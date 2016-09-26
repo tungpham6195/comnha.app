@@ -1,5 +1,6 @@
 package com.app.ptt.comnha.FireBase;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -7,14 +8,17 @@ import java.util.Map;
  */
 public class Posts {
     //không nên để là private
-    String titlle, content;
-    Map<String, Object> user;
+    String titlle, content, date, time;
 
     public Posts() {
     }
 
-    public void setUser(Map<String, Object> user) {
-        this.user = user;
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public void setTitlle(String titlle) {
@@ -25,4 +29,11 @@ public class Posts {
         this.content = content;
     }
 
+    public Map<String, Object> toMap(String userID) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("titlle", titlle);
+        result.put("content", content);
+        result.put("users/" + userID, true);
+        return null;
+    }
 }
