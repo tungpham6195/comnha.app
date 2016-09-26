@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Com nha</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_email">Email</string>
+    <string name="text_username">Username</string>
+    <string name="text_password">Mật khẩu</string>
+    <string name="text_confirmPass">Xác nhận mật khẩu</string>
+    <string name="text_ho">Họ</string>
+    <string name="text_tenLot">Tên lót</string>
+    <string name="text_ten">Tên</string>
+    <string name="text_birth">Ngày sinh</string>
+    <string name="text_signup">Đăng kí</string>
+    <string name="text_signin">Đăng nhập</string>
+    <string name="text_exit">Thoát</string>
+    <string name="text_forgotPass"><u>Quên mật khẩu?</u></string>
+    <string name="text_loginFB">Đăng nhập với tài khoản Facebook</string>
+    <string name="text_loginGmail">Đăng nhập với tài khoản Gmail</string>
+    <string name="text_chooseLocation">Chọn địa điểm</string>
+    <string name="text_title">Tiêu đề</string>
+    <string name="text_content">Nội dung</string>
+    <string name="text_upImage">Chọn ảnh</string>
+    <string name="text_vote">Vote</string>
+    <string name="text_hashtag">Tag</string>
+    <string name="title_activity_nav_draw">NavDrawActivity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main2">Main2Activity</string>
+</resources>
