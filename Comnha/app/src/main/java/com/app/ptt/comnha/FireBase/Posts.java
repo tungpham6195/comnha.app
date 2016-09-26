@@ -9,8 +9,21 @@ import java.util.Map;
 public class Posts {
     //không nên để là private
     String titlle, content, date, time;
+    long vesinh, phucvu, gia;
 
     public Posts() {
+    }
+
+    public void setVesinh(long vesinh) {
+        this.vesinh = vesinh;
+    }
+
+    public void setPhucvu(long phucvu) {
+        this.phucvu = phucvu;
+    }
+
+    public void setGia(long gia) {
+        this.gia = gia;
     }
 
     public void setDate(String date) {
@@ -29,11 +42,17 @@ public class Posts {
         this.content = content;
     }
 
-    public Map<String, Object> toMap(String userID) {
+    public Map<String, Object> toMap(String userID, String locID) {
         HashMap<String, Object> result = new HashMap<>();
         result.put("titlle", titlle);
         result.put("content", content);
+        result.put("date", date);
+        result.put("time", time);
+        result.put("vesinh", vesinh);
+        result.put("phucvu", phucvu);
+        result.put("gia", gia);
         result.put("users/" + userID, true);
-        return null;
+        result.put("locations/" + locID, true);
+        return result;
     }
 }

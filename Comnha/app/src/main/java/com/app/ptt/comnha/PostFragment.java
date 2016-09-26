@@ -99,7 +99,7 @@ public class PostFragment extends Fragment {
                 createPost.setContent(edt_content.getText().toString());
                 createPost.setUserID(userID );
                 createPost.setContext(getActivity().getApplicationContext());
-                createPost.doPost();
+                createPost.createNew();
             }
         });
     }

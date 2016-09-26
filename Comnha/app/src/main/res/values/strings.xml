@@ -3,6 +3,14 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_tenquan">Tên quán</string>
+    <string name="text_sdt">Số điện thoại</string>
+    <string name="text_openningTime">Giờ mở cửa</string>
+    <string name="text_start">Từ</string>
+    <string name="text_end">Đến</string>
+    <string name="text_gia">Giá</string>
+    <string name="text_save">Save</string>
+    <string name="text_address">Địa chỉ</string>
     <string name="text_email">Email</string>
     <string name="text_username">Username</string>
     <string name="text_password">Mật khẩu</string>
@@ -23,6 +31,7 @@
     <string name="text_upImage">Chọn ảnh</string>
     <string name="text_vote">Vote</string>
     <string name="text_hashtag">Tag</string>
+    <string name="text_taomoi">Tạo mới</string>
     <string name="title_activity_nav_draw">NavDrawActivity</string>
 
     <string name="title_section1">Section 1</string>
