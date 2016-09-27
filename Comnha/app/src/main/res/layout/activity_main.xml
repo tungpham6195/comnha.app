@@ -10,40 +10,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
+        <FrameLayout
+            android:id="@+id/frame"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"></FrameLayout>
         <LinearLayout
+            android:layout_marginTop="500dp"
             android:id="@+id/L_btns"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/btn_signin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="sign in" />
-
-            <Button
                 android:id="@+id/btn_signup"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="sign up" />
-
-            <Button
-                android:id="@+id/btn_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="POSTS" />
-            <Button
-                android:id="@+id/btn_postlst"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="LIST" />
+                android:text="sign up"
+                android:layout_width="80dp" />
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/L_btns" />
+
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
