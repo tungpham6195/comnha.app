@@ -39,7 +39,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
     private Boolean isBound=false;
     ArrayList<Route> listRoute;
     Geocoder geocoder;
-    int i=4;
+    int i=0;
     List<String> listPlace;
     boolean flag=false;
     ArrayList<String> list;
@@ -152,41 +152,40 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
                 }
             }
         });
-<<<<<<< HEAD
 
-=======
-        btn_posts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PostFragment postFragment = new PostFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, postFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
-        btn_signin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SigninFragment signinFragment = new SigninFragment();
-                signinFragment.setmAuth(mAuth);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, signinFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
-        btn_postlist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PostlistFragment postlistFragment = new PostlistFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, postlistFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
->>>>>>> origin/master
+
+//        btn_posts.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                PostFragment postFragment = new PostFragment();
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.frame, postFragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
+//            }
+//        });
+//        btn_signin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                SigninFragment signinFragment = new SigninFragment();
+//                signinFragment.setmAuth(mAuth);
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.frame, signinFragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
+//            }
+//        });
+//        btn_postlist.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                PostlistFragment postlistFragment = new PostlistFragment();
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.frame, postlistFragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
+//            }
+//        });
+
     }
 
 
