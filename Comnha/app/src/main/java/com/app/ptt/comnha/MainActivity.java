@@ -72,7 +72,6 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onClick(View view) {
                 PostFragment postFragment = new PostFragment();
-                postFragment.setUserID(mAuth.getCurrentUser().getUid().toString());
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame, postFragment);
                 transaction.addToBackStack(null);
@@ -93,9 +92,9 @@ public class MainActivity extends FragmentActivity {
         btn_postlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PostlistFragment postlistFragment=new PostlistFragment();
-                FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame,postlistFragment);
+                PostlistFragment postlistFragment = new PostlistFragment();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame, postlistFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }

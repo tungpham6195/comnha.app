@@ -29,7 +29,7 @@
     <string name="text_title">Tiêu đề</string>
     <string name="text_content">Nội dung</string>
     <string name="text_upImage">Chọn ảnh</string>
-    <string name="text_vote">Vote</string>
+    <string name="text_vote">Rate</string>
     <string name="text_hashtag">Tag</string>
     <string name="text_taomoi">Tạo mới</string>
     <string name="title_activity_nav_draw">NavDrawActivity</string>

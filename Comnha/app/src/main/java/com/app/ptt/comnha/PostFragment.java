@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.app.ptt.comnha.Classes.CreatePost;
+import com.app.ptt.comnha.Classes.Posts;
+import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 
 
@@ -19,12 +20,7 @@ import com.firebase.client.Firebase;
 public class PostFragment extends Fragment {
     Button btn_save, btn_upImage, btn_tag, btn_vote, btn_location;
     EditText edt_tittle, edt_content;
-    CreatePost createPost;
-    String userID;
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
+    Posts posts;
 
     public PostFragment() {
         // Required empty public constructor
@@ -94,12 +90,12 @@ public class PostFragment extends Fragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createPost = new CreatePost();
-                createPost.setTittle(edt_tittle.getText().toString());
-                createPost.setContent(edt_content.getText().toString());
-                createPost.setUserID(userID );
-                createPost.setContext(getActivity().getApplicationContext());
-                createPost.createNew();
+                posts = new Posts();
+                posts.setTittle(edt_tittle.getText().toString());
+                posts.setContent(edt_content.getText().toString());
+                posts.setUserID(LoginSession.getInstance().getUserID());
+                posts.setContext(getActivity().getApplicationContext());
+                posts.createNew();
             }
         });
     }

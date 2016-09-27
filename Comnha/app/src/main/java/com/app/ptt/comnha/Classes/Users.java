@@ -4,7 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.FireBase.Accounts;
+import com.app.ptt.comnha.FireBase.Account;
+import com.app.ptt.comnha.Interfaces.Transactions;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -15,13 +16,13 @@ import com.google.firebase.auth.FirebaseAuth;
 /**
  * Created by PTT on 9/16/2016.
  */
-public class SignUp {
+public class Users implements Transactions {
     private String ho, ten, tenlot, email, password, confirmPass, birth, username;
 
     private final Context suContext;
     private Firebase suRef;
 
-    public SignUp(Context suContext) {
+    public Users(Context suContext) {
         this.suContext = suContext;
     }
 
@@ -58,14 +59,21 @@ public class SignUp {
     }
 
     public void doSignUp() {
+
+    }
+
+    @Override
+    public void setupFirebase() {
         Firebase.setAndroidContext(suContext);
         suRef = new Firebase("https://com-nha.firebaseio.com/");
+    }
 
-
+    @Override
+    public void createNew() {
+        setupFirebase();
         if (!password.equals(confirmPass)) {
             Toast.makeText(suContext, "Mật khẩu xác nhận không đúng!!!", Toast.LENGTH_SHORT).show();
         } else {
-
             final FirebaseAuth mAuth;
             mAuth = FirebaseAuth.getInstance();
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -73,7 +81,7 @@ public class SignUp {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         String userID = task.getResult().getUser().getUid();
-                        Accounts newAccount = new Accounts(ho, ten, tenlot, email, password, birth, username);
+                        Account newAccount = new Account(ho, ten, tenlot, email, password, birth, username);
                         suRef.child("Users/" + userID).setValue(newAccount, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -92,10 +100,14 @@ public class SignUp {
             });
         }
     }
-    public void deleteUser(String userID){
+
+    @Override
+    public void update() {
 
     }
-    public void updateProfile(String userID){
+
+    @Override
+    public void delete() {
 
     }
 }

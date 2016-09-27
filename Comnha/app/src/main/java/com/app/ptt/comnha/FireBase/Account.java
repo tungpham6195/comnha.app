@@ -3,13 +3,13 @@ package com.app.ptt.comnha.FireBase;
 /**
  * Created by PTT on 9/16/2016.
  */
-public class Accounts {
+public class Account {
     private String ho, ten, tenlot, email, password, birth, username;
 
-    public Accounts() {
+    public Account() {
     }
 
-    public Accounts(String ho, String ten, String tenlot, String email, String password, String birth, String username) {
+    public Account(String ho, String ten, String tenlot, String email, String password, String birth, String username) {
         this.ho = ho;
         this.ten = ten;
         this.tenlot = tenlot;

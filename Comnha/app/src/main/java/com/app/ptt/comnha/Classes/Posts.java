@@ -3,7 +3,7 @@ package com.app.ptt.comnha.Classes;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.FireBase.Posts;
+import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.Interfaces.Transactions;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -18,8 +18,8 @@ import java.util.Locale;
 /**
  * Created by PTT on 9/19/2016.
  */
-public class CreatePost implements Transactions {
-    private Posts newPost;
+public class Posts implements Transactions {
+    private Post newPost;
     private FirebaseStorage storage;
     private StorageReference stReference;
     private Firebase database;
@@ -57,7 +57,7 @@ public class CreatePost implements Transactions {
         this.userID = userID;
     }
 
-    public CreatePost() {
+    public Posts() {
 
         //Create reference of db
 
@@ -90,7 +90,7 @@ public class CreatePost implements Transactions {
     public void createNew() {
         setupFirebase();
 
-        newPost = new Posts();
+        newPost = new Post();
         newPost.setTitlle(tittle);
         newPost.setContent(content);
         newPost.setDate(getDate());

@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.app.ptt.comnha.Classes.SignUp;
+import com.app.ptt.comnha.Classes.Users;
 import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,7 +26,7 @@ public class SignupFragment extends Fragment {
             editText_password, editText_confirmPass, editText_birth;
     Button butt_signup, butt_loginFB, butt_loginGmail;
     TextView txt_forgotPass;
-    SignUp createNewAccount;
+    Users createNewAccount;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -60,7 +60,7 @@ public class SignupFragment extends Fragment {
             @Override
             public void onClick(View view) {
 //                doSignUp();
-                createNewAccount = new SignUp(getActivity().getApplicationContext());
+                createNewAccount = new Users(getActivity().getApplicationContext());
                 createNewAccount.setHo(editText_ho.getText().toString().trim());
                 createNewAccount.setTen(editText_ten.getText().toString().trim());
                 createNewAccount.setTenlot(editText_tenlot.getText().toString().trim());

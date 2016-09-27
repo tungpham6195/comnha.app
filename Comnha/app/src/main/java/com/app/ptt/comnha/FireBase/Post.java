@@ -6,12 +6,12 @@ import java.util.Map;
 /**
  * Created by PTT on 9/19/2016.
  */
-public class Posts {
+public class Post {
     //không nên để là private
     String titlle, content, date, time;
     long vesinh, phucvu, gia;
 
-    public Posts() {
+    public Post() {
     }
 
     public void setVesinh(long vesinh) {

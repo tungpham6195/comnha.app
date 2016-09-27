@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.app.ptt.comnha.Classes.Locations;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,7 +45,15 @@ public class AddlocaFragment extends Fragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Locations newLocation = new Locations(getActivity().getApplicationContext());
+                newLocation.setName(edt_tenquan.getText().toString());
+                newLocation.setDiachi(edt_diachi.getText().toString());
+                newLocation.setSdt(edt_sdt.getText().toString());
+                newLocation.setTimestart(edt_timestart.getText().toString());
+                newLocation.setTimeend(edt_timeend.getText().toString());
+                newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
+                newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
+                newLocation.createNew();
             }
         });
     }
