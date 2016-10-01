@@ -19,31 +19,31 @@ public class Account {
         this.username = username;
     }
 
-    public String getHo() {
-        return ho;
-    }
-
-    public String getTen() {
-        return ten;
-    }
-
-    public String getTenlot() {
-        return tenlot;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getBirth() {
-        return birth;
-    }
-
-    public String getUsername() {
-        return username;
-    }
+//    public String getHo() {
+//        return ho;
+//    }
+//
+//    public String getTen() {
+//        return ten;
+//    }
+//
+//    public String getTenlot() {
+//        return tenlot;
+//    }
+//
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public String getBirth() {
+//        return birth;
+//    }
+//
+//    public String getUsername() {
+//        return username;
+//    }
 }

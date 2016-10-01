@@ -56,6 +56,42 @@ public class Location {
         this.checkinNumb = checkinNumb;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getDiachi() {
+        return diachi;
+    }
+
+    public String getSdt() {
+        return sdt;
+    }
+
+    public String getTimestart() {
+        return timestart;
+    }
+
+    public String getTimeend() {
+        return timeend;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public long getGiamin() {
+        return giamin;
+    }
+
+    public long getGiamax() {
+        return giamax;
+    }
+
     public Map<String, Object> toMap(String postID) {
         HashMap<String, Object> result = new HashMap<>();
         result.put("name", name);

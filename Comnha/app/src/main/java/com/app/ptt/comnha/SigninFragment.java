@@ -64,7 +64,7 @@ public class SigninFragment extends Fragment {
         btn_exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAuth.signOut();
+//                mAuth.signOut();
                 Toast.makeText(getActivity().getApplicationContext(), "Exit", Toast.LENGTH_SHORT).show();
             }
         });

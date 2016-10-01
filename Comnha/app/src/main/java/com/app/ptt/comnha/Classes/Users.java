@@ -2,10 +2,12 @@ package com.app.ptt.comnha.Classes;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.Account;
 import com.app.ptt.comnha.Interfaces.Transactions;
+import com.app.ptt.comnha.R;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -58,10 +60,6 @@ public class Users implements Transactions {
         this.birth = birth;
     }
 
-    public void doSignUp() {
-
-    }
-
     @Override
     public void setupFirebase() {
         Firebase.setAndroidContext(suContext);
@@ -74,7 +72,7 @@ public class Users implements Transactions {
         if (!password.equals(confirmPass)) {
             Toast.makeText(suContext, "Mật khẩu xác nhận không đúng!!!", Toast.LENGTH_SHORT).show();
         } else {
-            final FirebaseAuth mAuth;
+            FirebaseAuth mAuth;
             mAuth = FirebaseAuth.getInstance();
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -88,12 +86,12 @@ public class Users implements Transactions {
                                 if (firebaseError != null) {
                                     Toast.makeText(suContext, firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                 } else {
-                                    Toast.makeText(suContext, "Đăng kí thành công!!!", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(suContext, R.string.text_signup_successful, Toast.LENGTH_LONG).show();
                                 }
-
                             }
                         });
                     } else {
+                        Log.e("error",task.getException().toString());
                         Toast.makeText(suContext, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }

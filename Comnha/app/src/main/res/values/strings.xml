@@ -32,6 +32,7 @@
     <string name="text_vote">Rate</string>
     <string name="text_hashtag">Tag</string>
     <string name="text_taomoi">Tạo mới</string>
+    <string name="text_signup_successful">Đăng kí thành công!!!</string>
     <string name="title_activity_nav_draw">NavDrawActivity</string>
 
     <string name="title_section1">Section 1</string>
@@ -45,5 +46,14 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_activity_maps">Map</string>
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>

@@ -69,7 +69,7 @@ public class SignupFragment extends Fragment {
                 createNewAccount.setPassword(editText_password.getText().toString().trim());
                 createNewAccount.setConfirmPass(editText_confirmPass.getText().toString().trim());
                 createNewAccount.setBirth(editText_birth.getText().toString().trim());
-                createNewAccount.doSignUp();
+                createNewAccount.createNew();
 //                Toast.makeText(getContext(), editText_email.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });

@@ -81,7 +81,7 @@ public class Locations implements Transactions {
         newLocation.setLatitude(latitude);
         newLocation.setLongitude(longitude);
         newLocation.setCheckinNumb(checkinNumb);
-        lcaRef.child("Locations").setValue(newLocation, new Firebase.CompletionListener() {
+        lcaRef.child("Locations").push().setValue(newLocation, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {

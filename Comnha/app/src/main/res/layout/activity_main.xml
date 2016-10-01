@@ -10,23 +10,49 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <FrameLayout
-            android:id="@+id/frame"
-            android:layout_width="match_parent"
-            android:layout_height="500dp"></FrameLayout>
-        <LinearLayout
-            android:layout_marginTop="500dp"
+
+        <RelativeLayout
             android:id="@+id/L_btns"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/btn_signup"
+                android:id="@+id/btn_signin"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="sign up"
-                android:layout_width="80dp" />
-        </LinearLayout>
+                android:text="sign in" />
 
+            <Button
+                android:layout_toEndOf="@id/btn_signin"
+                android:id="@+id/btn_signup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="sign up" />
 
+            <Button
+                android:id="@+id/btn_post"
+                android:layout_toEndOf="@id/btn_signup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POSTS" />
+            <Button
+                android:id="@+id/btn_postlst"
+                android:layout_toEndOf="@id/btn_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LIST" />
+            <Button
+                android:layout_below="@id/btn_postlst"
+                android:id="@+id/btn_newlocation"
+                android:layout_height="wrap_content"
+                android:text="NEW LOCATION"
+                android:layout_width="wrap_content" />
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/L_btns" />
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
