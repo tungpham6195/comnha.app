@@ -45,7 +45,7 @@
                 android:layout_below="@id/btn_postlst"
                 android:id="@+id/btn_newlocation"
                 android:layout_height="wrap_content"
-                android:text="NEW LOCATION"
+                android:text="NEW"
                 android:layout_width="wrap_content" />
         </RelativeLayout>
 
