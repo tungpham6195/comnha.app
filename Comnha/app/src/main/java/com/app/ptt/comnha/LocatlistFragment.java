@@ -54,7 +54,7 @@ public class LocatlistFragment extends Fragment {
                 new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String key = list_item.get(position).getLocaKey();
+                String key = list_item.get(position).getLocaID();
                 Intent intent = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
                 intent.putExtra(getResources().getString(R.string.fragment_CODE),
                         getResources().getString(R.string.frag_locadetail_CODE));
@@ -68,22 +68,22 @@ public class LocatlistFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Location newLocation = dataSnapshot.getValue(Location.class);
-                newLocation.setLocaKey(dataSnapshot.getKey());
+                newLocation.setLocaID(dataSnapshot.getKey());
                 list_item.add(newLocation);
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Location newLocation = dataSnapshot.getValue(Location.class);
-                String key = dataSnapshot.getKey();
-                for (Location lc : list_item) {
-                    if (lc.getLocaKey().equals(key)) {
-                        newLocation.setLocaKey(key);
-                        list_item.set(list_item.indexOf(lc), newLocation);
-                    }
-                }
-                mAdapter.notifyDataSetChanged();
+//                Location newLocation = dataSnapshot.getValue(Location.class);
+//                String key = dataSnapshot.getKey();
+//                for (Location lc : list_item) {
+//                    if (lc.getLocaKey().equals(key)) {
+//                        newLocation.setLocaKey(key);
+//                        list_item.set(list_item.indexOf(lc), newLocation);
+//                    }
+//                }
+//                mAdapter.notifyDataSetChanged();
             }
 
             @Override

@@ -3,8 +3,11 @@ package com.app.ptt.comnha.Classes;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.app.ptt.comnha.FireBase.LocationPost;
 import com.app.ptt.comnha.FireBase.Post;
+import com.app.ptt.comnha.FireBase.UserPost;
 import com.app.ptt.comnha.Interfaces.Transactions;
+import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,7 +16,9 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by PTT on 9/19/2016.
@@ -113,8 +118,16 @@ public class Posts implements Transactions {
                         @Override
                         public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                             if (firebaseError == null) {
-                                ref.child("Locations/" + locaID + "/posts/" + firebase.getKey()).setValue(true);
-                                ref.child("Users/" + userID + "/posts/" + firebase.getKey()).setValue(true);
+                                LocationPost locationPost=new LocationPost();
+                                Map<String,Object> loca=new HashMap<String, Object>();
+                                loca.put(locaID+"/"+firebase.getKey(),true);
+                                locationPost.setPostID(loca);
+                                ref.setValue(locationPost);
+                                UserPost userPost=new UserPost();
+                                Map<String,Object> user=new HashMap<String, Object>();
+                                user.put(LoginSession.getInstance().getUserID()+"/"+firebase.getKey(),true);
+                                userPost.setUserID(user);
+                                ref.setValue(user);
                                 Toast.makeText(context, "Đăng bài thành công", Toast.LENGTH_SHORT).show();
                             }
                         }

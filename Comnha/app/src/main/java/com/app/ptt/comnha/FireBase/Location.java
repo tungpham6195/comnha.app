@@ -10,8 +10,13 @@ import java.util.Map;
 public class Location {
     String name, diachi, sdt, timestart, timeend, latitude, longitude;
     long giamin, giamax;
+    String locaID;
 
     public Location() {
+    }
+
+    public void setLocaID(String locaID) {
+        this.locaID = locaID;
     }
 
     public void setName(String name) {
@@ -84,6 +89,10 @@ public class Location {
 
     public long getGiamax() {
         return giamax;
+    }
+
+    public String getLocaID() {
+        return locaID;
     }
 
     public Map<String, Object> toMap() {

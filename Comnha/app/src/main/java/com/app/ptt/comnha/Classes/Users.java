@@ -79,7 +79,14 @@ public class Users implements Transactions {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         String userID = task.getResult().getUser().getUid();
-                        Account newAccount = new Account(ho, ten, tenlot, email, password, birth, username);
+                        Account newAccount = new Account();
+                        newAccount.setHo(ho);
+                        newAccount.setTen(ten);
+                        newAccount.setTenlot(tenlot);
+                        newAccount.setEmail(email);
+                        newAccount.setPassword(password);
+                        newAccount.setBirth(birth);
+                        setUsername(username);
                         suRef.child("Users/" + userID).setValue(newAccount, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -91,7 +98,7 @@ public class Users implements Transactions {
                             }
                         });
                     } else {
-                        Log.e("error",task.getException().toString());
+                        Log.e("error", task.getException().toString());
                         Toast.makeText(suContext, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }

@@ -70,11 +70,10 @@ public class ChooselocaFragment extends Fragment {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity().getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String key = list.get(position).getLocaKey();
+                String key = list.get(position).getLocaID();
                 passingData.passData(key);
                 ChooseLoca.getInstance().setLocaID(key);
                 getActivity().finish();
-//                Toast.makeText(getActivity().getApplicationContext(), key, Toast.LENGTH_SHORT).show();
             }
         }));
 
@@ -82,23 +81,23 @@ public class ChooselocaFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Location newLocation = dataSnapshot.getValue(Location.class);
-                newLocation.setLocaKey(dataSnapshot.getKey());
+                newLocation.setLocaID(dataSnapshot.getKey());
                 list.add(newLocation);
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Location newLocation = dataSnapshot.getValue(Location.class);
-                String key = dataSnapshot.getKey();
-                for (Location lc : list
-                        ) {
-                    if (lc.getLocaKey().equals(key)) {
-                        newLocation.setLocaKey(key);
-                        list.set(list.indexOf(lc), newLocation);
-                    }
-                }
-                mAdapter.notifyDataSetChanged();
+//                Location newLocation = dataSnapshot.getValue(Location.class);
+//                String key = dataSnapshot.getKey();
+//                for (Location lc : list
+//                        ) {
+//                    if (lc.getLocaID().equals(key)) {
+//                        newLocation.setLocaID(key);
+//                        list.set(list.indexOf(lc), newLocation);
+//                    }
+//                }
+//                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -122,6 +121,6 @@ public class ChooselocaFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("destroy","destroy");
+        Log.d("destroy", "destroy");
     }
 }
