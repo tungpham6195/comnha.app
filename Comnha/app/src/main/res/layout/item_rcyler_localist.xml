@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clickable="true"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="80dp"
+    >
 
     <ImageView
         android:id="@+id/item_rcyler_imgV"
@@ -18,6 +21,7 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/item_rcyler_imgV"
         android:text="Cơm ngô quyền 2"
+        android:maxLength="50"
         android:textSize="16sp"
         android:layout_alignParentEnd="true"
         android:textColor="@android:color/black"
@@ -30,6 +34,7 @@
         android:layout_below="@+id/item_rcyler_txtTenquan"
         android:layout_toEndOf="@+id/item_rcyler_imgV"
         android:textSize="12sp"
+        android:maxLength="40"
         android:text="89 ngô quyên, thủ đức, hồ chí minh" />
 
     <LinearLayout

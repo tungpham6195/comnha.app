@@ -22,10 +22,10 @@ public class Posts implements Transactions {
     private Post newPost;
     private FirebaseStorage storage;
     private StorageReference stReference;
-    private Firebase database;
+    private Firebase ref;
     DatabaseReference dbReference;
 
-    private String tittle, content, userID;
+    private String title, content, userID, locaID;
     private int vesinh, phucvu, gia;
     private Context context;
 
@@ -41,8 +41,12 @@ public class Posts implements Transactions {
         this.vesinh = vesinh;
     }
 
-    public void setTittle(String tittle) {
-        this.tittle = tittle;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setLocaID(String locaID) {
+        this.locaID = locaID;
     }
 
     public void setContent(String content) {
@@ -71,7 +75,7 @@ public class Posts implements Transactions {
     @Override
     public void setupFirebase() {
         Firebase.setAndroidContext(context);
-        database = new Firebase("https://com-nha.firebaseio.com/");
+        ref = new Firebase("https://com-nha.firebaseio.com/");
     }
 
     private String getDate() {
@@ -91,7 +95,7 @@ public class Posts implements Transactions {
         setupFirebase();
 
         newPost = new Post();
-        newPost.setTitlle(tittle);
+        newPost.setTitle(title);
         newPost.setContent(content);
         newPost.setDate(getDate());
         newPost.setTime(getTime());
@@ -99,16 +103,25 @@ public class Posts implements Transactions {
         newPost.setVesinh(vesinh);
         newPost.setPhucvu(phucvu);
 
-        database.child("Posts").push().setValue(newPost, new Firebase.CompletionListener() {
+        ref.child("Posts").push().setValue(newPost, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError != null) {
                     Toast.makeText(context, "Đăng bài bị lỗi", Toast.LENGTH_SHORT).show();
                 } else {
-                    database.child("Posts/" + firebase.getKey()).updateChildren(newPost.toMap(userID, ""));
+                    ref.child("Posts/" + firebase.getKey()).updateChildren(newPost.toMap(userID, locaID), new Firebase.CompletionListener() {
+                        @Override
+                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                            if (firebaseError == null) {
+                                ref.child("Locations/" + locaID + "/posts/" + firebase.getKey()).setValue(true);
+                                ref.child("Users/" + userID + "/posts/" + firebase.getKey()).setValue(true);
+                                Toast.makeText(context, "Đăng bài thành công", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 //                            .child("user/"+userID).setValue(true);
 //                    ).updateChildren(users);
-                    Toast.makeText(context, "Đã đăng thành công", Toast.LENGTH_SHORT).show();
+
                 }
             }
         });

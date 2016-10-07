@@ -8,40 +8,10 @@ import java.util.Map;
  */
 
 public class Location {
-    String name, diachi, sdt, timestart, timeend,latitude,longitude;
+    String name, diachi, sdt, timestart, timeend, latitude, longitude;
     long giamin, giamax;
 
-    long checkinNumb;
-
     public Location() {
-    }
-
-    public void setSdt(String sdt) {
-        this.sdt = sdt;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public void setTimestart(String timestart) {
-        this.timestart = timestart;
-    }
-
-    public void setTimeend(String timeend) {
-        this.timeend = timeend;
-    }
-
-    public void setGiamin(long giamin) {
-        this.giamin = giamin;
-    }
-
-    public void setGiamax(long giamax) {
-        this.giamax = giamax;
     }
 
     public void setName(String name) {
@@ -52,8 +22,32 @@ public class Location {
         this.diachi = diachi;
     }
 
-    public void setCheckinNumb(long checkinNumb) {
-        this.checkinNumb = checkinNumb;
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
+    }
+
+    public void setTimestart(String timestart) {
+        this.timestart = timestart;
+    }
+
+    public void setTimeend(String timeend) {
+        this.timeend = timeend;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setGiamin(long giamin) {
+        this.giamin = giamin;
+    }
+
+    public void setGiamax(long giamax) {
+        this.giamax = giamax;
     }
 
     public String getName() {
@@ -92,7 +86,7 @@ public class Location {
         return giamax;
     }
 
-    public Map<String, Object> toMap(String postID) {
+    public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("name", name);
         result.put("diachi", diachi);
@@ -103,8 +97,6 @@ public class Location {
         result.put("giamin", giamin);
         result.put("longitude", longitude);
         result.put("latitude", latitude);
-        result.put("checkinNumb", checkinNumb);
-        result.put("posts/" + postID, true);
         return result;
     }
 }

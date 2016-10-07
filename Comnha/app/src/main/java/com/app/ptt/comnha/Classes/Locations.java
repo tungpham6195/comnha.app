@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.Location;
 import com.app.ptt.comnha.Interfaces.Transactions;
+import com.app.ptt.comnha.R;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
@@ -70,7 +71,7 @@ public class Locations implements Transactions {
     @Override
     public void createNew() {
         setupFirebase();
-        Location newLocation = new Location();
+        final Location newLocation = new Location();
         newLocation.setName(name);
         newLocation.setDiachi(diachi);
         newLocation.setSdt(sdt);
@@ -80,12 +81,11 @@ public class Locations implements Transactions {
         newLocation.setGiamax(giamax);
         newLocation.setLatitude(latitude);
         newLocation.setLongitude(longitude);
-        newLocation.setCheckinNumb(checkinNumb);
         lcaRef.child("Locations").push().setValue(newLocation, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
-                    Toast.makeText(lcaContext, "Thêm địa điểm thành công", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(lcaContext,R.string.text_noti_addloca_succes, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(lcaContext, "Lỗi: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                 }

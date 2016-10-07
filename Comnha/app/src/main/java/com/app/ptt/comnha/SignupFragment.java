@@ -61,14 +61,14 @@ public class SignupFragment extends Fragment {
             public void onClick(View view) {
 //                doSignUp();
                 createNewAccount = new Users(getActivity().getApplicationContext());
-                createNewAccount.setHo(editText_ho.getText().toString().trim());
-                createNewAccount.setTen(editText_ten.getText().toString().trim());
-                createNewAccount.setTenlot(editText_tenlot.getText().toString().trim());
-                createNewAccount.setUsername(editText_username.getText().toString().trim());
-                createNewAccount.setEmail(editText_email.getText().toString().trim());
-                createNewAccount.setPassword(editText_password.getText().toString().trim());
-                createNewAccount.setConfirmPass(editText_confirmPass.getText().toString().trim());
-                createNewAccount.setBirth(editText_birth.getText().toString().trim());
+                createNewAccount.setHo(editText_ho.getText().toString());
+                createNewAccount.setTen(editText_ten.getText().toString());
+                createNewAccount.setTenlot(editText_tenlot.getText().toString());
+                createNewAccount.setUsername(editText_username.getText().toString());
+                createNewAccount.setEmail(editText_email.getText().toString());
+                createNewAccount.setPassword(editText_password.getText().toString());
+                createNewAccount.setConfirmPass(editText_confirmPass.getText().toString());
+                createNewAccount.setBirth(editText_birth.getText().toString());
                 createNewAccount.createNew();
 //                Toast.makeText(getContext(), editText_email.getText().toString(), Toast.LENGTH_SHORT).show();
             }

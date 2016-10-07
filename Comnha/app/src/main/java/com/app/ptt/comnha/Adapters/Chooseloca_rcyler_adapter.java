@@ -1,5 +1,6 @@
 package com.app.ptt.comnha.Adapters;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,30 +17,31 @@ import java.util.ArrayList;
  * Created by PTT on 9/27/2016.
  */
 
-public class Postlist_rcyler_adapter extends RecyclerView.Adapter<Postlist_rcyler_adapter.ViewHolder> {
+public class Chooseloca_rcyler_adapter extends RecyclerView.Adapter<Chooseloca_rcyler_adapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imgV;
         public TextView txt_diachi, txt_tenquan, txt_km, txt_diem;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            imgV = (ImageView) itemView.findViewById(R.id.item_rcyler_imgV);
-            txt_diachi = (TextView) itemView.findViewById(R.id.item_rcyler_txtdiachi);
-            txt_tenquan = (TextView) itemView.findViewById(R.id.item_rcyler_txtTenquan);
-            txt_km = (TextView) itemView.findViewById(R.id.item_rcyler_txtkm);
-            txt_diem = (TextView) itemView.findViewById(R.id.item_rcyler_txtscore);
+            imgV = (ImageView) itemView.findViewById(R.id.item_rcyler_chooseloca_imgV);
+            txt_diachi = (TextView) itemView.findViewById(R.id.item_rcyler_chooseloca_txtdiachi);
+            txt_tenquan = (TextView) itemView.findViewById(R.id.item_rcyler_chooseloca_txtTenquan);
+            txt_km = (TextView) itemView.findViewById(R.id.item_rcyler_chooseloca_txtkm);
+            txt_diem = (TextView) itemView.findViewById(R.id.item_rcyler_chooseloca_txtscore);
         }
     }
 
+    Activity activity;
     ArrayList<Location> list;
 
-    public Postlist_rcyler_adapter(ArrayList<Location> list) {
+    public Chooseloca_rcyler_adapter(ArrayList<Location> list) {
         this.list = list;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rcyler_postlist, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rcyler_chooseloca, parent, false);
         return new ViewHolder(itemView);
     }
 

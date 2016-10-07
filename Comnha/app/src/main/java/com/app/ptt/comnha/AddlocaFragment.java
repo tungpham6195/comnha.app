@@ -54,6 +54,7 @@ public class AddlocaFragment extends Fragment {
                 newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
                 newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
                 newLocation.createNew();
+                getActivity().finish();
             }
         });
     }

@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class Post {
     //không nên để là private
-    String titlle, content, date, time;
+    String title, content, date, time, postID;
     long vesinh, phucvu, gia;
 
     public Post() {
@@ -34,25 +34,59 @@ public class Post {
         this.time = time;
     }
 
-    public void setTitlle(String titlle) {
-        this.titlle = titlle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setContent(String content) {
         this.content = content;
     }
 
+    public void setPostID(String postID) {
+        this.postID = postID;
+    }
+
+    public String getPostID() {
+        return postID;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public long getVesinh() {
+        return vesinh;
+    }
+
+    public long getPhucvu() {
+        return phucvu;
+    }
+
+    public long getGia() {
+        return gia;
+    }
+
     public Map<String, Object> toMap(String userID, String locID) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("titlle", titlle);
+        result.put("title", title);
         result.put("content", content);
         result.put("date", date);
         result.put("time", time);
         result.put("vesinh", vesinh);
         result.put("phucvu", phucvu);
         result.put("gia", gia);
-        result.put("users/" + userID, true);
-        result.put("locations/" + locID, true);
         return result;
     }
 }
