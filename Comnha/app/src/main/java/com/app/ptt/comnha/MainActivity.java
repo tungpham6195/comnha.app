@@ -140,9 +140,9 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         btn_postlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PostFragment postlistFragment = new PostFragment();
+                LocatlistFragment locatlistFragment = new LocatlistFragment();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, postlistFragment);
+                transaction.replace(R.id.frame, locatlistFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
