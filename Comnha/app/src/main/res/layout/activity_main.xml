@@ -62,15 +62,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/btn_postlst"
-                    android:text="NEW LOCATION" />
-
-                <Button
-                    android:text="Map"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:id="@+id/btn_map" />
+                    android:text="NEW LOCATION"
+                    android:layout_toStartOf="@+id/btn_signup" />
 
                 <Button
                     android:text="Search"
@@ -79,6 +72,23 @@
                     android:id="@+id/btn_search"
                     android:layout_alignParentBottom="true"
                     android:layout_toEndOf="@+id/btn_map" />
+
+                <Button
+                    android:text="Map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_map"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toEndOf="@+id/btn_newlocation"
+                    android:layout_marginStart="13dp" />
+
+                <Button
+                    android:text="Load"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_load"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
             <FrameLayout

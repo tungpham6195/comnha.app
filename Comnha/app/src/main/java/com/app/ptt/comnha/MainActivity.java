@@ -34,7 +34,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
     private GPSService gpsService;
     private static final String LOG = "___MY LOG___";
     private Boolean isBound=false;
-    private Button btn_signup, btn_signin, btn_posts, btn_postlist, btn_newloca,btn_map,btn_search;
+    private Button btn_signup, btn_signin, btn_posts, btn_postlist, btn_newloca,btn_map,btn_search,btn_load;
     private Fragment fragment;
     private Bundle savedInstanceState;
     FirebaseAuth mAuth;
@@ -100,6 +100,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         btn_newloca = (Button) findViewById(R.id.btn_newlocation);
         btn_map =(Button) findViewById(R.id.btn_map);
         btn_search=(Button) findViewById(R.id.btn_search);
+        btn_load=(Button) findViewById(R.id.btn_load);
         btn_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,7 +131,6 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
             @Override
             public void onClick(View view) {
                 SigninFragment signinFragment = new SigninFragment();
-                signinFragment.setmAuth(mAuth);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame, signinFragment);
                 transaction.addToBackStack(null);
@@ -140,7 +140,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         btn_postlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PostlistFragment postlistFragment = new PostlistFragment();
+                PostFragment postlistFragment = new PostFragment();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame, postlistFragment);
                 transaction.addToBackStack(null);
@@ -150,18 +150,18 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         btn_newloca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                AddlocaFragment addlocaFragment = new AddlocaFragment();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.frame, addlocaFragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
-//                try {
-//                    Toast.makeText(getContext(),gpsService.returnLocation(),Toast.LENGTH_LONG).show();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-                loadListPlace();
+                AddlocaFragment addlocaFragment = new AddlocaFragment();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame, addlocaFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
 
+            }
+        });
+        btn_load.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadListPlace();
             }
         });
         btn_map.setOnClickListener(new View.OnClickListener() {
