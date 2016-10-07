@@ -127,7 +127,7 @@ public class Posts implements Transactions {
                                 Map<String,Object> user=new HashMap<String, Object>();
                                 user.put(LoginSession.getInstance().getUserID()+"/"+firebase.getKey(),true);
                                 userPost.setUserID(user);
-                                ref.setValue(user);
+                                ref.setValue(userPost);
                                 Toast.makeText(context, "Đăng bài thành công", Toast.LENGTH_SHORT).show();
                             }
                         }

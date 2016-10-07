@@ -37,8 +37,8 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
     private Geocoder geocoder;
     private GPSService gpsService;
     private static final String LOG = "___MY LOG___";
-    private Boolean isBound=false;
-    private Button btn_signup, btn_signin, btn_posts, btn_postlist, btn_newloca,btn_map,btn_search,btn_load;
+    private Boolean isBound = false;
+    private Button btn_signup, btn_signin, btn_posts, btn_postlist, btn_newloca, btn_map, btn_search, btn_load;
     private Fragment fragment;
     private Bundle savedInstanceState;
     FirebaseAuth mAuth;
@@ -53,15 +53,15 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.savedInstanceState = savedInstanceState;
-        if(!isMyServiceRunning(GPSService.class)){
-            final Intent intent=new Intent(this,GPSService.class);
+        if (!isMyServiceRunning(GPSService.class)) {
+            final Intent intent = new Intent(this, GPSService.class);
             startService(intent);
         }
         listPlace = new ArrayList<String>();
         Log.i(LOG,"onCreate");
         Firebase.setAndroidContext(this);
         ref=new Firebase(getString(R.string.firebase_path));
-
+        listPlace = new ArrayList<String>();
         ref.child(getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -97,6 +97,15 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
 //        listPlace.add("60 Dân Chủ Thủ Đức");
         geocoder=new Geocoder(this, Locale.getDefault());
         routes=new ArrayList<Route>();
+        Log.i(LOG, "onCreate");
+
+//        listPlace.add("89 Ngô Quyền Quận 9");
+//        listPlace.add("1 Võ Văn Ngân Thủ Đức");
+//        listPlace.add("250 Lê Văn Việt Quận 9");
+//        listPlace.add("89 Lê Văn Chí Thủ Đức");
+//        listPlace.add("60 Dân Chủ Thủ Đức");
+        geocoder = new Geocoder(this, Locale.getDefault());
+        routes = new ArrayList<Route>();
 
         anhXa();
         mAuth = FirebaseAuth.getInstance();
@@ -120,10 +129,11 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
 
 
     }
-    public void findDirection(String orgin,String destination){
-        try{
-            new DirectionFinder(this,orgin,destination,routes,geocoder).execute();
-        }catch (Exception e){
+
+    public void findDirection(String orgin, String destination) {
+        try {
+            new DirectionFinder(this, orgin, destination, routes, geocoder).execute();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -134,43 +144,34 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         btn_posts = (Button) findViewById(R.id.btn_post);
         btn_postlist = (Button) findViewById(R.id.btn_postlst);
         btn_newloca = (Button) findViewById(R.id.btn_newlocation);
-        btn_map =(Button) findViewById(R.id.btn_map);
-        btn_search=(Button) findViewById(R.id.btn_search);
-        btn_load=(Button) findViewById(R.id.btn_load);
+        btn_map = (Button) findViewById(R.id.btn_map);
+        btn_search = (Button) findViewById(R.id.btn_search);
+        btn_load = (Button) findViewById(R.id.btn_load);
         btn_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (findViewById(R.id.frame) != null) {
-                    if (savedInstanceState != null) {
-
-                    } else {
-
-                    }
-                    SignupFragment signupFragment = new SignupFragment();
-                    signupFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame, signupFragment).addToBackStack(null).commit();
-
-                }
+                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frg_signup_CODE));
+                startActivity(intent);
             }
         });
         btn_posts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PostFragment postFragment = new PostFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, postFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_addpost_CODE));
+                startActivity(intent);
             }
         });
         btn_signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SigninFragment signinFragment = new SigninFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, signinFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frg_signin_CODE));
+                startActivity(intent);
             }
         });
         btn_postlist.setOnClickListener(new View.OnClickListener() {
@@ -186,11 +187,10 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         btn_newloca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddlocaFragment addlocaFragment = new AddlocaFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, addlocaFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_addloca_CODE));
+                startActivity(intent);
 
             }
         });
@@ -204,10 +204,10 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
             @Override
             public void onClick(View v) {
 
-                MapFragment mapFragment=new MapFragment();
+                MapFragment mapFragment = new MapFragment();
                 mapFragment.getMethod(routes);
-                FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame,mapFragment);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame, mapFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
@@ -215,22 +215,26 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SearchFragment searchFragment=new SearchFragment();
-                FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame,searchFragment);
+                SearchFragment searchFragment = new SearchFragment();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame, searchFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
         });
     }
-    public void loadListPlace(String destination){
-        String origin="";
+
+    public void loadListPlace(String destination) {
+        String origin = "";
         try {
-            origin=gpsService.returnLocation();
+            origin = gpsService.returnLocation();
         } catch (IOException e) {
             e.printStackTrace();
         }
         findDirection(destination,origin);
+//        for (String destination : listPlace) {
+//            findDirection(destination, origin);
+//        }
     }
 
     @Override
@@ -239,18 +243,18 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
 
         mAuth.addAuthStateListener(mAuthListener);
         doBinService();
-        Log.i(LOG,"onStart");
+        Log.i(LOG, "onStart");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(isMyServiceRunning(GPSService.class)){
-            final Intent intent=new Intent(this,GPSService.class);
+        if (isMyServiceRunning(GPSService.class)) {
+            final Intent intent = new Intent(this, GPSService.class);
             startService(intent);
-            Log.i("Resume","Resume");
+            Log.i("Resume", "Resume");
         }
-        Log.i(LOG,"onResume");
+        Log.i(LOG, "onResume");
     }
 
     @Override
@@ -263,51 +267,54 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
             mAuth.removeAuthStateListener(mAuthListener);
 
         }
-        Log.i(LOG,"onStop");
+        Log.i(LOG, "onStop");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(isMyServiceRunning(GPSService.class)){
-            final Intent intent=new Intent(this,GPSService.class);
+        if (isMyServiceRunning(GPSService.class)) {
+            final Intent intent = new Intent(this, GPSService.class);
             stopService(intent);
 
         }
-        Log.i(LOG,"Pause");
+        Log.i(LOG, "Pause");
     }
 
-    public void doBinService(){
-        if(!isBound){
-            Intent intent=new Intent(this,GPSService.class);
-            bindService(intent,serviceConnection,BIND_AUTO_CREATE);
-            isBound=true;
+    public void doBinService() {
+        if (!isBound) {
+            Intent intent = new Intent(this, GPSService.class);
+            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+            isBound = true;
         }
     }
-    public void doUnbinService(){
-        if(isBound){
+
+    public void doUnbinService() {
+        if (isBound) {
             unbindService(serviceConnection);
-            isBound=false;
+            isBound = false;
         }
     }
-    private ServiceConnection serviceConnection=new ServiceConnection() {
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            GPSService.LocalBinder binder=(GPSService.LocalBinder) service;
-            gpsService=binder.getService();
-            isBound=true;
-            Log.i(LOG,"ServiceConnection");
+            GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
+            gpsService = binder.getService();
+            isBound = true;
+            Log.i(LOG, "ServiceConnection");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            isBound=false;
+            isBound = false;
         }
     };
-    public boolean isMyServiceRunning(Class<?> serviceClass){
-        ActivityManager manager=(ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for(ActivityManager.RunningServiceInfo service: manager.getRunningServices(Integer.MAX_VALUE)){
-            if(serviceClass.getName().equals(service.service.getClassName())){
+
+    public boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;
             }
         }
@@ -321,7 +328,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
 
     @Override
     public void onDirectionFinderSuccess(ArrayList<Route> routes) {
-        this.routes=routes;
+        this.routes = routes;
 
     }
 }
