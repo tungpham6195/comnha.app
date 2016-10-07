@@ -22,6 +22,10 @@ import com.app.ptt.comnha.Modules.DirectionFinderListener;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.GPSService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -43,6 +47,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
     ArrayList<Route> routes;
     ArrayList<String> listPlace;
     String yourLocation;
+    Firebase ref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +57,44 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
             final Intent intent=new Intent(this,GPSService.class);
             startService(intent);
         }
-        Log.i(LOG,"onCreate");
         listPlace = new ArrayList<String>();
-        listPlace.add("89 Ngô Quyền Quận 9");
-        listPlace.add("1 Võ Văn Ngân Thủ Đức");
-        listPlace.add("250 Lê Văn Việt Quận 9");
-        listPlace.add("89 Lê Văn Chí Thủ Đức");
-        listPlace.add("60 Dân Chủ Thủ Đức");
+        Log.i(LOG,"onCreate");
+        Firebase.setAndroidContext(this);
+        ref=new Firebase(getString(R.string.firebase_path));
+
+        ref.child(getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+               // listPlace.add(dataSnapshot.child("diachi").getValue().toString()); //destination
+                loadListPlace(dataSnapshot.child("diachi").getValue().toString());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+//        listPlace.add("89 Ngô Quyền Quận 9");
+//        listPlace.add("1 Võ Văn Ngân Thủ Đức");
+//        listPlace.add("250 Lê Văn Việt Quận 9");
+//        listPlace.add("89 Lê Văn Chí Thủ Đức");
+//        listPlace.add("60 Dân Chủ Thủ Đức");
         geocoder=new Geocoder(this, Locale.getDefault());
         routes=new ArrayList<Route>();
 
@@ -158,12 +194,12 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
 
             }
         });
-        btn_load.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadListPlace();
-            }
-        });
+//        btn_load.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                loadListPlace();
+//            }
+//        });
         btn_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,16 +223,14 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
             }
         });
     }
-    public void loadListPlace(){
+    public void loadListPlace(String destination){
         String origin="";
         try {
             origin=gpsService.returnLocation();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for(String destination: listPlace){
-            findDirection(destination,origin);
-        }
+        findDirection(destination,origin);
     }
 
     @Override

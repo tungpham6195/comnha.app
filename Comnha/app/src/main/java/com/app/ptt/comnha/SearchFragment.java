@@ -33,10 +33,10 @@ import java.util.ArrayList;
 
 public class SearchFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final String LOG="Google Places Autocomplete";
-    private static final String PLACES_API_BASE="http://maps.googleapis.com/maps/api/place";
+    private static final String PLACES_API_BASE="https://maps.googleapis.com/maps/api/place";
     private static final String TYPE_AUTOCOMPLETE="/autocomplete";
     public static final String OUT_JSON="/json";
-    private static final String API_KEY="AIzaSyAwoQwUBiENtY5l_lRJdhlPJFpSYSBqR7Y";
+    private static final String API_KEY="AIzaSyDU6VmWjBJP-k6yWgP4v4X5EVFhyCljulo";
     AutoCompleteTextView acText;
 
     @Override
@@ -58,14 +58,14 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         Toast.makeText(getContext(),str,Toast.LENGTH_LONG).show();
     }
     public static ArrayList autocomplete(String input){
-        ArrayList resultList=null;
+        ArrayList resultList=new ArrayList();
         HttpURLConnection conn=null;
         StringBuilder jsonResults=new StringBuilder();
         try{
             StringBuilder sb=new StringBuilder(PLACES_API_BASE+TYPE_AUTOCOMPLETE+OUT_JSON);
-            sb.append("?key="+API_KEY);
-            sb.append("&components=country:gr");
-            sb.append("&input="+ URLEncoder.encode(input,"utf8"));
+            sb.append("?input="+ URLEncoder.encode(input,"utf8"));
+            //sb.append("&components=country:gr");
+            sb.append("&key="+API_KEY);
 
             URL url=new URL(sb.toString());
             Log.i("",url+"");

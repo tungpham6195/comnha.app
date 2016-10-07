@@ -65,7 +65,8 @@
     <string name="keyloca_CODE">KEYLOCACODE</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <!--Firebase-->
+    <string name="locations_CODE">Locations</string>
     <string name="action_example">Example action</string>
 
     <string name="action_more">More</string>
