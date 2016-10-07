@@ -42,14 +42,15 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_search,container,false);
+        acText=(AutoCompleteTextView) view.findViewById(R.id.acText);
+        acText.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(),R.layout.list_item));
+        acText.setOnItemClickListener(this);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        acText=(AutoCompleteTextView) view.findViewById(R.id.acText);
-        acText.setAdapter(new GooglePlacesAutocompleteAdapter(getContext(),R.layout.list_item));
-        acText.setOnItemClickListener(this);
+
     }
 
     @Override
