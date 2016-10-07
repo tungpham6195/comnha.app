@@ -63,6 +63,22 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/btn_postlst"
                     android:text="NEW LOCATION" />
+
+                <Button
+                    android:text="Map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/btn_map" />
+
+                <Button
+                    android:text="Search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_search"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toEndOf="@+id/btn_map" />
             </RelativeLayout>
 
             <FrameLayout
