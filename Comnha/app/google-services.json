@@ -21,11 +21,15 @@
             "package_name": "com.app.ptt.comnha",
             "certificate_hash": "CF39339ECC6E70E3D4D2DE218806163A8B347970"
           }
+        },
+        {
+          "client_id": "820589785648-urs1e8pibog0o6p45rbh50pqnf2rcl0i.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAwoQwUBiENtY5l_lRJdhlPJFpSYSBqR7Y"
+          "current_key": "AIzaSyDtPffM5BI78ycwyVN6yz8TEM8zdsvTMpc"
         }
       ],
       "services": {
@@ -34,42 +38,12 @@
         },
         "appinvite_service": {
           "status": 2,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:820589785648:android:d2c9e4192fa0fdd6",
-        "android_client_info": {
-          "package_name": "com.comnha.android"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "820589785648-78l9ufmoak1sjvd9fqefh6cb0tcdfoh7.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.comnha.android",
-            "certificate_hash": "CF39339ECC6E70E3D4D2DE218806163A8B347970"
-          }
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAwoQwUBiENtY5l_lRJdhlPJFpSYSBqR7Y"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820589785648-urs1e8pibog0o6p45rbh50pqnf2rcl0i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

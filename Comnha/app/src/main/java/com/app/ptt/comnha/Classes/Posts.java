@@ -3,9 +3,7 @@ package com.app.ptt.comnha.Classes;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.FireBase.LocationPost;
 import com.app.ptt.comnha.FireBase.Post;
-import com.app.ptt.comnha.FireBase.UserPost;
 import com.app.ptt.comnha.Interfaces.Transactions;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
@@ -114,27 +112,15 @@ public class Posts implements Transactions {
                 if (firebaseError != null) {
                     Toast.makeText(context, "Đăng bài bị lỗi", Toast.LENGTH_SHORT).show();
                 } else {
-                    ref.child("Posts/" + firebase.getKey()).updateChildren(newPost.toMap(userID, locaID), new Firebase.CompletionListener() {
-                        @Override
-                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                            if (firebaseError == null) {
-                                LocationPost locationPost=new LocationPost();
-                                Map<String,Object> loca=new HashMap<String, Object>();
-                                loca.put(locaID+"/"+firebase.getKey(),true);
-                                locationPost.setPostID(loca);
-                                ref.setValue(locationPost);
-                                UserPost userPost=new UserPost();
-                                Map<String,Object> user=new HashMap<String, Object>();
-                                user.put(LoginSession.getInstance().getUserID()+"/"+firebase.getKey(),true);
-                                userPost.setUserID(user);
-                                ref.setValue(userPost);
-                                Toast.makeText(context, "Đăng bài thành công", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-//                            .child("user/"+userID).setValue(true);
-//                    ).updateChildren(users);
-
+                    //thêm vào bảng LocationPost
+                    Map<String, Object> loca = new HashMap<String, Object>();
+                    loca.put(firebase.getKey(), true);
+                    ref.child("LocationPost/" + locaID).setValue(loca);
+                    //thêm vào bảng UserPost
+                    Map<String, Object> user = new HashMap<String, Object>();
+                    user.put(firebase.getKey(), true);
+                    ref.child("UserPost/" + LoginSession.getInstance().getUserID()).setValue(user);
+                    Toast.makeText(context, "Đăng bài thành công", Toast.LENGTH_SHORT).show();
                 }
             }
         });

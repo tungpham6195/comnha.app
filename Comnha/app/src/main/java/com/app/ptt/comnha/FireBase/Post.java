@@ -78,7 +78,7 @@ public class Post {
         return gia;
     }
 
-    public Map<String, Object> toMap(String userID, String locID) {
+    public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("title", title);
         result.put("content", content);

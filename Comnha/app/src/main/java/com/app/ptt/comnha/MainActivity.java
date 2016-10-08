@@ -48,6 +48,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
     ArrayList<String> listPlace;
     String yourLocation;
     Firebase ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,14 +59,14 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
             startService(intent);
         }
         listPlace = new ArrayList<String>();
-        Log.i(LOG,"onCreate");
+        Log.i(LOG, "onCreate");
         Firebase.setAndroidContext(this);
-        ref=new Firebase(getString(R.string.firebase_path));
+        ref = new Firebase(getString(R.string.firebase_path));
         listPlace = new ArrayList<String>();
         ref.child(getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-               // listPlace.add(dataSnapshot.child("diachi").getValue().toString()); //destination
+                // listPlace.add(dataSnapshot.child("diachi").getValue().toString()); //destination
                 loadListPlace(dataSnapshot.child("diachi").getValue().toString());
             }
 
@@ -95,8 +96,8 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
 //        listPlace.add("250 Lê Văn Việt Quận 9");
 //        listPlace.add("89 Lê Văn Chí Thủ Đức");
 //        listPlace.add("60 Dân Chủ Thủ Đức");
-        geocoder=new Geocoder(this, Locale.getDefault());
-        routes=new ArrayList<Route>();
+        geocoder = new Geocoder(this, Locale.getDefault());
+        routes = new ArrayList<Route>();
         Log.i(LOG, "onCreate");
 
 //        listPlace.add("89 Ngô Quyền Quận 9");
@@ -116,11 +117,12 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
 
                 if (user != null) {
                     userID = user.getUid();
-                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getEmail().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getEmail(), Toast.LENGTH_SHORT).show();
                     LoginSession.getInstance().setUserID(userID);
-                    Log.d("signed_in", "onAuthStateChanged:signed_in: " + userID);
+                    Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getUid());
                 } else {
                     userID = "";
+                    LoginSession.getInstance().setUserID(null);
                     Toast.makeText(getApplicationContext(), "Signed out", Toast.LENGTH_SHORT).show();
                     Log.d("signed_out", "onAuthStateChanged:signed_out");
                 }
@@ -231,7 +233,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         } catch (IOException e) {
             e.printStackTrace();
         }
-        findDirection(destination,origin);
+        findDirection(destination, origin);
 //        for (String destination : listPlace) {
 //            findDirection(destination, origin);
 //        }
@@ -260,12 +262,9 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
     @Override
     protected void onStop() {
         super.onStop();
-//        mAuth.signOut();
-        LoginSession.getInstance().setUserID("");
         doUnbinService();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
-
         }
         Log.i(LOG, "onStop");
     }
