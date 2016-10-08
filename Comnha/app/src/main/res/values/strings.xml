@@ -63,10 +63,15 @@
     <string name="key_CODE">KEYCODE</string>
     <string name="keyPost_CODE">KEYPOSTCODE</string>
     <string name="keyloca_CODE">KEYLOCACODE</string>
+    <!--CODE-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!--Firebase-->
     <string name="locations_CODE">Locations</string>
+    <string name="posts_CODE">Posts</string>
+    <string name="locationpost_CODE">LocationPost</string>
+    <string name="userpost_CODE">UserPost</string>
+    <!--Firebase-->
     <string name="action_example">Example action</string>
 
     <string name="action_more">More</string>

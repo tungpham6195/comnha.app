@@ -78,16 +78,16 @@ public class SigninFragment extends Fragment {
 //                newSigninout.setSiContext(getActivity().getApplicationContext());
 //                newSigninout.setmAuth(mAuth);
 //                newSigninout.doSignIn();
-//
+//                Toast.makeText(getActivity(), "signin", Toast.LENGTH_SHORT).show();
                 mAuth.signInWithEmailAndPassword(edt_email.getText().toString(), edt_pass.getText().toString())
                         .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                                 if (!task.isSuccessful()) {
-                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
-                                    Toast.makeText(getActivity(), "failed login with: " + edt_email.getText().toString(),
-                                            Toast.LENGTH_SHORT).show();
+                                    Log.w(TAG, "signInWithEmail:onComplete", task.getException());
+//                                    Toast.makeText(getActivity(), "failed login with: " + edt_email.getText().toString(),
+//                                            Toast.LENGTH_SHORT).show();
                                 }else {
 
                                 }

@@ -115,11 +115,11 @@ public class Posts implements Transactions {
                     //thêm vào bảng LocationPost
                     Map<String, Object> loca = new HashMap<String, Object>();
                     loca.put(firebase.getKey(), true);
-                    ref.child("LocationPost/" + locaID).setValue(loca);
+                    ref.child("LocationPost/" + locaID).updateChildren(loca);
                     //thêm vào bảng UserPost
                     Map<String, Object> user = new HashMap<String, Object>();
                     user.put(firebase.getKey(), true);
-                    ref.child("UserPost/" + LoginSession.getInstance().getUserID()).setValue(user);
+                    ref.child("UserPost/" + LoginSession.getInstance().getUserID()).updateChildren(user);
                     Toast.makeText(context, "Đăng bài thành công", Toast.LENGTH_SHORT).show();
                 }
             }

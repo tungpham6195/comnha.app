@@ -3,7 +3,6 @@ package com.app.ptt.comnha.Classes;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,11 +44,11 @@ public class Signin_out {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(siContext, "Signed in successful", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(siContext, "Signed in successful", Toast.LENGTH_SHORT).show();
                     LoginSession.getInstance().setUserID(task.getResult().getUser().getUid());
                 } else {
-                    Log.e("error",task.getException().toString());
-                    Toast.makeText(siContext, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                    Log.e("errorsignin",task.getException().toString());
+//                    Toast.makeText(siContext, task.getException().toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
