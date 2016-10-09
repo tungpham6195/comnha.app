@@ -5,20 +5,30 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Comment_rcyler_adapter;
+import com.app.ptt.comnha.Classes.Times;
 import com.app.ptt.comnha.FireBase.Comment;
+import com.app.ptt.comnha.FireBase.Post;
+import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -28,6 +38,8 @@ public class ViewpostFragment extends Fragment {
     private String postID;
     TextView txt_un, txt_date, txt_title, txt_content, txt_likenumb;
     LinearLayout btn_like, btn_comment;
+    Button btn_sendcomment;
+    EditText edt_comment;
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mlayoutManager;
     RecyclerView.Adapter mAdapter;
@@ -53,16 +65,60 @@ public class ViewpostFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         mRecyclerView.setLayoutManager(mlayoutManager);
-        mAdapter = new Comment_rcyler_adapter(comment_List);
+        mAdapter = new Comment_rcyler_adapter(comment_List, getActivity().getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         ref = new Firebase(getString(R.string.firebase_path));
-        ref.child("Posts/" + postID).addValueEventListener(new ValueEventListener() {
+        Log.d("postID", postID);
+        ref.child(getString(R.string.posts_CODE) + "/" + postID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                txt_title.setText(dataSnapshot.child("title").getValue().toString());
-                txt_date.setText(dataSnapshot.child("date").getValue().toString());
-                txt_content.setText(dataSnapshot.child("content").getValue().toString());
+//                Toast.makeText(getActivity(), dataSnapshot.getKey(), Toast.LENGTH_SHORT).show();
+                Post post = dataSnapshot.getValue(Post.class);
+                txt_title.setText(post.getTitle());
+                txt_date.setText(post.getDate());
+                txt_content.setText(post.getContent());
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+        ref.child(getString(R.string.postcomment_CODE) + "/" + postID).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.getValue().equals(true)) {
+                    ref.child("Comments" + "/" + dataSnapshot.getKey())
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Comment comment = dataSnapshot.getValue(Comment.class);
+                                    comment_List.add(comment);
+                                    mAdapter.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onCancelled(FirebaseError firebaseError) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -81,6 +137,33 @@ public class ViewpostFragment extends Fragment {
         txt_likenumb = (TextView) view.findViewById(R.id.frg_viewrev_txtv_likenumb);
         btn_like = (LinearLayout) view.findViewById(R.id.frg_viewrev__btn_like);
         btn_comment = (LinearLayout) view.findViewById(R.id.frg_viewrev_btn_comment);
+        btn_sendcomment = (Button) view.findViewById(R.id.frg_viewrev_btn_sendcomment);
+        edt_comment = (EditText) view.findViewById(R.id.frg_viewrev_edt_comment);
+//        edt_comment.setFocusable(false);
+        btn_sendcomment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!edt_comment.getText().toString().equals("")) {
+                    Comment newComment = new Comment();
+                    newComment.setContent(edt_comment.getText().toString());
+                    newComment.setUserID(LoginSession.getInstance().getUserID());
+                    newComment.setDate(new Times().getDate());
+                    newComment.setTime(new Times().getTime());
+                    ref.child(getString(R.string.comments_CODE)).push().setValue(newComment, new Firebase.CompletionListener() {
+                        @Override
+                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                            if (firebaseError != null) {
+                                Toast.makeText(getActivity(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Map<String, Object> comment = new HashMap<String, Object>();
+                                comment.put(firebase.getKey(), true);
+                                ref.child(getString(R.string.postcomment_CODE) + "/" + postID).updateChildren(comment);
+                            }
+                        }
+                    });
+                }
+            }
+        });
         btn_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,7 +173,7 @@ public class ViewpostFragment extends Fragment {
         btn_comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                btn_comment.setFocusable(true);
             }
         });
     }

@@ -1,5 +1,6 @@
 package com.app.ptt.comnha.Adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.ptt.comnha.FireBase.Account;
 import com.app.ptt.comnha.FireBase.Comment;
 import com.app.ptt.comnha.R;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -30,7 +36,9 @@ public class Comment_rcyler_adapter extends RecyclerView.Adapter<Comment_rcyler_
         }
     }
 
-    ArrayList<Comment> list;
+    ArrayList<Comment> comment_list;
+    Context context;
+    Firebase ref;
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -40,18 +48,35 @@ public class Comment_rcyler_adapter extends RecyclerView.Adapter<Comment_rcyler_
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        holder.txt_un.setText(list.get(position).getUsername());
-        holder.txt_content.setText(list.get(position).getContent());
-        holder.txt_time.setText(list.get(position).getTime());
+        holder.txt_content.setText(comment_list.get(position).getContent());
+        holder.txt_time.setText(comment_list.get(position).getTime());
+        final String[] username;
+        final ArrayList<Account> account;
+        account = new ArrayList<Account>();
+        ref.child("Users/" + comment_list.get(position).getUserID())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        account.add(dataSnapshot.getValue(Account.class));
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+        holder.txt_un.setText(account.get(position).getUsername());
 
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return comment_list.size();
     }
 
-    public Comment_rcyler_adapter(ArrayList list) {
-        this.list = list;
+    public Comment_rcyler_adapter(ArrayList<Comment> comment_list, Context context) {
+        this.comment_list = comment_list;
+        Firebase.setAndroidContext(context);
+        ref = new Firebase("https://com-nha.firebaseio.com/");
     }
 }

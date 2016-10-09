@@ -88,8 +88,8 @@ public class SigninFragment extends Fragment {
                                     Log.w(TAG, "signInWithEmail:onComplete", task.getException());
 //                                    Toast.makeText(getActivity(), "failed login with: " + edt_email.getText().toString(),
 //                                            Toast.LENGTH_SHORT).show();
-                                }else {
-
+                                } else {
+                                    getActivity().finish();
                                 }
                             }
                         });

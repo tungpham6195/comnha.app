@@ -12,10 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -81,18 +78,6 @@ public class Posts implements Transactions {
         ref = new Firebase("https://com-nha.firebaseio.com/");
     }
 
-    private String getDate() {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        return df.format(c.getTime());
-    }
-
-    private String getTime() {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-        return df.format(c.getTime());
-    }
-
     @Override
     public void createNew() {
         setupFirebase();
@@ -100,8 +85,8 @@ public class Posts implements Transactions {
         newPost = new Post();
         newPost.setTitle(title);
         newPost.setContent(content);
-        newPost.setDate(getDate());
-        newPost.setTime(getTime());
+        newPost.setDate(new Times().getTime());
+        newPost.setTime(new Times().getDate());
         newPost.setGia(gia);
         newPost.setVesinh(vesinh);
         newPost.setPhucvu(phucvu);
@@ -120,6 +105,10 @@ public class Posts implements Transactions {
                     Map<String, Object> user = new HashMap<String, Object>();
                     user.put(firebase.getKey(), true);
                     ref.child("UserPost/" + LoginSession.getInstance().getUserID()).updateChildren(user);
+                    //thêm vào PostUser
+                    Map<String, Object> post = new HashMap<String, Object>();
+                    post.put("userID", userID);
+                    ref.child("PostUser/" + firebase.getKey()).updateChildren(post);
                     Toast.makeText(context, "Đăng bài thành công", Toast.LENGTH_SHORT).show();
                 }
             }

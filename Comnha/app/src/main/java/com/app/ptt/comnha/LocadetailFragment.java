@@ -103,6 +103,7 @@ public class LocadetailFragment extends Fragment {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Post post = dataSnapshot.getValue(Post.class);
+                            post.setPostID(dataSnapshot.getKey());
                             postlist.add(post);
                             mAdapter.notifyDataSetChanged();
                         }

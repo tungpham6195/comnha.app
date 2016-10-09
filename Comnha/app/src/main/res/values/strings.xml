@@ -47,6 +47,7 @@
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
+    <string name="txt_writecomment">Viết bình luận......</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <!--CODE-->
@@ -67,10 +68,13 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!--Firebase-->
+    <string name="users_CODE">Users</string>
     <string name="locations_CODE">Locations</string>
     <string name="posts_CODE">Posts</string>
     <string name="locationpost_CODE">LocationPost</string>
     <string name="userpost_CODE">UserPost</string>
+    <string name="comments_CODE">Comments</string>
+    <string name="postcomment_CODE">PostComment</string>
     <!--Firebase-->
     <string name="action_example">Example action</string>
 

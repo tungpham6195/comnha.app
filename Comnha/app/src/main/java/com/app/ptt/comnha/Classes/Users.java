@@ -60,6 +60,30 @@ public class Users implements Transactions {
         this.birth = birth;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getHo() {
+        return ho;
+    }
+
+    public String getTen() {
+        return ten;
+    }
+
+    public String getTenlot() {
+        return tenlot;
+    }
+
+    public String getBirth() {
+        return birth;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
     @Override
     public void setupFirebase() {
         Firebase.setAndroidContext(suContext);
@@ -86,7 +110,7 @@ public class Users implements Transactions {
                         newAccount.setEmail(email);
                         newAccount.setPassword(password);
                         newAccount.setBirth(birth);
-                        setUsername(username);
+                        newAccount.setUsername(username);
                         suRef.child("Users/" + userID).setValue(newAccount, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
