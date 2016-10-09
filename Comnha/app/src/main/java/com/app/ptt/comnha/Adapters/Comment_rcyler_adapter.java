@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.app.ptt.comnha.FireBase.Account;
 import com.app.ptt.comnha.FireBase.Comment;
 import com.app.ptt.comnha.R;
 import com.firebase.client.DataSnapshot;
@@ -37,7 +36,6 @@ public class Comment_rcyler_adapter extends RecyclerView.Adapter<Comment_rcyler_
     }
 
     ArrayList<Comment> comment_list;
-    Context context;
     Firebase ref;
 
     @Override
@@ -46,18 +44,19 @@ public class Comment_rcyler_adapter extends RecyclerView.Adapter<Comment_rcyler_
         return new ViewHolder(itemView);
     }
 
+    String username;
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txt_content.setText(comment_list.get(position).getContent());
         holder.txt_time.setText(comment_list.get(position).getTime());
-        final String[] username;
-        final ArrayList<Account> account;
-        account = new ArrayList<Account>();
-        ref.child("Users/" + comment_list.get(position).getUserID())
+
+
+        ref.child("Users/" + comment_list.get(position).getUserID() + "/username")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        account.add(dataSnapshot.getValue(Account.class));
+                        username = dataSnapshot.getValue().toString();
                     }
 
                     @Override
@@ -65,7 +64,7 @@ public class Comment_rcyler_adapter extends RecyclerView.Adapter<Comment_rcyler_
 
                     }
                 });
-        holder.txt_un.setText(account.get(position).getUsername());
+        holder.txt_un.setText(username);
 
     }
 
