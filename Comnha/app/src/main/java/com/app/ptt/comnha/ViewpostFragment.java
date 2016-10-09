@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,8 +35,7 @@ import java.util.Map;
  */
 public class ViewpostFragment extends Fragment {
     private String postID;
-    TextView txt_un, txt_date, txt_title, txt_content, txt_likenumb;
-    LinearLayout btn_like, btn_comment;
+    TextView txt_un, txt_date, txt_title, txt_content, txt_likenumb, btn_like, btn_comment;
     Button btn_sendcomment;
     EditText edt_comment;
     RecyclerView mRecyclerView;
@@ -65,11 +63,32 @@ public class ViewpostFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         mRecyclerView.setLayoutManager(mlayoutManager);
-        mAdapter = new Comment_rcyler_adapter(comment_List, getActivity().getApplicationContext());
+        mAdapter = new Comment_rcyler_adapter(comment_List);
         mRecyclerView.setAdapter(mAdapter);
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         ref = new Firebase(getString(R.string.firebase_path));
         Log.d("postID", postID);
+        ref.child("PostUser/" + postID + "/userID").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ref.child("Users/" + dataSnapshot.getValue().toString() + "/username").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        txt_un.setText(dataSnapshot.getValue().toString());
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
         ref.child(getString(R.string.posts_CODE) + "/" + postID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -135,8 +154,8 @@ public class ViewpostFragment extends Fragment {
         txt_title = (TextView) view.findViewById(R.id.frg_viewrev_txtv_tittle);
         txt_content = (TextView) view.findViewById(R.id.frg_viewrev_txtv_content);
         txt_likenumb = (TextView) view.findViewById(R.id.frg_viewrev_txtv_likenumb);
-        btn_like = (LinearLayout) view.findViewById(R.id.frg_viewrev__btn_like);
-        btn_comment = (LinearLayout) view.findViewById(R.id.frg_viewrev_btn_comment);
+        btn_like = (TextView) view.findViewById(R.id.frg_viewrev_txtv_like);
+        btn_comment = (TextView) view.findViewById(R.id.frg_viewrev_txtv_comment);
         btn_sendcomment = (Button) view.findViewById(R.id.frg_viewrev_btn_sendcomment);
         edt_comment = (EditText) view.findViewById(R.id.frg_viewrev_edt_comment);
 //        edt_comment.setFocusable(false);
@@ -144,20 +163,27 @@ public class ViewpostFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!edt_comment.getText().toString().equals("")) {
+//                    Comments comment = new Comments();
+//                    comment.setUserID(LoginSession.getInstance().getUserID());
+//                    comment.setContent(edt_comment.getText().toString());
+//                    comment.setContext(getActivity().getApplicationContext());
+//                    comment.setPostID(postID);
+//                    comment.createNew();
                     Comment newComment = new Comment();
                     newComment.setContent(edt_comment.getText().toString());
                     newComment.setUserID(LoginSession.getInstance().getUserID());
                     newComment.setDate(new Times().getDate());
                     newComment.setTime(new Times().getTime());
-                    ref.child(getString(R.string.comments_CODE)).push().setValue(newComment, new Firebase.CompletionListener() {
+                    ref.child(getResources().getString(R.string.comments_CODE)).push().setValue(newComment, new Firebase.CompletionListener() {
                         @Override
                         public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                             if (firebaseError != null) {
-                                Toast.makeText(getActivity(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
                                 Map<String, Object> comment = new HashMap<String, Object>();
                                 comment.put(firebase.getKey(), true);
-                                ref.child(getString(R.string.postcomment_CODE) + "/" + postID).updateChildren(comment);
+                                ref.child(getResources().getString(R.string.postcomment_CODE) + "/" + postID).updateChildren(comment);
+                                edt_comment.setText("");
                             }
                         }
                     });
@@ -173,7 +199,8 @@ public class ViewpostFragment extends Fragment {
         btn_comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn_comment.setFocusable(true);
+                edt_comment.requestFocusFromTouch();
+                Log.d("coomnent", "clicked");
             }
         });
     }

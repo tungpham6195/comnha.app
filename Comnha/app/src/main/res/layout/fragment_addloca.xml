@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/text_tenquan"
-            android:inputType="" />
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/frg_addloction_edt_diachi"
@@ -85,7 +85,8 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
-                android:hint="@string/text_start" />
+                android:hint="@string/text_start"
+                android:inputType="textEmailAddress" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -100,7 +101,8 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:hint="@string/text_end" />
+                android:hint="@string/text_end"
+                android:inputType="textEmailAddress" />
         </LinearLayout>
 
         <Button

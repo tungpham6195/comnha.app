@@ -1,6 +1,5 @@
 package com.app.ptt.comnha.Adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +9,7 @@ import android.widget.TextView;
 
 import com.app.ptt.comnha.FireBase.Comment;
 import com.app.ptt.comnha.R;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -40,31 +36,15 @@ public class Comment_rcyler_adapter extends RecyclerView.Adapter<Comment_rcyler_
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rcyler_comment, parent, false);
         return new ViewHolder(itemView);
     }
-
-    String username;
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txt_content.setText(comment_list.get(position).getContent());
         holder.txt_time.setText(comment_list.get(position).getTime());
-
-
-        ref.child("Users/" + comment_list.get(position).getUserID() + "/username")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        username = dataSnapshot.getValue().toString();
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
-        holder.txt_un.setText(username);
+        holder.txt_un.setText(comment_list.get(position).getUserID());
 
     }
 
@@ -73,9 +53,7 @@ public class Comment_rcyler_adapter extends RecyclerView.Adapter<Comment_rcyler_
         return comment_list.size();
     }
 
-    public Comment_rcyler_adapter(ArrayList<Comment> comment_list, Context context) {
+    public Comment_rcyler_adapter(ArrayList<Comment> comment_list) {
         this.comment_list = comment_list;
-        Firebase.setAndroidContext(context);
-        ref = new Firebase("https://com-nha.firebaseio.com/");
     }
 }

@@ -99,7 +99,7 @@ public class LocadetailFragment extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 //                Toast.makeText(getActivity(), dataSnapshot.getKey(), Toast.LENGTH_SHORT).show();
                 if (dataSnapshot.getValue().equals(true)) {
-                    ref.child(getString(R.string.posts_CODE) + "/" + dataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    ref.child("Posts" + "/" + dataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Post post = dataSnapshot.getValue(Post.class);

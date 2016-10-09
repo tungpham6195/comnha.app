@@ -10,16 +10,17 @@
         android:background="@color/colorPrimary" />
 
     <LinearLayout
-        android:layout_toEndOf="@id/comment_imguser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/comment_imguser"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/comment_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLength="23"
             android:text="Android User"
             android:textColor="@android:color/black"
             android:textSize="17sp"
@@ -35,11 +36,11 @@
     </LinearLayout>
 
     <TextView
-        android:layout_marginEnd="10dp"
-        android:layout_alignParentEnd="true"
         android:id="@+id/comment_time"
-        android:textSize="13sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="16m" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:text="16m"
+        android:textSize="13sp" />
 </RelativeLayout>

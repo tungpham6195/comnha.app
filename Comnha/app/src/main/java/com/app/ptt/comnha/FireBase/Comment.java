@@ -6,7 +6,7 @@ package com.app.ptt.comnha.FireBase;
 
 public class Comment {
     String content, time, date, userID;
-
+    String username;
 
     public void setContent(String content) {
         this.content = content;
@@ -22,6 +22,14 @@ public class Comment {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getDate() {

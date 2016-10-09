@@ -1,29 +1,32 @@
 package com.app.ptt.comnha.Classes;
 
 import android.content.Context;
+import android.widget.Toast;
+
+import com.app.ptt.comnha.FireBase.Comment;
+import com.app.ptt.comnha.Interfaces.Transactions;
+import com.app.ptt.comnha.R;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by PTT on 10/6/2016.
  */
 
-public class Comments {
-    String content, time, userID, postID,username;
+public class Comments implements Transactions {
+    String content, userID, postID;
     Context context;
+    Firebase ref;
 
     public void setContext(Context context) {
         this.context = context;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     public void setUserID(String userID) {
@@ -37,4 +40,41 @@ public class Comments {
     public Comments() {
     }
 
+    @Override
+    public void setupFirebase() {
+        Firebase.setAndroidContext(context);
+        ref = new Firebase(context.getResources().getString(R.string.firebase_path));
+    }
+
+    @Override
+    public void createNew() {
+        setupFirebase();
+        Comment newComment = new Comment();
+        newComment.setContent(content);
+        newComment.setUserID(userID);
+        newComment.setDate(new Times().getDate());
+        newComment.setTime(new Times().getTime());
+        ref.child(context.getResources().getString(R.string.comments_CODE)).push().setValue(newComment, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError != null) {
+                    Toast.makeText(context, firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Map<String, Object> comment = new HashMap<String, Object>();
+                    comment.put(firebase.getKey(), true);
+                    ref.child(context.getResources().getString(R.string.postcomment_CODE) + "/" + postID).updateChildren(comment);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void delete() {
+
+    }
 }

@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/text_title"
-                android:inputType="none" />
+                android:inputType="textEmailAddress" />
 
             <EditText
                 android:id="@+id/edt_content"
@@ -32,7 +32,7 @@
                 android:layout_height="350dp"
                 android:gravity="top"
                 android:hint="@string/text_content"
-                android:inputType="textImeMultiLine" />
+                android:inputType="textMultiLine" />
             <Button
                 android:id="@+id/btn_save"
                 android:text="@string/text_save"
