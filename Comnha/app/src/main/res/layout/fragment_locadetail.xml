@@ -36,6 +36,8 @@
 
                     <LinearLayout
                         android:id="@+id/frg_lcdetail_btn_themanh"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
                         android:layout_width="@dimen/linear_chucnang_rong"
                         android:layout_height="@dimen/linear_chucnang_cao"
                         android:gravity="center_horizontal"
@@ -55,6 +57,8 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
                         android:id="@+id/frg_lcdetail_dangreview"
                         android:layout_width="@dimen/linear_chucnang_rong"
                         android:layout_height="@dimen/linear_chucnang_cao"
@@ -276,8 +280,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/frg_lcdetail_rcyler_review"
             android:layout_width="match_parent"
-            android:layout_height="290dp"
-            android:layout_marginStart="7dp"
+            android:layout_height="299dp"
+            android:layout_marginStart="2dp"
             android:scrollbarStyle="insideInset"
             android:scrollbars="vertical"
             android:layout_below="@id/frg_lcdetail_L1"/>

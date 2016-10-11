@@ -193,7 +193,6 @@ public class ViewpostFragment extends Fragment {
         btn_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
             }
         });
         btn_comment.setOnClickListener(new View.OnClickListener() {

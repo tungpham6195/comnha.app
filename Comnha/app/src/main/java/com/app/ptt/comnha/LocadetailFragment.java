@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
+import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.Location;
 import com.app.ptt.comnha.FireBase.Post;
@@ -52,6 +53,7 @@ public class LocadetailFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locadetail, container, false);
+        Log.d("localID",locaID);
         andxa(view);
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         ref = new Firebase(getString(R.string.firebase_path));
@@ -105,6 +107,10 @@ public class LocadetailFragment extends Fragment {
                             Post post = dataSnapshot.getValue(Post.class);
                             post.setPostID(dataSnapshot.getKey());
                             postlist.add(post);
+                            CalcuAVGRate newcalcu = new CalcuAVGRate(postlist);
+                            txt_gia.setText(String.valueOf(newcalcu.calcu().get(0)));
+                            txt_vesinh.setText(String.valueOf(newcalcu.calcu().get(1)));
+                            txt_phucvu.setText(String.valueOf(newcalcu.calcu().get(2)));
                             mAdapter.notifyDataSetChanged();
                         }
 
