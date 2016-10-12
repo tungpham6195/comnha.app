@@ -31,6 +31,7 @@
     <string name="text_upImage">Chọn ảnh</string>
     <string name="text_vote">Rate</string>
     <string name="text_hashtag">Tag</string>
+    <string name="text_select">Chọn</string>
     <string name="text_taomoi">Tạo mới</string>
     <string name="text_signup_successful">Đăng kí thành công!!!</string>
     <string name="text_noti_addloca_succes">Thêm địa điểm thành công</string>
@@ -48,11 +49,15 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="txt_writecomment">Viết bình luận......</string>
+
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
+    <!--PATH-->
+
     <!--CODE-->
     <string name="DATA_FROM_FRAG">datafromfrag</string>
     <string name="frag_localist_CODE">localist</string>
+    <string name="frag_chooseimg_CODE">chooseimg</string>
     <string name="frag_chooseloca_CODE">chooseloca</string>
     <string name="frag_addloca_CODE">addloca</string>
     <string name="frag_addpost_CODE">addpost</string>
@@ -65,8 +70,10 @@
     <string name="keyPost_CODE">KEYPOSTCODE</string>
     <string name="keyloca_CODE">KEYLOCACODE</string>
     <!--CODE-->
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <!--Firebase-->
     <string name="users_CODE">Users</string>
     <string name="locations_CODE">Locations</string>
@@ -76,6 +83,7 @@
     <string name="comments_CODE">Comments</string>
     <string name="postcomment_CODE">PostComment</string>
     <!--Firebase-->
+
     <string name="action_example">Example action</string>
 
     <string name="action_more">More</string>

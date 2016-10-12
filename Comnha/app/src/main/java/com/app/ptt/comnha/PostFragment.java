@@ -90,7 +90,16 @@ public class PostFragment extends Fragment {
         btn_location = (Button) view.findViewById(R.id.btn_choselocat);
         edt_title = (EditText) view.findViewById(R.id.edt_title);
         edt_content = (EditText) view.findViewById(R.id.edt_content);
-
+        btn_upImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
+                intent.putExtra(getResources().getString(R.string.fragment_CODE),
+                        getResources().getString(R.string.frag_chooseimg_CODE));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

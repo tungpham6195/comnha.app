@@ -113,6 +113,18 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, signupFragment)
                         .commit();
             }
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_chooseimg_CODE))) {
+            if (findViewById(R.id.frame_adapter) != null) {
+                if (savedInstanceState != null) {
+
+                } else {
+
+                }
+                ChoosePhotoFragment choosePhotoFragment = new ChoosePhotoFragment();
+                choosePhotoFragment.setArguments(getIntent().getExtras());
+                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, choosePhotoFragment)
+                        .commit();
+            }
         }
     }
 
