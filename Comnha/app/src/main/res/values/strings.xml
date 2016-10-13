@@ -23,8 +23,8 @@
     <string name="text_signin">Đăng nhập</string>
     <string name="text_exit">Thoát</string>
     <string name="text_forgotPass"><u>Quên mật khẩu?</u></string>
-    <string name="text_loginFB">Đăng nhập với tài khoản Facebook</string>
-    <string name="text_loginGmail">Đăng nhập với tài khoản Gmail</string>
+    <string name="text_loginFB">Facebook</string>
+    <string name="text_loginGmail">Goodle +</string>
     <string name="text_chooseLocation">Chọn địa điểm</string>
     <string name="text_title">Tiêu đề</string>
     <string name="text_content">Nội dung</string>

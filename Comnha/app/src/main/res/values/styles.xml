@@ -14,8 +14,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@android:color/white</item>
-        <item name="android:textColor">#af0303</item>
+    <style name="AppTheme.ButtonGM" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@android:color/holo_red_dark</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.ButtonFB" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@android:color/holo_blue_dark</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 </resources>
