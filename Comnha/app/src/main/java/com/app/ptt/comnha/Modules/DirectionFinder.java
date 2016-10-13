@@ -1,14 +1,11 @@
 package com.app.ptt.comnha.Modules;
 
-import android.app.job.JobInfo;
+
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.app.ptt.comnha.MainActivity;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.nearby.messages.*;
-import com.google.android.gms.nearby.messages.Distance;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,19 +22,16 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by cuong on 10/5/2016.
- */
 
 public class DirectionFinder {
     private static final String DIRECTION_URL_API="https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_API_KEY="AIzaSyDU6VmWjBJP-k6yWgP4v4X5EVFhyCljulo";
-    private static final String LOG = "___MY LOG___";
+    private static final String LOG = "DirectionFinder";
     private DirectionFinderListener listener;
     private String origin;
-    Geocoder geocoder;
+    private Geocoder geocoder;
     private String destination;
-    ArrayList<Route> routes;
+    private ArrayList<Route> routes;
     public DirectionFinder(DirectionFinderListener listener,String origin,String destination,ArrayList<Route> routes,Geocoder geocoder){
         this.listener=listener;
         this.origin=origin;
@@ -117,7 +111,7 @@ public class DirectionFinder {
             route.endLocation=new LatLng(jsonEndLocation.getDouble("lat"),jsonEndLocation.getDouble("lng"));
             route.points=decodePolyLine(overview_polylineJson.getString("points"));
             try {
-                route.district=  new getDistrict((Double)route.endLocation.latitude,(Double) route.endLocation.longitude, geocoder).execute();
+                route.district=  new getDistrict(route.endLocation.latitude,route.endLocation.longitude, geocoder).execute();
             } catch (Exception e) {
                 route.district="";
             }
@@ -129,7 +123,7 @@ public class DirectionFinder {
     private List<LatLng> decodePolyLine(final String poly) {
         int len = poly.length();
         int index = 0;
-        List<LatLng> decoded = new ArrayList<LatLng>();
+        List<LatLng> decoded = new ArrayList<>();
         int lat = 0;
         int lng = 0;
 

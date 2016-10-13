@@ -8,20 +8,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by CIQAZ on 9/25/2016.
- */
 
 public class getDistrict {
-    private static final String LOG = "___MY LOG___";
-    Geocoder geocoder;
-    double latitude,longitude;
-    List<Address> addresses;
+    private static final String LOG = "getDistrict";
+    private Geocoder geocoder;
+    private double latitude,longitude;
+    private List<Address> addresses;
     public getDistrict(Double latitude, Double longitude, Geocoder geocoder) throws IOException {
         this.latitude=latitude;
         this.longitude=longitude;
         this.geocoder=geocoder;
-        addresses=new ArrayList<Address>();
+        addresses=new ArrayList<>();
     }
     public String execute() throws NullPointerException, IOException {
          addresses= geocoder.getFromLocation(latitude, longitude, 1);

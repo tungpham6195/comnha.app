@@ -33,22 +33,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends FragmentActivity implements DirectionFinderListener {
-    private Geocoder geocoder;
+public class MainActivity extends FragmentActivity  {
     private GPSService gpsService;
-    private static final String LOG = "___MY LOG___";
+    private static final String LOG = "MainActivity";
     private Boolean isBound = false;
     private Button btn_signup, btn_signin, btn_posts, btn_postlist, btn_newloca, btn_map, btn_search, btn_load;
-    private Fragment fragment;
     private Bundle savedInstanceState;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     public String userID;
     ArrayList<Route> routes;
-    ArrayList<String> listPlace;
-    String yourLocation;
-    Firebase ref;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,56 +52,8 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
             final Intent intent = new Intent(this, GPSService.class);
             startService(intent);
         }
-        listPlace = new ArrayList<String>();
         Log.i(LOG, "onCreate");
-        Firebase.setAndroidContext(this);
-        ref = new Firebase(getString(R.string.firebase_path));
-        listPlace = new ArrayList<String>();
-        ref.child(getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                // listPlace.add(dataSnapshot.child("diachi").getValue().toString()); //destination
-                loadListPlace(dataSnapshot.child("diachi").getValue().toString());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-//        listPlace.add("89 Ngô Quyền Quận 9");
-//        listPlace.add("1 Võ Văn Ngân Thủ Đức");
-//        listPlace.add("250 Lê Văn Việt Quận 9");
-//        listPlace.add("89 Lê Văn Chí Thủ Đức");
-//        listPlace.add("60 Dân Chủ Thủ Đức");
-        geocoder = new Geocoder(this, Locale.getDefault());
-        routes = new ArrayList<Route>();
-        Log.i(LOG, "onCreate");
-
-//        listPlace.add("89 Ngô Quyền Quận 9");
-//        listPlace.add("1 Võ Văn Ngân Thủ Đức");
-//        listPlace.add("250 Lê Văn Việt Quận 9");
-//        listPlace.add("89 Lê Văn Chí Thủ Đức");
-//        listPlace.add("60 Dân Chủ Thủ Đức");
-        geocoder = new Geocoder(this, Locale.getDefault());
-        routes = new ArrayList<Route>();
-
+        routes = new ArrayList<>();
         anhXa();
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -132,13 +78,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
 
     }
 
-    public void findDirection(String orgin, String destination) {
-        try {
-            new DirectionFinder(this, orgin, destination, routes, geocoder).execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 
     void anhXa() {
         btn_signup = (Button) findViewById(R.id.btn_signup);
@@ -205,13 +145,19 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         btn_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                routes=gpsService.returnRoute();
+                if(routes==null){
+                    Toast.makeText(MainActivity.this,"Khong load dc dia diem",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    MapFragment mapFragment = new MapFragment();
+                    mapFragment.getMethod(routes);
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.frame, mapFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
 
-                MapFragment mapFragment = new MapFragment();
-                mapFragment.getMethod(routes);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, mapFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
             }
         });
         btn_search.setOnClickListener(new View.OnClickListener() {
@@ -226,18 +172,7 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         });
     }
 
-    public void loadListPlace(String destination) {
-        String origin = "";
-        try {
-            origin = gpsService.returnLocation();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        findDirection(destination, origin);
-//        for (String destination : listPlace) {
-//            findDirection(destination, origin);
-//        }
-    }
+
 
     @Override
     protected void onStart() {
@@ -320,14 +255,5 @@ public class MainActivity extends FragmentActivity implements DirectionFinderLis
         return false;
     }
 
-    @Override
-    public void onDirectionFinderStart() {
 
-    }
-
-    @Override
-    public void onDirectionFinderSuccess(ArrayList<Route> routes) {
-        this.routes = routes;
-
-    }
 }
