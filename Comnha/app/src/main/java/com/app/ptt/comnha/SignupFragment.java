@@ -3,6 +3,7 @@ package com.app.ptt.comnha;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class SignupFragment extends Fragment {
     EditText editText_ho, editText_ten, editText_tenlot, editText_username, editText_email,
             editText_password, editText_confirmPass, editText_birth;
-    Button butt_signup, butt_loginFB, butt_loginGmail;
+    Button butt_signup, butt_exit;
     TextView txt_forgotPass;
     Users createNewAccount;
     FirebaseAuth mAuth;
@@ -59,17 +60,38 @@ public class SignupFragment extends Fragment {
         butt_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                doSignUp();
-                createNewAccount = new Users(getActivity().getApplicationContext());
-                createNewAccount.setHo(editText_ho.getText().toString());
-                createNewAccount.setTen(editText_ten.getText().toString());
-                createNewAccount.setTenlot(editText_tenlot.getText().toString());
-                createNewAccount.setUsername(editText_username.getText().toString());
-                createNewAccount.setEmail(editText_email.getText().toString());
-                createNewAccount.setPassword(editText_password.getText().toString());
-                createNewAccount.setConfirmPass(editText_confirmPass.getText().toString());
-                createNewAccount.setBirth(editText_birth.getText().toString());
-                createNewAccount.createNew();
+                if (editText_ho.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getActivity().getResources().getString(R.string.txt_noho), Snackbar.LENGTH_SHORT).show();
+                } else if (editText_tenlot.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getActivity().getResources().getString(R.string.txt_notenlot), Snackbar.LENGTH_SHORT).show();
+                } else if (editText_ten.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getActivity().getResources().getString(R.string.txt_noten), Snackbar.LENGTH_SHORT).show();
+                } else if (editText_birth.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getActivity().getResources().getString(R.string.txt_nongsinh), Snackbar.LENGTH_SHORT).show();
+                } else if (editText_username.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getActivity().getResources().getString(R.string.txt_noun), Snackbar.LENGTH_SHORT).show();
+                } else if (editText_email.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getActivity().getResources().getString(R.string.txt_noemail), Snackbar.LENGTH_SHORT).show();
+                } else if (editText_password.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getActivity().getResources().getString(R.string.txt_nopass), Snackbar.LENGTH_SHORT).show();
+                } else if (editText_confirmPass.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getActivity().getResources().getString(R.string.txt_noconfirmpass), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    if (!isValidEmailAddress(editText_email.getText().toString())) {
+                        Snackbar.make(view, getActivity().getResources().getString(R.string.txt_notemail), Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        createNewAccount = new Users(getActivity().getApplicationContext());
+                        createNewAccount.setHo(editText_ho.getText().toString());
+                        createNewAccount.setTen(editText_ten.getText().toString());
+                        createNewAccount.setTenlot(editText_tenlot.getText().toString());
+                        createNewAccount.setUsername(editText_username.getText().toString());
+                        createNewAccount.setEmail(editText_email.getText().toString());
+                        createNewAccount.setPassword(editText_password.getText().toString());
+                        createNewAccount.setConfirmPass(editText_confirmPass.getText().toString());
+                        createNewAccount.setBirth(editText_birth.getText().toString());
+                        createNewAccount.createNew();
+                    }
+                }
 //                Toast.makeText(getContext(), editText_email.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -87,7 +109,13 @@ public class SignupFragment extends Fragment {
         editText_confirmPass = (EditText) view.findViewById(R.id.editText_confirmPass);
         editText_birth = (EditText) view.findViewById(R.id.editText_birth);
         butt_signup = (Button) view.findViewById(R.id.butt_signup);
-
+        butt_exit = (Button) view.findViewById(R.id.butt_signup_exit);
+        butt_exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     //        private void doSignUp(){
@@ -108,6 +136,13 @@ public class SignupFragment extends Fragment {
     @Override
     public void setArguments(Bundle args) {
         super.setArguments(args);
+    }
+
+    private boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
     }
 
     @Override

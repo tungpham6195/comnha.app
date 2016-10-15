@@ -8,12 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -21,29 +19,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.Modules.DirectionFinder;
-import com.app.ptt.comnha.Modules.DirectionFinderListener;
 import com.app.ptt.comnha.Modules.Route;
-
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.api.model.StringList;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
 
-public class MainActivity extends FragmentActivity  {
-    public static final String mBroadcast="mBroadcastComplete";
+public class MainActivity extends FragmentActivity {
+    public static final String mBroadcast = "mBroadcastComplete";
     private ProgressDialog progressDialog;
-    private int progressBarStatus=0;
-    private Handler progressBarHandler=new Handler();
+    private int progressBarStatus = 0;
+    private Handler progressBarHandler = new Handler();
 
     private MyService myService;
     private static final String LOG = "MainActivity";
@@ -54,15 +42,16 @@ public class MainActivity extends FragmentActivity  {
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     int fileSize;
-    boolean isComplete=false;
+    boolean isComplete = false;
     public String userID;
     ArrayList<Route> routes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.savedInstanceState = savedInstanceState;
-        mIntentFilter=new IntentFilter();
+        mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcast);
 
         Log.i(LOG, "onCreate");
@@ -90,17 +79,16 @@ public class MainActivity extends FragmentActivity  {
 
 
     }
-    private BroadcastReceiver mReceiver=new BroadcastReceiver() {
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(mBroadcast)){
-                isComplete=intent.getBooleanExtra("LoadingComplete",false);
-                Log.i(LOG,"isComplete="+isComplete);
+            if (intent.getAction().equals(mBroadcast)) {
+                isComplete = intent.getBooleanExtra("LoadingComplete", false);
+                Log.i(LOG, "isComplete=" + isComplete);
             }
         }
     };
-
-
 
 
     void anhXa() {
@@ -169,40 +157,40 @@ public class MainActivity extends FragmentActivity  {
             @Override
             public void onClick(View v) {
 
-                progressDialog=new ProgressDialog(v.getContext());
+                progressDialog = new ProgressDialog(v.getContext());
                 progressDialog.setCancelable(true);
                 progressDialog.setMessage("Loading data");
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progressDialog.setProgressStyle(0);
                 progressDialog.setMax(100);
                 progressDialog.show();
-                progressBarStatus=0;
-                fileSize=0;
+                progressBarStatus = 0;
+                fileSize = 0;
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         myService.getDataInFireBase();
-                        while(progressBarStatus<100){
-                            progressBarStatus=loadProgress();
-                            try{
+                        while (progressBarStatus < 100) {
+                            progressBarStatus = loadProgress();
+                            try {
 
                                 Thread.sleep(1000);
-                            }catch (InterruptedException e){
+                            } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            progressBarHandler.post(new Runnable(){
-                                public void run(){
+                            progressBarHandler.post(new Runnable() {
+                                public void run() {
                                     progressDialog.setProgress(progressBarStatus);
                                 }
 
                             });
-                            if(progressBarStatus>=100){
+                            if (progressBarStatus >= 100) {
                                 try {
                                     Thread.sleep(2000);
-                                }catch (InterruptedException e){
+                                } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                if(isComplete==true) {
+                                if (isComplete == true) {
                                     routes = myService.returnRoute();
                                     if (routes == null) {
                                         Toast.makeText(MainActivity.this, "Khong load dc dia diem", Toast.LENGTH_LONG).show();
@@ -238,8 +226,9 @@ public class MainActivity extends FragmentActivity  {
             }
         });
     }
-    public int loadProgress(){
-        if(!isComplete) {
+
+    public int loadProgress() {
+        if (!isComplete) {
             while (fileSize <= 1000000) {
                 fileSize++;
 
@@ -260,12 +249,10 @@ public class MainActivity extends FragmentActivity  {
                 }
             }
             return 0;
-        }
-        else{
+        } else {
             return 100;
         }
     }
-
 
 
     @Override
@@ -285,7 +272,7 @@ public class MainActivity extends FragmentActivity  {
             startService(intent);
             Log.i("Resume", "Resume");
         }
-        registerReceiver(mReceiver,mIntentFilter);
+        registerReceiver(mReceiver, mIntentFilter);
         Log.i(LOG, "onResume");
     }
 

@@ -1,32 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_account_black_24dp"
-            android:title="@string/nav_profile" />
-        <item
-            android:id="@+id/nav_homepage"
-            android:icon="@drawable/ic_homepage_black_24dp"
-            android:title="@string/nav_homepage" />
-        <item
-            android:id="@+id/nav_uploadedimg"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/nav_uploadedimg" />
+    <item
+        android:id="@+id/nav_homepage"
+        android:icon="@drawable/ic_homepage_black_24dp"
+        android:title="@string/nav_homepage" />
+    <group>
+        <item android:title="Trang cá nhân">
+            <menu>
+                <item
+                    android:id="@+id/nav_profile"
+                    android:icon="@drawable/ic_account_black_24dp"
+                    android:title="@string/nav_profile" />
+                <item
+                    android:id="@+id/nav_uploadedimg"
+                    android:icon="@drawable/ic_menu_gallery"
+                    android:title="@string/nav_uploadedimg" />
+            </menu>
+        </item>
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+    <group>
+        <item android:title="Communicate">
+            <menu>
+                <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/ic_menu_share"
+                    android:title="Share" />
+                <item
+                    android:id="@+id/nav_send"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="Send" />
+            </menu>
+        </item>
+    </group>
+    <group>
+        <item android:title="Authentication">
+            <menu>
+                <item
+                    android:id="@+id/nav_signin"
+                    android:icon="@drawable/ic_login_64"
+                    android:title="Login" />
+                <item
+                    android:id="@+id/nav_signout"
+                    android:icon="@drawable/ic_logout_64"
+                    android:title="Logout" />
+            </menu>
+        </item>
+    </group>
 
 </menu>
