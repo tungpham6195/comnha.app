@@ -43,10 +43,12 @@ public class MapFragment extends Fragment {
     public void getMethod(ArrayList<Route> list) {
         this.list = new ArrayList<>();
         listName=new ArrayList<>();
-        for(Route a: list){
-            listName.add(a.endAddress);
+        if(list!=null &&list.size()>0) {
+            for (Route a : list) {
+                listName.add(a.endAddress);
+            }
+            this.list = list;
         }
-        this.list = list;
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -71,6 +73,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (list != null &&list.size()>0) {
         supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
         if (supportMapFragment == null) {
             FragmentManager fragmentManager = getFragmentManager();
@@ -78,18 +81,15 @@ public class MapFragment extends Fragment {
             supportMapFragment = SupportMapFragment.newInstance();
             fragmentTransaction.replace(R.id.mapwhere, supportMapFragment).commit();
         }
-        if (supportMapFragment != null) {
-            supportMapFragment.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    if (googleMap != null) {
-                        googleMap.setMinZoomPreference(6.0f);
-                        googleMap.setMaxZoomPreference(14.0f);
-                        googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-
-
-                        if (list != null) {
-                            Toast.makeText(getContext(),list.size()+"",Toast.LENGTH_LONG).show();
+            if (supportMapFragment != null) {
+                supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        if (googleMap != null) {
+                            googleMap.setMinZoomPreference(6.0f);
+                            googleMap.setMaxZoomPreference(14.0f);
+                            googleMap.animateCamera(CameraUpdateFactory.zoomIn());
+                            Toast.makeText(getContext(), list.size() + "", Toast.LENGTH_LONG).show();
                             Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                             yourLocation = new MarkerOptions()
@@ -97,32 +97,22 @@ public class MapFragment extends Fragment {
                                     .title(list.get(0).startAddress)
                                     .icon(markerIcon);
                             googleMap.addMarker(yourLocation);
-                        }
-                        for (int i = 0; i < list.size(); i++) {
-                            googleMap.addMarker(new MarkerOptions()
-                                    .position(list.get(i).endLocation)
-                                    .title(list.get(i).endAddress)
-                            );
+
+                            for (int i = 0; i < list.size(); i++) {
+                                googleMap.addMarker(new MarkerOptions()
+                                        .position(list.get(i).endLocation)
+                                        .title(list.get(i).endAddress)
+                                );
 
 
-                        }
+                            }
 
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).startLocation, 13));
-                        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-                            return;
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).startLocation, 13));
                         }
-                        googleMap.setMyLocationEnabled(true);
                     }
-                }
 
-            });
+                });
+            }
         }
     }
 

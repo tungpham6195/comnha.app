@@ -60,6 +60,7 @@
     <string name="frag_chooseimg_CODE">chooseimg</string>
     <string name="frag_chooseloca_CODE">chooseloca</string>
     <string name="frag_addloca_CODE">addloca</string>
+    <string name="frag_map_CODE">map</string>
     <string name="frag_addpost_CODE">addpost</string>
     <string name="frg_viewpost_CODE">viewpost</string>
     <string name="frg_signup_CODE">signup</string>

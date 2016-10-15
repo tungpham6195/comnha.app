@@ -45,8 +45,9 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     List<Address> addresses;
     private String yourLocation;
     Intent broadcastIntent;
-    ArrayList<Route> routes=new ArrayList<>();
-    ArrayList<String> listPlace=new ArrayList<>();
+    ArrayList<Route> routes;
+    ArrayList<String> listPlace;
+    Boolean check;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -82,7 +83,8 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     public void onDirectionFinderSuccess(ArrayList<Route> routes) {
         this.routes=routes;
         Log.i(LOG,"Routes size="+routes.size());
-        sendBroadcast();
+        if(routes.size()>0)
+            sendBroadcast();
     }
 
     public void findDirection(String orgin, String destination) {
@@ -93,17 +95,19 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             e.printStackTrace();
         }
     }
-    public void loadListPlace(String destination) {
+    public Boolean loadListPlace(String destination) {
         Log.i(LOG, "loadListPlace");
-        String origin = "";
+        String origin =null;
         try {
             origin = returnLocation();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(origin!="")
+        if(origin!=null &&destination!=null) {
             findDirection(origin, destination);
-
+            return true;
+        }
+        else return false;
     }
     public String returnLocation() throws IOException {
         Log.i(LOG, "returnLocation");
@@ -111,21 +115,34 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     }
     public void getDataInFireBase(){
         Log.i(LOG, "getDataInFireBase");
+        listPlace=new ArrayList<>();
+        routes=new ArrayList<>();
         Firebase.setAndroidContext(this);
+
+        check=true;
         ref = new Firebase(getString(R.string.firebase_path));
         ref.child(getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //routes=new ArrayList<Route>();
-                listPlace.add(dataSnapshot.child("diachi").getValue().toString());
-                Log.i(LOG,"listPlace.size= "+listPlace.size()+"");
-                Log.i(LOG,"getDataInFireBase: "+dataSnapshot.child("diachi").getValue().toString());
-               loadListPlace(listPlace.get(listPlace.size()-1));
+                boolean a=false;
+                if (check) {
+                    listPlace.add(dataSnapshot.child("diachi").getValue().toString());
+                    a=loadListPlace(listPlace.get(listPlace.size() - 1));
+                    Log.i(LOG, "listPlace.size= " + listPlace.size() + "");
+                    Log.i(LOG, "getDataInFireBase: " + dataSnapshot.child("diachi").getValue().toString());
+                }
+                Log.i(LOG, "listPlace.size= " + listPlace.size() + "");
+                if (!a) {
+                    check = false;
+                    if (routes.size() == 0) {
+                        sendBroadcast();
+                    }
+                }
 
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(DataSnapshot dataSnapshot, String  s) {
 
             }
 
@@ -229,10 +246,16 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
 
     }
     public void sendBroadcast(){
-        if(listPlace.size()==routes.size()) {
+        if(listPlace.size()==routes.size() &&routes.size()>0) {
             Log.i(LOG,"listPlace.size==routes.size");
             broadcastIntent.setAction(MainActivity.mBroadcast);
-            broadcastIntent.putExtra("LoadingComplete",true);
+            broadcastIntent.putExtra("LoadingComplete",1);
+            sendBroadcast(broadcastIntent);
+        }
+        if(routes.size()<=0){
+            Log.i(LOG,"listPlace.size>routes.size");
+            broadcastIntent.setAction(MainActivity.mBroadcast);
+            broadcastIntent.putExtra("LoadingComplete",-1);
             sendBroadcast(broadcastIntent);
         }
 

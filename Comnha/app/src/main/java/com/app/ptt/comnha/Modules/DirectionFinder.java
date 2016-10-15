@@ -44,7 +44,7 @@ public class DirectionFinder {
 
 
     public void execute() throws UnsupportedEncodingException {
-        if(destination!=null) {
+        if(destination!=null &&origin!=null) {
             listener.onDirectionFinderStart();
             new DowloadRawData().execute(createURL());
         }
