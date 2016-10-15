@@ -1,12 +1,16 @@
 package com.app.ptt.comnha;
 
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -36,13 +40,21 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends FragmentActivity  {
+    public static final String mBroadcast="mBroadcastComplete";
+    private ProgressDialog progressDialog;
+    private int progressBarStatus=0;
+    private Handler progressBarHandler=new Handler();
+
     private MyService myService;
     private static final String LOG = "MainActivity";
     private Boolean isBound = false;
     private Button btn_signup, btn_signin, btn_posts, btn_postlist, btn_newloca, btn_map, btn_search, btn_load;
     private Bundle savedInstanceState;
+    private IntentFilter mIntentFilter;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    int fileSize;
+    boolean isComplete=false;
     public String userID;
     ArrayList<Route> routes;
     @Override
@@ -50,6 +62,9 @@ public class MainActivity extends FragmentActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.savedInstanceState = savedInstanceState;
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(mBroadcast);
+
         Log.i(LOG, "onCreate");
         routes = new ArrayList<>();
         anhXa();
@@ -75,6 +90,16 @@ public class MainActivity extends FragmentActivity  {
 
 
     }
+    private BroadcastReceiver mReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(mBroadcast)){
+                isComplete=intent.getBooleanExtra("LoadingComplete",false);
+                Log.i(LOG,"isComplete="+isComplete);
+            }
+        }
+    };
+
 
 
 
@@ -143,22 +168,65 @@ public class MainActivity extends FragmentActivity  {
         btn_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // myService.getDataInFireBase();
-                routes=myService.returnRoute();
-                if(routes==null){
-                    Toast.makeText(MainActivity.this,"Khong load dc dia diem",Toast.LENGTH_LONG).show();
-                }
-                else{
-                    MapFragment mapFragment = new MapFragment();
-                    mapFragment.getMethod(routes);
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.frame, mapFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
+
+                progressDialog=new ProgressDialog(v.getContext());
+                progressDialog.setCancelable(true);
+                progressDialog.setMessage("Loading data");
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setProgressStyle(0);
+                progressDialog.setMax(100);
+                progressDialog.show();
+                progressBarStatus=0;
+                fileSize=0;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        myService.getDataInFireBase();
+                        while(progressBarStatus<100){
+                            progressBarStatus=loadProgress();
+                            try{
+
+                                Thread.sleep(1000);
+                            }catch (InterruptedException e){
+                                e.printStackTrace();
+                            }
+                            progressBarHandler.post(new Runnable(){
+                                public void run(){
+                                    progressDialog.setProgress(progressBarStatus);
+                                }
+
+                            });
+                            if(progressBarStatus>=100){
+                                try {
+                                    Thread.sleep(2000);
+                                }catch (InterruptedException e){
+                                    e.printStackTrace();
+                                }
+                                if(isComplete==true) {
+                                    routes = myService.returnRoute();
+                                    if (routes == null) {
+                                        Toast.makeText(MainActivity.this, "Khong load dc dia diem", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        MapFragment mapFragment = new MapFragment();
+                                        mapFragment.getMethod(routes);
+                                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                        transaction.replace(R.id.frame, mapFragment);
+                                        transaction.addToBackStack(null);
+                                        transaction.commit();
+                                    }
+                                }
+                                progressDialog.dismiss();
+                            }
+
+
+                        }
+                    }
+                }).start();
+
 
             }
         });
+
         btn_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,6 +237,33 @@ public class MainActivity extends FragmentActivity  {
                 transaction.commit();
             }
         });
+    }
+    public int loadProgress(){
+        if(!isComplete) {
+            while (fileSize <= 1000000) {
+                fileSize++;
+
+                if (fileSize == 100000) {
+                    return 10;
+                } else if (fileSize == 200000) {
+                    return 20;
+                } else if (fileSize == 300000) {
+                    return 30;
+                } else if (fileSize == 400000) {
+                    return 40;
+                } else if (fileSize == 500000) {
+                    return 50;
+                } else if (fileSize == 700000) {
+                    return 70;
+                } else if (fileSize == 800000) {
+                    return 80;
+                }
+            }
+            return 0;
+        }
+        else{
+            return 100;
+        }
     }
 
 
@@ -190,6 +285,7 @@ public class MainActivity extends FragmentActivity  {
             startService(intent);
             Log.i("Resume", "Resume");
         }
+        registerReceiver(mReceiver,mIntentFilter);
         Log.i(LOG, "onResume");
     }
 
@@ -211,6 +307,7 @@ public class MainActivity extends FragmentActivity  {
             stopService(intent);
 
         }
+        unregisterReceiver(mReceiver);
         Log.i(LOG, "Pause");
     }
 

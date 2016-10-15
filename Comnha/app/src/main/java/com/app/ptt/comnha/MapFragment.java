@@ -37,10 +37,15 @@ public class MapFragment extends Fragment {
     private SupportMapFragment supportMapFragment;
     private AutoCompleteTextView acText;
     private ArrayList<Route> list;
+    private ArrayList<String> listName;
     MarkerOptions yourLocation = null;
 
     public void getMethod(ArrayList<Route> list) {
         this.list = new ArrayList<>();
+        listName=new ArrayList<>();
+        for(Route a: list){
+            listName.add(a.endAddress);
+        }
         this.list = list;
     }
 
@@ -56,10 +61,10 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-//        acText=(AutoCompleteTextView) view.findViewById(R.id.acText);
-//        ArrayAdapter arrayAdapter=new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,listName);
-//        acText.setAdapter(arrayAdapter);
-//        acText.setThreshold(1);
+        acText=(AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
+        ArrayAdapter arrayAdapter=new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,listName);
+        acText.setAdapter(arrayAdapter);
+        acText.setThreshold(1);
         return view;
     }
 
