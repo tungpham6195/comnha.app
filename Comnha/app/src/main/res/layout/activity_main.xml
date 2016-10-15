@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start"
+    android:id="@+id/activity_main"
     tools:context="com.app.ptt.comnha.MainActivity">
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/main_nav_view"
+        android:layout_width="320dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main2"
+        app:menu="@menu/nav" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -62,33 +73,33 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/btn_postlst"
-                    android:text="NEW LOCATION"
-                    android:layout_toStartOf="@+id/btn_signup" />
+                    android:layout_toStartOf="@+id/btn_signup"
+                    android:text="NEW LOCATION" />
 
                 <Button
-                    android:text="Search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/btn_search"
-                    android:layout_alignParentBottom="true"
-                    android:layout_toEndOf="@+id/btn_map" />
-
-                <Button
-                    android:text="Map"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toEndOf="@+id/btn_map"
+                    android:text="Search" />
+
+                <Button
                     android:id="@+id/btn_map"
-                    android:layout_alignParentBottom="true"
-                    android:layout_toEndOf="@+id/btn_newlocation"
-                    android:layout_marginStart="13dp" />
-
-                <Button
-                    android:text="Load"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_load"
                     android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_marginStart="13dp"
+                    android:layout_toEndOf="@+id/btn_newlocation"
+                    android:text="Map" />
+
+                <Button
+                    android:id="@+id/btn_load"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:text="Load" />
             </RelativeLayout>
 
             <FrameLayout
@@ -97,12 +108,6 @@
                 android:layout_height="match_parent"
                 android:layout_below="@+id/L_btns" />
 
-            <ListView
-                android:id="@+id/listv_option"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:behavior_hideable="true"
-                app:layout_behavior="@string/bottom_sheet_behavior" />
         </RelativeLayout>
     </RelativeLayout>
-</android.support.v4.widget.NestedScrollView>
+</android.support.v4.widget.DrawerLayout>

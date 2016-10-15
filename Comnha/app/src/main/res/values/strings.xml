@@ -12,7 +12,7 @@
     <string name="text_save">Save</string>
     <string name="text_address">Địa chỉ</string>
     <string name="text_email">Email</string>
-    <string name="text_username">Tài khoản</string>
+    <string name="text_username">Username</string>
     <string name="text_password">Mật khẩu</string>
     <string name="text_confirmPass">Xác nhận mật khẩu</string>
     <string name="text_ho">Họ</string>
@@ -49,6 +49,15 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="txt_writecomment">Viết bình luận......</string>
+    <string name="txt_noemail">Warning: Chưa nhập email</string>
+    <string name="txt_notemail">Error: Email không hợp lệ</string>
+    <string name="txt_nopass">Warning: Chưa nhập password</string>
+    <string name="txt_noho">Warning: Chưa nhập họ</string>
+    <string name="txt_notenlot">Warning: Chưa nhập tên lót</string>
+    <string name="txt_noten">Warning: Chưa nhập tên</string>
+    <string name="txt_nongsinh">Warning: Chưa nhập ngày-tháng-năm sinh</string>
+    <string name="txt_noun">Warning: Chưa nhập tên tài khoản</string>
+    <string name="txt_noconfirmpass">Warning: Chưa nhập mật khẩu xác nhận</string>
 
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
