@@ -44,8 +44,10 @@ public class DirectionFinder {
 
 
     public void execute() throws UnsupportedEncodingException {
-        listener.onDirectionFinderStart();
-        new DowloadRawData().execute(createURL());
+        if(destination!=null) {
+            listener.onDirectionFinderStart();
+            new DowloadRawData().execute(createURL());
+        }
 
     }
     private String createURL() throws UnsupportedEncodingException {
@@ -116,6 +118,8 @@ public class DirectionFinder {
                 route.district="";
             }
             routes.add(route);
+            Log.i(LOG,"route.startAddress: "+route.startAddress);
+            Log.i(LOG,"RoutesSize: "+routes.size());
 
         }
         listener.onDirectionFinderSuccess(routes);

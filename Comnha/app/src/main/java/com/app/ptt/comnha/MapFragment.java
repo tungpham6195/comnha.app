@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Modules.Route;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,21 +37,11 @@ public class MapFragment extends Fragment {
     private SupportMapFragment supportMapFragment;
     private AutoCompleteTextView acText;
     private ArrayList<Route> list;
-    private ArrayList<String> listName;
-    private ArrayList<LatLng> listLatLng;
     MarkerOptions yourLocation = null;
 
     public void getMethod(ArrayList<Route> list) {
         this.list = new ArrayList<>();
         this.list = list;
-        listName = new ArrayList<>();
-        listLatLng = new ArrayList<>();
-
-        for (Route a : list) {
-            listLatLng.add((a.startLocation));
-            listName.add(a.startAddress);
-            Log.i("LOG", a.startAddress);
-        }
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -87,23 +78,31 @@ public class MapFragment extends Fragment {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     if (googleMap != null) {
+                        googleMap.setMinZoomPreference(6.0f);
+                        googleMap.setMaxZoomPreference(14.0f);
+                        googleMap.animateCamera(CameraUpdateFactory.zoomIn());
+
 
                         if (list != null) {
+                            Toast.makeText(getContext(),list.size()+"",Toast.LENGTH_LONG).show();
                             Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                             yourLocation = new MarkerOptions()
-                                    .position(list.get(0).endLocation)
-                                    .title(list.get(0).endAddress)
+                                    .position(list.get(0).startLocation)
+                                    .title(list.get(0).startAddress)
                                     .icon(markerIcon);
                             googleMap.addMarker(yourLocation);
                         }
-                        for (int i = 0; i < listLatLng.size(); i++) {
+                        for (int i = 0; i < list.size(); i++) {
                             googleMap.addMarker(new MarkerOptions()
-                                    .position(listLatLng.get(i))
-                                    .title(listName.get(i))
+                                    .position(list.get(i).endLocation)
+                                    .title(list.get(i).endAddress)
                             );
+
+
                         }
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).endLocation, 13));
+
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).startLocation, 13));
                         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             // TODO: Consider calling
                             //    ActivityCompat#requestPermissions

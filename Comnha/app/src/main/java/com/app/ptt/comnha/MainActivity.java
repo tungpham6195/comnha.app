@@ -20,7 +20,8 @@ import android.widget.Toast;
 import com.app.ptt.comnha.Modules.DirectionFinder;
 import com.app.ptt.comnha.Modules.DirectionFinderListener;
 import com.app.ptt.comnha.Modules.Route;
-import com.app.ptt.comnha.Service.GPSService;
+
+import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -28,13 +29,14 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.api.model.StringList;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends FragmentActivity  {
-    private GPSService gpsService;
+    private MyService myService;
     private static final String LOG = "MainActivity";
     private Boolean isBound = false;
     private Button btn_signup, btn_signin, btn_posts, btn_postlist, btn_newloca, btn_map, btn_search, btn_load;
@@ -48,10 +50,6 @@ public class MainActivity extends FragmentActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.savedInstanceState = savedInstanceState;
-        if (!isMyServiceRunning(GPSService.class)) {
-            final Intent intent = new Intent(this, GPSService.class);
-            startService(intent);
-        }
         Log.i(LOG, "onCreate");
         routes = new ArrayList<>();
         anhXa();
@@ -136,16 +134,17 @@ public class MainActivity extends FragmentActivity  {
 
             }
         });
-//        btn_load.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                loadListPlace();
-//            }
-//        });
+        btn_load.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         btn_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                routes=gpsService.returnRoute();
+               // myService.getDataInFireBase();
+                routes=myService.returnRoute();
                 if(routes==null){
                     Toast.makeText(MainActivity.this,"Khong load dc dia diem",Toast.LENGTH_LONG).show();
                 }
@@ -177,17 +176,17 @@ public class MainActivity extends FragmentActivity  {
     @Override
     protected void onStart() {
         super.onStart();
-
         mAuth.addAuthStateListener(mAuthListener);
         doBinService();
+//        gpsService.init();
         Log.i(LOG, "onStart");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isMyServiceRunning(GPSService.class)) {
-            final Intent intent = new Intent(this, GPSService.class);
+        if (!isMyServiceRunning(MyService.class)) {
+            final Intent intent = new Intent(this, MyService.class);
             startService(intent);
             Log.i("Resume", "Resume");
         }
@@ -207,8 +206,8 @@ public class MainActivity extends FragmentActivity  {
     @Override
     protected void onPause() {
         super.onPause();
-        if (isMyServiceRunning(GPSService.class)) {
-            final Intent intent = new Intent(this, GPSService.class);
+        if (isMyServiceRunning(MyService.class)) {
+            final Intent intent = new Intent(this, MyService.class);
             stopService(intent);
 
         }
@@ -217,7 +216,7 @@ public class MainActivity extends FragmentActivity  {
 
     public void doBinService() {
         if (!isBound) {
-            Intent intent = new Intent(this, GPSService.class);
+            Intent intent = new Intent(this, MyService.class);
             bindService(intent, serviceConnection, BIND_AUTO_CREATE);
             isBound = true;
         }
@@ -233,8 +232,9 @@ public class MainActivity extends FragmentActivity  {
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
-            gpsService = binder.getService();
+            MyService.LocalBinder binder = (MyService.LocalBinder) service;
+            myService = binder.getService();
+
             isBound = true;
             Log.i(LOG, "ServiceConnection");
         }
