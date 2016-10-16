@@ -78,8 +78,10 @@ public class Posts implements Transactions {
         ref = new Firebase("https://com-nha.firebaseio.com/");
     }
 
+    private boolean check;
+
     @Override
-    public void createNew() {
+    public boolean createNew() {
         setupFirebase();
 
         newPost = new Post();
@@ -95,6 +97,7 @@ public class Posts implements Transactions {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError != null) {
+                    check = false;
                     Toast.makeText(context, "Đăng bài bị lỗi", Toast.LENGTH_SHORT).show();
                 } else {
                     //thêm vào bảng LocationPost
@@ -109,10 +112,12 @@ public class Posts implements Transactions {
                     Map<String, Object> post = new HashMap<String, Object>();
                     post.put("userID", userID);
                     ref.child("PostUser/" + firebase.getKey()).updateChildren(post);
+                    check = true;
                     Toast.makeText(context, "Đăng bài thành công", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        return check;
     }
 
     @Override

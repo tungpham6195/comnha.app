@@ -1,116 +1,196 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="500dp"
+    android:layout_gravity="center"
     tools:context="com.app.ptt.comnha.AddlocaFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="@dimen/cardv_sign_width"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/frg_addloction_edt_tenquan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/text_tenquan"
-            android:inputType="textEmailAddress" />
-
-        <EditText
-            android:id="@+id/frg_addloction_edt_diachi"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/text_address"
-            android:inputType="textPostalAddress" />
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="5dp"
+        card_view:cardElevation="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/ic_logo" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/action_addloca"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="35sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:id="@+id/frg_addloction_edt_tenquan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|top"
+                        android:hint="@string/text_tenquan"
+                        android:inputType="textEmailAddress" />
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:id="@+id/frg_addloction_edt_diachi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|top"
+                        android:hint="@string/text_address"
+                        android:inputType="textPostalAddress" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:id="@+id/frg_addloction_edt_sdt"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="@string/text_sdt"
+                        android:inputType="number" />
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_gia"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/frg_addloction_edt_giamin"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="66dp"
+                        android:gravity="start|top"
+                        android:hint="@string/text_start"
+                        android:inputType="number"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="-"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/frg_addloction_edt_giamax"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10sp"
+                        android:gravity="start|top"
+                        android:hint="@string/text_end"
+                        android:inputType="number" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="5dp"
+                        android:text="@string/text_openningTime"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/frg_addloction_edt_giomo"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/text_start"
+                        android:inputType="textEmailAddress" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="-"
+                        android:textColor="@android:color/black"
+                        android:textSize="18dp" />
+
+                    <EditText
+                        android:id="@+id/frg_addloction_edt_giodong"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:hint="@string/text_end"
+                        android:inputType="textEmailAddress" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_gia"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:gravity="end"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/frg_addloction_edt_giamin"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="110dp"
-                android:hint="@string/text_start"
-                android:inputType="number" />
+                <Button
+                    android:id="@+id/frg_addloction_btn_save"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="95dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/text_add" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="-"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                <Button
+                    android:id="@+id/frg_addloction_btn_exit"
+                    android:layout_width="95dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/text_exit"
+                    android:theme="@style/AppTheme.ButtonExit" />
+            </LinearLayout>
 
-            <EditText
-                android:id="@+id/frg_addloction_edt_giamax"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10sp"
-                android:hint="@string/text_end"
-                android:inputType="number" />
+
         </LinearLayout>
+    </android.support.v7.widget.CardView>
 
-
-        <EditText
-            android:id="@+id/frg_addloction_edt_sdt"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/text_sdt"
-            android:inputType="number" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_openningTime"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/frg_addloction_edt_giomo"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:hint="@string/text_start"
-                android:inputType="textEmailAddress" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="-"
-                android:textColor="@android:color/black"
-                android:textSize="18dp" />
-
-            <EditText
-                android:id="@+id/frg_addloction_edt_giodong"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:hint="@string/text_end"
-                android:inputType="textEmailAddress" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/frg_addloction_btn_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/text_save" />
-
-    </LinearLayout>
 </FrameLayout>

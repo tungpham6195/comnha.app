@@ -10,6 +10,7 @@
     <string name="text_end">Đến</string>
     <string name="text_gia">Giá</string>
     <string name="text_save">Save</string>
+    <string name="text_add">Thêm mới</string>
     <string name="text_address">Địa chỉ</string>
     <string name="text_email">Email</string>
     <string name="text_username">Username</string>
@@ -58,7 +59,16 @@
     <string name="txt_nongsinh">Warning: Chưa nhập ngày-tháng-năm sinh</string>
     <string name="txt_noun">Warning: Chưa nhập tên tài khoản</string>
     <string name="txt_noconfirmpass">Warning: Chưa nhập mật khẩu xác nhận</string>
-
+    <string name="txt_notenquan">Warning: Chưa nhập tên quán</string>
+    <string name="txt_nodiachi">Warning: Chưa nhập địa chỉ</string>
+    <string name="txt_nogia">Warning: Chưa nhập giá</string>
+    <string name="txt_nosdt">Warning: Chưa nhập số điện thoại</string>
+    <string name="txt_noopentime">Warning: Chưa nhập giờ mở cửa</string>
+    <string name="txt_addinlocaerr">Error: Không thể thêm địa điểm mới</string>
+    <string name="txt_plzwait">Please wait &#8230;</string>
+    <string name="txt_logging">Đang đăng nhập &#8230;</string>
+    <string name="txt_addinloca">Đang thêm địa điểm mới &#8230;</string>
+    <string name="txt_addinpost">Đang đăng review mới &#8230;</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <!--PATH-->
@@ -109,7 +119,10 @@
         <item>Neptune</item>
     </string-array>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_addpost">Đăng review</string>
+    <string name="action_addloca">Thêm địa điểm</string>
+    <string name="action_uploadphoto">Đăng ảnh</string>
+
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->

@@ -7,7 +7,7 @@ package com.app.ptt.comnha.Interfaces;
 public interface Transactions {
     void setupFirebase();
 
-    void createNew();
+    boolean createNew();
 
     void update();
 

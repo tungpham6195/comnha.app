@@ -10,8 +10,8 @@
     tools:context="com.app.ptt.comnha.AdapterActivity">
 
     <FrameLayout
-        android:layout_gravity="center"
         android:id="@+id/frame_adapter"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
 </android.support.v4.widget.NestedScrollView>

@@ -3,6 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="editTextColor">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -21,5 +22,10 @@
     <style name="AppTheme.ButtonFB" parent="Widget.AppCompat.Button.Colored">
         <item name="android:colorButtonNormal">@android:color/holo_blue_dark</item>
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.ButtonExit" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
     </style>
 </resources>

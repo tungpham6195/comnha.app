@@ -46,8 +46,10 @@ public class Comments implements Transactions {
         ref = new Firebase(context.getResources().getString(R.string.firebase_path));
     }
 
+    boolean check;
+
     @Override
-    public void createNew() {
+    public boolean createNew() {
         setupFirebase();
         Comment newComment = new Comment();
         newComment.setContent(content);
@@ -58,14 +60,17 @@ public class Comments implements Transactions {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError != null) {
+                    check = false;
                     Toast.makeText(context, firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
+                    check = true;
                     Map<String, Object> comment = new HashMap<String, Object>();
                     comment.put(firebase.getKey(), true);
                     ref.child(context.getResources().getString(R.string.postcomment_CODE) + "/" + postID).updateChildren(comment);
                 }
             }
         });
+        return check;
     }
 
     @Override

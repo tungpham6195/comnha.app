@@ -91,7 +91,7 @@ public class Users implements Transactions {
     }
 
     @Override
-    public void createNew() {
+    public boolean createNew() {
         setupFirebase();
         if (!password.equals(confirmPass)) {
             Toast.makeText(suContext, "Mật khẩu xác nhận không đúng!!!", Toast.LENGTH_SHORT).show();
@@ -128,6 +128,7 @@ public class Users implements Transactions {
                 }
             });
         }
+        return true;
     }
 
     @Override

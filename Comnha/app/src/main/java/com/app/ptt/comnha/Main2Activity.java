@@ -45,14 +45,20 @@ public class Main2Activity extends AppCompatActivity
     private MyService myService;
     private static final String LOG = "MainActivity2";
     private Boolean isBound = false;
-    private Button btn_posts, btn_postlist, btn_newloca, btn_map, btn_search, btn_load;
+    private Button btn_map, btn_search, btn_load;
     private Bundle savedInstanceState;
     private IntentFilter mIntentFilter;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+<<<<<<< Updated upstream
     int temp, count;
     int isComplete = 0;
     public String userID;
+=======
+    int fileSize;
+    boolean isComplete = false;
+    public String userID, username, email;
+>>>>>>> Stashed changes
     ArrayList<Route> routes;
 
     private Toolbar mtoolbar;
@@ -65,30 +71,25 @@ public class Main2Activity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        anhXa();
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
 
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mtoggle = new ActionBarDrawerToggle(
-                this, mdrawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-        };
+                this, mdrawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mdrawer.setDrawerListener(mtoggle);
         mtoggle.syncState();
-
         mnavigationView = (NavigationView) findViewById(R.id.nav_view);
         mnavigationView.setNavigationItemSelectedListener(this);
+        View header = mnavigationView.getHeaderView(0);
+        txt_email = (TextView) header.findViewById(R.id.nav_head_email);
 
         this.savedInstanceState = savedInstanceState;
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcast);
-
         Log.i(LOG, "onCreate");
         routes = new ArrayList<>();
-        anhXa();
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -99,59 +100,33 @@ public class Main2Activity extends AppCompatActivity
                     userID = user.getUid();
                     Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getEmail(), Toast.LENGTH_SHORT).show();
                     LoginSession.getInstance().setUserID(userID);
+                    LoginSession.getInstance().setEmail(user.getEmail());
+                    txt_email.setText(user.getEmail());
                     Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getUid());
-//                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//                    if (drawer.isDrawerOpen(GravityCompat.START)) {
-//                        Log.i("drawopend", "opened");
-//                    }
+                    Log.i("email", LoginSession.getInstance().getEmail());
                 } else {
                     userID = "";
                     LoginSession.getInstance().setUserID(null);
+                    LoginSession.getInstance().setEmail(null);
                     Toast.makeText(getApplicationContext(), "Signed out", Toast.LENGTH_SHORT).show();
                     Log.d("signed_out", "onAuthStateChanged:signed_out");
                 }
             }
         };
+
     }
 
     void anhXa() {
-        txt_email = (TextView) findViewById(R.id.nav_head_email);
-//        btn_posts = (Button) findViewById(R.id.btn_post);
-//        btn_postlist = (Button) findViewById(R.id.btn_postlst);
-//        btn_newloca = (Button) findViewById(R.id.btn_newlocation);
+
         btn_map = (Button) findViewById(R.id.btn_map);
+<<<<<<< Updated upstream
         btn_search = (Button) findViewById(R.id.btn_search);
+=======
+
+//        btn_search = (Button) findViewById(R.id.btn_search);
+>>>>>>> Stashed changes
 //        btn_load = (Button) findViewById(R.id.btn_load);
 
-//        btn_posts.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
-//                intent.putExtra(getString(R.string.fragment_CODE),
-//                        getString(R.string.frag_addpost_CODE));
-//                startActivity(intent);
-//            }
-//        });
-//        btn_postlist.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                LocatlistFragment locatlistFragment = new LocatlistFragment();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.frame, locatlistFragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
-//            }
-//        });
-//        btn_newloca.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
-//                intent.putExtra(getString(R.string.fragment_CODE),
-//                        getString(R.string.frag_addloca_CODE));
-//                startActivity(intent);
-//
-//            }
-//        });
 //        btn_load.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -396,23 +371,31 @@ public class Main2Activity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main2, menu);
-        return false;
+        getMenuInflater().inflate(R.menu.options, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.action_addloca:
+                Intent intent = new Intent(Main2Activity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_addloca_CODE));
+                startActivity(intent);
+                break;
+            case R.id.action_addpost:
+                Intent intent1 = new Intent(Main2Activity.this, AdapterActivity.class);
+                intent1.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_addpost_CODE));
+                startActivity(intent1);
+                break;
+            case R.id.action_uploadPhoto:
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
+//        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -443,7 +426,6 @@ public class Main2Activity extends AppCompatActivity
                 break;
             case R.id.nav_signout:
                 mAuth.signOut();
-                LoginSession.getInstance().setUserID("");
                 break;
         }
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -1,6 +1,7 @@
 package com.app.ptt.comnha;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +41,8 @@ public class SigninFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FloatingActionButton fab_signup;
     FirebaseAuth.AuthStateListener mAuthStateListener;
+    android.support.design.widget.Snackbar snackbar;
+    ProgressDialog mprogressDialog;
 
     public SigninFragment() {
         // Required empty public constructor
@@ -50,12 +53,13 @@ public class SigninFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_signin, container, false);
-        anhXa(view, savedInstanceState);
+        anhXa(view, savedInstanceState, container);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         return view;
+
     }
 
-    private void anhXa(final View view, final Bundle savedInstanceState) {
+    private void anhXa(final View view, final Bundle savedInstanceState, final ViewGroup container) {
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -93,13 +97,6 @@ public class SigninFragment extends Fragment {
             public void onClick(View view) {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-//                newSigninout = new Signin_out();
-//                newSigninout.setEmail(edt_email.getText().toString().trim());
-//                newSigninout.setPassword(edt_pass.getText().toString().trim());
-//                newSigninout.setSiContext(getActivity().getApplicationContext());
-//                newSigninout.setmAuth(mAuth);
-//                newSigninout.doSignIn();
-//                Toast.makeText(getActivity(), "signin", Toast.LENGTH_SHORT).show();
                 if (edt_email.getText().toString().equals("")) {
                     Snackbar.make(view, getResources().getString(R.string.txt_noemail), Snackbar.LENGTH_SHORT).show();
                 } else if (edt_pass.getText().toString().equals("")) {
@@ -109,11 +106,15 @@ public class SigninFragment extends Fragment {
                     if (!isValidEmailAddress(edt_email.getText().toString())) {
                         Snackbar.make(view, getResources().getString(R.string.txt_notemail), Snackbar.LENGTH_SHORT).show();
                     } else {
+                        mprogressDialog = ProgressDialog.show(getActivity(),
+                                getResources().getString(R.string.txt_plzwait),
+                                getResources().getString(R.string.txt_logging), true, true);
                         mAuth.signInWithEmailAndPassword(edt_email.getText().toString(), edt_pass.getText().toString())
                                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                                        mprogressDialog.dismiss();
                                         if (!task.isSuccessful()) {
                                             Log.w(TAG, "signInWithEmail:onComplete", task.getException());
 //                                    Toast.makeText(getActivity(), "failed login with: " + edt_email.getText().toString(),
