@@ -50,8 +50,8 @@ public class Main2Activity extends AppCompatActivity
     private IntentFilter mIntentFilter;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    int fileSize;
-    boolean isComplete = false;
+    int temp, count;
+    int isComplete = 0;
     public String userID;
     ArrayList<Route> routes;
 
@@ -120,7 +120,7 @@ public class Main2Activity extends AppCompatActivity
 //        btn_postlist = (Button) findViewById(R.id.btn_postlst);
 //        btn_newloca = (Button) findViewById(R.id.btn_newlocation);
         btn_map = (Button) findViewById(R.id.btn_map);
-//        btn_search = (Button) findViewById(R.id.btn_search);
+        btn_search = (Button) findViewById(R.id.btn_search);
 //        btn_load = (Button) findViewById(R.id.btn_load);
 
 //        btn_posts.setOnClickListener(new View.OnClickListener() {
@@ -161,102 +161,132 @@ public class Main2Activity extends AppCompatActivity
         btn_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                count=0;
+                routes = myService.returnRoute();
+                if (routes == null) {
 
-                progressDialog = new ProgressDialog(v.getContext());
-                progressDialog.setCancelable(true);
-                progressDialog.setMessage("Loading data");
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setProgressStyle(0);
-                progressDialog.setMax(100);
-                progressDialog.show();
-                progressBarStatus = 0;
-                fileSize = 0;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        myService.getDataInFireBase();
-                        while (progressBarStatus < 100) {
-                            progressBarStatus = loadProgress();
-                            try {
-
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            progressBarHandler.post(new Runnable() {
-                                public void run() {
-                                    progressDialog.setProgress(progressBarStatus);
-                                }
-
-                            });
-                            if (progressBarStatus >= 100) {
+                    progressDialog = new ProgressDialog(v.getContext());
+                    progressDialog.setCancelable(true);
+                    progressDialog.setMessage("Loading data");
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setProgressStyle(0);
+                    progressDialog.setMax(100);
+                    progressDialog.show();
+                    progressBarStatus = 0;
+                    temp = 0;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            myService.getDataInFireBase();
+                            while (progressBarStatus < 100) {
+                                progressBarStatus = loadProgress();
                                 try {
-                                    Thread.sleep(2000);
+
+                                    Thread.sleep(1000);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                if (isComplete == true) {
-                                    routes = myService.returnRoute();
-                                    if (routes == null) {
-                                        Toast.makeText(Main2Activity.this, "Khong load dc dia diem", Toast.LENGTH_LONG).show();
-                                    } else {
+                                progressBarHandler.post(new Runnable() {
+                                    public void run() {
+                                        progressDialog.setProgress(progressBarStatus);
+                                    }
+
+                                });
+                                if (progressBarStatus >= 100) {
+                                    try {
+                                        Thread.sleep(2000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (isComplete == 1) {
+                                        routes = myService.returnRoute();
                                         MapFragment mapFragment = new MapFragment();
                                         mapFragment.getMethod(routes);
                                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                                         transaction.replace(R.id.frame, mapFragment);
                                         transaction.addToBackStack(null);
                                         transaction.commit();
+
                                     }
+                                    progressDialog.dismiss();
                                 }
-                                progressDialog.dismiss();
+
                             }
-
-
+                            if (progressBarStatus == 101 && isComplete != 1)
+                                showToast("Lỗi rồi");
                         }
-                    }
-                }).start();
+                    }).start();
 
 
+                } else {
+                    routes = myService.returnRoute();
+                    MapFragment mapFragment = new MapFragment();
+                    mapFragment.getMethod(routes);
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.frame, mapFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
             }
         });
-//
-//        btn_search.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
+
+
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
 //                SearchFragment searchFragment = new SearchFragment();
 //                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //                transaction.replace(R.id.frame, searchFragment);
 //                transaction.addToBackStack(null);
 //                transaction.commit();
-//            }
-//        });
+            }
+        });
+    }
+
+    public void showToast(final String a) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(Main2Activity.this, a, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public int loadProgress() {
-        if (!isComplete) {
-            while (fileSize <= 1000000) {
-                fileSize++;
-                if (fileSize == 100000) {
-                    return 10;
-                } else if (fileSize == 200000) {
-                    return 20;
-                } else if (fileSize == 300000) {
-                    return 30;
-                } else if (fileSize == 400000) {
-                    return 40;
-                } else if (fileSize == 500000) {
-                    return 50;
-                } else if (fileSize == 700000) {
-                    return 70;
-                } else if (fileSize == 800000) {
-                    return 80;
+        Log.i(LOG, "Count= " + count);
+        Log.i(LOG, "temp= " + temp);
+        if (isComplete != 1) {
+            if (count < 15) {
+                count++;
+                while (temp <= 1000000) {
+                    temp++;
+
+                    if (temp == 100000) {
+                        return 10;
+                    } else if (temp == 200000) {
+                        return 20;
+                    } else if (temp == 300000) {
+                        return 30;
+                    } else if (temp == 400000) {
+                        return 40;
+                    } else if (temp == 500000) {
+                        return 50;
+                    } else if (temp == 700000) {
+                        return 70;
+                    } else if (temp == 800000) {
+                        return 80;
+                    }
                 }
+                return 0;
+            } else {
+                return 101;
             }
-            return 0;
         } else {
             return 100;
         }
     }
+
 
 
     @Override
@@ -284,7 +314,7 @@ public class Main2Activity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcast)) {
-                isComplete = intent.getBooleanExtra("LoadingComplete", false);
+                isComplete = intent.getIntExtra("LoadingComplete", 0);
                 Log.i(LOG, "isComplete=" + isComplete);
             }
         }
