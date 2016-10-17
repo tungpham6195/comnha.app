@@ -1,16 +1,19 @@
 package com.app.ptt.comnha;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -27,6 +30,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
@@ -136,72 +140,35 @@ public class Main2Activity extends AppCompatActivity
         btn_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                count=0;
-                routes = myService.returnRoute();
-                if (routes == null) {
-
-                    progressDialog = new ProgressDialog(v.getContext());
-                    progressDialog.setCancelable(true);
-                    progressDialog.setMessage("Loading data");
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    progressDialog.setProgressStyle(0);
-                    progressDialog.setMax(100);
-                    progressDialog.show();
-                    progressBarStatus = 0;
-                    temp = 0;
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            myService.getDataInFireBase();
-                            while (progressBarStatus < 100) {
-                                progressBarStatus = loadProgress();
-                                try {
-
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                progressBarHandler.post(new Runnable() {
-                                    public void run() {
-                                        progressDialog.setProgress(progressBarStatus);
-                                    }
-
-                                });
-                                if (progressBarStatus >= 100) {
-                                    try {
-                                        Thread.sleep(2000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (isComplete == 1) {
-                                        routes = myService.returnRoute();
-                                        MapFragment mapFragment = new MapFragment();
-                                        mapFragment.getMethod(routes);
-                                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                                        transaction.replace(R.id.frame, mapFragment);
-                                        transaction.addToBackStack(null);
-                                        transaction.commit();
-
-                                    }
-                                    progressDialog.dismiss();
-                                }
-
-                            }
-                            if (progressBarStatus == 101 && isComplete != 1)
-                                showToast("Lỗi rồi");
-                        }
-                    }).start();
-
-
-                } else {
-                    routes = myService.returnRoute();
-                    MapFragment mapFragment = new MapFragment();
-                    mapFragment.getMethod(routes);
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.frame, mapFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                if(!ConnectionDetector.canGetLocation(getApplicationContext())){
+                    if(!ConnectionDetector.networkStatus(getApplicationContext())){
+                        Toast.makeText(getApplicationContext(),"Không có kết nối internet + GPS",Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        ConnectionDetector.showSettingAlert(Main2Activity.this);
+                    }
+                    myService.resetDataLoad();
+                }else if(!ConnectionDetector.networkStatus(getApplicationContext())){
+                    Toast.makeText(getApplicationContext(),"Không có kết nối internet",Toast.LENGTH_LONG).show();
+                    myService.resetDataLoad();
                 }
+                else{
+                    myService.startGoogleApi();
+                    count=0;
+                    routes = myService.returnRoute();
+                    if (routes == null) {
+                        runProgressDialog(v);
+                    } else {
+                        routes = myService.returnRoute();
+                        MapFragment mapFragment = new MapFragment();
+                        mapFragment.getMethod(routes);
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, mapFragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+                }
+
             }
         });
 
@@ -227,11 +194,68 @@ public class Main2Activity extends AppCompatActivity
             }
         });
     }
+    public void runProgressDialog(View v){
+        progressDialog = new ProgressDialog(v.getContext());
+        progressDialog.setCancelable(true);
+        progressDialog.setMessage("Loading data");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setProgressStyle(0);
+        progressDialog.setMax(100);
+        progressDialog.show();
+        progressBarStatus = 0;
+        temp = 0;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                myService.getDataInFireBase();
+                while (progressBarStatus < 100) {
+                    progressBarStatus = loadProgress();
+                    try {
+
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    progressBarHandler.post(new Runnable() {
+                        public void run() {
+                            progressDialog.setProgress(progressBarStatus);
+                        }
+
+                    });
+                    if (progressBarStatus >= 100) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        if (isComplete == 1) {
+                            routes = myService.returnRoute();
+                            MapFragment mapFragment = new MapFragment();
+                            mapFragment.getMethod(routes);
+                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            transaction.replace(R.id.frame, mapFragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+
+                        }
+                        progressDialog.dismiss();
+                    }
+
+                }
+                if (progressBarStatus == 101 && isComplete != 1)
+                    showToast("Lỗi rồi");
+            }
+        }).start();
+
+    }
 
     public int loadProgress() {
         Log.i(LOG, "Count= " + count);
         Log.i(LOG, "temp= " + temp);
         if (isComplete != 1) {
+            if(isComplete==-1){
+                return 101;
+            }
             if (count < 15) {
                 count++;
                 while (temp <= 1000000) {
@@ -269,9 +293,9 @@ public class Main2Activity extends AppCompatActivity
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
         doBinService();
-//        gpsService.init();
         Log.i(LOG, "onStart");
     }
+
 
     @Override
     protected void onResume() {
