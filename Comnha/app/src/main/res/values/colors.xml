@@ -5,5 +5,9 @@
     <color name="colorAccent">#20BF55</color>
     <color name="colorFloat1">#BA5A31</color>
     <color name="colorFloat2">#19b8a3</color>
+    <color name="colorFloat2dark">#0a7667</color>
     <color name="colorbg1">#A0EADE</color>
+    <color name="colorgia">#C40808</color>
+    <color name="colorvesinh">#cdd400</color>
+    <color name="colorphucvu">#189603</color>
 </resources>

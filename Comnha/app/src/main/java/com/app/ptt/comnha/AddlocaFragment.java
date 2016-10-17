@@ -8,23 +8,25 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.Location;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.github.clans.fab.FloatingActionButton;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddlocaFragment extends Fragment {
-    Button btn_save, btn_exit;
+public class AddlocaFragment extends Fragment implements FloatingActionButton.OnClickListener {
+    FloatingActionButton fab_save;
     EditText edt_tenquan, edt_diachi, edt_timeend, edt_timestart, edt_sdt, edt_giamin, edt_giamax;
     ProgressDialog mProgressDialog;
     Firebase ref;
+    ImageView img_ic;
 
     public AddlocaFragment() {
         // Required empty public constructor
@@ -50,36 +52,15 @@ public class AddlocaFragment extends Fragment {
         edt_sdt = (EditText) view.findViewById(R.id.frg_addloction_edt_sdt);
         edt_giamin = (EditText) view.findViewById(R.id.frg_addloction_edt_giamin);
         edt_giamax = (EditText) view.findViewById(R.id.frg_addloction_edt_giamax);
-        btn_save = (Button) view.findViewById(R.id.frg_addloction_btn_save);
-        btn_exit = (Button) view.findViewById(R.id.frg_addloction_btn_exit);
-        btn_exit.setOnClickListener(new View.OnClickListener() {
+        fab_save = (FloatingActionButton) view.findViewById(R.id.frg_addloction_btn_save);
+        img_ic = (ImageView) view.findViewById(R.id.frg_addloca_ic);
+        img_ic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getActivity().finish();
             }
         });
-        btn_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (edt_tenquan.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_notenquan), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_diachi.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_nodiachi), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_giamin.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_giamax.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_sdt.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_nosdt), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_timestart.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_timeend.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
-                } else {
-                    addNewLoca();
-                }
-            }
-        });
+        fab_save.setOnClickListener(this);
     }
 
     private void addNewLoca() {
@@ -109,5 +90,32 @@ public class AddlocaFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.frg_addloction_btn_save:
+                if (edt_tenquan.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_notenquan), Snackbar.LENGTH_SHORT).show();
+                } else if (edt_diachi.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_nodiachi), Snackbar.LENGTH_SHORT).show();
+                } else if (edt_giamin.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
+                } else if (edt_giamax.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
+                } else if (edt_sdt.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_nosdt), Snackbar.LENGTH_SHORT).show();
+                } else if (edt_timestart.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
+                } else if (edt_timeend.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
+                } else if (Long.valueOf(edt_giamax.getText().toString()) <= Long.valueOf(edt_giamin.getText().toString())) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_giawarn), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    addNewLoca();
+                }
+                break;
+        }
     }
 }

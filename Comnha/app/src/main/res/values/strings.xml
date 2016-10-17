@@ -9,6 +9,10 @@
     <string name="text_start">Từ</string>
     <string name="text_end">Đến</string>
     <string name="text_gia">Giá</string>
+    <string name="text_more">Mở rộng</string>
+    <string name="text_rategia">Giá</string>
+    <string name="text_ratevs">Vệ sinh</string>
+    <string name="text_ratepv">Phục vụ</string>
     <string name="text_save">Save</string>
     <string name="text_add">Thêm mới</string>
     <string name="text_address">Địa chỉ</string>
@@ -30,7 +34,7 @@
     <string name="text_title">Tiêu đề</string>
     <string name="text_content">Nội dung</string>
     <string name="text_upImage">Chọn ảnh</string>
-    <string name="text_vote">Rate</string>
+    <string name="text_vote">Đánh giá</string>
     <string name="text_hashtag">Tag</string>
     <string name="text_select">Chọn</string>
     <string name="text_taomoi">Tạo mới</string>
@@ -42,10 +46,7 @@
     <string name="text_themanh">Thêm ảnh</string>
     <string name="text_comment">Bình luận</string>
     <string name="text_like">Thích</string>
-    <string name="nav_homepage">Trang chủ</string>
-    <string name="nav_uploadedimg">Ảnh đã đăng</string>
-    <string name="nav_profile">Thông tin cá nhân</string>
-    <string name="nav_activity">Activities</string>
+
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -64,6 +65,10 @@
     <string name="txt_nogia">Warning: Chưa nhập giá</string>
     <string name="txt_nosdt">Warning: Chưa nhập số điện thoại</string>
     <string name="txt_noopentime">Warning: Chưa nhập giờ mở cửa</string>
+    <string name="txt_notitle">Warning: Chưa nhập tiêu đề</string>
+    <string name="txt_nocontent">Warning: Chưa nhập nội dung</string>
+    <string name="txt_nochoseloca">Warning: Chưa chọn địa điểm</string>
+    <string name="txt_giawarn">Warning: Giá cuối cùng phải lớn hơn giá bắt đầu</string>
     <string name="txt_addinlocaerr">Error: Không thể thêm địa điểm mới</string>
     <string name="txt_plzwait">Please wait &#8230;</string>
     <string name="txt_logging">Đang đăng nhập &#8230;</string>
@@ -72,6 +77,14 @@
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <!--PATH-->
+
+    <!--NAV-->
+    <string name="nav_homepage">Trang chủ</string>
+    <string name="nav_map">Bản đồ</string>
+    <string name="nav_uploadedimg">Ảnh đã đăng</string>
+    <string name="nav_profile">Thông tin cá nhân</string>
+    <string name="nav_activity">Activities</string>
+    <!--NAV-->
 
     <!--CODE-->
     <string name="DATA_FROM_FRAG">datafromfrag</string>
@@ -85,6 +98,7 @@
     <string name="frg_signup_CODE">signup</string>
     <string name="frg_signin_CODE">signin</string>
     <string name="frag_locadetail_CODE">locadetail</string>
+    <string name="frag_vote_CODE">vote</string>
     <string name="fragment_CODE">FRAGMENTCODE</string>
     <string name="key_CODE">KEYCODE</string>
     <string name="keyPost_CODE">KEYPOSTCODE</string>

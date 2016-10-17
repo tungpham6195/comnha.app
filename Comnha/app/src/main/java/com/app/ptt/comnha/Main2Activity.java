@@ -1,19 +1,16 @@
 package com.app.ptt.comnha;
 
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -23,24 +20,23 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FloatingActionButton.OnClickListener {
     public static final String mBroadcast = "mBroadcastComplete";
     private ProgressDialog progressDialog;
     private int progressBarStatus = 0;
@@ -49,20 +45,14 @@ public class Main2Activity extends AppCompatActivity
     private MyService myService;
     private static final String LOG = "MainActivity2";
     private Boolean isBound = false;
-    private Button btn_map, btn_search, btn_load;
     private Bundle savedInstanceState;
     private IntentFilter mIntentFilter;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-<<<<<<< Updated upstream
     int temp, count;
     int isComplete = 0;
-    public String userID;
-=======
     int fileSize;
-    boolean isComplete = false;
     public String userID, username, email;
->>>>>>> Stashed changes
     ArrayList<Route> routes;
 
     private Toolbar mtoolbar;
@@ -70,6 +60,8 @@ public class Main2Activity extends AppCompatActivity
     private ActionBarDrawerToggle mtoggle;
     private NavigationView mnavigationView;
     TextView txt_email, txt_un;
+    FloatingActionMenu fabmenu;
+    FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,69 +113,28 @@ public class Main2Activity extends AppCompatActivity
     }
 
     void anhXa() {
+        fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
+        fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
+        fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
+        fab_uploadpho = (FloatingActionButton) findViewById(R.id.main_fabitem1);
 
-        btn_map = (Button) findViewById(R.id.btn_map);
-<<<<<<< Updated upstream
-        btn_search = (Button) findViewById(R.id.btn_search);
-=======
+        fab_review.setOnClickListener(this);
+        fab_addloca.setOnClickListener(this);
+        fab_uploadpho.setOnClickListener(this);
+        fabmenu.setClosedOnTouchOutside(true);
 
-//        btn_search = (Button) findViewById(R.id.btn_search);
->>>>>>> Stashed changes
-//        btn_load = (Button) findViewById(R.id.btn_load);
 
-//        btn_load.setOnClickListener(new View.OnClickListener() {
+//        btn_search.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //
+////                SearchFragment searchFragment = new SearchFragment();
+////                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+////                transaction.replace(R.id.frame, searchFragment);
+////                transaction.addToBackStack(null);
+////                transaction.commit();
 //            }
 //        });
-        btn_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!ConnectionDetector.canGetLocation(getApplicationContext())){
-                    if(!ConnectionDetector.networkStatus(getApplicationContext())){
-                        Toast.makeText(getApplicationContext(),"Không có kết nối internet + GPS",Toast.LENGTH_LONG).show();
-                    }
-                    else{
-                        ConnectionDetector.showSettingAlert(Main2Activity.this);
-                    }
-                    myService.resetDataLoad();
-                }else if(!ConnectionDetector.networkStatus(getApplicationContext())){
-                    Toast.makeText(getApplicationContext(),"Không có kết nối internet",Toast.LENGTH_LONG).show();
-                    myService.resetDataLoad();
-                }
-                else{
-                    myService.startGoogleApi();
-                    count=0;
-                    routes = myService.returnRoute();
-                    if (routes == null) {
-                        runProgressDialog(v);
-                    } else {
-                        routes = myService.returnRoute();
-                        MapFragment mapFragment = new MapFragment();
-                        mapFragment.getMethod(routes);
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.frame, mapFragment);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
-                }
-
-            }
-        });
-
-
-        btn_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-//                SearchFragment searchFragment = new SearchFragment();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.frame, searchFragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
-            }
-        });
     }
 
     public void showToast(final String a) {
@@ -194,68 +145,11 @@ public class Main2Activity extends AppCompatActivity
             }
         });
     }
-    public void runProgressDialog(View v){
-        progressDialog = new ProgressDialog(v.getContext());
-        progressDialog.setCancelable(true);
-        progressDialog.setMessage("Loading data");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setProgressStyle(0);
-        progressDialog.setMax(100);
-        progressDialog.show();
-        progressBarStatus = 0;
-        temp = 0;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                myService.getDataInFireBase();
-                while (progressBarStatus < 100) {
-                    progressBarStatus = loadProgress();
-                    try {
-
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    progressBarHandler.post(new Runnable() {
-                        public void run() {
-                            progressDialog.setProgress(progressBarStatus);
-                        }
-
-                    });
-                    if (progressBarStatus >= 100) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        if (isComplete == 1) {
-                            routes = myService.returnRoute();
-                            MapFragment mapFragment = new MapFragment();
-                            mapFragment.getMethod(routes);
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.frame, mapFragment);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-
-                        }
-                        progressDialog.dismiss();
-                    }
-
-                }
-                if (progressBarStatus == 101 && isComplete != 1)
-                    showToast("Lỗi rồi");
-            }
-        }).start();
-
-    }
 
     public int loadProgress() {
         Log.i(LOG, "Count= " + count);
         Log.i(LOG, "temp= " + temp);
         if (isComplete != 1) {
-            if(isComplete==-1){
-                return 101;
-            }
             if (count < 15) {
                 count++;
                 while (temp <= 1000000) {
@@ -287,15 +181,14 @@ public class Main2Activity extends AppCompatActivity
     }
 
 
-
     @Override
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
         doBinService();
+//        gpsService.init();
         Log.i(LOG, "onStart");
     }
-
 
     @Override
     protected void onResume() {
@@ -392,36 +285,6 @@ public class Main2Activity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.options, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_addloca:
-                Intent intent = new Intent(Main2Activity.this, AdapterActivity.class);
-                intent.putExtra(getString(R.string.fragment_CODE),
-                        getString(R.string.frag_addloca_CODE));
-                startActivity(intent);
-                break;
-            case R.id.action_addpost:
-                Intent intent1 = new Intent(Main2Activity.this, AdapterActivity.class);
-                intent1.putExtra(getString(R.string.fragment_CODE),
-                        getString(R.string.frag_addpost_CODE));
-                startActivity(intent1);
-                break;
-            case R.id.action_uploadPhoto:
-
-                break;
-        }
-        return true;
-//        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -451,9 +314,101 @@ public class Main2Activity extends AppCompatActivity
             case R.id.nav_signout:
                 mAuth.signOut();
                 break;
+            case R.id.nav_map:
+                openMap();
+                break;
         }
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mdrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.main_fabitem1:
+                break;
+            case R.id.main_fabitem2:
+                Intent intent = new Intent(Main2Activity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_addloca_CODE));
+                startActivity(intent);
+                break;
+            case R.id.main_fabitem3:
+                Intent intent1 = new Intent(Main2Activity.this, AdapterActivity.class);
+                intent1.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_addpost_CODE));
+                startActivity(intent1);
+                break;
+        }
+    }
+
+    private void openMap() {
+        count = 0;
+        routes = myService.returnRoute();
+        if (routes == null) {
+
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(true);
+            progressDialog.setMessage("Loading data");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setProgressStyle(0);
+            progressDialog.setMax(100);
+            progressDialog.show();
+            progressBarStatus = 0;
+            temp = 0;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    myService.getDataInFireBase();
+                    while (progressBarStatus < 100) {
+                        progressBarStatus = loadProgress();
+                        try {
+
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        progressBarHandler.post(new Runnable() {
+                            public void run() {
+                                progressDialog.setProgress(progressBarStatus);
+                            }
+
+                        });
+                        if (progressBarStatus >= 100) {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (isComplete == 1) {
+                                routes = myService.returnRoute();
+                                MapFragment mapFragment = new MapFragment();
+                                mapFragment.getMethod(routes);
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.frame, mapFragment);
+                                transaction.addToBackStack(null);
+                                transaction.commit();
+
+                            }
+                            progressDialog.dismiss();
+                        }
+
+                    }
+                    if (progressBarStatus == 101 && isComplete != 1)
+                        showToast("Lỗi rồi");
+                }
+            }).start();
+
+
+        } else {
+            routes = myService.returnRoute();
+            MapFragment mapFragment = new MapFragment();
+            mapFragment.getMethod(routes);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame, mapFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 }
