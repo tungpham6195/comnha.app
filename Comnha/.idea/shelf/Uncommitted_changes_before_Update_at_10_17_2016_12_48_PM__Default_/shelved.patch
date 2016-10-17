@@ -1,0 +1,1564 @@
+Index: app/src/main/java/com/app/ptt/comnha/SingletonClasses/DoRate.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/app/ptt/comnha/SingletonClasses/DoRate.java	(revision )
++++ app/src/main/java/com/app/ptt/comnha/SingletonClasses/DoRate.java	(revision )
+@@ -0,0 +1,43 @@
++package com.app.ptt.comnha.SingletonClasses;
++
++/**
++ * Created by PTT on 10/5/2016.
++ */
++public class DoRate {
++    private static DoRate ourInstance;
++    private long gia, vesinh, phucvu;
++
++    public static DoRate getInstance() {
++        if (ourInstance == null) {
++            ourInstance = new DoRate();
++        }
++        return ourInstance;
++    }
++
++    private DoRate() {
++    }
++
++    public void setPhucvu(long phucvu) {
++        this.phucvu = phucvu;
++    }
++
++    public void setVesinh(long vesinh) {
++        this.vesinh = vesinh;
++    }
++
++    public void setGia(long gia) {
++        this.gia = gia;
++    }
++
++    public long getGia() {
++        return gia;
++    }
++
++    public long getVesinh() {
++        return vesinh;
++    }
++
++    public long getPhucvu() {
++        return phucvu;
++    }
++}
+Index: app/src/main/java/com/app/ptt/comnha/VoteFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/app/ptt/comnha/VoteFragment.java	(revision )
++++ app/src/main/java/com/app/ptt/comnha/VoteFragment.java	(revision )
+@@ -0,0 +1,137 @@
++package com.app.ptt.comnha;
++
++
++import android.graphics.Point;
++import android.os.Bundle;
++import android.support.annotation.Nullable;
++import android.support.v4.app.DialogFragment;
++import android.support.v4.app.Fragment;
++import android.view.Display;
++import android.view.Gravity;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++import android.view.Window;
++import android.view.WindowManager;
++import android.widget.Button;
++import android.widget.TextView;
++
++import com.app.ptt.comnha.SingletonClasses.DoRate;
++
++import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
++
++
++/**
++ * A simple {@link Fragment} subclass.
++ */
++public class VoteFragment extends DialogFragment implements View.OnClickListener, DiscreteSeekBar.OnProgressChangeListener {
++    Button btn_vote;
++    DiscreteSeekBar mSeekBarGia, mSeekBarVS, mSeekBarPV;
++    TextView txt_gia, txt_vs, txt_pv;
++    Long gia, vs, pv;
++
++    public VoteFragment() {
++        // Required empty public constructor
++    }
++
++    public static VoteFragment newIntance(String title) {
++        VoteFragment frg = new VoteFragment();
++        Bundle args = new Bundle();
++        args.putString("title", title);
++        frg.setArguments(args);
++        return frg;
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        View view = inflater.inflate(R.layout.fragment_vote, container, false);
++        return view;
++    }
++
++    @Override
++    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
++        super.onViewCreated(view, savedInstanceState);
++        anhxa(view);
++        String title = getArguments().getString("title", "enter name");
++        getDialog().setTitle(title);
++//        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
++    }
++
++    private void anhxa(View view) {
++        txt_gia = (TextView) view.findViewById(R.id.frg_vote_txt_gia);
++        txt_vs = (TextView) view.findViewById(R.id.frg_vote_txt_vs);
++        txt_pv = (TextView) view.findViewById(R.id.frg_vote_txt_pv);
++        mSeekBarGia = (DiscreteSeekBar) view.findViewById(R.id.frg_vote_slide_gia);
++        mSeekBarVS = (DiscreteSeekBar) view.findViewById(R.id.frg_vote_slide_vesinh);
++        mSeekBarPV = (DiscreteSeekBar) view.findViewById(R.id.frg_vote_slide_phucvu);
++        btn_vote = (Button) view.findViewById(R.id.frg_vote_btn_vote);
++        btn_vote.setOnClickListener(this);
++        mSeekBarGia.setOnProgressChangeListener(this);
++        mSeekBarPV.setOnProgressChangeListener(this);
++        mSeekBarVS.setOnProgressChangeListener(this);
++    }
++
++    @Override
++    public void onClick(View view) {
++        switch (view.getId()) {
++            case R.id.frg_vote_btn_vote:
++                DoRate.getInstance().setGia(gia);
++                DoRate.getInstance().setPhucvu(pv);
++                DoRate.getInstance().setVesinh(vs);
++                this.dismiss();
++                break;
++        }
++    }
++
++    @Override
++    public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
++        switch (seekBar.getId()) {
++            case R.id.frg_vote_slide_gia:
++                txt_gia.setText(getResources().getString(R.string.text_rategia) + ": " + String.valueOf(value));
++                break;
++            case R.id.frg_vote_slide_phucvu:
++                txt_pv.setText(getResources().getString(R.string.text_ratepv) + ": " + String.valueOf(value));
++                break;
++            case R.id.frg_vote_slide_vesinh:
++                txt_vs.setText(getResources().getString(R.string.text_ratevs) + ": " + String.valueOf(value));
++                break;
++        }
++    }
++
++    @Override
++    public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
++
++    }
++
++    @Override
++    public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
++        switch (seekBar.getId()) {
++            case R.id.frg_vote_slide_gia:
++                gia = (long) seekBar.getProgress();
++                break;
++            case R.id.frg_vote_slide_phucvu:
++                pv = (long) seekBar.getProgress();
++                break;
++            case R.id.frg_vote_slide_vesinh:
++                vs = (long) seekBar.getProgress();
++                break;
++        }
++    }
++
++    @Override
++    public void onResume() {
++        super.onResume();
++        Window window = getDialog().getWindow();
++        Point size = new Point();
++        // Store dimensions of the screen in `size`
++        Display display = window.getWindowManager().getDefaultDisplay();
++        display.getSize(size);
++        // Set the width of the dialog proportional to 75% of the screen width
++        window.setLayout((int) (size.x * 0.95), WindowManager.LayoutParams.WRAP_CONTENT);
++        window.setGravity(Gravity.CENTER);
++
++
++    }
++}
+Index: app/src/main/res/layout/fragment_vote.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_vote.xml	(revision )
++++ app/src/main/res/layout/fragment_vote.xml	(revision )
+@@ -0,0 +1,102 @@
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="wrap_content"
++    android:layout_height="wrap_content"
++    android:layout_gravity="center"
++    tools:context="com.app.ptt.comnha.VoteFragment">
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:orientation="vertical"
++        android:paddingTop="10dp"
++        android:paddingStart="10dp"
++        android:paddingBottom="5dp"
++        android:paddingEnd="5dp">
++
++        <LinearLayout
++            android:id="@+id/linear1"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:gravity="start|top"
++            android:orientation="vertical">
++
++            <TextView
++                android:id="@+id/frg_vote_txt_gia"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:text="@string/text_rategia"
++                android:textColor="@color/colorgia"
++                android:textSize="20sp" />
++
++            <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
++                android:id="@+id/frg_vote_slide_gia"
++                android:layout_width="match_parent"
++                android:layout_height="match_parent"
++                app:dsb_indicatorColor="@color/colorgia"
++                app:dsb_max="10"
++                app:dsb_min="1"
++                app:dsb_progressColor="@color/colorgia" />
++        </LinearLayout>
++
++        <LinearLayout
++            android:id="@+id/linear2"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:gravity="start|top"
++            android:orientation="vertical">
++
++            <TextView
++                android:id="@+id/frg_vote_txt_vs"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:text="@string/text_ratevs"
++                android:textColor="@color/colorvesinh"
++                android:textSize="20sp" />
++
++            <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
++                android:id="@+id/frg_vote_slide_vesinh"
++                android:layout_width="match_parent"
++                android:layout_height="match_parent"
++                app:dsb_indicatorColor="@color/colorvesinh"
++                app:dsb_max="10"
++                app:dsb_min="1"
++                app:dsb_progressColor="@color/colorvesinh" />
++        </LinearLayout>
++
++        <LinearLayout
++            android:id="@+id/linear3"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:gravity="start|top"
++            android:orientation="vertical">
++
++            <TextView
++                android:id="@+id/frg_vote_txt_pv"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:text="@string/text_ratepv"
++                android:textColor="@color/colorphucvu"
++                android:textSize="20sp" />
++
++            <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
++                android:id="@+id/frg_vote_slide_phucvu"
++                android:layout_width="match_parent"
++                android:layout_height="match_parent"
++                app:dsb_indicatorColor="@color/colorphucvu"
++                app:dsb_max="10"
++                app:dsb_min="1"
++                app:dsb_progressColor="@color/colorphucvu" />
++        </LinearLayout>
++
++        <Button
++            android:id="@+id/frg_vote_btn_vote"
++            style="@style/Widget.AppCompat.Button.Borderless.Colored"
++            android:layout_width="100dp"
++            android:layout_height="wrap_content"
++            android:layout_gravity="bottom|end"
++            android:text="@string/text_vote" />
++    </LinearLayout>
++
++</FrameLayout>
+Index: app/src/main/java/com/app/ptt/comnha/PostFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/app/ptt/comnha/PostFragment.java	(date 1476626609000)
++++ app/src/main/java/com/app/ptt/comnha/PostFragment.java	(revision )
+@@ -1,21 +1,32 @@
+ package com.app.ptt.comnha;
+ 
+ 
++import android.app.ProgressDialog;
+ import android.content.Intent;
+ import android.os.Bundle;
++import android.support.design.widget.Snackbar;
+ import android.support.v4.app.Fragment;
++import android.support.v4.app.FragmentManager;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.Button;
+ import android.widget.EditText;
++import android.widget.Toast;
+ 
+ import com.app.ptt.comnha.Classes.Posts;
++import com.app.ptt.comnha.Classes.Times;
++import com.app.ptt.comnha.FireBase.Post;
+ import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
++import com.app.ptt.comnha.SingletonClasses.DoRate;
+ import com.app.ptt.comnha.SingletonClasses.LoginSession;
+ import com.firebase.client.Firebase;
++import com.firebase.client.FirebaseError;
+ 
++import java.util.HashMap;
++import java.util.Map;
+ 
++
+ /**
+  * A simple {@link Fragment} subclass.
+  */
+@@ -24,12 +35,14 @@
+     EditText edt_title, edt_content;
+     Posts posts;
+     static final int PICK_LOCATION_REQUEST = 1;
++    ProgressDialog mProgressDialog;
++    Post newPost;
+ 
+     public PostFragment() {
+         // Required empty public constructor
+     }
+ 
+-    Firebase dbRef;
++    Firebase ref;
+ 
+     @Override
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+@@ -37,47 +50,9 @@
+         // Inflate the layout for this fragment
+         View view = inflater.inflate(R.layout.fragment_post, container, false);
+         anhXa(view);
++        Firebase.setAndroidContext(getActivity());
+         Firebase.setAndroidContext(getContext());
+-//        dbRef=new Firebase("https://com-nha.firebaseio.com/");
+-//        dbRef.child("Posts/-KS-ffaqVs7mfzsCmIyt/LoaiPost").addChildEventListener(new ChildEventListener() {
+-//            @Override
+-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+-//                String groupKey=dataSnapshot.getKey();
+-//                Toast.makeText(getContext(),groupKey,Toast.LENGTH_SHORT).show();
+-//                dbRef.child("LoaiPost/"+groupKey+"/name").addListenerForSingleValueEvent(new ValueEventListener() {
+-//                    @Override
+-//                    public void onDataChange(DataSnapshot dataSnapshot) {
+-//                        Toast.makeText(getContext(),dataSnapshot.getValue().toString(),Toast.LENGTH_SHORT).show();
+-//                    }
+-//
+-//                    @Override
+-//                    public void onCancelled(FirebaseError firebaseError) {
+-//
+-//                    }
+-//                });
+-//            }
+-//
+-//            @Override
+-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+-//
+-//            }
+-//
+-//            @Override
+-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+-//
+-//            }
+-//
+-//            @Override
+-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+-//
+-//            }
+-//
+-//            @Override
+-//            public void onCancelled(FirebaseError firebaseError) {
+-//
+-//            }
+-//        });
+-
++        ref = new Firebase(getResources().getString(R.string.firebase_path));
+         return view;
+ 
+     }
+@@ -90,6 +65,20 @@
+         btn_location = (Button) view.findViewById(R.id.btn_choselocat);
+         edt_title = (EditText) view.findViewById(R.id.edt_title);
+         edt_content = (EditText) view.findViewById(R.id.edt_content);
++        btn_vote.setOnClickListener(new View.OnClickListener() {
++            @Override
++            public void onClick(View view) {
++//                Intent intent = new Intent(getActivity(), AdapterActivity.class);
++//                intent.putExtra(getResources().getString(R.string.fragment_CODE),
++//                        getResources().getString(R.string.frag_vote_CODE));
++//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
++//                startActivity(intent);
++                FragmentManager fm = getActivity().getSupportFragmentManager();
++                VoteFragment voteFragment = VoteFragment.newIntance(getResources().getString(R.string.text_vote));
++                voteFragment.show(fm, "fragment_vote");
++
++            }
++        });
+         btn_upImage.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+@@ -103,13 +92,50 @@
+         btn_save.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                posts = new Posts();
+-                posts.setTitle(edt_title.getText().toString());
+-                posts.setLocaID(ChooseLoca.getInstance().getLocaID());
+-                posts.setContent(edt_content.getText().toString());
+-                posts.setUserID(LoginSession.getInstance().getUserID());
+-                posts.setContext(getActivity().getApplicationContext());
+-                posts.createNew();
++                if (edt_title.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getString(R.string.txt_notitle), Snackbar.LENGTH_SHORT).show();
++                } else if (edt_content.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getString(R.string.txt_nocontent), Snackbar.LENGTH_SHORT).show();
++                } else if (ChooseLoca.getInstance().getLocaID().equals("")) {
++                    Snackbar.make(view, getResources().getString(R.string.txt_nochoseloca), Snackbar.LENGTH_SHORT).show();
++                } else {
++                    mProgressDialog = ProgressDialog.show(getActivity(),
++                            getResources().getString(R.string.txt_plzwait),
++                            getResources().getString(R.string.txt_addinpost),
++                            true, true);
++                    newPost = new Post();
++                    newPost.setTitle(edt_title.getText().toString());
++                    newPost.setContent(edt_content.getText().toString());
++                    newPost.setDate(new Times().getTime());
++                    newPost.setTime(new Times().getDate());
++                    newPost.setGia(DoRate.getInstance().getGia());
++                    newPost.setVesinh(DoRate.getInstance().getVesinh());
++                    newPost.setPhucvu(DoRate.getInstance().getPhucvu());
++                    ref.child("Posts").push().setValue(newPost, new Firebase.CompletionListener() {
++                        @Override
++                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
++                            mProgressDialog.dismiss();
++                            if (firebaseError != null) {
++                                Toast.makeText(getActivity(), "Đăng bài bị lỗi" + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
++                            } else {
++                                //thêm vào bảng LocationPost
++                                Map<String, Object> loca = new HashMap<String, Object>();
++                                loca.put(firebase.getKey(), true);
++                                ref.child("LocationPost/" + ChooseLoca.getInstance().getLocaID()).updateChildren(loca);
++                                //thêm vào bảng UserPost
++                                Map<String, Object> user = new HashMap<String, Object>();
++                                user.put(firebase.getKey(), true);
++                                ref.child("UserPost/" + LoginSession.getInstance().getUserID()).updateChildren(user);
++                                //thêm vào PostUser
++                                Map<String, Object> post = new HashMap<String, Object>();
++                                post.put("userID", LoginSession.getInstance().getUserID());
++                                ref.child("PostUser/" + firebase.getKey()).updateChildren(post);
++                                getActivity().finish();
++                                Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
++                            }
++                        }
++                    });
++                }
+             }
+         });
+         btn_location.setOnClickListener(new View.OnClickListener() {
+Index: app/src/main/res/layout/fragment_chooseloca.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_chooseloca.xml	(date 1476626609000)
++++ app/src/main/res/layout/fragment_chooseloca.xml	(revision )
+@@ -1,13 +1,14 @@
+ <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+-    android:layout_height="match_parent"
++    android:layout_height="wrap_content"
++    android:scrollbars="vertical"
+     tools:context="com.app.ptt.comnha.ChooselocaFragment">
++
+     <android.support.v7.widget.RecyclerView
+-        android:scrollbarStyle="insideInset"
+         android:id="@+id/recyclerView_chooseloca"
+-        android:scrollbars="vertical"
+         android:layout_width="match_parent"
+-        android:layout_height="wrap_content">
+-    </android.support.v7.widget.RecyclerView>
++        android:layout_height="600dp"
++        android:scrollbarStyle="insideInset"
++        android:scrollbars="vertical" />
+ </FrameLayout>
+Index: app/src/main/res/values/dimens.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/dimens.xml	(date 1476626609000)
++++ app/src/main/res/values/dimens.xml	(revision )
+@@ -24,4 +24,7 @@
+     <dimen name="edt_ngsinh_width">80dp</dimen>
+     <dimen name="edt_ngsinh_height">50dp</dimen>
+     <dimen name="cardv_sign_width">330dp</dimen>
++    <dimen name="layout_popup_width">350dp</dimen>
++    <dimen name="popup_width">300dp</dimen>
++    <dimen name="popup_height">315dp</dimen>
+ </resources>
+Index: app/src/main/res/layout/fragment_addloca.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_addloca.xml	(date 1476626609000)
++++ app/src/main/res/layout/fragment_addloca.xml	(revision )
+@@ -1,196 +1,216 @@
+ <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:fab="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+-    android:layout_width="match_parent"
++    android:layout_width="@dimen/layout_popup_width"
+     android:layout_height="500dp"
+     android:layout_gravity="center"
+     tools:context="com.app.ptt.comnha.AddlocaFragment">
+ 
++    <RelativeLayout
++        android:layout_width="match_parent"
++        android:layout_height="505dp"
++        android:layout_gravity="center"
++        android:gravity="center"
++        android:orientation="vertical"
++        android:paddingTop="10dp">
++
++        <LinearLayout
++            android:gravity="center"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent">
++
+-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
++            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
++                android:id="@+id/card_addloca"
+-        android:layout_width="@dimen/cardv_sign_width"
+-        android:layout_height="wrap_content"
++                android:layout_width="@dimen/cardv_sign_width"
++                android:layout_height="wrap_content"
+-        android:layout_gravity="center"
++                android:focusableInTouchMode="true"
++                android:paddingBottom="100dp"
+-        card_view:cardCornerRadius="5dp"
+-        card_view:cardElevation="5dp">
++                card_view:cardCornerRadius="5dp"
++                card_view:cardElevation="5dp">
+ 
+-        <LinearLayout
+-            android:layout_width="match_parent"
+-            android:layout_height="wrap_content"
+-            android:orientation="vertical">
++                <LinearLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:orientation="vertical">
+ 
+-            <LinearLayout
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:background="@color/colorAccent"
+-                android:gravity="center_horizontal"
+-                android:orientation="vertical">
++                    <LinearLayout
++                        android:layout_width="match_parent"
++                        android:layout_height="wrap_content"
++                        android:background="@color/colorAccent"
++                        android:gravity="center_horizontal"
++                        android:orientation="vertical">
+ 
+-                <ImageView
++                        <ImageView
+-                    android:id="@+id/img"
++                            android:id="@+id/frg_addloca_ic"
+-                    android:layout_width="wrap_content"
+-                    android:layout_height="wrap_content"
+-                    android:layout_gravity="center_horizontal"
+-                    android:layout_marginTop="10dp"
+-                    android:background="@drawable/ic_logo" />
++                            android:layout_width="wrap_content"
++                            android:layout_height="wrap_content"
++                            android:layout_gravity="center_horizontal"
++                            android:layout_marginTop="10dp"
++                            android:background="@drawable/ic_logo" />
+ 
+-                <TextView
+-                    android:layout_width="wrap_content"
+-                    android:layout_height="wrap_content"
+-                    android:text="@string/action_addloca"
+-                    android:textAllCaps="true"
+-                    android:textColor="@android:color/white"
+-                    android:textSize="35sp" />
+-            </LinearLayout>
++                        <TextView
++                            android:layout_width="wrap_content"
++                            android:layout_height="wrap_content"
++                            android:text="@string/action_addloca"
++                            android:textAllCaps="true"
++                            android:textColor="@android:color/white"
++                            android:textSize="35sp" />
++                    </LinearLayout>
+ 
+-            <LinearLayout
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:orientation="vertical"
+-                android:padding="5dp">
++                    <LinearLayout
++                        android:layout_width="match_parent"
++                        android:layout_height="wrap_content"
++                        android:orientation="vertical"
++                        android:padding="5dp">
+ 
+-                <android.support.design.widget.TextInputLayout
+-                    android:layout_width="match_parent"
+-                    android:layout_height="match_parent">
++                        <android.support.design.widget.TextInputLayout
++                            android:layout_width="match_parent"
++                            android:layout_height="match_parent">
+ 
+-                    <EditText
+-                        android:id="@+id/frg_addloction_edt_tenquan"
+-                        android:layout_width="match_parent"
+-                        android:layout_height="wrap_content"
+-                        android:gravity="start|top"
+-                        android:hint="@string/text_tenquan"
+-                        android:inputType="textEmailAddress" />
+-                </android.support.design.widget.TextInputLayout>
++                            <EditText
++                                android:id="@+id/frg_addloction_edt_tenquan"
++                                android:layout_width="match_parent"
++                                android:layout_height="wrap_content"
++                                android:gravity="start|top"
++                                android:hint="@string/text_tenquan"
++                                android:inputType="textEmailAddress" />
++                        </android.support.design.widget.TextInputLayout>
+ 
+ 
+-                <android.support.design.widget.TextInputLayout
+-                    android:layout_width="match_parent"
+-                    android:layout_height="match_parent">
++                        <android.support.design.widget.TextInputLayout
++                            android:layout_width="match_parent"
++                            android:layout_height="match_parent">
+ 
+-                    <EditText
+-                        android:id="@+id/frg_addloction_edt_diachi"
+-                        android:layout_width="match_parent"
+-                        android:layout_height="wrap_content"
+-                        android:gravity="start|top"
+-                        android:hint="@string/text_address"
+-                        android:inputType="textPostalAddress" />
+-                </android.support.design.widget.TextInputLayout>
++                            <EditText
++                                android:id="@+id/frg_addloction_edt_diachi"
++                                android:layout_width="match_parent"
++                                android:layout_height="wrap_content"
++                                android:gravity="start|top"
++                                android:hint="@string/text_address"
++                                android:inputType="textPostalAddress" />
++                        </android.support.design.widget.TextInputLayout>
+ 
+-                <android.support.design.widget.TextInputLayout
+-                    android:layout_width="match_parent"
+-                    android:layout_height="match_parent">
++                        <android.support.design.widget.TextInputLayout
++                            android:layout_width="match_parent"
++                            android:layout_height="match_parent">
+ 
+-                    <EditText
+-                        android:id="@+id/frg_addloction_edt_sdt"
+-                        android:layout_width="match_parent"
+-                        android:layout_height="match_parent"
+-                        android:hint="@string/text_sdt"
+-                        android:inputType="number" />
+-                </android.support.design.widget.TextInputLayout>
++                            <EditText
++                                android:id="@+id/frg_addloction_edt_sdt"
++                                android:layout_width="match_parent"
++                                android:layout_height="match_parent"
++                                android:hint="@string/text_sdt"
++                                android:inputType="number" />
++                        </android.support.design.widget.TextInputLayout>
+ 
+-                <LinearLayout
+-                    android:layout_width="match_parent"
+-                    android:layout_height="match_parent"
+-                    android:gravity="center_vertical"
+-                    android:orientation="horizontal"
+-                    android:paddingStart="5dp">
++                        <LinearLayout
++                            android:layout_width="match_parent"
++                            android:layout_height="match_parent"
++                            android:gravity="center_vertical"
++                            android:orientation="horizontal"
++                            android:paddingStart="5dp">
+ 
+-                    <TextView
+-                        android:layout_width="wrap_content"
+-                        android:layout_height="wrap_content"
+-                        android:text="@string/text_gia"
+-                        android:textColor="@android:color/black"
+-                        android:textSize="18sp" />
++                            <TextView
++                                android:layout_width="wrap_content"
++                                android:layout_height="wrap_content"
++                                android:text="@string/text_gia"
++                                android:textColor="@android:color/black"
++                                android:textSize="18sp" />
+ 
+-                    <EditText
+-                        android:id="@+id/frg_addloction_edt_giamin"
+-                        android:layout_width="100dp"
+-                        android:layout_height="match_parent"
+-                        android:layout_marginStart="66dp"
+-                        android:gravity="start|top"
+-                        android:hint="@string/text_start"
+-                        android:inputType="number"
+-                        android:textSize="18sp" />
++                            <EditText
++                                android:id="@+id/frg_addloction_edt_giamin"
++                                android:layout_width="100dp"
++                                android:layout_height="match_parent"
++                                android:layout_marginStart="66dp"
++                                android:gravity="start|top"
++                                android:hint="@string/text_start"
++                                android:inputType="number"
++                                android:textSize="18sp" />
+ 
+-                    <TextView
+-                        android:layout_width="wrap_content"
+-                        android:layout_height="wrap_content"
+-                        android:layout_marginStart="10dp"
+-                        android:text="-"
+-                        android:textColor="@android:color/black"
+-                        android:textSize="18sp" />
++                            <TextView
++                                android:layout_width="wrap_content"
++                                android:layout_height="wrap_content"
++                                android:layout_marginStart="10dp"
++                                android:text="-"
++                                android:textColor="@android:color/black"
++                                android:textSize="18sp" />
+ 
+-                    <EditText
+-                        android:id="@+id/frg_addloction_edt_giamax"
+-                        android:layout_width="100dp"
+-                        android:layout_height="wrap_content"
+-                        android:layout_marginStart="10sp"
+-                        android:gravity="start|top"
+-                        android:hint="@string/text_end"
+-                        android:inputType="number" />
+-                </LinearLayout>
++                            <EditText
++                                android:id="@+id/frg_addloction_edt_giamax"
++                                android:layout_width="100dp"
++                                android:layout_height="wrap_content"
++                                android:layout_marginStart="10sp"
++                                android:gravity="start|top"
++                                android:hint="@string/text_end"
++                                android:inputType="number" />
++                        </LinearLayout>
+ 
+ 
+-                <LinearLayout
+-                    android:layout_width="match_parent"
+-                    android:layout_height="wrap_content"
++                        <LinearLayout
++                            android:layout_width="match_parent"
++                            android:layout_height="wrap_content"
+-                    android:orientation="horizontal">
++                            android:orientation="horizontal"
++                            android:paddingBottom="30dp">
+ 
+-                    <TextView
+-                        android:layout_width="wrap_content"
+-                        android:layout_height="wrap_content"
+-                        android:paddingStart="5dp"
+-                        android:text="@string/text_openningTime"
+-                        android:textColor="@android:color/black"
+-                        android:textSize="18sp" />
++                            <TextView
++                                android:layout_width="wrap_content"
++                                android:layout_height="wrap_content"
++                                android:paddingStart="5dp"
++                                android:text="@string/text_openningTime"
++                                android:textColor="@android:color/black"
++                                android:textSize="18sp" />
+ 
+-                    <EditText
+-                        android:id="@+id/frg_addloction_edt_giomo"
+-                        android:layout_width="100dp"
+-                        android:layout_height="wrap_content"
+-                        android:hint="@string/text_start"
+-                        android:inputType="textEmailAddress" />
++                            <EditText
++                                android:id="@+id/frg_addloction_edt_giomo"
++                                android:layout_width="100dp"
++                                android:layout_height="wrap_content"
++                                android:hint="@string/text_start"
++                                android:inputType="textEmailAddress" />
+ 
+-                    <TextView
+-                        android:layout_width="wrap_content"
+-                        android:layout_height="wrap_content"
+-                        android:layout_marginStart="10dp"
+-                        android:text="-"
+-                        android:textColor="@android:color/black"
+-                        android:textSize="18dp" />
++                            <TextView
++                                android:layout_width="wrap_content"
++                                android:layout_height="wrap_content"
++                                android:layout_marginStart="10dp"
++                                android:text="-"
++                                android:textColor="@android:color/black"
++                                android:textSize="18dp" />
+ 
+-                    <EditText
+-                        android:id="@+id/frg_addloction_edt_giodong"
+-                        android:layout_width="100dp"
+-                        android:layout_height="wrap_content"
+-                        android:layout_marginStart="10dp"
+-                        android:hint="@string/text_end"
+-                        android:inputType="textEmailAddress" />
+-                </LinearLayout>
+-            </LinearLayout>
++                            <EditText
++                                android:id="@+id/frg_addloction_edt_giodong"
++                                android:layout_width="100dp"
++                                android:layout_height="wrap_content"
++                                android:layout_marginStart="10dp"
++                                android:hint="@string/text_end"
++                                android:inputType="textEmailAddress" />
++                        </LinearLayout>
++                    </LinearLayout>
++                    <!--<LinearLayout-->
++                    <!--android:layout_width="wrap_content"-->
++                    <!--android:layout_height="match_parent"-->
++                    <!--android:layout_gravity="end"-->
++                    <!--android:gravity="end"-->
++                    <!--android:orientation="horizontal">-->
+ 
+-            <LinearLayout
+-                android:layout_width="wrap_content"
+-                android:layout_height="match_parent"
+-                android:layout_gravity="end"
+-                android:gravity="end"
+-                android:orientation="horizontal">
+-
+-                <Button
+-                    android:id="@+id/frg_addloction_btn_save"
+-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+-                    android:layout_width="95dp"
+-                    android:layout_height="match_parent"
+-                    android:text="@string/text_add" />
+-
+-                <Button
+-                    android:id="@+id/frg_addloction_btn_exit"
+-                    android:layout_width="95dp"
+-                    android:layout_height="match_parent"
+-                    android:text="@string/text_exit"
+-                    android:theme="@style/AppTheme.ButtonExit" />
++                    <!--&lt;!&ndash;<Button&ndash;&gt;-->
++                    <!--&lt;!&ndash;android:id="@+id/frg_addloction_btn_save"&ndash;&gt;-->
++                    <!--&lt;!&ndash;style="@style/Widget.AppCompat.Button.Borderless.Colored"&ndash;&gt;-->
++                    <!--&lt;!&ndash;android:layout_width="95dp"&ndash;&gt;-->
++                    <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
++                    <!--&lt;!&ndash;android:text="@string/text_add" />&ndash;&gt;-->
++                    <!--</LinearLayout>-->
+-            </LinearLayout>
++                </LinearLayout>
+-
+-
+-        </LinearLayout>
+-    </android.support.v7.widget.CardView>
++            </android.support.v7.widget.CardView>
++        </LinearLayout>
+ 
++        <com.github.clans.fab.FloatingActionButton
++            android:id="@+id/frg_addloction_btn_save"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:layout_alignParentBottom="true"
++            android:layout_alignParentStart="true"
++            android:layout_marginStart="60dp"
++            android:src="@drawable/ic_check_white_36dp"
++            app:fab_colorPressed="@color/colorFloat2dark"
++            app:fab_colorNormal="@color/colorFloat2" />
++    </RelativeLayout>
+ </FrameLayout>
+Index: app/src/main/res/layout/app_bar_main2.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/app_bar_main2.xml	(date 1476626609000)
++++ app/src/main/res/layout/app_bar_main2.xml	(revision )
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:fab="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+@@ -16,10 +17,82 @@
+     <!---->
+ 
+     <!--</android.support.design.widget.AppBarLayout>-->
++    <com.github.clans.fab.FloatingActionMenu xmlns:app="http://schemas.android.com/apk/res-auto"
++        xmlns:fab="http://schemas.android.com/apk/res-auto"
++        android:id="@+id/main_fabMenu"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:layout_gravity="bottom|end"
++        android:layout_marginBottom="11dp"
++        android:layout_marginLeft="11dp"
++        android:layout_marginRight="11dp"
++        fab:menu_animationDelayPerItem="55"
++        fab:menu_backgroundColor="@android:color/transparent"
++        fab:menu_buttonSpacing="0dp"
++        fab:menu_colorNormal="@color/colorAccent"
++        fab:menu_colorPressed="@color/colorPrimaryDark"
++        fab:menu_colorRipple="#99d4d4d4"
++        fab:menu_fab_label="@string/text_more"
++        fab:menu_fab_size="normal"
++        fab:menu_icon="@drawable/fab_add"
++        fab:menu_labels_colorNormal="#333"
++        fab:menu_labels_colorPressed="#444"
++        fab:menu_labels_colorRipple="#66efecec"
++        fab:menu_labels_cornerRadius="3dp"
++        fab:menu_labels_ellipsize="none"
++        fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
++        fab:menu_labels_margin="0dp"
++        fab:menu_labels_maxLines="-1"
++        fab:menu_labels_padding="8dp"
++        fab:menu_labels_position="left"
++        fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
++        fab:menu_labels_showShadow="true"
++        fab:menu_labels_singleLine="false"
++        fab:menu_labels_textColor="#f2f1f1"
++        fab:menu_labels_textSize="15sp"
++        fab:menu_openDirection="up"
++        fab:menu_shadowColor="#66101010"
++        fab:menu_shadowRadius="1dp"
++        fab:menu_shadowXOffset="0.5dp"
++        fab:menu_shadowYOffset="0.5dp"
++        fab:menu_showShadow="true">
++
++        <com.github.clans.fab.FloatingActionButton
++            android:id="@+id/main_fabitem3"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:src="@drawable/ic__review_white_18dp"
++            app:fab_colorNormal="@color/colorFloat2"
++            app:fab_colorPressed="@color/colorFloat2"
++            fab:fab_label="@string/action_addpost"
++            fab:fab_size="mini" />
++
++        <com.github.clans.fab.FloatingActionButton
++            android:id="@+id/main_fabitem2"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:src="@drawable/ic_add_location_white_18dp"
++            app:fab_colorNormal="@color/colorvesinh"
++            app:fab_colorPressed="@color/colorvesinh"
++            fab:fab_label="@string/action_addloca"
++            fab:fab_size="mini" />
++
++        <com.github.clans.fab.FloatingActionButton
++            android:id="@+id/main_fabitem1"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:src="@drawable/ic_add_a_photo_white_18dp"
++            app:fab_colorNormal="@color/colorgia"
++            app:fab_colorPressed="@color/colorgia"
++            fab:fab_label="@string/action_uploadphoto"
++            fab:fab_size="mini" />
++    </com.github.clans.fab.FloatingActionMenu>
++
+     <RelativeLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:fitsSystemWindows="true">
++
+         <android.support.v7.widget.Toolbar
+             android:id="@+id/toolbar"
+             android:layout_width="match_parent"
+@@ -27,44 +100,43 @@
+             android:background="?attr/colorPrimary"
+             android:theme="@style/AppTheme.AppBarOverlay"
+             app:popupTheme="@style/AppTheme.PopupOverlay" />
++
+         <FrameLayout
+-            android:layout_below="@id/toolbar"
+             android:id="@+id/frame"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_below="@id/toolbar"
+             android:fitsSystemWindows="false" />
++
+-            <RelativeLayout
+-                android:id="@+id/L_btns"
+-                android:layout_width="wrap_content"
++        <RelativeLayout
++            android:id="@+id/L_btns"
++            android:layout_width="wrap_content"
+-                android:layout_height="wrap_content">
++            android:layout_height="wrap_content"
++            android:fitsSystemWindows="true"
++            android:paddingTop="60dp">
+ 
+-                <Button
+-                    android:id="@+id/btn_search"
+-                    android:layout_width="wrap_content"
+-                    android:layout_height="wrap_content"
++            <Button
++                android:id="@+id/btn_search"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
+-                    android:layout_alignParentBottom="true"
+-                    android:layout_toEndOf="@+id/btn_map"
+-                    android:text="Search" />
++                android:layout_toEndOf="@+id/btn_map"
++                android:text="Search" />
+ 
+-                <Button
+-                    android:id="@+id/btn_map"
+-                    android:layout_width="wrap_content"
+-                    android:layout_height="wrap_content"
++            <Button
++                android:id="@+id/btn_map"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
+-                    android:layout_alignParentBottom="true"
+-                    android:layout_marginStart="13dp"
+-                    android:text="Map" />
++                android:layout_marginStart="13dp"
++                android:text="Map" />
+ 
+-                <Button
+-                    android:id="@+id/btn_load"
+-                    android:layout_width="wrap_content"
+-                    android:layout_height="wrap_content"
++            <Button
++                android:id="@+id/btn_load"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
+-                    android:layout_alignParentBottom="true"
+-                    android:layout_alignParentEnd="true"
++                android:layout_toEndOf="@+id/btn_search"
+-                    android:text="Load" />
+-            </RelativeLayout>
++                android:text="Load" />
++        </RelativeLayout>
+ 
+     </RelativeLayout>
+-
+-
+ 
+ </android.support.design.widget.CoordinatorLayout>
+Index: app/src/main/res/layout/activity_adapter.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_adapter.xml	(date 1476626609000)
++++ app/src/main/res/layout/activity_adapter.xml	(revision )
+@@ -5,13 +5,14 @@
+     android:id="@+id/activity_adapter"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
++    android:fitsSystemWindows="true"
+     android:orientation="vertical"
+     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+     tools:context="com.app.ptt.comnha.AdapterActivity">
+ 
+     <FrameLayout
+         android:id="@+id/frame_adapter"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
+         android:layout_gravity="center" />
+ </android.support.v4.widget.NestedScrollView>
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/colors.xml	(date 1476626609000)
++++ app/src/main/res/values/colors.xml	(revision )
+@@ -5,5 +5,9 @@
+     <color name="colorAccent">#20BF55</color>
+     <color name="colorFloat1">#BA5A31</color>
+     <color name="colorFloat2">#19b8a3</color>
++    <color name="colorFloat2dark">#0a7667</color>
+     <color name="colorbg1">#A0EADE</color>
++    <color name="colorgia">#C40808</color>
++    <color name="colorvesinh">#cdd400</color>
++    <color name="colorphucvu">#189603</color>
+ </resources>
+Index: app/src/main/res/layout/fragment_signup.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_signup.xml	(date 1476626609000)
++++ app/src/main/res/layout/fragment_signup.xml	(revision )
+@@ -190,7 +190,7 @@
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginStart="10dp"
+-                android:text="@string/title_activity_login"
++                android:text="@string/text_signup"
+                 android:textAllCaps="true"
+                 android:textColor="@android:color/white"
+                 android:textSize="45sp" />
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(date 1476626609000)
++++ app/src/main/res/values/strings.xml	(revision )
+@@ -9,6 +9,10 @@
+     <string name="text_start">Từ</string>
+     <string name="text_end">Đến</string>
+     <string name="text_gia">Giá</string>
++    <string name="text_more">Mở rộng</string>
++    <string name="text_rategia">Giá</string>
++    <string name="text_ratevs">Vệ sinh</string>
++    <string name="text_ratepv">Phục vụ</string>
+     <string name="text_save">Save</string>
+     <string name="text_add">Thêm mới</string>
+     <string name="text_address">Địa chỉ</string>
+@@ -30,7 +34,7 @@
+     <string name="text_title">Tiêu đề</string>
+     <string name="text_content">Nội dung</string>
+     <string name="text_upImage">Chọn ảnh</string>
+-    <string name="text_vote">Rate</string>
++    <string name="text_vote">Đánh giá</string>
+     <string name="text_hashtag">Tag</string>
+     <string name="text_select">Chọn</string>
+     <string name="text_taomoi">Tạo mới</string>
+@@ -42,10 +46,7 @@
+     <string name="text_themanh">Thêm ảnh</string>
+     <string name="text_comment">Bình luận</string>
+     <string name="text_like">Thích</string>
+-    <string name="nav_homepage">Trang chủ</string>
+-    <string name="nav_uploadedimg">Ảnh đã đăng</string>
+-    <string name="nav_profile">Thông tin cá nhân</string>
+-    <string name="nav_activity">Activities</string>
++
+     <string name="title_section1">Section 1</string>
+     <string name="title_section2">Section 2</string>
+     <string name="title_section3">Section 3</string>
+@@ -64,6 +65,10 @@
+     <string name="txt_nogia">Warning: Chưa nhập giá</string>
+     <string name="txt_nosdt">Warning: Chưa nhập số điện thoại</string>
+     <string name="txt_noopentime">Warning: Chưa nhập giờ mở cửa</string>
++    <string name="txt_notitle">Warning: Chưa nhập tiêu đề</string>
++    <string name="txt_nocontent">Warning: Chưa nhập nội dung</string>
++    <string name="txt_nochoseloca">Warning: Chưa chọn địa điểm</string>
++    <string name="txt_giawarn">Warning: Giá cuối cùng phải lớn hơn giá bắt đầu</string>
+     <string name="txt_addinlocaerr">Error: Không thể thêm địa điểm mới</string>
+     <string name="txt_plzwait">Please wait &#8230;</string>
+     <string name="txt_logging">Đang đăng nhập &#8230;</string>
+@@ -73,6 +78,14 @@
+     <string name="firebase_path">https://com-nha.firebaseio.com</string>
+     <!--PATH-->
+ 
++    <!--NAV-->
++    <string name="nav_homepage">Trang chủ</string>
++    <string name="nav_map">Bản đồ</string>
++    <string name="nav_uploadedimg">Ảnh đã đăng</string>
++    <string name="nav_profile">Thông tin cá nhân</string>
++    <string name="nav_activity">Activities</string>
++    <!--NAV-->
++
+     <!--CODE-->
+     <string name="DATA_FROM_FRAG">datafromfrag</string>
+     <string name="frag_localist_CODE">localist</string>
+@@ -85,6 +98,7 @@
+     <string name="frg_signup_CODE">signup</string>
+     <string name="frg_signin_CODE">signin</string>
+     <string name="frag_locadetail_CODE">locadetail</string>
++    <string name="frag_vote_CODE">vote</string>
+     <string name="fragment_CODE">FRAGMENTCODE</string>
+     <string name="key_CODE">KEYCODE</string>
+     <string name="keyPost_CODE">KEYPOSTCODE</string>
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(date 1476626609000)
++++ app/build.gradle	(revision )
+@@ -43,5 +43,7 @@
+     compile 'junit:junit:4.12'
+     compile 'com.android.support:cardview-v7:24.2.1'
+     compile 'com.android.support:recyclerview-v7:24.2.1'
++    compile 'org.adw.library:discrete-seekbar:1.0.1'
++    compile 'com.github.clans:fab:1.6.4'
+ }
+ apply plugin: 'com.google.gms.google-services'
+Index: app/src/main/java/com/app/ptt/comnha/AddlocaFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/app/ptt/comnha/AddlocaFragment.java	(date 1476626609000)
++++ app/src/main/java/com/app/ptt/comnha/AddlocaFragment.java	(revision )
+@@ -8,23 +8,25 @@
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+-import android.widget.Button;
+ import android.widget.EditText;
++import android.widget.ImageView;
+ import android.widget.Toast;
+ 
+ import com.app.ptt.comnha.FireBase.Location;
+ import com.firebase.client.Firebase;
+ import com.firebase.client.FirebaseError;
++import com.github.clans.fab.FloatingActionButton;
+ 
+ 
+ /**
+  * A simple {@link Fragment} subclass.
+  */
+-public class AddlocaFragment extends Fragment {
+-    Button btn_save, btn_exit;
++public class AddlocaFragment extends Fragment implements FloatingActionButton.OnClickListener {
++    FloatingActionButton fab_save;
+     EditText edt_tenquan, edt_diachi, edt_timeend, edt_timestart, edt_sdt, edt_giamin, edt_giamax;
+     ProgressDialog mProgressDialog;
+     Firebase ref;
++    ImageView img_ic;
+ 
+     public AddlocaFragment() {
+         // Required empty public constructor
+@@ -50,37 +52,16 @@
+         edt_sdt = (EditText) view.findViewById(R.id.frg_addloction_edt_sdt);
+         edt_giamin = (EditText) view.findViewById(R.id.frg_addloction_edt_giamin);
+         edt_giamax = (EditText) view.findViewById(R.id.frg_addloction_edt_giamax);
+-        btn_save = (Button) view.findViewById(R.id.frg_addloction_btn_save);
+-        btn_exit = (Button) view.findViewById(R.id.frg_addloction_btn_exit);
+-        btn_exit.setOnClickListener(new View.OnClickListener() {
++        fab_save = (FloatingActionButton) view.findViewById(R.id.frg_addloction_btn_save);
++        img_ic = (ImageView) view.findViewById(R.id.frg_addloca_ic);
++        img_ic.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 getActivity().finish();
+             }
+         });
+-        btn_save.setOnClickListener(new View.OnClickListener() {
+-            @Override
+-            public void onClick(View view) {
+-                if (edt_tenquan.getText().toString().trim().equals("")) {
+-                    Snackbar.make(view, getResources().getText(R.string.txt_notenquan), Snackbar.LENGTH_SHORT).show();
+-                } else if (edt_diachi.getText().toString().trim().equals("")) {
+-                    Snackbar.make(view, getResources().getText(R.string.txt_nodiachi), Snackbar.LENGTH_SHORT).show();
+-                } else if (edt_giamin.getText().toString().trim().equals("")) {
+-                    Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
+-                } else if (edt_giamax.getText().toString().trim().equals("")) {
+-                    Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
+-                } else if (edt_sdt.getText().toString().trim().equals("")) {
+-                    Snackbar.make(view, getResources().getText(R.string.txt_nosdt), Snackbar.LENGTH_SHORT).show();
+-                } else if (edt_timestart.getText().toString().trim().equals("")) {
+-                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
+-                } else if (edt_timeend.getText().toString().trim().equals("")) {
+-                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
+-                } else {
+-                    addNewLoca();
++        fab_save.setOnClickListener(this);
+-                }
++    }
+-            }
+-        });
+-    }
+ 
+     private void addNewLoca() {
+         Location newLocation = new Location();
+@@ -109,5 +90,32 @@
+                 }
+             }
+         });
++    }
++
++    @Override
++    public void onClick(View view) {
++        switch (view.getId()) {
++            case R.id.frg_addloction_btn_save:
++                if (edt_tenquan.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getText(R.string.txt_notenquan), Snackbar.LENGTH_SHORT).show();
++                } else if (edt_diachi.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getText(R.string.txt_nodiachi), Snackbar.LENGTH_SHORT).show();
++                } else if (edt_giamin.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
++                } else if (edt_giamax.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
++                } else if (edt_sdt.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getText(R.string.txt_nosdt), Snackbar.LENGTH_SHORT).show();
++                } else if (edt_timestart.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
++                } else if (edt_timeend.getText().toString().trim().equals("")) {
++                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
++                } else if (Long.valueOf(edt_giamax.getText().toString()) <= Long.valueOf(edt_giamin.getText().toString())) {
++                    Snackbar.make(view, getResources().getText(R.string.txt_giawarn), Snackbar.LENGTH_SHORT).show();
++                } else {
++                    addNewLoca();
++                }
++                break;
++        }
+     }
+ }
+Index: app/src/main/java/com/app/ptt/comnha/AdapterActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/app/ptt/comnha/AdapterActivity.java	(date 1476626609000)
++++ app/src/main/java/com/app/ptt/comnha/AdapterActivity.java	(revision )
+@@ -125,6 +125,18 @@
+                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, choosePhotoFragment)
+                         .commit();
+             }
++        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
++            if (findViewById(R.id.frame_adapter) != null) {
++                if (savedInstanceState != null) {
++
++                } else {
++
++                }
++                VoteFragment voteFragment = new VoteFragment();
++                voteFragment.setArguments(getIntent().getExtras());
++                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, voteFragment)
++                        .commit();
++            }
+         }
+     }
+ 
+Index: app/src/main/res/menu/nav.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/menu/nav.xml	(date 1476626609000)
++++ app/src/main/res/menu/nav.xml	(revision )
+@@ -2,8 +2,12 @@
+ <menu xmlns:android="http://schemas.android.com/apk/res/android">
+     <item
+         android:id="@+id/nav_homepage"
+-        android:icon="@drawable/ic_homepage_black_24dp"
++        android:icon="@drawable/ic_map_black_24dp"
+         android:title="@string/nav_homepage" />
++    <item
++        android:id="@+id/nav_map"
++        android:icon="@drawable/ic_homepage_black_24dp"
++        android:title="@string/nav_map" />
+     <group>
+         <item android:title="Trang cá nhân">
+             <menu>
+Index: app/src/main/java/com/app/ptt/comnha/Main2Activity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/app/ptt/comnha/Main2Activity.java	(date 1476626609000)
++++ app/src/main/java/com/app/ptt/comnha/Main2Activity.java	(revision )
+@@ -20,7 +20,6 @@
+ import android.support.v7.app.AppCompatActivity;
+ import android.support.v7.widget.Toolbar;
+ import android.util.Log;
+-import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.View;
+ import android.widget.Button;
+@@ -30,13 +29,15 @@
+ import com.app.ptt.comnha.Modules.Route;
+ import com.app.ptt.comnha.Service.MyService;
+ import com.app.ptt.comnha.SingletonClasses.LoginSession;
++import com.github.clans.fab.FloatingActionButton;
++import com.github.clans.fab.FloatingActionMenu;
+ import com.google.firebase.auth.FirebaseAuth;
+ import com.google.firebase.auth.FirebaseUser;
+ 
+ import java.util.ArrayList;
+ 
+ public class Main2Activity extends AppCompatActivity
+-        implements NavigationView.OnNavigationItemSelectedListener {
++        implements NavigationView.OnNavigationItemSelectedListener, FloatingActionButton.OnClickListener {
+     public static final String mBroadcast = "mBroadcastComplete";
+     private ProgressDialog progressDialog;
+     private int progressBarStatus = 0;
+@@ -50,15 +51,10 @@
+     private IntentFilter mIntentFilter;
+     FirebaseAuth mAuth;
+     private FirebaseAuth.AuthStateListener mAuthListener;
+-<<<<<<< Updated upstream
+     int temp, count;
+     int isComplete = 0;
+-    public String userID;
+-=======
+     int fileSize;
+-    boolean isComplete = false;
+     public String userID, username, email;
+->>>>>>> Stashed changes
+     ArrayList<Route> routes;
+ 
+     private Toolbar mtoolbar;
+@@ -66,6 +62,8 @@
+     private ActionBarDrawerToggle mtoggle;
+     private NavigationView mnavigationView;
+     TextView txt_email, txt_un;
++    FloatingActionMenu fabMenu;
++    FloatingActionButton fabitem1, fabitem2, fabitem3;
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -117,26 +115,20 @@
+     }
+ 
+     void anhXa() {
+-
++        fabMenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
++        fabitem1 = (FloatingActionButton) findViewById(R.id.main_fabitem1);
++        fabitem2 = (FloatingActionButton) findViewById(R.id.main_fabitem2);
++        fabitem3 = (FloatingActionButton) findViewById(R.id.main_fabitem3);
++        fabitem1.setOnClickListener(this);
++        fabitem2.setOnClickListener(this);
++        fabitem3.setOnClickListener(this);
+         btn_map = (Button) findViewById(R.id.btn_map);
+-<<<<<<< Updated upstream
+         btn_search = (Button) findViewById(R.id.btn_search);
+-=======
+-
+-//        btn_search = (Button) findViewById(R.id.btn_search);
+->>>>>>> Stashed changes
+-//        btn_load = (Button) findViewById(R.id.btn_load);
+-
+-//        btn_load.setOnClickListener(new View.OnClickListener() {
+-//            @Override
+-//            public void onClick(View v) {
+-//
+-//            }
+-//        });
++        fabMenu.setClosedOnTouchOutside(true);
+         btn_map.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+-                count=0;
++                count = 0;
+                 routes = myService.returnRoute();
+                 if (routes == null) {
+ 
+@@ -263,10 +255,10 @@
+     }
+ 
+ 
+-
+     @Override
+     protected void onStart() {
+         super.onStart();
++        fabMenu.close(true);
+         mAuth.addAuthStateListener(mAuthListener);
+         doBinService();
+ //        gpsService.init();
+@@ -368,36 +360,7 @@
+         }
+     }
+ 
+-    @Override
+-    public boolean onCreateOptionsMenu(Menu menu) {
+-        // Inflate the menu; this adds items to the action bar if it is present.
+-        getMenuInflater().inflate(R.menu.options, menu);
+-        return true;
+-    }
+ 
+-    @Override
+-    public boolean onOptionsItemSelected(MenuItem item) {
+-        switch (item.getItemId()) {
+-            case R.id.action_addloca:
+-                Intent intent = new Intent(Main2Activity.this, AdapterActivity.class);
+-                intent.putExtra(getString(R.string.fragment_CODE),
+-                        getString(R.string.frag_addloca_CODE));
+-                startActivity(intent);
+-                break;
+-            case R.id.action_addpost:
+-                Intent intent1 = new Intent(Main2Activity.this, AdapterActivity.class);
+-                intent1.putExtra(getString(R.string.fragment_CODE),
+-                        getString(R.string.frag_addpost_CODE));
+-                startActivity(intent1);
+-                break;
+-            case R.id.action_uploadPhoto:
+-
+-                break;
+-        }
+-        return true;
+-//        return super.onOptionsItemSelected(item);
+-    }
+-
+     @SuppressWarnings("StatementWithEmptyBody")
+     @Override
+     public boolean onNavigationItemSelected(MenuItem item) {
+@@ -431,5 +394,25 @@
+         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+         mdrawer.closeDrawer(GravityCompat.START);
+         return true;
++    }
++
++    @Override
++    public void onClick(View view) {
++        switch (view.getId()) {
++            case R.id.main_fabitem3://đăng review
++                Intent intent1 = new Intent(Main2Activity.this, AdapterActivity.class);
++                intent1.putExtra(getString(R.string.fragment_CODE),
++                        getString(R.string.frag_addpost_CODE));
++                startActivity(intent1);
++                break;
++            case R.id.main_fabitem2://thêm địa điểm
++                Intent intent = new Intent(Main2Activity.this, AdapterActivity.class);
++                intent.putExtra(getString(R.string.fragment_CODE),
++                        getString(R.string.frag_addloca_CODE));
++                startActivity(intent);
++                break;
++            case R.id.main_fabitem1://đăng ảnh
++                break;
++        }
+     }
+ }
