@@ -27,4 +27,6 @@
     <dimen name="layout_popup_width">350dp</dimen>
     <dimen name="popup_width">300dp</dimen>
     <dimen name="popup_height">315dp</dimen>
+    <dimen name="cardv_elevation">2dp</dimen>
+    <dimen name="cardv_cornerRadius">5dp</dimen>
 </resources>

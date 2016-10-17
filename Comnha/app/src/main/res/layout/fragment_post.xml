@@ -1,23 +1,74 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:id="@+id/frg_post"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     tools:context="com.app.ptt.comnha.PostFragment">
+
+
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/L_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/frg_post_cardv_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            card_view:cardCornerRadius="@dimen/cardv_cornerRadius"
+            card_view:cardElevation="@dimen/cardv_elevation">
 
-            <Button
-                android:id="@+id/btn_choselocat"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/text_chooseLocation" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/frg_post_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/ic_logo" />
+
+                <LinearLayout
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:maxLength="25"
+                        android:id="@+id/frg_post_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_chooseLocation"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:maxLength="25"
+                        android:id="@+id/frg_post_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_chooseLocation"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/L_1"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/frg_post_cardv_location"
+            android:orientation="vertical">
 
             <EditText
                 android:id="@+id/edt_title"
@@ -33,40 +84,84 @@
                 android:gravity="top"
                 android:hint="@string/text_content"
                 android:inputType="textMultiLine" />
+
             <Button
                 android:id="@+id/btn_save"
-                android:text="@string/text_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="100dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/L_1"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_upImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_upImage" />
-
-            <Button
-                android:id="@+id/btn_hashtag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_hashtag" />
-
-            <Button
-                android:id="@+id/btn_vote"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_vote" />
+                android:text="@string/text_save" />
         </LinearLayout>
     </RelativeLayout>
 
+    <com.github.clans.fab.FloatingActionMenu xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/frg_post_fabMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|end"
+        android:paddingBottom="20dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="0dp"
+        fab:menu_animationDelayPerItem="55"
+        fab:menu_backgroundColor="@android:color/transparent"
+        fab:menu_buttonSpacing="0dp"
+        fab:menu_colorNormal="@color/colorgia"
+        fab:menu_colorPressed="@color/colorgia"
+        fab:menu_colorRipple="#99d4d4d4"
+        fab:menu_fab_label="@string/text_more"
+        fab:menu_fab_size="normal"
+        fab:menu_icon="@drawable/fab_add"
+        fab:menu_labels_colorNormal="#333"
+        fab:menu_labels_colorPressed="#444"
+        fab:menu_labels_colorRipple="#66efecec"
+        fab:menu_labels_cornerRadius="3dp"
+        fab:menu_labels_ellipsize="none"
+        fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+        fab:menu_labels_margin="0dp"
+        fab:menu_labels_maxLines="-1"
+        fab:menu_labels_padding="8dp"
+        fab:menu_labels_position="left"
+        fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+        fab:menu_labels_showShadow="true"
+        fab:menu_labels_singleLine="false"
+        fab:menu_labels_textColor="#f2f1f1"
+        fab:menu_labels_textSize="15sp"
+        fab:menu_openDirection="up"
+        fab:menu_shadowColor="#66101010"
+        fab:menu_shadowRadius="1dp"
+        fab:menu_shadowXOffset="0.5dp"
+        fab:menu_shadowYOffset="0.5dp"
+        fab:menu_showShadow="true">
 
-</FrameLayout>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/frg_post_fabchoseloca"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chooseloca_white_18dp"
+            app:fab_colorNormal="@color/colorFloat2dark"
+            app:fab_colorPressed="@color/colorFloat2dark"
+            fab:fab_label="@string/text_chooseLocation"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/frg_post_fabchoseimg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_a_photo_white_18dp"
+            app:fab_colorNormal="@color/colorvesinh"
+            app:fab_colorPressed="@color/colorvesinh"
+            fab:fab_label="@string/text_upImage"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/frg_post_fabrate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic__review_white_18dp"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimary"
+            fab:fab_label="@string/text_vote"
+            fab:fab_size="mini" />
+    </com.github.clans.fab.FloatingActionMenu>
+
+</android.support.design.widget.CoordinatorLayout>

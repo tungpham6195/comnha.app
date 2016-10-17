@@ -80,7 +80,7 @@ public class Main2Activity extends AppCompatActivity
         mnavigationView.setNavigationItemSelectedListener(this);
         View header = mnavigationView.getHeaderView(0);
         txt_email = (TextView) header.findViewById(R.id.nav_head_email);
-
+        txt_un = (TextView) header.findViewById(R.id.nav_head_username);
         this.savedInstanceState = savedInstanceState;
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcast);
@@ -91,16 +91,18 @@ public class Main2Activity extends AppCompatActivity
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-
                 if (user != null) {
                     userID = user.getUid();
                     Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getEmail(), Toast.LENGTH_SHORT).show();
                     LoginSession.getInstance().setUserID(userID);
                     LoginSession.getInstance().setEmail(user.getEmail());
-                    txt_email.setText(user.getEmail());
+                    txt_email.setText(getResources().getString(R.string.text_hello));
+                    txt_un.setText(user.getEmail());
                     Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getUid());
                     Log.i("email", LoginSession.getInstance().getEmail());
                 } else {
+                    txt_email.setText(getResources().getString(R.string.text_hello));
+                    txt_un.setText(getResources().getString(R.string.text_user));
                     userID = "";
                     LoginSession.getInstance().setUserID(null);
                     LoginSession.getInstance().setEmail(null);
@@ -299,7 +301,7 @@ public class Main2Activity extends AppCompatActivity
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
-            case R.id.nav_uploadedimg:
+            case R.id.nav_activity:
                 break;
             case R.id.nav_share:
                 break;

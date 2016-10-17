@@ -73,6 +73,8 @@ public class ChooselocaFragment extends Fragment {
                 String key = list.get(position).getLocaID();
                 passingData.passData(key);
                 ChooseLoca.getInstance().setLocaID(key);
+                ChooseLoca.getInstance().setName(list.get(position).getName());
+                ChooseLoca.getInstance().setAddress(list.get(position).getDiachi());
                 getActivity().finish();
             }
         }));

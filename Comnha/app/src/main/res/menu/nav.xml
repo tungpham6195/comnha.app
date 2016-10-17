@@ -16,9 +16,9 @@
                     android:icon="@drawable/ic_account_black_24dp"
                     android:title="@string/nav_profile" />
                 <item
-                    android:id="@+id/nav_uploadedimg"
-                    android:icon="@drawable/ic_menu_gallery"
-                    android:title="@string/nav_uploadedimg" />
+                    android:id="@+id/nav_activity"
+                    android:icon="@drawable/ic_activity_64"
+                    android:title="@string/nav_activities" />
             </menu>
         </item>
     </group>

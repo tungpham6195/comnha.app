@@ -44,9 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="11dp"
-        android:layout_marginLeft="11dp"
-        android:layout_marginRight="11dp"
+        android:paddingBottom="20dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
         fab:menu_animationDelayPerItem="55"
         fab:menu_backgroundColor="@android:color/transparent"
         fab:menu_buttonSpacing="0dp"
@@ -108,6 +108,4 @@
             fab:fab_label="@string/action_uploadphoto"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
-
-
 </android.support.design.widget.CoordinatorLayout>

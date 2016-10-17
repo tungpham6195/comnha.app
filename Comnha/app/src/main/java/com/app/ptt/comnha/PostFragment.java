@@ -7,11 +7,14 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.Posts;
@@ -22,6 +25,8 @@ import com.app.ptt.comnha.SingletonClasses.DoRate;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,13 +35,17 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PostFragment extends Fragment {
-    Button btn_save, btn_upImage, btn_tag, btn_vote, btn_location;
+public class PostFragment extends Fragment implements FloatingActionButton.OnClickListener {
+    Button btn_save;
+    ImageView img;
+    TextView txt_name, txt_address;
     EditText edt_title, edt_content;
     Posts posts;
     static final int PICK_LOCATION_REQUEST = 1;
     ProgressDialog mProgressDialog;
     Post newPost;
+    FloatingActionButton fab_choseloca, fab_addphoto, fab_rate;
+    FloatingActionMenu fab_menu;
 
     public PostFragment() {
         // Required empty public constructor
@@ -58,46 +67,50 @@ public class PostFragment extends Fragment {
     }
 
     void anhXa(View view) {
+        img = (ImageView) view.findViewById(R.id.frg_post_img);
+        txt_name = (TextView) view.findViewById(R.id.frg_post_name);
+        txt_address = (TextView) view.findViewById(R.id.frg_post_address);
         btn_save = (Button) view.findViewById(R.id.btn_save);
-        btn_upImage = (Button) view.findViewById(R.id.btn_upImage);
-        btn_tag = (Button) view.findViewById(R.id.btn_hashtag);
-        btn_vote = (Button) view.findViewById(R.id.btn_vote);
-        btn_location = (Button) view.findViewById(R.id.btn_choselocat);
+        fab_choseloca = (FloatingActionButton) view.findViewById(R.id.frg_post_fabchoseloca);
+        fab_addphoto = (FloatingActionButton) view.findViewById(R.id.frg_post_fabchoseimg);
+        fab_rate = (FloatingActionButton) view.findViewById(R.id.frg_post_fabrate);
+        fab_menu = (FloatingActionMenu) view.findViewById(R.id.frg_post_fabMenu);
         edt_title = (EditText) view.findViewById(R.id.edt_title);
         edt_content = (EditText) view.findViewById(R.id.edt_content);
-        btn_vote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent intent = new Intent(getActivity(), AdapterActivity.class);
-//                intent.putExtra(getResources().getString(R.string.fragment_CODE),
-//                        getResources().getString(R.string.frag_vote_CODE));
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(intent);
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                VoteFragment voteFragment = VoteFragment.newIntance(getResources().getString(R.string.text_vote));
-                voteFragment.show(fm, "fragment_vote");
+        fab_addphoto.setOnClickListener(this);
+        fab_choseloca.setOnClickListener(this);
+        fab_rate.setOnClickListener(this);
+        fab_menu.setClosedOnTouchOutside(true);
 
-            }
-        });
-        btn_upImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
-                intent.putExtra(getResources().getString(R.string.fragment_CODE),
-                        getResources().getString(R.string.frag_chooseimg_CODE));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean checloca = false;
+                boolean checkrate = false;
+                try {
+                    if (ChooseLoca.getInstance().getLocaID().equals("")) {
+                        checloca = true;
+                    }
+                } catch (NullPointerException mess) {
+                    checloca = true;
+                }
+                try {
+                    if (DoRate.getInstance().getGia() < 1
+                            && DoRate.getInstance().getVesinh() < 1
+                            && DoRate.getInstance().getPhucvu() < 1) {
+                        checkrate = true;
+                    }
+                } catch (NullPointerException mess) {
+                    checkrate = true;
+                }
                 if (edt_title.getText().toString().trim().equals("")) {
                     Snackbar.make(view, getResources().getString(R.string.txt_notitle), Snackbar.LENGTH_SHORT).show();
                 } else if (edt_content.getText().toString().trim().equals("")) {
                     Snackbar.make(view, getResources().getString(R.string.txt_nocontent), Snackbar.LENGTH_SHORT).show();
-                } else if (ChooseLoca.getInstance().getLocaID().equals("")) {
+                } else if (checloca) {
                     Snackbar.make(view, getResources().getString(R.string.txt_nochoseloca), Snackbar.LENGTH_SHORT).show();
+                } else if (checkrate) {
+                    Snackbar.make(view, getResources().getString(R.string.txt_norate), Snackbar.LENGTH_SHORT).show();
                 } else {
                     mProgressDialog = ProgressDialog.show(getActivity(),
                             getResources().getString(R.string.txt_plzwait),
@@ -138,15 +151,6 @@ public class PostFragment extends Fragment {
                 }
             }
         });
-        btn_location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), AdapterActivity.class);
-                intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frag_chooseloca_CODE));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -156,4 +160,57 @@ public class PostFragment extends Fragment {
     }
 
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.frg_post_fabchoseloca:
+                Intent intent = new Intent(getActivity(), AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frag_chooseloca_CODE));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            case R.id.frg_post_fabchoseimg:
+                Intent intent1 = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
+                intent1.putExtra(getResources().getString(R.string.fragment_CODE),
+                        getResources().getString(R.string.frag_chooseimg_CODE));
+                intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent1);
+                break;
+            case R.id.frg_post_fabrate:
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                VoteFragment voteFragment = VoteFragment.newIntance(getResources().getString(R.string.text_vote));
+                voteFragment.show(fm, "fragment_vote");
+                break;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Log.i("startFrag", "start");
+        try {
+            if (!ChooseLoca.getInstance().getLocaID().isEmpty()) {
+                img.setVisibility(View.VISIBLE);
+                txt_address.setVisibility(View.VISIBLE);
+                txt_address.setText(ChooseLoca.getInstance().getAddress());
+                txt_name.setText(ChooseLoca.getInstance().getName());
+            }
+        } catch (NullPointerException mess) {
+            img.setVisibility(View.GONE);
+            txt_address.setVisibility(View.GONE);
+            Log.e("nullChooseloca", mess.getMessage());
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ChooseLoca.getInstance().setLocaID(null);
+        ChooseLoca.getInstance().setAddress(null);
+        ChooseLoca.getInstance().setName(null);
+        DoRate.getInstance().setVesinh(0);
+        DoRate.getInstance().setGia(0);
+        DoRate.getInstance().setPhucvu(0);
+    }
 }

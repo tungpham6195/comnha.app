@@ -28,7 +28,7 @@
                     android:id="@+id/review_img_user"
                     android:layout_width="@dimen/img_size"
                     android:layout_height="@dimen/img_size"
-                    android:background="@color/colorPrimary" />
+                    android:background="@drawable/ic_logo" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
