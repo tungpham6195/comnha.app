@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"
-            android:fitsSystemWindows="false" />
+            android:fitsSystemWindows="true" />
     </RelativeLayout>
 
     <com.github.clans.fab.FloatingActionMenu xmlns:app="http://schemas.android.com/apk/res-auto"
