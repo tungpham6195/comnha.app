@@ -78,15 +78,6 @@
         fab:menu_shadowYOffset="0.3dp"
         fab:menu_showShadow="true">
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/main_fabitem4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic__review_white_18dp"
-            app:fab_colorNormal="@color/colorFloat2"
-            app:fab_colorPressed="@color/colorFloat2"
-            fab:fab_label="@string/action_map"
-            fab:fab_size="mini" />
-        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/main_fabitem3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
