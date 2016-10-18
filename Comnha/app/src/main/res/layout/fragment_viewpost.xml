@@ -4,162 +4,164 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.app.ptt.comnha.ViewpostFragment">
-
-    <RelativeLayout
-        android:id="@+id/parentR"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/mainL"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/parentR"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/mainL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/frg_viewrev_img_user"
-                    android:layout_width="@dimen/img_size"
-                    android:layout_height="@dimen/img_size"
-                    android:background="@color/colorPrimary" />
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="7dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/frg_viewrev_img_user"
+                        android:layout_width="@dimen/img_size"
+                        android:layout_height="@dimen/img_size"
+                        android:background="@color/colorPrimary" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/frg_viewrev_txtv_username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Android User"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/frg_viewrev_txtv_postdate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="20/11/2016"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/frg_viewrev_txtv_username"
+                        android:id="@+id/frg_viewrev_txtv_tittle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Android User"
+                        android:text="Tittle"
                         android:textColor="@android:color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/frg_viewrev_txtv_postdate"
+                        android:id="@+id/frg_viewrev_txtv_content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="20/11/2016"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:layout_marginTop="5dp"
+                        android:text="Content"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/frg_viewrev_txtv_likenumb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="20 likes"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/frg_viewrev__btn_like"
+                            android:layout_width="@dimen/linear_diem"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/frg_viewrev_txtv_like"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/text_like"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/frg_viewrev_btn_comment"
+                            android:layout_width="@dimen/linear_diem"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/frg_viewrev_txtv_comment"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/text_comment"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
+
+
             </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/frg_viewrev_rcyler_comments"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_below="@id/mainL"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="7dp"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical">
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_below="@id/frg_viewrev_rcyler_comments"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/frg_viewrev_txtv_tittle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tittle"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/frg_viewrev_edt_comment"
+                    android:layout_width="320dp"
+                    android:layout_height="50dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/txt_writecomment"
+                    android:inputType="textMultiLine" />
 
-                <TextView
-                    android:id="@+id/frg_viewrev_txtv_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="Content"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/frg_viewrev_txtv_likenumb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="20 likes"
-                    android:textSize="12sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/frg_viewrev__btn_like"
-                        android:layout_width="@dimen/linear_diem"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/frg_viewrev_txtv_like"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:text="@string/text_like"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/frg_viewrev_btn_comment"
-                        android:layout_width="@dimen/linear_diem"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/frg_viewrev_txtv_comment"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:text="@string/text_comment"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                <Button
+                    android:id="@+id/frg_viewrev_btn_sendcomment"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/ic_menu_send" />
             </LinearLayout>
-
-
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/frg_viewrev_rcyler_comments"
-            android:layout_width="match_parent"
-            android:layout_height="430dp"
-            android:layout_below="@id/mainL"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="7dp"
-            android:scrollbarStyle="insideInset"
-            android:scrollbars="vertical" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal|center_vertical"
-            android:layout_below="@id/frg_viewrev_rcyler_comments"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/frg_viewrev_edt_comment"
-                android:layout_width="320dp"
-                android:layout_height="50dp"
-                android:background="@android:color/transparent"
-                android:hint="@string/txt_writecomment"
-                android:inputType="textMultiLine" />
-
-            <Button
-                android:id="@+id/frg_viewrev_btn_sendcomment"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/ic_menu_send" />
-        </LinearLayout>
-    </RelativeLayout>
-
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
 </FrameLayout>

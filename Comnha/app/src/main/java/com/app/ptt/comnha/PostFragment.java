@@ -36,6 +36,7 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  */
 public class PostFragment extends Fragment implements FloatingActionButton.OnClickListener {
+
     Button btn_save;
     ImageView img;
     TextView txt_name, txt_address;

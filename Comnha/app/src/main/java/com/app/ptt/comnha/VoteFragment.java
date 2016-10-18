@@ -28,7 +28,7 @@ public class VoteFragment extends DialogFragment implements View.OnClickListener
     Button btn_vote;
     DiscreteSeekBar mSeekBarGia, mSeekBarVS, mSeekBarPV;
     TextView txt_gia, txt_vs, txt_pv;
-    Long gia, vs, pv;
+    Long gia = (long) 1, vs = (long) 1, pv = (long) 1;
 
     public VoteFragment() {
         // Required empty public constructor
@@ -63,11 +63,16 @@ public class VoteFragment extends DialogFragment implements View.OnClickListener
         txt_gia = (TextView) view.findViewById(R.id.frg_vote_txt_gia);
         txt_vs = (TextView) view.findViewById(R.id.frg_vote_txt_vs);
         txt_pv = (TextView) view.findViewById(R.id.frg_vote_txt_pv);
+        txt_vs = (TextView) view.findViewById(R.id.frg_vote_txt_vs);
+        txt_pv = (TextView) view.findViewById(R.id.frg_vote_txt_pv);
         mSeekBarGia = (DiscreteSeekBar) view.findViewById(R.id.frg_vote_slide_gia);
         mSeekBarVS = (DiscreteSeekBar) view.findViewById(R.id.frg_vote_slide_vesinh);
         mSeekBarPV = (DiscreteSeekBar) view.findViewById(R.id.frg_vote_slide_phucvu);
         btn_vote = (Button) view.findViewById(R.id.frg_vote_btn_vote);
         btn_vote.setOnClickListener(this);
+        txt_pv.setText(getResources().getString(R.string.text_ratepv) + ": " + mSeekBarPV.getMin());
+        txt_vs.setText(getResources().getString(R.string.text_ratevs) + ": " + mSeekBarVS.getMin());
+        txt_gia.setText(getResources().getString(R.string.text_rategia) + ": " + mSeekBarGia.getMin());
         mSeekBarGia.setOnProgressChangeListener(this);
         mSeekBarPV.setOnProgressChangeListener(this);
         mSeekBarVS.setOnProgressChangeListener(this);
@@ -109,13 +114,26 @@ public class VoteFragment extends DialogFragment implements View.OnClickListener
     public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
         switch (seekBar.getId()) {
             case R.id.frg_vote_slide_gia:
-                gia = (long) seekBar.getProgress();
+                try {
+                    gia = (long) seekBar.getProgress();
+
+                } catch (NullPointerException mess) {
+                    gia = (long) 1;
+                }
                 break;
             case R.id.frg_vote_slide_phucvu:
-                pv = (long) seekBar.getProgress();
+                try {
+                    pv = (long) seekBar.getProgress();
+                } catch (NullPointerException mess) {
+                    pv = (long) 1;
+                }
                 break;
             case R.id.frg_vote_slide_vesinh:
-                vs = (long) seekBar.getProgress();
+                try {
+                    vs = (long) seekBar.getProgress();
+                } catch (NullPointerException mess) {
+                    vs = (long) 1;
+                }
                 break;
         }
     }

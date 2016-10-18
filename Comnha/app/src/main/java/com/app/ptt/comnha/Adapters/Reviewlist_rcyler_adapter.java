@@ -24,12 +24,13 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
     LayoutInflater inflater;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txt_un, txt_postdate, txt_tittle, txt_content, txt_likenumb;
+        public TextView txt_un, txt_postdate, txt_tittle, txt_content, txt_likenumb, txt_time;
         public ImageView img_user;
         public LinearLayout btn_like, btn_comment;
 
         public ViewHolder(View view) {
             super(view);
+            txt_time = (TextView) view.findViewById(R.id.review_txtv_time);
             txt_un = (TextView) view.findViewById(R.id.review_txtv_username);
             txt_tittle = (TextView) view.findViewById(R.id.review_txtv_tittle);
             txt_postdate = (TextView) view.findViewById(R.id.review_txtv_postdate);
@@ -58,6 +59,7 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
         holder.txt_tittle.setText(list.get(position).getTitle());
         holder.txt_content.setText(list.get(position).getContent());
         holder.txt_postdate.setText(list.get(position).getDate());
+        holder.txt_time.setText(list.get(position).getTime());
 //        holder.txt_un.setText(list.get(position).getUn());
     }
 

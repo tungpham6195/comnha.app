@@ -72,10 +72,10 @@
         fab:menu_labels_textColor="#f2f1f1"
         fab:menu_labels_textSize="15sp"
         fab:menu_openDirection="up"
-        fab:menu_shadowColor="#66101010"
+        fab:menu_shadowColor="#53101010"
         fab:menu_shadowRadius="1dp"
-        fab:menu_shadowXOffset="0.5dp"
-        fab:menu_shadowYOffset="0.5dp"
+        fab:menu_shadowXOffset="0.3dp"
+        fab:menu_shadowYOffset="0.3dp"
         fab:menu_showShadow="true">
 
         <com.github.clans.fab.FloatingActionButton
