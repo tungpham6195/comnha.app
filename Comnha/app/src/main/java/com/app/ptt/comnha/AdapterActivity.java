@@ -323,6 +323,8 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
 
         Log.i(LOG, "temp= " + temp);
         if (isComplete != 1) {
+            if(isComplete==-1)
+                return 101;
                 while (temp <= 1000000) {
                     temp++;
 

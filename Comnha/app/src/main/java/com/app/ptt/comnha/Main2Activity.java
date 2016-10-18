@@ -279,7 +279,6 @@ public class Main2Activity extends AppCompatActivity
                 mAuth.signOut();
                 break;
             case R.id.nav_map:
-
                 Intent intent2 = new Intent(Main2Activity.this, AdapterActivity.class);
                 intent2.putExtra(getString(R.string.fragment_CODE),
                         getString(R.string.frag_map_CODE));

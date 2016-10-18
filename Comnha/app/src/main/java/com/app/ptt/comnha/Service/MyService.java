@@ -268,6 +268,15 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             }
 
         }
+        else{
+            if (flag == 2) {
+                Log.i(LOG, "SendBroadcast");
+                broadcastIntent.setAction(AdapterActivity.mBroadcast);
+                broadcastIntent.putExtra("LoadingComplete", -1);
+                sendBroadcast(broadcastIntent);
+
+            }
+        }
     }
     @Override
     public void onLocationChanged(Location location) {
