@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_homepage:
                 break;
-            case R.id.nav_uploadedimg:
+            case R.id.nav_activity:
                 break;
             case R.id.nav_share:
                 break;
@@ -377,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                intent.putExtra(getString(R.string.fragment_CODE),
 //                        getString(R.string.frg_signin_CODE));
 //                startActivity(intent);
-                Log.d("signinbtt","clicked");
+                Log.d("signinbtt", "clicked");
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main);

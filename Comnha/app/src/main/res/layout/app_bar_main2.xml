@@ -44,9 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="11dp"
-        android:layout_marginLeft="11dp"
-        android:layout_marginRight="11dp"
+        android:paddingBottom="20dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
         fab:menu_animationDelayPerItem="55"
         fab:menu_backgroundColor="@android:color/transparent"
         fab:menu_buttonSpacing="0dp"
@@ -72,10 +72,10 @@
         fab:menu_labels_textColor="#f2f1f1"
         fab:menu_labels_textSize="15sp"
         fab:menu_openDirection="up"
-        fab:menu_shadowColor="#66101010"
+        fab:menu_shadowColor="#53101010"
         fab:menu_shadowRadius="1dp"
-        fab:menu_shadowXOffset="0.5dp"
-        fab:menu_shadowYOffset="0.5dp"
+        fab:menu_shadowXOffset="0.3dp"
+        fab:menu_shadowYOffset="0.3dp"
         fab:menu_showShadow="true">
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/main_fabitem4"
@@ -116,6 +116,4 @@
             fab:fab_label="@string/action_uploadphoto"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
-
-
 </android.support.design.widget.CoordinatorLayout>

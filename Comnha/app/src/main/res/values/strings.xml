@@ -46,7 +46,8 @@
     <string name="text_themanh">Thêm ảnh</string>
     <string name="text_comment">Bình luận</string>
     <string name="text_like">Thích</string>
-
+    <string name="text_hello">Xin chào</string>
+    <string name="text_user">User</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -68,13 +69,13 @@
     <string name="txt_notitle">Warning: Chưa nhập tiêu đề</string>
     <string name="txt_nocontent">Warning: Chưa nhập nội dung</string>
     <string name="txt_nochoseloca">Warning: Chưa chọn địa điểm</string>
+    <string name="txt_norate">Warning: Chưa đánh giá</string>
     <string name="txt_giawarn">Warning: Giá cuối cùng phải lớn hơn giá bắt đầu</string>
     <string name="txt_addinlocaerr">Error: Không thể thêm địa điểm mới</string>
     <string name="txt_plzwait">Please wait &#8230;</string>
     <string name="txt_logging">Đang đăng nhập &#8230;</string>
     <string name="txt_addinloca">Đang thêm địa điểm mới &#8230;</string>
     <string name="txt_addinpost">Đang đăng review mới &#8230;</string>
-    <string name="txt_tenquan">Tên quán</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <!--PATH-->
@@ -83,6 +84,7 @@
     <string name="nav_homepage">Trang chủ</string>
     <string name="nav_map">Bản đồ</string>
     <string name="nav_uploadedimg">Ảnh đã đăng</string>
+    <string name="nav_activities">Hoạt động</string>
     <string name="nav_profile">Thông tin cá nhân</string>
     <string name="nav_activity">Activities</string>
     <!--NAV-->
@@ -137,8 +139,6 @@
     <string name="action_addpost">Đăng review</string>
     <string name="action_addloca">Thêm địa điểm</string>
     <string name="action_uploadphoto">Đăng ảnh</string>
-    <string name="action_map">Bản đồ</string>
-    <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
