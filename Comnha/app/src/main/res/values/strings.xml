@@ -74,6 +74,7 @@
     <string name="txt_logging">Đang đăng nhập &#8230;</string>
     <string name="txt_addinloca">Đang thêm địa điểm mới &#8230;</string>
     <string name="txt_addinpost">Đang đăng review mới &#8230;</string>
+    <string name="txt_tenquan">Tên quán</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <!--PATH-->
@@ -136,7 +137,7 @@
     <string name="action_addpost">Đăng review</string>
     <string name="action_addloca">Thêm địa điểm</string>
     <string name="action_uploadphoto">Đăng ảnh</string>
-
+    <string name="action_map">Bản đồ</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->

@@ -17,6 +17,8 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.app.ptt.comnha.AdapterActivity;
+import com.app.ptt.comnha.Main2Activity;
 import com.app.ptt.comnha.MainActivity;
 import com.app.ptt.comnha.Manifest;
 import com.app.ptt.comnha.Modules.ConnectionDetector;
@@ -54,7 +56,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     ArrayList<Route> routes;
     ArrayList<String> listPlace;
     Boolean check=false;
-    int sizeOfListData;
+    int flag;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -67,12 +69,12 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
         Log.i(LOG, "onCreate");
     }
     public void startGoogleApi(){
-        if(ConnectionDetector.canGetLocation(getApplicationContext()) &&ConnectionDetector.networkStatus(getApplicationContext())){
+        //if(ConnectionDetector.canGetLocation(getApplicationContext()) &&ConnectionDetector.networkStatus(getApplicationContext())){
             buildGoogleApiClient();
             if(!mGoogleApiClient.isConnected()){
                 mGoogleApiClient.connect();
             }
-        }
+       // }
     }
     public void resetDataLoad(){
         listPlace=new ArrayList<>();
@@ -98,7 +100,6 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     }
     @Override
     public void onDirectionFinderSuccess(ArrayList<Route> routes) {
-
         this.routes=routes;
         Log.i(LOG,"Routes size="+routes.size());
     }
@@ -129,16 +130,18 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     }
     public void getDataInFireBase(){
         Log.i(LOG, "getDataInFireBase");
+        routes=new ArrayList<>();
         Firebase.setAndroidContext(this);
         ref = new Firebase(getString(R.string.firebase_path));
         ref.child(getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //listPlace.add(dataSnapshot.child("diachi").getValue().toString());
+                listPlace.add(dataSnapshot.child("diachi").getValue().toString());
+                //Location location=dataSnapshot.getValue(Location.class);
                 //sizeOfListData=listPlace.size();
                 //loadListPlace(listPlace.get(listPlace.size() - 1));
-                sizeOfListData = 1;
+                flag = 1;
                 check = false;
                 loadListPlace(dataSnapshot.child("diachi").getValue().toString());
                 Log.i(LOG, "Routes.size= " + routes.size());
@@ -147,7 +150,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String  s) {
-                sizeOfListData=1;
+                flag=1;
                 check=false;
                 loadListPlace(dataSnapshot.child("diachi").getValue().toString());
                 Log.i(LOG, "onChildChanged.getDataInFireBase: " + dataSnapshot.child("diachi").getValue().toString());
@@ -168,9 +171,6 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
 
             }
         });
-        Log.i(LOG,"LOAD SUCCESS FULL");
-
-
 
     }
     public class LocalBinder extends Binder {
@@ -214,7 +214,6 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
         }
 
     }
-
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG, "onConnected");
@@ -234,26 +233,42 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
                 this.longtitude = l.getLongitude();
                 Log.i(LOG, "lat1 " + latitude);
                 Log.i(LOG, "lng1" + longtitude);
-
-
+            } else{
+                Log.i(LOG, "Location Error");
+                flag=4;
+                sendBroadcast();
             }
             startLocationUpdate();
     }
-
     @Override
     public void onConnectionSuspended(int i) {
         Log.i(LOG, "onConnectionSuspended " + i);
 
     }
     public void sendBroadcast(){
+        if(flag==4){
+            Log.i(LOG, "SendBroadcast");
+            broadcastIntent.setAction(Main2Activity.mBroadcast);
+            broadcastIntent.putExtra("LocationError",false);
+            sendBroadcast(broadcastIntent);
+        }
         if(routes.size()>0) {
-                Log.i(LOG,"SendBroadcast");
-                broadcastIntent.setAction(MainActivity.mBroadcast);
-                broadcastIntent.putExtra("LoadingComplete",1);
+            if (flag == 2) {
+                Log.i(LOG, "SendBroadcast");
+                broadcastIntent.setAction(AdapterActivity.mBroadcast);
+                broadcastIntent.putExtra("LoadingComplete", 1);
                 sendBroadcast(broadcastIntent);
+
+            }
+            if(flag==3){
+                Log.i(LOG, "SendBroadcast");
+                broadcastIntent.setAction(AdapterActivity.mBroadcast);
+                broadcastIntent.putExtra("LoadingComplete", 0);
+                sendBroadcast(broadcastIntent);
+            }
+
         }
     }
-
     @Override
     public void onLocationChanged(Location location) {
         if (latitude == null && longtitude == null) {
@@ -265,15 +280,15 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             this.latitude = location.getLatitude();
             this.longtitude = location.getLongitude();
             for (String a : listPlace) {
+                routes=new ArrayList<>();
                 loadListPlace(a);
             }
         }
-        Log.i(LOG,"Check="+check+" And size="+sizeOfListData);
-        if (sizeOfListData == 1 && check == false) {
-            sizeOfListData = 3;
-        } else if(sizeOfListData==3 && check == false ) {
-            sizeOfListData=2;
-            check = true;
+        if (flag == 1) {
+            flag = 3;
+            sendBroadcast();
+        } else if(flag==3) {
+            flag=2;
             sendBroadcast();
         }
     }
@@ -300,7 +315,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
 
     private void initLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(2000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }

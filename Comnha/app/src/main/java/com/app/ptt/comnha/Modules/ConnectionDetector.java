@@ -9,6 +9,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 
+import java.util.ArrayList;
+
 /**
  * Created by cuong on 10/16/2016.
  */
@@ -31,6 +33,7 @@ public class ConnectionDetector {
         }
         return false;
     }
+
 
     public static boolean networkStatus(Context mContext) {
         return (ConnectionDetector.isMobileNetworkAvailable(mContext) || ConnectionDetector.isWifiAvailable(mContext));

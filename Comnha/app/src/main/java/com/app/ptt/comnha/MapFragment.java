@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.Modules.Route;
@@ -29,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.vision.text.Text;
 
 import java.util.ArrayList;
 
@@ -38,11 +40,14 @@ public class MapFragment extends Fragment {
     private AutoCompleteTextView acText;
     private ArrayList<Route> list;
     private ArrayList<String> listName;
+    TextView txt_TenQuan,txt_DiaChi,txt_GioMo,txt_DiemGia,txt_DiemPhucVu,txt_DiemVeSinh;
+
     MarkerOptions yourLocation = null;
 
     public void getMethod(ArrayList<Route> list) {
         this.list = new ArrayList<>();
         listName=new ArrayList<>();
+
         if(list!=null &&list.size()>0) {
             for (Route a : list) {
                 listName.add(a.endAddress);
@@ -71,7 +76,7 @@ public class MapFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (list != null &&list.size()>0) {
         supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
@@ -86,8 +91,33 @@ public class MapFragment extends Fragment {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
                         if (googleMap != null) {
-                            googleMap.setMinZoomPreference(6.0f);
-                            googleMap.setMaxZoomPreference(14.0f);
+                            googleMap.getUiSettings().setZoomControlsEnabled(true);
+                            googleMap.getUiSettings().setCompassEnabled(true);
+                            googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                            googleMap.getUiSettings().setRotateGesturesEnabled(true);
+                            googleMap.getUiSettings().setScrollGesturesEnabled(true);
+                            googleMap.getUiSettings().setTiltGesturesEnabled(true);
+                            googleMap.getUiSettings().setZoomGesturesEnabled(true);
+                            googleMap.setTrafficEnabled(true);
+                            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                                @Override
+                                public View getInfoWindow(Marker marker) {
+                                    return null;
+                                }
+
+                                @Override
+                                public View getInfoContents(Marker marker) {
+                                    View view1=getLayoutInflater(savedInstanceState).inflate(R.layout.infowindowlayout,null);
+                                    LatLng latLng=marker.getPosition();
+                                    txt_TenQuan=(TextView) view.findViewById(R.id.txt_TenQuan);
+                                    txt_DiaChi=(TextView)view.findViewById(R.id.txt_DiaChi);
+                                    txt_GioMo=(TextView)view.findViewById(R.id.txt_GioMo);
+                                    txt_DiemGia=(TextView) view.findViewById(R.id.txt_DiemGia);
+                                    txt_DiemPhucVu=(TextView) view.findViewById(R.id.txt_DiemPhucVu);
+                                    txt_DiemVeSinh=(TextView) view.findViewById(R.id.txt_DiemVeSinh);
+                                    return view1;
+                                }
+                            });
                             googleMap.animateCamera(CameraUpdateFactory.zoomIn());
                             Toast.makeText(getContext(), list.size() + "", Toast.LENGTH_LONG).show();
                             Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
@@ -113,6 +143,11 @@ public class MapFragment extends Fragment {
 
                 });
             }
+        }
+    }
+    public void getPosition(Marker marker){
+        if(marker.getPosition()!=yourLocation.getPosition()){
+
         }
     }
 

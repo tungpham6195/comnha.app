@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
@@ -37,23 +38,23 @@ import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FloatingActionButton.OnClickListener {
-    public static final String mBroadcast = "mBroadcastComplete";
-    private ProgressDialog progressDialog;
-    private int progressBarStatus = 0;
-    private Handler progressBarHandler = new Handler();
+
 
     private MyService myService;
     private static final String LOG = "MainActivity2";
     private Boolean isBound = false;
     private Bundle savedInstanceState;
+    public static final String mBroadcast = "mBroadcastComplete";
+    private ProgressDialog progressDialog;
+    private int progressBarStatus = 0;
+    private Handler progressBarHandler = new Handler();
     private IntentFilter mIntentFilter;
+
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    int temp, count;
-    int isComplete = 0;
+
     int fileSize;
     public String userID, username, email;
-    ArrayList<Route> routes;
 
     private Toolbar mtoolbar;
     private DrawerLayout mdrawer;
@@ -61,16 +62,19 @@ public class Main2Activity extends AppCompatActivity
     private NavigationView mnavigationView;
     TextView txt_email, txt_un;
     FloatingActionMenu fabmenu;
-    FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
+    boolean checkConnection=true;
+    FloatingActionButton fab_review, fab_addloca, fab_uploadpho,fab_map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         anhXa();
+
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
-
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mBroadcast);
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mtoggle = new ActionBarDrawerToggle(
                 this, mdrawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -82,10 +86,8 @@ public class Main2Activity extends AppCompatActivity
         txt_email = (TextView) header.findViewById(R.id.nav_head_email);
 
         this.savedInstanceState = savedInstanceState;
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(mBroadcast);
+
         Log.i(LOG, "onCreate");
-        routes = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -111,17 +113,32 @@ public class Main2Activity extends AppCompatActivity
         };
 
     }
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(mBroadcast)) {
+                checkConnection = intent.getBooleanExtra("LocationError", true);
+                Log.i(LOG, "checkConnection=" + checkConnection);
+                if(!checkConnection){
+                    if(!ConnectionDetector.canGetLocation(Main2Activity.this)){
+                            ConnectionDetector.showSettingAlert(Main2Activity.this);
+                    }
+                }
+            }
+        }
+    };
 
     void anhXa() {
         fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
         fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
         fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
         fab_uploadpho = (FloatingActionButton) findViewById(R.id.main_fabitem1);
-
+        fab_map=(FloatingActionButton) findViewById(R.id.main_fabitem4);
         fab_review.setOnClickListener(this);
         fab_addloca.setOnClickListener(this);
         fab_uploadpho.setOnClickListener(this);
         fabmenu.setClosedOnTouchOutside(true);
+        fab_map.setOnClickListener(this);
 
 
 //        btn_search.setOnClickListener(new View.OnClickListener() {
@@ -137,48 +154,7 @@ public class Main2Activity extends AppCompatActivity
 //        });
     }
 
-    public void showToast(final String a) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(Main2Activity.this, a, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
-    public int loadProgress() {
-        Log.i(LOG, "Count= " + count);
-        Log.i(LOG, "temp= " + temp);
-        if (isComplete != 1) {
-            if (count < 15) {
-                count++;
-                while (temp <= 1000000) {
-                    temp++;
-
-                    if (temp == 100000) {
-                        return 10;
-                    } else if (temp == 200000) {
-                        return 20;
-                    } else if (temp == 300000) {
-                        return 30;
-                    } else if (temp == 400000) {
-                        return 40;
-                    } else if (temp == 500000) {
-                        return 50;
-                    } else if (temp == 700000) {
-                        return 70;
-                    } else if (temp == 800000) {
-                        return 80;
-                    }
-                }
-                return 0;
-            } else {
-                return 101;
-            }
-        } else {
-            return 100;
-        }
-    }
 
 
     @Override
@@ -198,19 +174,11 @@ public class Main2Activity extends AppCompatActivity
             startService(intent);
             Log.i("Resume", "Resume");
         }
-        registerReceiver(mReceiver, mIntentFilter);
+        registerReceiver(mReceiver,mIntentFilter);
         Log.i(LOG, "onResume");
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(mBroadcast)) {
-                isComplete = intent.getIntExtra("LoadingComplete", 0);
-                Log.i(LOG, "isComplete=" + isComplete);
-            }
-        }
-    };
+
 
     @Override
     protected void onStop() {
@@ -231,6 +199,7 @@ public class Main2Activity extends AppCompatActivity
 
         }
         unregisterReceiver(mReceiver);
+
         Log.i(LOG, "Pause");
     }
 
@@ -315,7 +284,6 @@ public class Main2Activity extends AppCompatActivity
                 mAuth.signOut();
                 break;
             case R.id.nav_map:
-                openMap();
                 break;
         }
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -340,75 +308,15 @@ public class Main2Activity extends AppCompatActivity
                         getString(R.string.frag_addpost_CODE));
                 startActivity(intent1);
                 break;
+            case R.id.main_fabitem4:
+                Intent intent2 = new Intent(Main2Activity.this, AdapterActivity.class);
+                intent2.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_map_CODE));
+                startActivity(intent2);
+                break;
+
         }
     }
 
-    private void openMap() {
-        count = 0;
-        routes = myService.returnRoute();
-        if (routes == null) {
 
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(true);
-            progressDialog.setMessage("Loading data");
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setProgressStyle(0);
-            progressDialog.setMax(100);
-            progressDialog.show();
-            progressBarStatus = 0;
-            temp = 0;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    myService.getDataInFireBase();
-                    while (progressBarStatus < 100) {
-                        progressBarStatus = loadProgress();
-                        try {
-
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        progressBarHandler.post(new Runnable() {
-                            public void run() {
-                                progressDialog.setProgress(progressBarStatus);
-                            }
-
-                        });
-                        if (progressBarStatus >= 100) {
-                            try {
-                                Thread.sleep(2000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            if (isComplete == 1) {
-                                routes = myService.returnRoute();
-                                MapFragment mapFragment = new MapFragment();
-                                mapFragment.getMethod(routes);
-                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                                transaction.replace(R.id.frame, mapFragment);
-                                transaction.addToBackStack(null);
-                                transaction.commit();
-
-                            }
-                            progressDialog.dismiss();
-                        }
-
-                    }
-                    if (progressBarStatus == 101 && isComplete != 1)
-                        showToast("Lỗi rồi");
-                }
-            }).start();
-
-
-        } else {
-            routes = myService.returnRoute();
-            MapFragment mapFragment = new MapFragment();
-            mapFragment.getMethod(routes);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frame, mapFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
-    }
 }

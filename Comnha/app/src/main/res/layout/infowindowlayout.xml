@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ECEFF1">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_below="@+id/ll1"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:background="#ECEFF1">
+
+        <RelativeLayout
+            android:layout_width="110dp"
+            android:background="@drawable/background_style"
+            android:layout_marginRight="12dp"
+            android:layout_height="100dp">
+
+            <TextView
+                android:text="Giá"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="12dp"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:id="@+id/txt_GiaTien" />
+
+            <TextView
+                android:text="9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="60sp"
+                android:textStyle="bold"
+                android:id="@+id/txt_DiemGia"
+                android:layout_above="@+id/txt_GiaTien"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/colorgia" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="110dp"
+            android:layout_height="100dp"
+            android:background="@drawable/background_style"
+            android:layout_marginRight="12dp">
+
+            <TextView
+                android:text="Phục vụ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="12dp"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:id="@+id/text_PhucVu" />
+
+            <TextView
+                android:text="8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="60sp"
+                android:textStyle="bold"
+                android:id="@+id/txt_DiemPhucVu"
+                android:textColor="@color/colorphucvu"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="110dp"
+            android:layout_height="100dp"
+            android:background="@drawable/background_style">
+
+            <TextView
+                android:text="Vệ sinh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="12dp"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:id="@+id/text_VeSinh" />
+
+            <TextView
+                android:text="8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="60sp"
+                android:textStyle="bold"
+                android:id="@+id/txt_DiemVeSinh"
+                android:layout_above="@+id/text_VeSinh"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/colorvesinh" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll1"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:background="#ECEFF1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_weight="0.18"
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/imageView2"
+            android:background="@mipmap/ic_launcher"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <LinearLayout
+            android:layout_weight="0.8"
+            android:orientation="vertical"
+            android:weightSum="3"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tên quán"
+                android:id="@+id/txt_TenQuan"
+                android:textColor="?attr/actionMenuTextColor"
+                android:textStyle="bold"
+                android:textSize="25sp"/>
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Địa Chỉ"
+                android:id="@+id/txt_DiaChi"
+                android:textSize="15sp"
+                android:textColor="?attr/actionMenuTextColor" />
+            <TextView
+                android:layout_weight="1.15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giờ mở"
+                android:textColor="?attr/actionMenuTextColor"
+                android:id="@+id/txt_GioMo"
+                android:textSize="15sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
