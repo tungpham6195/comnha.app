@@ -26,15 +26,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.Modules.ConnectionDetector;
-import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FloatingActionButton.OnClickListener {
@@ -62,8 +59,8 @@ public class Main2Activity extends AppCompatActivity
     private NavigationView mnavigationView;
     TextView txt_email, txt_un;
     FloatingActionMenu fabmenu;
-    boolean checkConnection=true;
-    FloatingActionButton fab_review, fab_addloca, fab_uploadpho,fab_map;
+    boolean checkConnection = true;
+    FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,15 +112,16 @@ public class Main2Activity extends AppCompatActivity
         };
 
     }
+
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcast)) {
                 checkConnection = intent.getBooleanExtra("LocationError", true);
                 Log.i(LOG, "checkConnection=" + checkConnection);
-                if(!checkConnection){
-                    if(!ConnectionDetector.canGetLocation(Main2Activity.this)){
-                            ConnectionDetector.showSettingAlert(Main2Activity.this);
+                if (!checkConnection) {
+                    if (!ConnectionDetector.canGetLocation(Main2Activity.this)) {
+                        ConnectionDetector.showSettingAlert(Main2Activity.this);
                     }
                 }
             }
@@ -135,12 +133,10 @@ public class Main2Activity extends AppCompatActivity
         fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
         fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
         fab_uploadpho = (FloatingActionButton) findViewById(R.id.main_fabitem1);
-        fab_map=(FloatingActionButton) findViewById(R.id.main_fabitem4);
         fab_review.setOnClickListener(this);
         fab_addloca.setOnClickListener(this);
         fab_uploadpho.setOnClickListener(this);
         fabmenu.setClosedOnTouchOutside(true);
-        fab_map.setOnClickListener(this);
 
 
 //        btn_search.setOnClickListener(new View.OnClickListener() {
@@ -155,8 +151,6 @@ public class Main2Activity extends AppCompatActivity
 //            }
 //        });
     }
-
-
 
 
     @Override
@@ -176,10 +170,9 @@ public class Main2Activity extends AppCompatActivity
             startService(intent);
             Log.i("Resume", "Resume");
         }
-        registerReceiver(mReceiver,mIntentFilter);
+        registerReceiver(mReceiver, mIntentFilter);
         Log.i(LOG, "onResume");
     }
-
 
 
     @Override
@@ -286,6 +279,11 @@ public class Main2Activity extends AppCompatActivity
                 mAuth.signOut();
                 break;
             case R.id.nav_map:
+
+                Intent intent2 = new Intent(Main2Activity.this, AdapterActivity.class);
+                intent2.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_map_CODE));
+                startActivity(intent2);
                 break;
         }
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -309,12 +307,6 @@ public class Main2Activity extends AppCompatActivity
                 intent1.putExtra(getString(R.string.fragment_CODE),
                         getString(R.string.frag_addpost_CODE));
                 startActivity(intent1);
-                break;
-            case R.id.main_fabitem4:
-                Intent intent2 = new Intent(Main2Activity.this, AdapterActivity.class);
-                intent2.putExtra(getString(R.string.fragment_CODE),
-                        getString(R.string.frag_map_CODE));
-                startActivity(intent2);
                 break;
 
         }

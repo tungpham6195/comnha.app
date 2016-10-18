@@ -28,5 +28,10 @@
     <dimen name="popup_width">300dp</dimen>
     <dimen name="popup_height">315dp</dimen>
     <dimen name="cardv_elevation">2dp</dimen>
-    <dimen name="cardv_cornerRadius">5dp</dimen>
+    <dimen name="cardv_cornerRadius">2dp</dimen>
+    <dimen name="cardv_loca_item_margin">7dp</dimen>
+    <dimen name="cardv_loca_item_marginTop">3dp</dimen>
+    <dimen name="cardv_loca_item_marginBot">3dp</dimen>
+    <dimen name="rcyler_paddingTop">3dp</dimen>
+
 </resources>
