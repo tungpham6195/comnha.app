@@ -1,27 +1,19 @@
 package com.app.ptt.comnha.Service;
 
-import android.app.AlertDialog;
 import android.app.Service;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.app.ptt.comnha.AdapterActivity;
 import com.app.ptt.comnha.Main2Activity;
-import com.app.ptt.comnha.MainActivity;
-import com.app.ptt.comnha.Manifest;
-import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.DirectionFinder;
 import com.app.ptt.comnha.Modules.DirectionFinderListener;
 import com.app.ptt.comnha.Modules.Route;
@@ -30,7 +22,6 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -61,7 +52,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     public void onCreate() {
         super.onCreate();
         listPlace=new ArrayList<>();
-        routes=new ArrayList<>();
+        //routes=new ArrayList<>();
         broadcastIntent =new Intent();
         mBinder = new LocalBinder();
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -258,7 +249,6 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
                 broadcastIntent.setAction(AdapterActivity.mBroadcast);
                 broadcastIntent.putExtra("LoadingComplete", 1);
                 sendBroadcast(broadcastIntent);
-
             }
             if(flag==3){
                 Log.i(LOG, "SendBroadcast");
@@ -289,6 +279,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             this.latitude = location.getLatitude();
             this.longtitude = location.getLongitude();
             for (String a : listPlace) {
+                Log.i(LOG,"onLocationChanged");
                 routes=new ArrayList<>();
                 loadListPlace(a);
             }

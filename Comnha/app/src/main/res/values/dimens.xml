@@ -27,11 +27,18 @@
     <dimen name="layout_popup_width">350dp</dimen>
     <dimen name="popup_width">300dp</dimen>
     <dimen name="popup_height">315dp</dimen>
+    <dimen name="text_rate_mark">20sp</dimen>
+    <dimen name="text_rate_txt">10sp</dimen>
     <dimen name="cardv_elevation">2dp</dimen>
     <dimen name="cardv_cornerRadius">2dp</dimen>
     <dimen name="cardv_loca_item_margin">7dp</dimen>
     <dimen name="cardv_loca_item_marginTop">3dp</dimen>
     <dimen name="cardv_loca_item_marginBot">3dp</dimen>
+    <dimen name="cardv_elevation_infowindow">1dp</dimen>
+    <dimen name="cardv_cornerRadius_infowindow">2dp</dimen>
+    <dimen name="cardv_info_width">40dp</dimen>
+    <dimen name="cardv_info_height">40dp</dimen>
+
     <dimen name="rcyler_paddingTop">3dp</dimen>
 
 </resources>

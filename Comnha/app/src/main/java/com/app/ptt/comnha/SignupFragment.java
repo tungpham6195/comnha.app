@@ -1,6 +1,7 @@
 package com.app.ptt.comnha;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -17,12 +18,16 @@ import com.app.ptt.comnha.Classes.Users;
 import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import java.util.Calendar;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignupFragment extends Fragment {
+public class SignupFragment extends Fragment implements DialogInterface.OnCancelListener, DialogInterface.OnDismissListener,
+        DatePickerDialog.OnDateSetListener, View.OnClickListener {
     EditText editText_ho, editText_ten, editText_tenlot, editText_username, editText_email,
             editText_password, editText_confirmPass, editText_birth;
     Button butt_signup, butt_exit;
@@ -30,6 +35,9 @@ public class SignupFragment extends Fragment {
     Users createNewAccount;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    DatePickerDialog dpd;
+    Calendar now;
+    int day, month, year;
 
     public SignupFragment() {
         // Required empty public constructor
@@ -40,6 +48,7 @@ public class SignupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signup, container, false);
+        now = Calendar.getInstance();
         anhXa(view);
         Firebase.setAndroidContext(getContext());
         mAuth = FirebaseAuth.getInstance();
@@ -57,9 +66,78 @@ public class SignupFragment extends Fragment {
                 // ...
             }
         };
-        butt_signup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        return view;
+    }
+
+    private void anhXa(View view) {
+        editText_ho = (EditText) view.findViewById(R.id.editText_ho);
+        editText_ten = (EditText) view.findViewById(R.id.editText_ten);
+        editText_tenlot = (EditText) view.findViewById(R.id.editText_tenLot);
+        editText_username = (EditText) view.findViewById(R.id.editText_username);
+        editText_email = (EditText) view.findViewById(R.id.editText_email);
+        editText_password = (EditText) view.findViewById(R.id.editText_password);
+        editText_confirmPass = (EditText) view.findViewById(R.id.editText_confirmPass);
+        editText_birth = (EditText) view.findViewById(R.id.editText_birth);
+        butt_signup = (Button) view.findViewById(R.id.butt_signup);
+        butt_exit = (Button) view.findViewById(R.id.butt_signup_exit);
+        dpd = DatePickerDialog.newInstance(this, now.get(Calendar.YEAR),
+                now.get(Calendar.MONTH), now.get(Calendar.DATE));
+        butt_signup.setOnClickListener(this);
+        butt_exit.setOnClickListener(this);
+        editText_birth.setOnClickListener(this);
+        dpd.setOnDismissListener(this);
+        dpd.setOnCancelListener(this);
+    }
+
+    @Override
+    public void setArguments(Bundle args) {
+        super.setArguments(args);
+    }
+
+    private boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        year = month = day = -1;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        if (year > -1) {
+            editText_birth.setText(day + "/" + month + "/" + year);
+        }
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        this.day = dayOfMonth;
+        this.month = monthOfYear+1;
+        this.year = year;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.butt_signup:
                 if (editText_ho.getText().toString().trim().equals("")) {
                     Snackbar.make(view, getActivity().getResources().getString(R.string.txt_noho), Snackbar.LENGTH_SHORT).show();
                 } else if (editText_tenlot.getText().toString().trim().equals("")) {
@@ -92,70 +170,13 @@ public class SignupFragment extends Fragment {
                         createNewAccount.createNew();
                     }
                 }
-//                Toast.makeText(getContext(), editText_email.getText().toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        return view;
-    }
-
-    private void anhXa(View view) {
-        editText_ho = (EditText) view.findViewById(R.id.editText_ho);
-        editText_ten = (EditText) view.findViewById(R.id.editText_ten);
-        editText_tenlot = (EditText) view.findViewById(R.id.editText_tenLot);
-        editText_username = (EditText) view.findViewById(R.id.editText_username);
-        editText_email = (EditText) view.findViewById(R.id.editText_email);
-        editText_password = (EditText) view.findViewById(R.id.editText_password);
-        editText_confirmPass = (EditText) view.findViewById(R.id.editText_confirmPass);
-        editText_birth = (EditText) view.findViewById(R.id.editText_birth);
-        butt_signup = (Button) view.findViewById(R.id.butt_signup);
-        butt_exit = (Button) view.findViewById(R.id.butt_signup_exit);
-        butt_exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                break;
+            case R.id.butt_signup_exit:
                 getActivity().onBackPressed();
-            }
-        });
-    }
-
-    //        private void doSignUp(){
-//        mAuth.createUserWithEmailAndPassword(editText_email.getText().toString(), editText_password.getText().toString())
-//                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        Log.d("TAG", "createUserWithEmail:onComplete:" + task.isSuccessful());
-//
-//                        if (!task.isSuccessful()) {
-//                            Toast.makeText(getContext(),task.isSuccessful()+"Failed to sign up",Toast.LENGTH_SHORT).show();
-//                        }else {
-//                            Toast.makeText(getContext(),task.isSuccessful()+"success to sign up",Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//    }
-    @Override
-    public void setArguments(Bundle args) {
-        super.setArguments(args);
-    }
-
-    private boolean isValidEmailAddress(String email) {
-        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
-        java.util.regex.Matcher m = p.matcher(email);
-        return m.matches();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+                break;
+            case R.id.editText_birth:
+                dpd.show(getActivity().getFragmentManager(), "Datepickerdialog");
+                break;
         }
     }
 }

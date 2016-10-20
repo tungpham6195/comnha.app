@@ -44,7 +44,6 @@ public class PostFragment extends Fragment implements FloatingActionButton.OnCli
     Posts posts;
     static final int PICK_LOCATION_REQUEST = 1;
     ProgressDialog mProgressDialog;
-    Post newPost;
     FloatingActionButton fab_choseloca, fab_addphoto, fab_rate;
     FloatingActionMenu fab_menu;
 
@@ -117,38 +116,58 @@ public class PostFragment extends Fragment implements FloatingActionButton.OnCli
                             getResources().getString(R.string.txt_plzwait),
                             getResources().getString(R.string.txt_addinpost),
                             true, true);
-                    newPost = new Post();
+                    Post newPost = new Post();
                     newPost.setTitle(edt_title.getText().toString());
                     newPost.setContent(edt_content.getText().toString());
+                    newPost.setUid(LoginSession.getInstance().getUserID());
+                    newPost.setUsername(LoginSession.getInstance().getUsername());
                     newPost.setDate(new Times().getTime());
                     newPost.setTime(new Times().getDate());
                     newPost.setGia(DoRate.getInstance().getGia());
                     newPost.setVesinh(DoRate.getInstance().getVesinh());
                     newPost.setPhucvu(DoRate.getInstance().getPhucvu());
-                    ref.child("Posts").push().setValue(newPost, new Firebase.CompletionListener() {
+                    String key = ref.child("Posts").push().getKey();
+                    Map<String, Object> postValue = newPost.toMap();
+                    Map<String, Object> childUpdates = new HashMap<String, Object>();
+                    childUpdates.put("/Posts/" + key, postValue);
+                    childUpdates.put("/UserPost/" + LoginSession.getInstance().getUserID() + "/" + key, postValue);
+                    childUpdates.put("/LocationPost/" + ChooseLoca.getInstance().getLocaID() + "/" + key, postValue);
+                    ref.updateChildren(childUpdates, new Firebase.CompletionListener() {
                         @Override
                         public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                             mProgressDialog.dismiss();
                             if (firebaseError != null) {
                                 Toast.makeText(getActivity(), "Đăng bài bị lỗi" + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                //thêm vào bảng LocationPost
-                                Map<String, Object> loca = new HashMap<String, Object>();
-                                loca.put(firebase.getKey(), true);
-                                ref.child("LocationPost/" + ChooseLoca.getInstance().getLocaID()).updateChildren(loca);
-                                //thêm vào bảng UserPost
-                                Map<String, Object> user = new HashMap<String, Object>();
-                                user.put(firebase.getKey(), true);
-                                ref.child("UserPost/" + LoginSession.getInstance().getUserID()).updateChildren(user);
-                                //thêm vào PostUser
-                                Map<String, Object> post = new HashMap<String, Object>();
-                                post.put("userID", LoginSession.getInstance().getUserID());
-                                ref.child("PostUser/" + firebase.getKey()).updateChildren(post);
                                 getActivity().finish();
                                 Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
+//                    ref.child("Posts").push().setValue(newPost, new Firebase.CompletionListener() {
+//                        @Override
+//                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+//                            mProgressDialog.dismiss();
+//                            if (firebaseError != null) {
+//                                Toast.makeText(getActivity(), "Đăng bài bị lỗi" + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                //thêm vào bảng LocationPost
+//                                Map<String, Object> loca = new HashMap<String, Object>();
+//                                loca.put(firebase.getKey(), true);
+//                                ref.child("LocationPost/" + ChooseLoca.getInstance().getLocaID()).updateChildren(loca);
+//                                //thêm vào bảng UserPost
+//                                Map<String, Object> user = new HashMap<String, Object>();
+//                                user.put(firebase.getKey(), true);
+//                                ref.child("UserPost/" + LoginSession.getInstance().getUserID()).updateChildren(user);
+//                                //thêm vào PostUser
+//                                Map<String, Object> post = new HashMap<String, Object>();
+//                                post.put("userID", LoginSession.getInstance().getUserID());
+//                                ref.child("PostUser/" + firebase.getKey()).updateChildren(post);
+//                                getActivity().finish();
+//                                Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    });
                 }
             }
         });

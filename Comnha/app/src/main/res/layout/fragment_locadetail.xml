@@ -10,6 +10,7 @@
 
 
         <LinearLayout
+            android:layout_marginBottom="5dp"
             android:id="@+id/frg_lcdetail_L1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -18,7 +19,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                
+
                 <ImageView
                     android:id="@+id/frg_lcdetail_maimimg"
                     android:layout_width="match_parent"
@@ -36,10 +37,10 @@
 
                     <LinearLayout
                         android:id="@+id/frg_lcdetail_btn_themanh"
-                        android:clickable="true"
-                        android:foreground="?attr/selectableItemBackground"
                         android:layout_width="@dimen/linear_chucnang_rong"
                         android:layout_height="@dimen/linear_chucnang_cao"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_horizontal"
                         android:orientation="vertical">
 
@@ -57,12 +58,12 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:clickable="true"
-                        android:foreground="?attr/selectableItemBackground"
                         android:id="@+id/frg_lcdetail_dangreview"
                         android:layout_width="@dimen/linear_chucnang_rong"
                         android:layout_height="@dimen/linear_chucnang_cao"
                         android:layout_marginStart="30dp"
+                        android:clickable="true"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_horizontal"
                         android:orientation="vertical">
 
@@ -86,13 +87,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="10dp"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="@dimen/linear_diem"
                     android:layout_height="match_parent"
-                    android:gravity="center_horizontal"
+                    android:clickable="true"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
@@ -100,22 +102,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="10"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/colorgia"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Giá" />
+                        android:text="@string/text_rategia" />
                 </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/vertical_line" />
 
                 <LinearLayout
                     android:layout_width="@dimen/linear_diem"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="50dp"
-                    android:layout_marginStart="50dp"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
@@ -123,20 +132,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="10"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/colorvesinh"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Vệ sinh" />
+                        android:text="@string/text_ratevs" />
                 </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/vertical_line" />
 
                 <LinearLayout
                     android:layout_width="@dimen/linear_diem"
                     android:layout_height="match_parent"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
@@ -144,21 +162,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="10"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/colorphucvu"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Phục vụ" />
+                        android:text="@string/text_ratepv" />
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:layout_marginStart="10dp"
                 android:orientation="vertical">
 
@@ -273,17 +290,15 @@
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
-
-
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/frg_lcdetail_rcyler_review"
             android:layout_width="match_parent"
             android:layout_height="250dp"
+            android:layout_below="@id/frg_lcdetail_L1"
             android:layout_marginStart="2dp"
             android:scrollbarStyle="insideOverlay"
-            android:scrollbars="vertical"
-            android:layout_below="@id/frg_lcdetail_L1"/>
+            android:scrollbars="vertical" />
     </RelativeLayout>
 </FrameLayout>

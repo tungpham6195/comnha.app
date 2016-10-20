@@ -68,35 +68,14 @@ public class ViewpostFragment extends Fragment {
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         ref = new Firebase(getString(R.string.firebase_path));
         Log.d("postID", postID);
-        ref.child("PostUser/" + postID + "/userID").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ref.child("Users/" + dataSnapshot.getValue().toString() + "/username").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        txt_un.setText(dataSnapshot.getValue().toString());
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
         ref.child(getString(R.string.posts_CODE) + "/" + postID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                Toast.makeText(getActivity(), dataSnapshot.getKey(), Toast.LENGTH_SHORT).show();
                 Post post = dataSnapshot.getValue(Post.class);
                 txt_title.setText(post.getTitle());
                 txt_date.setText(post.getDate());
                 txt_content.setText(post.getContent());
+                txt_un.setText(post.getUsername());
             }
 
             @Override
@@ -107,22 +86,9 @@ public class ViewpostFragment extends Fragment {
         ref.child(getString(R.string.postcomment_CODE) + "/" + postID).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getValue().equals(true)) {
-                    ref.child("Comments" + "/" + dataSnapshot.getKey())
-                            .addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Comment comment = dataSnapshot.getValue(Comment.class);
-                                    comment_List.add(comment);
-                                    mAdapter.notifyDataSetChanged();
-                                }
-
-                                @Override
-                                public void onCancelled(FirebaseError firebaseError) {
-
-                                }
-                            });
-                }
+                Comment comment = dataSnapshot.getValue(Comment.class);
+                comment_List.add(comment);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -163,27 +129,22 @@ public class ViewpostFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!edt_comment.getText().toString().equals("")) {
-//                    Comments comment = new Comments();
-//                    comment.setUserID(LoginSession.getInstance().getUserID());
-//                    comment.setContent(edt_comment.getText().toString());
-//                    comment.setContext(getActivity().getApplicationContext());
-//                    comment.setPostID(postID);
-//                    comment.createNew();
                     Comment newComment = new Comment();
                     newComment.setContent(edt_comment.getText().toString());
+                    newComment.setUsername(LoginSession.getInstance().getUsername());
                     newComment.setUserID(LoginSession.getInstance().getUserID());
                     newComment.setDate(new Times().getDate());
                     newComment.setTime(new Times().getTime());
-                    ref.child(getResources().getString(R.string.comments_CODE)).push().setValue(newComment, new Firebase.CompletionListener() {
+                    edt_comment.setText(null);
+                    String key = ref.child(getResources().getString(R.string.postcomment_CODE) + "/" + postID).push().getKey();
+                    Map<String, Object> commentValues = newComment.toMap();
+                    Map<String, Object> childUpdates = new HashMap<String, Object>();
+                    childUpdates.put("/" + getResources().getString(R.string.postcomment_CODE) + "/" + postID + "/" + key, commentValues);
+                    ref.updateChildren(childUpdates, new Firebase.CompletionListener() {
                         @Override
                         public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                             if (firebaseError != null) {
                                 Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                            } else {
-                                Map<String, Object> comment = new HashMap<String, Object>();
-                                comment.put(firebase.getKey(), true);
-                                ref.child(getResources().getString(R.string.postcomment_CODE) + "/" + postID).updateChildren(comment);
-                                edt_comment.setText("");
                             }
                         }
                     });

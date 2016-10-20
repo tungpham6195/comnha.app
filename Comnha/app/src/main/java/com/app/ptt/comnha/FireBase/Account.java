@@ -4,7 +4,7 @@ package com.app.ptt.comnha.FireBase;
  * Created by PTT on 9/16/2016.
  */
 public class Account {
-    String ho, ten, tenlot, email, password, birth, username;
+    String ho, ten, tenlot, password, birth;
 
     public Account() {
     }
@@ -21,20 +21,12 @@ public class Account {
         this.tenlot = tenlot;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
     public void setBirth(String birth) {
         this.birth = birth;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getHo() {
@@ -49,9 +41,6 @@ public class Account {
         return tenlot;
     }
 
-    public String getEmail() {
-        return email;
-    }
 
     public String getPassword() {
         return password;
@@ -61,7 +50,4 @@ public class Account {
         return birth;
     }
 
-    public String getUsername() {
-        return username;
-    }
 }

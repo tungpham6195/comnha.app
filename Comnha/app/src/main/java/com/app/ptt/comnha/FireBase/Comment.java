@@ -1,5 +1,8 @@
 package com.app.ptt.comnha.FireBase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by PTT on 10/5/2016.
  */
@@ -49,5 +52,15 @@ public class Comment {
     }
 
     public Comment() {
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("content", content);
+        result.put("time", time);
+        result.put("date", date);
+        result.put("userID", userID);
+        result.put("username", username);
+        return result;
     }
 }

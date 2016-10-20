@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 /**
  * Created by PTT on 9/16/2016.
@@ -60,30 +61,6 @@ public class Users implements Transactions {
         this.birth = birth;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getHo() {
-        return ho;
-    }
-
-    public String getTen() {
-        return ten;
-    }
-
-    public String getTenlot() {
-        return tenlot;
-    }
-
-    public String getBirth() {
-        return birth;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
     @Override
     public void setupFirebase() {
         Firebase.setAndroidContext(suContext);
@@ -102,15 +79,17 @@ public class Users implements Transactions {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+                        UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(username)
+                                .build();
+                        Toast.makeText(suContext,profileUpdate.getDisplayName(),Toast.LENGTH_SHORT).show();
                         String userID = task.getResult().getUser().getUid();
                         Account newAccount = new Account();
                         newAccount.setHo(ho);
                         newAccount.setTen(ten);
                         newAccount.setTenlot(tenlot);
-                        newAccount.setEmail(email);
                         newAccount.setPassword(password);
                         newAccount.setBirth(birth);
-                        newAccount.setUsername(username);
                         suRef.child("Users/" + userID).setValue(newAccount, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {

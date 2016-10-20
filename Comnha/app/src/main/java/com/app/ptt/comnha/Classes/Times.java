@@ -13,7 +13,7 @@ public class Times {
     }
     public String getDate() {
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         return df.format(c.getTime());
     }
 

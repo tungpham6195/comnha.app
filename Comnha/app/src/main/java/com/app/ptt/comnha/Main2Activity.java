@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.firebase.client.Firebase;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,22 +51,25 @@ public class Main2Activity extends AppCompatActivity
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    int fileSize;
+    private int fileSize;
     public String userID, username, email;
 
     private Toolbar mtoolbar;
     private DrawerLayout mdrawer;
     private ActionBarDrawerToggle mtoggle;
     private NavigationView mnavigationView;
-    TextView txt_email, txt_un;
-    FloatingActionMenu fabmenu;
-    boolean checkConnection = true;
-    FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
+    private TextView txt_email, txt_un;
+    private FloatingActionMenu fabmenu;
+    private boolean checkConnection = true;
+    private FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
+    private Firebase ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        Firebase.setAndroidContext(this);
+        ref = new Firebase(getResources().getString(R.string.firebase_path));
         anhXa();
 
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -94,9 +98,10 @@ public class Main2Activity extends AppCompatActivity
                     userID = user.getUid();
                     Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getEmail(), Toast.LENGTH_SHORT).show();
                     LoginSession.getInstance().setUserID(userID);
+                    LoginSession.getInstance().setUsername(user.getDisplayName());
                     LoginSession.getInstance().setEmail(user.getEmail());
-                    txt_email.setText(getResources().getString(R.string.text_hello));
-                    txt_un.setText(user.getEmail());
+                    txt_email.setText(user.getEmail());
+                    txt_un.setText(user.getDisplayName());
                     Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getUid());
                     Log.i("email", LoginSession.getInstance().getEmail());
                 } else {
@@ -104,6 +109,7 @@ public class Main2Activity extends AppCompatActivity
                     txt_un.setText(getResources().getString(R.string.text_user));
                     userID = "";
                     LoginSession.getInstance().setUserID(null);
+                    LoginSession.getInstance().setUsername(null);
                     LoginSession.getInstance().setEmail(null);
                     Toast.makeText(getApplicationContext(), "Signed out", Toast.LENGTH_SHORT).show();
                     Log.d("signed_out", "onAuthStateChanged:signed_out");

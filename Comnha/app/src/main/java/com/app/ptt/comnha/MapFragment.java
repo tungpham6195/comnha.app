@@ -1,20 +1,15 @@
 package com.app.ptt.comnha;
 
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -30,7 +25,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.vision.text.Text;
 
 import java.util.ArrayList;
 
@@ -40,15 +34,15 @@ public class MapFragment extends Fragment {
     private AutoCompleteTextView acText;
     private ArrayList<Route> list;
     private ArrayList<String> listName;
-    TextView txt_TenQuan,txt_DiaChi,txt_GioMo,txt_DiemGia,txt_DiemPhucVu,txt_DiemVeSinh;
+    TextView txt_TenQuan, txt_DiaChi, txt_GioMo, txt_DiemGia, txt_DiemPhucVu, txt_DiemVeSinh;
 
     MarkerOptions yourLocation = null;
 
     public void getMethod(ArrayList<Route> list) {
         this.list = new ArrayList<>();
-        listName=new ArrayList<>();
+        listName = new ArrayList<>();
 
-        if(list!=null &&list.size()>0) {
+        if (list != null && list.size() > 0) {
             for (Route a : list) {
                 listName.add(a.endAddress);
             }
@@ -68,8 +62,8 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        acText=(AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
-        ArrayAdapter arrayAdapter=new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,listName);
+        acText = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, listName);
         acText.setAdapter(arrayAdapter);
         acText.setThreshold(1);
         return view;
@@ -78,14 +72,14 @@ public class MapFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (list != null &&list.size()>0) {
-        supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
-        if (supportMapFragment == null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            supportMapFragment = SupportMapFragment.newInstance();
-            fragmentTransaction.replace(R.id.mapwhere, supportMapFragment).commit();
-        }
+        if (list != null && list.size() > 0) {
+            supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
+            if (supportMapFragment == null) {
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                supportMapFragment = SupportMapFragment.newInstance();
+                fragmentTransaction.replace(R.id.mapwhere, supportMapFragment).commit();
+            }
             if (supportMapFragment != null) {
                 supportMapFragment.getMapAsync(new OnMapReadyCallback() {
                     @Override
@@ -102,20 +96,29 @@ public class MapFragment extends Fragment {
                             googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                                 @Override
                                 public View getInfoWindow(Marker marker) {
-                                    return null;
+                                    View view1 = getLayoutInflater(savedInstanceState).inflate(R.layout.infowindowlayout, null);
+                                    LatLng latLng = marker.getPosition();
+                                    txt_TenQuan = (TextView) view1.findViewById(R.id.txt_TenQuan);
+                                    txt_DiaChi = (TextView) view1.findViewById(R.id.txt_DiaChi);
+                                    txt_GioMo = (TextView) view1.findViewById(R.id.txt_GioMo);
+                                    txt_DiemGia = (TextView) view1.findViewById(R.id.txt_DiemGia);
+                                    txt_DiemPhucVu = (TextView) view1.findViewById(R.id.txt_DiemPhucVu);
+                                    txt_DiemVeSinh = (TextView) view1.findViewById(R.id.txt_DiemVeSinh);
+                                    txt_TenQuan.setText("tenquan");
+                                    return view1;
                                 }
 
                                 @Override
                                 public View getInfoContents(Marker marker) {
-                                    View view1=getLayoutInflater(savedInstanceState).inflate(R.layout.infowindowlayout,null);
-                                    LatLng latLng=marker.getPosition();
-                                    txt_TenQuan=(TextView) view.findViewById(R.id.txt_TenQuan);
-                                    txt_DiaChi=(TextView)view.findViewById(R.id.txt_DiaChi);
-                                    txt_GioMo=(TextView)view.findViewById(R.id.txt_GioMo);
-                                    txt_DiemGia=(TextView) view.findViewById(R.id.txt_DiemGia);
-                                    txt_DiemPhucVu=(TextView) view.findViewById(R.id.txt_DiemPhucVu);
-                                    txt_DiemVeSinh=(TextView) view.findViewById(R.id.txt_DiemVeSinh);
-                                    return view1;
+//                                    View view1=getLayoutInflater(savedInstanceState).inflate(R.layout.infowindowlayout,null);
+//                                    LatLng latLng=marker.getPosition();
+//                                    txt_TenQuan=(TextView) view.findViewById(R.id.txt_TenQuan);
+//                                    txt_DiaChi=(TextView)view.findViewById(R.id.txt_DiaChi);
+//                                    txt_GioMo=(TextView)view.findViewById(R.id.txt_GioMo);
+//                                    txt_DiemGia=(TextView) view.findViewById(R.id.txt_DiemGia);
+//                                    txt_DiemPhucVu=(TextView) view.findViewById(R.id.txt_DiemPhucVu);
+//                                    txt_DiemVeSinh=(TextView) view.findViewById(R.id.txt_DiemVeSinh);
+                                    return null;
                                 }
                             });
                             googleMap.animateCamera(CameraUpdateFactory.zoomIn());
@@ -145,8 +148,9 @@ public class MapFragment extends Fragment {
             }
         }
     }
-    public void getPosition(Marker marker){
-        if(marker.getPosition()!=yourLocation.getPosition()){
+
+    public void getPosition(Marker marker) {
+        if (marker.getPosition() != yourLocation.getPosition()) {
 
         }
     }
