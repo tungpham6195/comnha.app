@@ -40,14 +40,6 @@ public class MapFragment extends Fragment {
 
     public void getMethod(ArrayList<Route> list) {
         this.list = new ArrayList<>();
-        listName = new ArrayList<>();
-
-        if (list != null && list.size() > 0) {
-            for (Route a : list) {
-                listName.add(a.endAddress);
-            }
-            this.list = list;
-        }
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -126,21 +118,21 @@ public class MapFragment extends Fragment {
                             Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                             yourLocation = new MarkerOptions()
-                                    .position(list.get(0).startLocation)
-                                    .title(list.get(0).startAddress)
+                                    .position(list.get(0).getStartLocation())
+                                    .title(list.get(0).getStartAddress())
                                     .icon(markerIcon);
                             googleMap.addMarker(yourLocation);
 
                             for (int i = 0; i < list.size(); i++) {
                                 googleMap.addMarker(new MarkerOptions()
-                                        .position(list.get(i).endLocation)
-                                        .title(list.get(i).endAddress)
+                                        .position(list.get(i).getEndLocation())
+                                        .title(list.get(i).getEndAddress())
                                 );
 
 
                             }
 
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).startLocation, 13));
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).getStartLocation(), 13));
                         }
                     }
 
