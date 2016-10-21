@@ -60,7 +60,7 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
         holder.txt_content.setText(list.get(position).getContent());
         holder.txt_postdate.setText(list.get(position).getDate());
         holder.txt_time.setText(list.get(position).getTime());
-//        holder.txt_un.setText(list.get(position).getUn());
+        holder.txt_un.setText(list.get(position).getUsername());
     }
 
     @Override

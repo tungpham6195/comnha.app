@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.CalcuAVGRate;
@@ -54,7 +55,7 @@ public class LocadetailFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locadetail, container, false);
-        Log.d("localID",locaID);
+        Log.d("localID", locaID);
         andxa(view);
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         ref = new Firebase(getString(R.string.firebase_path));
@@ -97,30 +98,18 @@ public class LocadetailFragment extends Fragment {
 
             }
         });
-        ref.child(getString(R.string.locationpost_CODE) + "/" + locaID).addChildEventListener(new ChildEventListener() {
+        ref.child(getResources().getString(R.string.locationpost_CODE) + "/" + locaID).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                Toast.makeText(getActivity(), dataSnapshot.getKey(), Toast.LENGTH_SHORT).show();
-                if (dataSnapshot.getValue().equals(true)) {
-                    ref.child("Posts" + "/" + dataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Post post = dataSnapshot.getValue(Post.class);
-                            post.setPostID(dataSnapshot.getKey());
-                            postlist.add(post);
-                            CalcuAVGRate newcalcu = new CalcuAVGRate(postlist);
-                            txt_gia.setText(String.valueOf(newcalcu.calcu().get(0)));
-                            txt_vesinh.setText(String.valueOf(newcalcu.calcu().get(1)));
-                            txt_phucvu.setText(String.valueOf(newcalcu.calcu().get(2)));
-                            mAdapter.notifyDataSetChanged();
-                        }
+                Post post = dataSnapshot.getValue(Post.class);
+                post.setPostID(dataSnapshot.getKey());
+                postlist.add(post);
+                CalcuAVGRate newcalcu = new CalcuAVGRate(postlist);
+                txt_gia.setText(String.valueOf(newcalcu.calcu().get(0)));
+                txt_vesinh.setText(String.valueOf(newcalcu.calcu().get(1)));
+                txt_phucvu.setText(String.valueOf(newcalcu.calcu().get(2)));
+                mAdapter.notifyDataSetChanged();
 
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-
-                        }
-                    });
-                }
             }
 
             @Override

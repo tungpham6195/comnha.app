@@ -45,5 +45,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'org.adw.library:discrete-seekbar:1.0.1'
     compile 'com.github.clans:fab:1.6.4'
+    compile 'com.wdullaer:materialdatetimepicker:2.5.0'
 }
 apply plugin: 'com.google.gms.google-services'
