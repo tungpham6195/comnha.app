@@ -17,9 +17,11 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.Route;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,22 +42,22 @@ public class MapFragment extends Fragment {
     private AutoCompleteTextView acText;
     private ArrayList<Route> list;
     private ArrayList<String> listName;
+
     TextView txt_TenQuan,txt_DiaChi,txt_GioMo,txt_DiemGia,txt_DiemPhucVu,txt_DiemVeSinh;
 
     MarkerOptions yourLocation = null;
 
-    public void getMethod(ArrayList<Route> list) {
+    public void getRoute(ArrayList<Route> list) {
         this.list = new ArrayList<>();
         listName=new ArrayList<>();
 
         if(list!=null &&list.size()>0) {
             for (Route a : list) {
-                listName.add(a.endAddress);
+                listName.add(a.getEndAddress());
             }
             this.list = list;
         }
     }
-
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -108,36 +110,51 @@ public class MapFragment extends Fragment {
                                 @Override
                                 public View getInfoContents(Marker marker) {
                                     View view1=getLayoutInflater(savedInstanceState).inflate(R.layout.infowindowlayout,null);
-                                    LatLng latLng=marker.getPosition();
-                                    txt_TenQuan=(TextView) view.findViewById(R.id.txt_TenQuan);
-                                    txt_DiaChi=(TextView)view.findViewById(R.id.txt_DiaChi);
-                                    txt_GioMo=(TextView)view.findViewById(R.id.txt_GioMo);
-                                    txt_DiemGia=(TextView) view.findViewById(R.id.txt_DiemGia);
-                                    txt_DiemPhucVu=(TextView) view.findViewById(R.id.txt_DiemPhucVu);
-                                    txt_DiemVeSinh=(TextView) view.findViewById(R.id.txt_DiemVeSinh);
+                                   // view1.setLayoutParams(new RelativeLayout.LayoutParams(500,RelativeLayout.LayoutParams.WRAP_CONTENT));
+                                    txt_TenQuan=(TextView) view1.findViewById(R.id.txt_TenQuan);
+                                    txt_DiaChi=(TextView)view1.findViewById(R.id.txt_DiaChi);
+                                    txt_GioMo=(TextView)view1.findViewById(R.id.txt_GioMo);
+                                    txt_DiemGia=(TextView) view1.findViewById(R.id.txt_DiemGia);
+                                    txt_DiemPhucVu=(TextView) view1.findViewById(R.id.txt_DiemPhucVu);
+                                    txt_DiemVeSinh=(TextView) view1.findViewById(R.id.txt_DiemVeSinh);
+                                    Route a= returnRoute(marker);
+                                    if(a==null){
+                                    }else{
+                                        txt_TenQuan.setText(a.getTenQuan());
+                                        txt_DiaChi.setText(a.getEndAddress());
+                                        txt_GioMo.setText(a.getGioMo()+":"+a.getGioDong());
+                                        txt_DiemVeSinh.setText("5");
+                                        txt_DiemGia.setText("6");
+                                        txt_DiemPhucVu.setText("8");
+                                    }
+                                    txt_DiemPhucVu.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Toast.makeText(getContext(),"NHU CC",Toast.LENGTH_LONG).show();
+                                        }
+                                    });
                                     return view1;
                                 }
                             });
                             googleMap.animateCamera(CameraUpdateFactory.zoomIn());
-                            Toast.makeText(getContext(), list.size() + "", Toast.LENGTH_LONG).show();
                             Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                             yourLocation = new MarkerOptions()
-                                    .position(list.get(0).startLocation)
-                                    .title(list.get(0).startAddress)
+                                    .position(list.get(0).getStartLocation())
+                                    .title(list.get(0).getStartAddress())
                                     .icon(markerIcon);
                             googleMap.addMarker(yourLocation);
 
                             for (int i = 0; i < list.size(); i++) {
                                 googleMap.addMarker(new MarkerOptions()
-                                        .position(list.get(i).endLocation)
-                                        .title(list.get(i).endAddress)
+                                        .position(list.get(i).getEndLocation())
+                                        .title(list.get(i).getEndAddress())
                                 );
 
 
                             }
 
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).startLocation, 13));
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(0).getStartLocation(), 13));
                         }
                     }
 
@@ -145,10 +162,12 @@ public class MapFragment extends Fragment {
             }
         }
     }
-    public void getPosition(Marker marker){
-        if(marker.getPosition()!=yourLocation.getPosition()){
-
+    public Route returnRoute(Marker marker){
+        for(Route a:list){
+            if(marker.getPosition().latitude==a.getEndLocation().latitude&& marker.getPosition().longitude==a.getEndLocation().longitude)
+                return a;
         }
+            return null;
     }
 
 }

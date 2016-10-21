@@ -16,7 +16,8 @@ import android.widget.TextView;
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
-import com.app.ptt.comnha.FireBase.Location;
+import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -78,7 +79,7 @@ public class LocadetailFragment extends Fragment {
         ref.child("Locations/" + locaID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Location location = dataSnapshot.getValue(Location.class);
+                MyLocation location = dataSnapshot.getValue(MyLocation.class);
                 String gio = location.getTimestart() + " - " + location.getTimeend();
                 String tenquan = location.getName();
                 String diachi = location.getDiachi();

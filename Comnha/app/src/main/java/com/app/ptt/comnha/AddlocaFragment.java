@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.FireBase.Location;
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.github.clans.fab.FloatingActionButton;
@@ -64,7 +64,7 @@ public class AddlocaFragment extends Fragment implements FloatingActionButton.On
     }
 
     private void addNewLoca() {
-        Location newLocation = new Location();
+        MyLocation newLocation = new MyLocation();
         newLocation.setName(edt_tenquan.getText().toString());
         newLocation.setDiachi(edt_diachi.getText().toString());
         newLocation.setSdt(edt_sdt.getText().toString());

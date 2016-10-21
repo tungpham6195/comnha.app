@@ -7,12 +7,12 @@ import java.util.Map;
  * Created by PTT on 9/26/2016.
  */
 
-public class Location {
+public class MyLocation {
     String name, diachi, sdt, timestart, timeend, latitude, longitude;
     long giamin, giamax;
     String locaID;
 
-    public Location() {
+    public MyLocation() {
     }
 
     public void setLocaID(String locaID) {

@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
-import com.app.ptt.comnha.FireBase.Location;
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -29,7 +29,7 @@ public class LocatlistFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Firebase ref;
-    private ArrayList<Location> list_item;
+    private ArrayList<MyLocation> list_item;
 
     public LocatlistFragment() {
         // Required empty public constructor
@@ -43,7 +43,7 @@ public class LocatlistFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_localist, container, false);
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         ref = new Firebase("https://com-nha.firebaseio.com/");
-        list_item = new ArrayList<Location>();
+        list_item = new ArrayList<>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_localist);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -67,7 +67,7 @@ public class LocatlistFragment extends Fragment {
         ref.child("Locations").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Location newLocation = dataSnapshot.getValue(Location.class);
+                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 newLocation.setLocaID(dataSnapshot.getKey());
                 list_item.add(newLocation);
                 mAdapter.notifyDataSetChanged();

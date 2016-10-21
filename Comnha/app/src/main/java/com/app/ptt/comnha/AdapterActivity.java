@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
@@ -24,23 +25,25 @@ import java.util.ArrayList;
 
 public class AdapterActivity extends AppCompatActivity implements ChooselocaFragment.onPassDatafromChooseLocaFrg {
     String locaKey;
-    public static final String LOG="AdapterActivity";
+    public static final String LOG = "AdapterActivity";
     public static final String mBroadcast = "mBroadcastComplete";
     private ProgressDialog progressDialog;
     private int progressBarStatus = 0;
     private Handler progressBarHandler = new Handler();
     MyService myService;
-    int temp;
+    int temp, count;
     private IntentFilter mIntentFilter;
     int isComplete = 0;
     Bundle savedInstanceState;
     ArrayList<Route> routes;
-    public AdapterActivity(){
+
+    public AdapterActivity() {
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.savedInstanceState=savedInstanceState;
-        Log.i(LOG,"onCreate");
+        this.savedInstanceState = savedInstanceState;
+        Log.i(LOG, "onCreate");
         doBindService();
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcast);
@@ -49,17 +52,20 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         setContentView(R.layout.activity_adapter);
 
     }
-    public void doBindService(){
-        Log.i(LOG,"doBindService");
-        bindService(new Intent(this,MyService.class),serviceConnection, Context.BIND_AUTO_CREATE);
+
+    public void doBindService() {
+        Log.i(LOG, "doBindService");
+        bindService(new Intent(this, MyService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     }
-    public void doUnbindService(){
-        Log.i(LOG,"doUnbindService");
+
+    public void doUnbindService() {
+        Log.i(LOG, "doUnbindService");
         unbindService(serviceConnection);
     }
+
     @Override
     public void finish() {
-        Log.i(LOG,"finish");
+        Log.i(LOG, "finish");
         super.finish();
         doUnbindService();
         unregisterReceiver(mReceiver);
@@ -75,13 +81,13 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
             }
         }
     };
-    private ServiceConnection serviceConnection=new ServiceConnection() {
+    private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            myService=((MyService.LocalBinder) service).getService();
-            if(myService==null){
-                Log.i(LOG,"CCCCCCCCCCCCCCCCCCCCCCCCCCCc");
-            }else{
+            myService = ((MyService.LocalBinder) service).getService();
+            if (myService == null) {
+                Log.i(LOG, "CCCCCCCCCCCCCCCCCCCCCCCCCCCc");
+            } else {
                 loadData(savedInstanceState);
             }
 
@@ -89,9 +95,10 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            myService=null;
+            myService = null;
         }
     };
+
     public void showToast(final String a) {
         runOnUiThread(new Runnable() {
             @Override
@@ -100,8 +107,9 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
             }
         });
     }
+
     private void openMap() {
-        Log.i(LOG,"openMap");
+        Log.i(LOG, "openMap");
         if (routes == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setCancelable(true);
@@ -112,6 +120,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
             progressDialog.show();
             progressBarStatus = 0;
             temp = 0;
+            count = 0;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -139,14 +148,8 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                             if (isComplete == 1) {
                                 routes = myService.returnRoute();
                                 MapFragment mapFragment = new MapFragment();
-                                mapFragment.getMethod(routes);
+                                mapFragment.getRoute(routes);
                                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
-//                                MapFragment mapFragment = new MapFragment();
-//
-//                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                                transaction.replace(R.id.frame, mapFragment);
-//                                transaction.addToBackStack(null);
-//                                transaction.commit();
 
                             }
                             progressDialog.dismiss();
@@ -160,12 +163,14 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
 
 
         } else {
+
             MapFragment mapFragment = new MapFragment();
-            mapFragment.getMethod(routes);
+            mapFragment.getRoute(routes);
             getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
         }
     }
-    public void loadData(Bundle savedInstanceState){
+
+    public void loadData(Bundle savedInstanceState) {
         Intent intent = getIntent();
         String FRAGMENT_CODE = intent.getExtras().getString(getResources().getString(R.string.fragment_CODE));
         Log.d("FRAGMENT_CODE", FRAGMENT_CODE);
@@ -291,24 +296,23 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, voteFragment)
                         .commit();
             }
-        } else if(FRAGMENT_CODE.equals(getString(R.string.frag_map_CODE))){
-            Log.i(LOG,"frag_map_CODE");
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_map_CODE))) {
+            Log.i(LOG, "frag_map_CODE");
             if (findViewById(R.id.frame_adapter) != null) {
                 if (savedInstanceState != null) {
                 }
-                if(!ConnectionDetector.canGetLocation(this)){
-                    if(!ConnectionDetector.networkStatus(this)){
-                        Toast.makeText(getApplicationContext(),"Không có kết nối internet và gps",Toast.LENGTH_LONG).show();
-                    } else{
+                if (!ConnectionDetector.canGetLocation(this)) {
+                    if (!ConnectionDetector.networkStatus(this)) {
+                        Toast.makeText(getApplicationContext(), "Không có kết nối internet và gps", Toast.LENGTH_LONG).show();
+                    } else {
                         ConnectionDetector.showSettingAlert(this);
                     }
-                    routes=null;
-                }
-                else{
-                    if(!ConnectionDetector.networkStatus(this)){
-                        Toast.makeText(getApplicationContext(),"Không có kết nối internet",Toast.LENGTH_LONG).show();
-                        routes=null;
-                    }else{
+                    routes = null;
+                } else {
+                    if (!ConnectionDetector.networkStatus(this)) {
+                        Toast.makeText(getApplicationContext(), "Không có kết nối internet", Toast.LENGTH_LONG).show();
+                        routes = null;
+                    } else {
                         openMap();
                     }
                 }
@@ -320,11 +324,14 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     }
 
     public int loadProgress() {
-
+        Log.i(LOG, "count= " + count);
         Log.i(LOG, "temp= " + temp);
         if (isComplete != 1) {
-            if(isComplete==-1)
-                return 101;
+            if (count < 60) {
+                count++;
+
+                if (isComplete == -1)
+                    return 101;
                 while (temp <= 1000000) {
                     temp++;
 
@@ -345,10 +352,14 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                     }
                 }
                 return 0;
+            } else {
+                return 101;
+            }
         } else {
             return 100;
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();

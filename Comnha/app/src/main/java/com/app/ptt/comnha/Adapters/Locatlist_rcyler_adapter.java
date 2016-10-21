@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.app.ptt.comnha.FireBase.Location;
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.R;
 
 import java.util.ArrayList;
@@ -33,9 +33,9 @@ public class Locatlist_rcyler_adapter extends RecyclerView.Adapter<Locatlist_rcy
     }
 
     Activity activity;
-    ArrayList<Location> list;
+    ArrayList<MyLocation> list;
 
-    public Locatlist_rcyler_adapter(ArrayList<Location> list) {
+    public Locatlist_rcyler_adapter(ArrayList<MyLocation> list) {
         this.list = list;
     }
 

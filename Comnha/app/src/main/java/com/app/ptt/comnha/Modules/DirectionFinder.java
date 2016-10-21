@@ -30,13 +30,14 @@ public class DirectionFinder {
     private DirectionFinderListener listener;
     private String origin;
     private Geocoder geocoder;
-    private String destination;
+    private String destination,ID;
     private ArrayList<Route> routes;
-    public DirectionFinder(DirectionFinderListener listener,String origin,String destination,ArrayList<Route> routes,Geocoder geocoder){
+    public DirectionFinder(DirectionFinderListener listener,String origin,String destination,ArrayList<Route> routes,Geocoder geocoder,String ID){
         this.listener=listener;
         this.origin=origin;
         this.destination=destination;
         this.routes=routes;
+        this.ID=ID;
         this.geocoder=geocoder;
         Log.i(LOG,origin+" -> "+destination);
     }
@@ -106,21 +107,25 @@ public class DirectionFinder {
                 JSONObject jsonEndLocation = jsonLeg.getJSONObject("end_location");
                 JSONObject jsonStartLocation = jsonLeg.getJSONObject("start_location");
 
-                route.distance = new MyDistance(jsonDistance.getString("text"), jsonDistance.getInt("value"));
-                route.duration = new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value"));
-                route.endAddress = jsonLeg.getString("end_address");
-                route.startAddress = jsonLeg.getString("start_address");
-                route.startLocation = new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng"));
-                route.endLocation = new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng"));
-                route.points = decodePolyLine(overview_polylineJson.getString("points"));
+                route.setDistance(new MyDistance(jsonDistance.getString("text"), jsonDistance.getInt("value")));
+                route.setDuration( new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value")));
+                route.setEndAddress(jsonLeg.getString("end_address"));
+                route.setStartAddress(jsonLeg.getString("start_address"));
+                route.setStartLocation(new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng")));
+                route.setEndLocation(new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng")));
+                route.setPoints(decodePolyLine(overview_polylineJson.getString("points")));
+                route.setLocalID(ID);
+
                 try {
-                    route.district = new getDistrict(route.endLocation.latitude, route.endLocation.longitude, geocoder).execute();
+                    route.setDistrict(new getDistrict(route.getEndLocation().latitude, route.getEndLocation().longitude, geocoder).execute());
                 } catch (Exception e) {
-                    route.district = "";
+                    route.setDistrict("");
                 }
 
                 routes.add(route);
-                Log.i(LOG, "route.startAddress: " + route.endAddress);
+                Log.i(LOG, "route.endAddress: " + route.getEndAddress());
+                Log.i(LOG,"lat="+route.getEndLocation().latitude+" lon="+route.getEndLocation().longitude);
+                Log.i(LOG,route.getLocalID()+"");
                 Log.i(LOG, "RoutesSize: " + routes.size());
 
             }
