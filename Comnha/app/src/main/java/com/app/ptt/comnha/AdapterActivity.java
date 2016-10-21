@@ -148,7 +148,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                             if (isComplete == 1) {
                                 routes = myService.returnRoute();
                                 MapFragment mapFragment = new MapFragment();
-                                mapFragment.getRoute(routes);
+                                mapFragment.getMethod(routes);
                                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
 
                             }
@@ -165,7 +165,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         } else {
 
             MapFragment mapFragment = new MapFragment();
-            mapFragment.getRoute(routes);
+            mapFragment.getMethod(routes);
             getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
         }
     }

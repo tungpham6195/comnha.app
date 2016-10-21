@@ -40,6 +40,7 @@ public class MapFragment extends Fragment {
 
     public void getMethod(ArrayList<Route> list) {
         this.list = new ArrayList<>();
+        this.list=list;
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -96,7 +97,16 @@ public class MapFragment extends Fragment {
                                     txt_DiemGia = (TextView) view1.findViewById(R.id.txt_DiemGia);
                                     txt_DiemPhucVu = (TextView) view1.findViewById(R.id.txt_DiemPhucVu);
                                     txt_DiemVeSinh = (TextView) view1.findViewById(R.id.txt_DiemVeSinh);
-                                    txt_TenQuan.setText("tenquan");
+                                    Route a= returnRoute(marker);
+                                    if(a==null){
+                                    }else{
+                                        txt_TenQuan.setText(a.getTenQuan());
+                                        txt_DiaChi.setText(a.getEndAddress());
+                                        txt_GioMo.setText(a.getGioMo()+":"+a.getGioDong());
+                                        txt_DiemVeSinh.setText("5");
+                                        txt_DiemGia.setText("6");
+                                        txt_DiemPhucVu.setText("8");
+                                    }
                                     return view1;
                                 }
 
@@ -141,10 +151,13 @@ public class MapFragment extends Fragment {
         }
     }
 
-    public void getPosition(Marker marker) {
-        if (marker.getPosition() != yourLocation.getPosition()) {
-
+    public Route returnRoute(Marker marker){
+        for(Route a:list){
+            if(marker.getPosition().latitude==a.getEndLocation().latitude&& marker.getPosition().longitude==a.getEndLocation().longitude)
+                return a;
         }
+        return null;
     }
+
 
 }

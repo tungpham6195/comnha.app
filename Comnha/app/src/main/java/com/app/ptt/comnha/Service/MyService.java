@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.app.ptt.comnha.AdapterActivity;
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Main2Activity;
 import com.app.ptt.comnha.Modules.DirectionFinder;
 import com.app.ptt.comnha.Modules.DirectionFinderListener;
@@ -26,6 +27,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,15 +45,15 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     Firebase ref;
     List<Address> addresses;
     private String yourLocation;
+    ArrayList<MyLocation> listLocation;
     Intent broadcastIntent;
     ArrayList<Route> routes;
-    ArrayList<String> listPlace;
     Boolean check=false;
-    int flag;
+    int flag,myCount=0;
     @Override
     public void onCreate() {
         super.onCreate();
-        listPlace=new ArrayList<>();
+        listLocation=new ArrayList<>();
         //routes=new ArrayList<>();
         broadcastIntent =new Intent();
         mBinder = new LocalBinder();
@@ -66,10 +68,6 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
                 mGoogleApiClient.connect();
             }
        // }
-    }
-    public void resetDataLoad(){
-        listPlace=new ArrayList<>();
-        routes=new ArrayList<>();
     }
 
     public ArrayList<Route> returnRoute(){
@@ -92,18 +90,19 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     @Override
     public void onDirectionFinderSuccess(ArrayList<Route> routes) {
         this.routes=routes;
+        addToRoute();
         Log.i(LOG,"Routes size="+routes.size());
     }
 
-    public void findDirection(String orgin, String destination) {
+    public void findDirection(String orgin, String destination,String ID) {
         Log.i(LOG, "findDirection");
         try {
-            new DirectionFinder(this, orgin, destination, routes, geocoder).execute();
+            new DirectionFinder(this, orgin, destination, routes, geocoder,ID).execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void loadListPlace(String destination) {
+    public void loadListPlace(String destination,String ID) {
         Log.i(LOG, "loadListPlace");
         String origin =null;
         try {
@@ -112,7 +111,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             e.printStackTrace();
         }
         if(origin!=null &&destination!=null) {
-            findDirection(origin, destination);
+            findDirection(origin, destination,ID);
         }
     }
     public String returnLocation() throws IOException {
@@ -128,25 +127,27 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                listPlace.add(dataSnapshot.child("diachi").getValue().toString());
+                listLocation.add(dataSnapshot.getValue(MyLocation.class));
+                Log.i(LOG, "Ten quan: "+dataSnapshot.getValue(MyLocation.class).getName());
+                Log.i(LOG, "Địa chỉ: "+dataSnapshot.getValue(MyLocation.class).getDiachi());
                 //Location location=dataSnapshot.getValue(Location.class);
                 //sizeOfListData=listPlace.size();
                 //loadListPlace(listPlace.get(listPlace.size() - 1));
                 flag = 1;
                 check = false;
-                loadListPlace(dataSnapshot.child("diachi").getValue().toString());
-                Log.i(LOG, "Routes.size= " + routes.size());
-                Log.i(LOG, "onChildAdded.getDataInFireBase: " + dataSnapshot.child("diachi").getValue().toString());
+                listLocation.get(listLocation.size()-1).setLocaID(setRandomID()+"");
+                loadListPlace(listLocation.get(listLocation.size()-1).getDiachi(),listLocation.get(listLocation.size()-1).getLocaID());
+                Log.i(LOG, "Routes size= " + routes.size());
+                Log.i(LOG, "onChildAdded.getDataInFireBase: " + dataSnapshot.getValue(MyLocation.class).getName()+ ". ID="+listLocation.get(listLocation.size()-1).getLocaID());
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String  s) {
-                flag=1;
-                check=false;
-                loadListPlace(dataSnapshot.child("diachi").getValue().toString());
-                Log.i(LOG, "onChildChanged.getDataInFireBase: " + dataSnapshot.child("diachi").getValue().toString());
-            }
 
+            }
+            public int  setRandomID(){
+                return myCount++;
+            }
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
 
@@ -225,9 +226,9 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
                 Log.i(LOG, "lat1 " + latitude);
                 Log.i(LOG, "lng1" + longtitude);
             } else{
-                Log.i(LOG, "Location Error");
-                flag=4;
-                sendBroadcast();
+//                Log.i(LOG, "Location Error");
+//                flag=4;
+//                sendBroadcast();
             }
             startLocationUpdate();
     }
@@ -278,10 +279,10 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             Log.i(LOG, "latitude: " + location.getLatitude() + ". Longitude: " + location.getLongitude());
             this.latitude = location.getLatitude();
             this.longtitude = location.getLongitude();
-            for (String a : listPlace) {
+            for (MyLocation a : listLocation) {
                 Log.i(LOG,"onLocationChanged");
                 routes=new ArrayList<>();
-                loadListPlace(a);
+                loadListPlace(a.getDiachi(),a.getLocaID());
             }
         }
         if (flag == 1) {
@@ -301,7 +302,35 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
                 mGoogleApiClient.disconnect();
 
     }
-
+    public void addToRoute(){
+        Log.i(LOG,"resetListPlace");
+        Route a=routes.get(routes.size()-1);
+        // for(Route a: routes){
+        for(MyLocation location: listLocation){
+            if(a.getLocalID()==location.getLocaID()){
+                Log.i(LOG,"Da zo day"+location.getName()+" ."+location.getTimestart()+" ."+location.getTimeend()+"."+location.getSdt());
+                a.setTenQuan(location.getName());
+                a.setGioMo(location.getTimestart());
+                a.setGioDong(location.getTimeend());
+                a.setSdt(location.getSdt());
+                a.setGiaMin(location.getGiamin());
+                a.setGiaMax(location.getGiamax());
+            }
+        }
+        // }
+    }
+    public LatLng convertAddress(String address) {
+        List<Address> addresses=null;
+        try {
+            addresses = geocoder.getFromLocationName(address, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (addresses != null) {
+            Log.i(LOG,"convert: latitude="+addresses.get(0).getLatitude()+"longitude="+addresses.get(0).getLongitude());
+            return new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
+        } else return null;
+    }
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
