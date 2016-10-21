@@ -96,7 +96,7 @@ public class Main2Activity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     userID = user.getUid();
-                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                     LoginSession.getInstance().setUserID(userID);
                     LoginSession.getInstance().setUsername(user.getDisplayName());
                     LoginSession.getInstance().setEmail(user.getEmail());
@@ -143,8 +143,6 @@ public class Main2Activity extends AppCompatActivity
         fab_addloca.setOnClickListener(this);
         fab_uploadpho.setOnClickListener(this);
         fabmenu.setClosedOnTouchOutside(true);
-
-
 //        btn_search.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

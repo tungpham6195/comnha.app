@@ -24,18 +24,18 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class VoteFragment extends DialogFragment implements View.OnClickListener, DiscreteSeekBar.OnProgressChangeListener {
+public class DovoteFragment extends DialogFragment implements View.OnClickListener, DiscreteSeekBar.OnProgressChangeListener {
     Button btn_vote;
     DiscreteSeekBar mSeekBarGia, mSeekBarVS, mSeekBarPV;
     TextView txt_gia, txt_vs, txt_pv;
     Long gia = (long) 1, vs = (long) 1, pv = (long) 1;
 
-    public VoteFragment() {
+    public DovoteFragment() {
         // Required empty public constructor
     }
 
-    public static VoteFragment newIntance(String title) {
-        VoteFragment frg = new VoteFragment();
+    public static DovoteFragment newIntance(String title) {
+        DovoteFragment frg = new DovoteFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
         frg.setArguments(args);
@@ -79,6 +79,28 @@ public class VoteFragment extends DialogFragment implements View.OnClickListener
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (DoRate.getInstance().getGia() > 0
+                && DoRate.getInstance().getVesinh() > 0
+                && DoRate.getInstance().getPhucvu() > 0) {
+//            txt_gia.setText(getResources().getString(R.string.text_rategia) + ": " +
+//                    DoRate.getInstance().getGia());
+//            txt_vs.setText(getResources().getString(R.string.text_ratevs) + ": " +
+//                    DoRate.getInstance().getVesinh());
+//            txt_pv.setText(getResources().getString(R.string.text_ratepv) + ": " +
+//                    DoRate.getInstance().getPhucvu());
+            mSeekBarGia.setProgress((int) DoRate.getInstance().getGia());
+            mSeekBarVS.setProgress((int) DoRate.getInstance().getVesinh());
+            mSeekBarPV.setProgress((int) DoRate.getInstance().getPhucvu());
+        } else {
+            mSeekBarGia.setProgress((int) DoRate.getInstance().getGia());
+            mSeekBarVS.setProgress((int) DoRate.getInstance().getVesinh());
+            mSeekBarPV.setProgress((int) DoRate.getInstance().getPhucvu());
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.frg_vote_btn_vote:
@@ -95,12 +117,28 @@ public class VoteFragment extends DialogFragment implements View.OnClickListener
         switch (seekBar.getId()) {
             case R.id.frg_vote_slide_gia:
                 txt_gia.setText(getResources().getString(R.string.text_rategia) + ": " + String.valueOf(value));
+                try {
+                    gia = (long) seekBar.getProgress();
+
+                } catch (NullPointerException mess) {
+                    gia = (long) 1;
+                }
                 break;
             case R.id.frg_vote_slide_phucvu:
                 txt_pv.setText(getResources().getString(R.string.text_ratepv) + ": " + String.valueOf(value));
+                try {
+                    pv = (long) seekBar.getProgress();
+                } catch (NullPointerException mess) {
+                    pv = (long) 1;
+                }
                 break;
             case R.id.frg_vote_slide_vesinh:
                 txt_vs.setText(getResources().getString(R.string.text_ratevs) + ": " + String.valueOf(value));
+                try {
+                    vs = (long) seekBar.getProgress();
+                } catch (NullPointerException mess) {
+                    vs = (long) 1;
+                }
                 break;
         }
     }
@@ -112,30 +150,7 @@ public class VoteFragment extends DialogFragment implements View.OnClickListener
 
     @Override
     public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
-        switch (seekBar.getId()) {
-            case R.id.frg_vote_slide_gia:
-                try {
-                    gia = (long) seekBar.getProgress();
 
-                } catch (NullPointerException mess) {
-                    gia = (long) 1;
-                }
-                break;
-            case R.id.frg_vote_slide_phucvu:
-                try {
-                    pv = (long) seekBar.getProgress();
-                } catch (NullPointerException mess) {
-                    pv = (long) 1;
-                }
-                break;
-            case R.id.frg_vote_slide_vesinh:
-                try {
-                    vs = (long) seekBar.getProgress();
-                } catch (NullPointerException mess) {
-                    vs = (long) 1;
-                }
-                break;
-        }
     }
 
     @Override
@@ -149,7 +164,5 @@ public class VoteFragment extends DialogFragment implements View.OnClickListener
         // Set the width of the dialog proportional to 75% of the screen width
         window.setLayout((int) (size.x * 0.95), WindowManager.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
-
-
     }
 }

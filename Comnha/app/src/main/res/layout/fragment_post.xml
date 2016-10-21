@@ -3,7 +3,7 @@
     android:id="@+id/frg_post"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.app.ptt.comnha.PostFragment">
+    tools:context="com.app.ptt.comnha.AddpostFragment">
 
 
     <RelativeLayout

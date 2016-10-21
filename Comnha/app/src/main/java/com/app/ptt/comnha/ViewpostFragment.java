@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ViewpostFragment extends Fragment {
+public class ViewpostFragment extends Fragment implements View.OnClickListener {
     private String postID;
     TextView txt_un, txt_date, txt_title, txt_content, txt_likenumb, btn_like, btn_comment;
     Button btn_sendcomment;
@@ -125,9 +125,15 @@ public class ViewpostFragment extends Fragment {
         btn_sendcomment = (Button) view.findViewById(R.id.frg_viewrev_btn_sendcomment);
         edt_comment = (EditText) view.findViewById(R.id.frg_viewrev_edt_comment);
 //        edt_comment.setFocusable(false);
-        btn_sendcomment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btn_sendcomment.setOnClickListener(this);
+        btn_like.setOnClickListener(this);
+        btn_comment.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.frg_viewrev_btn_sendcomment:
                 if (!edt_comment.getText().toString().equals("")) {
                     Comment newComment = new Comment();
                     newComment.setContent(edt_comment.getText().toString());
@@ -149,20 +155,10 @@ public class ViewpostFragment extends Fragment {
                         }
                     });
                 }
-            }
-        });
-        btn_like.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
-        btn_comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                break;
+            case R.id.frg_viewrev_txtv_comment:
                 edt_comment.requestFocusFromTouch();
-                Log.d("coomnent", "clicked");
-            }
-        });
+                break;
+        }
     }
-
 }

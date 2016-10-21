@@ -12,12 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
-import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
 import com.firebase.client.ChildEventListener;
@@ -132,107 +130,6 @@ public class LocadetailFragment extends Fragment {
 
             }
         });
-//        ref.child("Locations/" + locaID + "/posts/").addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                if (dataSnapshot.getValue().equals(true)) {
-//                    final String key = dataSnapshot.getKey();
-//                    ref.child("Posts").addChildEventListener(new ChildEventListener() {
-//                        @Override
-//                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                            if (dataSnapshot.getKey().equals(key)) {
-//                                Post post = new Post();
-//                                post.setGia(Long.valueOf(dataSnapshot.child("gia").getValue().toString()));
-//                                post.setVesinh(Long.valueOf(dataSnapshot.child("vesinh").getValue().toString()));
-//                                post.setPhucvu(Long.valueOf(dataSnapshot.child("phucvu").getValue().toString()));
-//                                post.setDate(dataSnapshot.child("date").getValue().toString());
-//                                post.setTitle(dataSnapshot.child("title").getValue().toString());
-//                                post.setContent(dataSnapshot.child("content").getValue().toString());
-//                                post.setPostID(key);
-////                                txt_gia.setText(String.valueOf(post.getGia()));
-////                                txt_phucvu.setText(String.valueOf(post.getPhucvu()));
-////                                txt_vesinh.setText(String.valueOf(post.getVesinh()));
-//                                postlist.add(post);
-//                            }
-//                            mAdapter.notifyDataSetChanged();
-//                        }
-//
-//                        @Override
-//                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//                        }
-//
-//                        @Override
-//                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//                        }
-//
-//                        @Override
-//                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(FirebaseError firebaseError) {
-//
-//                        }
-//                    });
-//                    ref.child("Posts/").child(key).addValueEventListener(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-////                            Toast.makeText(getActivity().getApplicationContext(),
-////                                            dataSnapshot.getKey(), Toast.LENGTH_SHORT).show();
-////                            Toast.makeText(getActivity().getApplicationContext(),
-////                            dataSnapshot.child("users/").getKey(), Toast.LENGTH_SHORT).show();
-//                            Post post = new Post();
-//                            post.setGia(Long.valueOf(dataSnapshot.child("gia").getValue().toString()));
-//                            post.setVesinh(Long.valueOf(dataSnapshot.child("vesinh").getValue().toString()));
-//                            post.setPhucvu(Long.valueOf(dataSnapshot.child("phucvu").getValue().toString()));
-//                            post.setDate(dataSnapshot.child("date").getValue().toString());
-//                            post.setTitle(dataSnapshot.child("title").getValue().toString());
-//                            post.setContent(dataSnapshot.child("content").getValue().toString());
-//                            post.setPostID(key);
-//                            txt_gia.setText(String.valueOf(post.getGia()));
-//                            txt_phucvu.setText(String.valueOf(post.getPhucvu()));
-//                            txt_vesinh.setText(String.valueOf(post.getVesinh()));
-//
-//                            for (Post pst : postlist) {
-//                                if (pst.getPostID().equals(dataSnapshot.getKey())) {
-//                                    post.setPostID(dataSnapshot.getKey());
-//                                    postlist.set(postlist.indexOf(pst), post);
-//                                }
-//                            }
-//                            mAdapter.notifyDataSetChanged();
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(FirebaseError firebaseError) {
-//
-//                        }
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(FirebaseError firebaseError) {
-//
-//            }
-//        });
         return view;
     }
 

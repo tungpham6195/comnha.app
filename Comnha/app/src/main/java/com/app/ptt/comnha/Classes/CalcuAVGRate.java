@@ -21,7 +21,7 @@ public class CalcuAVGRate {
         long size = list.size();
         for (Post item : list) {
             giasum += item.getGia();
-            vsinhsum += item.getPhucvu();
+            vsinhsum += item.getVesinh();
             phucvusum += item.getPhucvu();
         }
         ArrayList<Long> endlist = new ArrayList<Long>();

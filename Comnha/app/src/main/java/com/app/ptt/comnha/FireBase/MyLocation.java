@@ -8,7 +8,7 @@ import java.util.Map;
  */
 
 public class MyLocation {
-    String name, diachi, sdt, timestart, timeend, latitude, longitude;
+    String name, diachi, sdt, timestart, timeend;
     long giamin, giamax;
     String locaID;
 
@@ -39,14 +39,6 @@ public class MyLocation {
         this.timeend = timeend;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
     public void setGiamin(long giamin) {
         this.giamin = giamin;
     }
@@ -75,14 +67,6 @@ public class MyLocation {
         return timeend;
     }
 
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
     public long getGiamin() {
         return giamin;
     }
@@ -104,8 +88,6 @@ public class MyLocation {
         result.put("timestart", timestart);
         result.put("giamax", giamax);
         result.put("giamin", giamin);
-        result.put("longitude", longitude);
-        result.put("latitude", latitude);
         return result;
     }
 }

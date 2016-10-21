@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 /**
@@ -73,16 +74,17 @@ public class Users implements Transactions {
         if (!password.equals(confirmPass)) {
             Toast.makeText(suContext, "Mật khẩu xác nhận không đúng!!!", Toast.LENGTH_SHORT).show();
         } else {
-            FirebaseAuth mAuth;
+            final FirebaseAuth mAuth;
             mAuth = FirebaseAuth.getInstance();
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+                        FirebaseUser user=task.getResult().getUser();
                         UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(username)
                                 .build();
-                        Toast.makeText(suContext,profileUpdate.getDisplayName(),Toast.LENGTH_SHORT).show();
+                        user.updateProfile(profileUpdate);
                         String userID = task.getResult().getUser().getUid();
                         Account newAccount = new Account();
                         newAccount.setHo(ho);

@@ -10,17 +10,14 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class AdapterActivity extends AppCompatActivity implements ChooselocaFragment.onPassDatafromChooseLocaFrg {
@@ -230,9 +227,9 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 } else {
 
                 }
-                PostFragment postFragment = new PostFragment();
-                postFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, postFragment)
+                AddpostFragment addpostFragment = new AddpostFragment();
+                addpostFragment.setArguments(getIntent().getExtras());
+                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, addpostFragment)
                         .commit();
             }
         } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewpost_CODE))) {
@@ -291,9 +288,9 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 } else {
 
                 }
-                VoteFragment voteFragment = new VoteFragment();
-                voteFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, voteFragment)
+                DovoteFragment dovoteFragment = new DovoteFragment();
+                dovoteFragment.setArguments(getIntent().getExtras());
+                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, dovoteFragment)
                         .commit();
             }
         } else if (FRAGMENT_CODE.equals(getString(R.string.frag_map_CODE))) {

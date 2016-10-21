@@ -135,7 +135,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
                 //loadListPlace(listPlace.get(listPlace.size() - 1));
                 flag = 1;
                 check = false;
-                listLocation.get(listLocation.size()-1).setLocaID(setRandomID()+"");
+                listLocation.get(listLocation.size()-1).setLocaID(dataSnapshot.getKey());
                 loadListPlace(listLocation.get(listLocation.size()-1).getDiachi(),listLocation.get(listLocation.size()-1).getLocaID());
                 Log.i(LOG, "Routes size= " + routes.size());
                 Log.i(LOG, "onChildAdded.getDataInFireBase: " + dataSnapshot.getValue(MyLocation.class).getName()+ ". ID="+listLocation.get(listLocation.size()-1).getLocaID());
