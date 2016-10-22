@@ -366,8 +366,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_homepage:
                 break;
-            case R.id.nav_activity:
-                break;
             case R.id.nav_share:
                 break;
             case R.id.nav_send:

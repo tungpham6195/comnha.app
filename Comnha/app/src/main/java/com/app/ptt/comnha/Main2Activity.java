@@ -259,6 +259,10 @@ public class Main2Activity extends AppCompatActivity
         // Handle navigation view item clicks here.
         switch (item.getItemId()) {
             case R.id.nav_profile:
+                Intent intent = new Intent(Main2Activity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frg_prodetail_CODE));
+                startActivity(intent);
                 break;
             case R.id.nav_homepage:
                 LocatlistFragment locatlistFragment = new LocatlistFragment();
@@ -267,17 +271,15 @@ public class Main2Activity extends AppCompatActivity
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
-            case R.id.nav_activity:
-                break;
             case R.id.nav_share:
                 break;
             case R.id.nav_send:
                 break;
             case R.id.nav_signin:
-                Intent intent = new Intent(Main2Activity.this, AdapterActivity.class);
-                intent.putExtra(getString(R.string.fragment_CODE),
+                Intent intent1 = new Intent(Main2Activity.this, AdapterActivity.class);
+                intent1.putExtra(getString(R.string.fragment_CODE),
                         getString(R.string.frg_signin_CODE));
-                startActivity(intent);
+                startActivity(intent1);
                 break;
             case R.id.nav_signout:
                 mAuth.signOut();

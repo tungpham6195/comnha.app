@@ -62,7 +62,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_post, container, false);
+        View view = inflater.inflate(R.layout.fragment_addpost, container, false);
         anhXa(view);
         Firebase.setAndroidContext(getActivity());
         Firebase.setAndroidContext(getContext());
@@ -198,9 +198,13 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             String key = ref.child("Posts").push().getKey();
             Map<String, Object> postValue = newPost.toMap();
             Map<String, Object> childUpdates = new HashMap<String, Object>();
-            childUpdates.put("/Posts/" + key, postValue);
-            childUpdates.put("/UserPost/" + LoginSession.getInstance().getUserID() + "/" + key, postValue);
-            childUpdates.put("/LocationPost/" + ChooseLoca.getInstance().getLocaID() + "/" + key, postValue);
+            childUpdates.put(getResources().getString(R.string.posts_CODE) + key, postValue);
+            childUpdates.put(getResources().getString(R.string.userpost_CODE)
+                    + LoginSession.getInstance().getUserID() + "/" + key, postValue);
+            childUpdates.put(getResources().getString(R.string.locationpost_CODE) +
+                    ChooseLoca.getInstance().getLocaID() + "/" + key, postValue);
+            childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
+                    + LoginSession.getInstance().getUserID() + "/" + key, postValue);
             ref.updateChildren(childUpdates, new Firebase.CompletionListener() {
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {

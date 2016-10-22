@@ -20,6 +20,7 @@
     <string name="text_username">Username</string>
     <string name="text_password">Mật khẩu</string>
     <string name="text_confirmPass">Xác nhận mật khẩu</string>
+    <string name="text_hoten">Họ Tên</string>
     <string name="text_ho">Họ</string>
     <string name="text_tenLot">Tên lót</string>
     <string name="text_ten">Tên</string>
@@ -100,6 +101,7 @@
     <string name="frg_viewpost_CODE">viewpost</string>
     <string name="frg_signup_CODE">signup</string>
     <string name="frg_signin_CODE">signin</string>
+    <string name="frg_prodetail_CODE">profiledetail</string>
     <string name="frag_locadetail_CODE">locadetail</string>
     <string name="frag_vote_CODE">vote</string>
     <string name="fragment_CODE">FRAGMENTCODE</string>
@@ -112,13 +114,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!--Firebase-->
-    <string name="users_CODE">Users</string>
-    <string name="locations_CODE">Locations</string>
-    <string name="posts_CODE">Posts</string>
-    <string name="locationpost_CODE">LocationPost</string>
-    <string name="userpost_CODE">UserPost</string>
+    <string name="users_CODE">/Users/</string>
+    <string name="locations_CODE">/Locations/</string>
+    <string name="posts_CODE">/Posts/</string>
+    <string name="locationpost_CODE">/LocationPost/</string>
+    <string name="userpost_CODE">/UserPost/</string>
     <string name="comments_CODE">Comments</string>
-    <string name="postcomment_CODE">PostComment</string>
+    <string name="postcomment_CODE">/PostComment/</string>
+    <string name="locauserpost_CODE">/LocationUserPost/</string>
     <!--Firebase-->
 
     <string name="action_example">Example action</string>

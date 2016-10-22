@@ -15,10 +15,6 @@
                     android:id="@+id/nav_profile"
                     android:icon="@drawable/ic_account_black_24dp"
                     android:title="@string/nav_profile" />
-                <item
-                    android:id="@+id/nav_activity"
-                    android:icon="@drawable/ic_activity_64"
-                    android:title="@string/nav_activities" />
             </menu>
         </item>
     </group>

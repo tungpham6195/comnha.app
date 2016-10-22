@@ -313,10 +313,20 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                         openMap();
                     }
                 }
-
-
             }
 
+        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frg_prodetail_CODE))) {
+            if (findViewById(R.id.frame_adapter) != null) {
+                if (savedInstanceState != null) {
+
+                } else {
+
+                }
+                ProfiledetailFragment proDetailFrag = new ProfiledetailFragment();
+                proDetailFrag.setArguments(getIntent().getExtras());
+                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, proDetailFrag)
+                        .commit();
+            }
         }
     }
 
@@ -360,7 +370,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(LOG,"onPause");
+        Log.i(LOG, "onPause");
 //        failed startActitityforResult
 //        Intent intent1 = new Intent();
 //        intent1.putExtra("result", locaKey);
