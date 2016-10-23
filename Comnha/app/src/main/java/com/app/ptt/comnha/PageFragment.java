@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
 import com.app.ptt.comnha.FireBase.Account;
@@ -55,7 +54,6 @@ public class PageFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPage = getArguments().getInt(ARG_PAGE);
     }
 
     View view;
@@ -64,7 +62,9 @@ public class PageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        mPage = getArguments().getInt(ARG_PAGE);
         Firebase.setAndroidContext(getActivity().getApplicationContext());
+        Log.i("pageNumb", "" + mPage);
         ref = new Firebase(getResources().getString(R.string.firebase_path));
         switch (mPage) {
             case 1://frg_profile
@@ -140,7 +140,6 @@ public class PageFragment extends Fragment {
                                         getResources().getString(R.string.frag_chooseloca_CODE));
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
-                                loadPost();
                                 break;
                         }
                         return true;
@@ -173,7 +172,7 @@ public class PageFragment extends Fragment {
         }
         switch (whatFilter) {
             case 1://hiện tất cả các review (chưa có vị trí xác định)
-                Toast.makeText(getActivity(), "none", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "none", Toast.LENGTH_SHORT).show();
                 postList.clear();
                 mAdapter = new Reviewlist_rcyler_adapter(postList, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
@@ -210,7 +209,7 @@ public class PageFragment extends Fragment {
                         });
                 break;
             case 2://hiện tất cả review theo vị trí xác định
-                Toast.makeText(getActivity(), ChooseLoca.getInstance().getLocaID(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), ChooseLoca.getInstance().getLocaID(), Toast.LENGTH_SHORT).show();
                 postList.clear();
                 mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_activity_recyler);
                 mRecyclerView.setHasFixedSize(true);
@@ -255,5 +254,4 @@ public class PageFragment extends Fragment {
 
     void anhxaPage3(View view) {
     }
-
 }

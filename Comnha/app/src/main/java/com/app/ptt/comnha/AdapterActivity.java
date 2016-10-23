@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,18 +34,17 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     int isComplete = 0;
     Bundle savedInstanceState;
     ArrayList<Route> routes;
+    static final String STATE_ADDPOST_FRAGMENT = "addpostFragment";
+    static final int CHECK_ADDPOST_FRAGMENT = 1;
 
     public AdapterActivity() {
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.savedInstanceState = savedInstanceState;
         Log.i(LOG, "onCreate");
-        doBindService();
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcast);
-        registerReceiver(mReceiver, mIntentFilter);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adapter);
 
@@ -64,8 +64,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     public void finish() {
         Log.i(LOG, "finish");
         super.finish();
-        doUnbindService();
-        unregisterReceiver(mReceiver);
+
 
     }
 
@@ -225,12 +224,13 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 if (savedInstanceState != null) {
 
                 } else {
-
+                    Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
+                    AddpostFragment addpostFragment = new AddpostFragment();
+                    addpostFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, addpostFragment)
+                            .commit();
                 }
-                AddpostFragment addpostFragment = new AddpostFragment();
-                addpostFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, addpostFragment)
-                        .commit();
+
             }
         } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewpost_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
@@ -382,5 +382,33 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     @Override
     public void passData(String data) {
         locaKey = data;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        doBindService();
+        registerReceiver(mReceiver, mIntentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        doUnbindService();
+        unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        outState.putInt(STATE_ADDPOST_FRAGMENT, CHECK_ADDPOST_FRAGMENT);
+        Log.i("saveState","saved");
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.i("restoreState","restored");
+        this.savedInstanceState = savedInstanceState;
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }

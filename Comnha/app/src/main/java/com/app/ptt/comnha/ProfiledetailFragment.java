@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.app.ptt.comnha.Adapters.FragmentPagerAdapter;
+import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 
 
@@ -48,7 +49,7 @@ public class ProfiledetailFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mToolbar);
         ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setTitle(LoginSession.getInstance().getUsername().trim()+"'s profile");
+        actionBar.setTitle(LoginSession.getInstance().getUsername().trim() + "'s profile");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setShowHideAnimationEnabled(true);
@@ -56,7 +57,7 @@ public class ProfiledetailFragment extends Fragment {
         collapsLayout = (CollapsingToolbarLayout) view.findViewById(R.id.frag_prodetail_collapsing_toolbar);
         collapsLayout.setTitle(LoginSession.getInstance().getUsername());
         viewPager.setAdapter(
-                new FragmentPagerAdapter(activity.getSupportFragmentManager(), getActivity().getApplicationContext())
+                new FragmentPagerAdapter(activity.getSupportFragmentManager(), activity.getApplicationContext())
         );
         tabLayout.setupWithViewPager(viewPager);
 //        dynamicToolbarColor();
@@ -86,5 +87,13 @@ public class ProfiledetailFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ChooseLoca.getInstance().setLocaID(null);
+        ChooseLoca.getInstance().setName(null);
+        ChooseLoca.getInstance().setAddress(null);
     }
 }
