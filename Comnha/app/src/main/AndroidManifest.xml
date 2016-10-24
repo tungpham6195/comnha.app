@@ -39,6 +39,13 @@
             android:name=".Service.MyService"
             android:enabled="true"
             android:exported="true"/>
+        <provider
+            android:authorities="br.com.mauker.materialsearchview.searchhistorydatabase"
+            android:name="br.com.mauker.materialsearchview.db.HistoryProvider"
+            android:exported="false"
+            android:protectionLevel="signature"
+            android:syncable="true"/>
     </application>
+    
 
 </manifest>

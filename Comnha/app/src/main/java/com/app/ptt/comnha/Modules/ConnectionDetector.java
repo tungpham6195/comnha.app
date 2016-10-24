@@ -9,6 +9,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 
+import com.app.ptt.comnha.Main2Activity;
+
 import java.util.ArrayList;
 
 /**
@@ -57,7 +59,7 @@ public class ConnectionDetector {
 
     public static void showSettingAlert(final Context mContext) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle("GPS settings");
         alertDialog.setMessage("GPS is not enabled.Do you want to setting menu?");
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
             @Override
@@ -70,8 +72,34 @@ public class ConnectionDetector {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                Intent main=new Intent(mContext,Main2Activity.class);
+                mContext.startActivity(main);
             }
         });
         alertDialog.show();
+    }
+    public static void showNetworkAlert(final Context mContext){
+        AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+        builder.setTitle("Network Connection");
+        builder.setMessage("Network is not enabled. Enable network and try again");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent main=new Intent(mContext,Main2Activity.class);
+                mContext.startActivity(main);
+            }
+        });
+    }
+    public static void showNoConnectAlert(final Context mContext){
+        AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+        builder.setTitle("No Connection");
+        builder.setMessage("Network and GPS is not enabled. Enable and try again");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent main=new Intent(mContext,Main2Activity.class);
+                mContext.startActivity(main);
+            }
+        });
     }
 }

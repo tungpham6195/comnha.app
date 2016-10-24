@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddpostFragment extends Fragment implements View.OnClickListener {
+public class AddPostFragment extends Fragment implements View.OnClickListener {
 
     Button btn_save;
     ImageView img;
@@ -52,7 +52,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     ArrayList<Post> postlist;
     CalcuAVGRate newcalcu;
 
-    public AddpostFragment() {
+    public AddPostFragment() {
         // Required empty public constructor
     }
 
@@ -114,7 +114,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.frg_post_fabrate:
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                DovoteFragment dovoteFragment = DovoteFragment.newIntance(getResources().getString(R.string.text_vote));
+                DoVoteFragment dovoteFragment = DoVoteFragment.newIntance(getResources().getString(R.string.text_vote));
                 dovoteFragment.show(fm, "fragment_vote");
                 break;
             case R.id.btn_save:
@@ -192,6 +192,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             newPost.setUsername(LoginSession.getInstance().getUsername());
             newPost.setDate(new Times().getTime());
             newPost.setTime(new Times().getDate());
+
             newPost.setGia(DoRate.getInstance().getGia());
             newPost.setVesinh(DoRate.getInstance().getVesinh());
             newPost.setPhucvu(DoRate.getInstance().getPhucvu());

@@ -227,7 +227,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 } else {
 
                 }
-                AddpostFragment addpostFragment = new AddpostFragment();
+                AddPostFragment addpostFragment = new AddPostFragment();
                 addpostFragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, addpostFragment)
                         .commit();
@@ -288,7 +288,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 } else {
 
                 }
-                DovoteFragment dovoteFragment = new DovoteFragment();
+                DoVoteFragment dovoteFragment = new DoVoteFragment();
                 dovoteFragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, dovoteFragment)
                         .commit();
@@ -300,14 +300,14 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 }
                 if (!ConnectionDetector.canGetLocation(this)) {
                     if (!ConnectionDetector.networkStatus(this)) {
-                        Toast.makeText(getApplicationContext(), "Không có kết nối internet và gps", Toast.LENGTH_LONG).show();
+                        ConnectionDetector.showNoConnectAlert(this);
                     } else {
                         ConnectionDetector.showSettingAlert(this);
                     }
                     routes = null;
                 } else {
                     if (!ConnectionDetector.networkStatus(this)) {
-                        Toast.makeText(getApplicationContext(), "Không có kết nối internet", Toast.LENGTH_LONG).show();
+                        ConnectionDetector.showNetworkAlert(this);
                         routes = null;
                     } else {
                         openMap();

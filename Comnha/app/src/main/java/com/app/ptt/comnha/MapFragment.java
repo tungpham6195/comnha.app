@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,12 +29,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
+import br.com.mauker.materialsearchview.MaterialSearchView;
+
 public class MapFragment extends Fragment {
     private static final String LOG = "MapFragment";
     private SupportMapFragment supportMapFragment;
     private AutoCompleteTextView acText;
     private ArrayList<Route> list;
     private ArrayList<String> listName;
+    MaterialSearchView materialSearchView;
+    ArrayAdapter<String> a;
     TextView txt_TenQuan, txt_DiaChi, txt_GioMo, txt_DiemGia, txt_DiemPhucVu, txt_DiemVeSinh;
 
     MarkerOptions yourLocation = null;
@@ -55,10 +60,17 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        acText = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, listName);
-        acText.setAdapter(arrayAdapter);
-        acText.setThreshold(1);
+        materialSearchView=(MaterialSearchView) view.findViewById(R.id.msv);
+        materialSearchView.addSuggestions(new String[]{"Cuong"});
+        materialSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                materialSearchView.openSearch();
+            }
+        });
+//        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, listName);
+//        acText.setAdapter(arrayAdapter);
+//        acText.setThreshold(1);
         return view;
     }
 

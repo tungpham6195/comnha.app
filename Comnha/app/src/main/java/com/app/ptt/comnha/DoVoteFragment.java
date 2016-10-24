@@ -24,18 +24,18 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DovoteFragment extends DialogFragment implements View.OnClickListener, DiscreteSeekBar.OnProgressChangeListener {
+public class DoVoteFragment extends DialogFragment implements View.OnClickListener, DiscreteSeekBar.OnProgressChangeListener {
     Button btn_vote;
     DiscreteSeekBar mSeekBarGia, mSeekBarVS, mSeekBarPV;
     TextView txt_gia, txt_vs, txt_pv;
     Long gia = (long) 1, vs = (long) 1, pv = (long) 1;
 
-    public DovoteFragment() {
+    public DoVoteFragment() {
         // Required empty public constructor
     }
 
-    public static DovoteFragment newIntance(String title) {
-        DovoteFragment frg = new DovoteFragment();
+    public static DoVoteFragment newIntance(String title) {
+        DoVoteFragment frg = new DoVoteFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
         frg.setArguments(args);
