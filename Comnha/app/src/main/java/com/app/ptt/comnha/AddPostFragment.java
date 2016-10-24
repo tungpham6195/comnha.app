@@ -122,7 +122,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.frg_post_fabrate:
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                DovoteFragment dovoteFragment = DovoteFragment.newIntance(getResources().getString(R.string.text_vote));
+                DoVoteFragment dovoteFragment = DoVoteFragment.newIntance(getResources().getString(R.string.text_vote));
                 dovoteFragment.show(fm, "fragment_vote");
                 break;
             case R.id.btn_save:
