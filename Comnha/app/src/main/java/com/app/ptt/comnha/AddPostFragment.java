@@ -3,6 +3,7 @@ package com.app.ptt.comnha;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -21,14 +22,18 @@ import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.Posts;
 import com.app.ptt.comnha.Classes.Times;
 import com.app.ptt.comnha.FireBase.Post;
-import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
-import com.app.ptt.comnha.SingletonClasses.DoRate;
+import com.app.ptt.comnha.SingletonClasses.DoPost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +62,8 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     }
 
     Firebase ref;
+    StorageReference storeRef;
+    FirebaseStorage storage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,8 +72,9 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_addpost, container, false);
         anhXa(view);
         Firebase.setAndroidContext(getActivity());
-        Firebase.setAndroidContext(getContext());
         ref = new Firebase(getResources().getString(R.string.firebase_path));
+        storage = FirebaseStorage.getInstance();
+        storeRef = storage.getReferenceFromUrl(getResources().getString(R.string.firebaseStorage_path));
         return view;
 
     }
@@ -129,11 +137,11 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
 
         Log.i("startFrag", "start");
         try {
-            if (!ChooseLoca.getInstance().getLocaID().isEmpty()) {
+            if (!DoPost.getInstance().getLocaID().isEmpty()) {
                 img.setVisibility(View.VISIBLE);
                 txt_address.setVisibility(View.VISIBLE);
-                txt_address.setText(ChooseLoca.getInstance().getAddress());
-                txt_name.setText(ChooseLoca.getInstance().getName());
+                txt_address.setText(DoPost.getInstance().getAddress());
+                txt_name.setText(DoPost.getInstance().getName());
             }
         } catch (NullPointerException mess) {
             img.setVisibility(View.GONE);
@@ -145,28 +153,28 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        ChooseLoca.getInstance().setLocaID(null);
-        ChooseLoca.getInstance().setAddress(null);
-        ChooseLoca.getInstance().setName(null);
-        DoRate.getInstance().setVesinh(0);
-        DoRate.getInstance().setGia(0);
-        DoRate.getInstance().setPhucvu(0);
+        DoPost.getInstance().setLocaID(null);
+        DoPost.getInstance().setAddress(null);
+        DoPost.getInstance().setName(null);
+        DoPost.getInstance().setVesinh(0);
+        DoPost.getInstance().setGia(0);
+        DoPost.getInstance().setPhucvu(0);
     }
 
     private void savePost(View view) {
         boolean checloca = false;
         boolean checkrate = false;
         try {
-            if (ChooseLoca.getInstance().getLocaID().equals("")) {
+            if (DoPost.getInstance().getLocaID().equals("")) {
                 checloca = true;
             }
         } catch (NullPointerException mess) {
             checloca = true;
         }
         try {
-            if (DoRate.getInstance().getGia() < 1
-                    && DoRate.getInstance().getVesinh() < 1
-                    && DoRate.getInstance().getPhucvu() < 1) {
+            if (DoPost.getInstance().getGia() < 1
+                    && DoPost.getInstance().getVesinh() < 1
+                    && DoPost.getInstance().getPhucvu() < 1) {
                 checkrate = true;
             }
         } catch (NullPointerException mess) {
@@ -184,7 +192,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             mProgressDialog = ProgressDialog.show(getActivity(),
                     getResources().getString(R.string.txt_plzwait),
                     getResources().getString(R.string.txt_addinpost),
-                    true, true);
+                    true, false);
             Post newPost = new Post();
             newPost.setTitle(edt_title.getText().toString());
             newPost.setContent(edt_content.getText().toString());
@@ -192,34 +200,74 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             newPost.setUsername(LoginSession.getInstance().getUsername());
             newPost.setDate(new Times().getTime());
             newPost.setTime(new Times().getDate());
-            newPost.setGia(DoRate.getInstance().getGia());
-            newPost.setVesinh(DoRate.getInstance().getVesinh());
-            newPost.setPhucvu(DoRate.getInstance().getPhucvu());
-            String key = ref.child("Posts").push().getKey();
+            newPost.setGia(DoPost.getInstance().getGia());
+            newPost.setVesinh(DoPost.getInstance().getVesinh());
+            newPost.setPhucvu(DoPost.getInstance().getPhucvu());
+            final String key = ref.child("Posts").push().getKey();
             Map<String, Object> postValue = newPost.toMap();
-            Map<String, Object> childUpdates = new HashMap<String, Object>();
+            final Map<String, Object> childUpdates = new HashMap<String, Object>();
             childUpdates.put(getResources().getString(R.string.posts_CODE) + key, postValue);
             childUpdates.put(getResources().getString(R.string.userpost_CODE)
                     + LoginSession.getInstance().getUserID() + "/" + key, postValue);
             childUpdates.put(getResources().getString(R.string.locationpost_CODE) +
-                    ChooseLoca.getInstance().getLocaID() + "/" + key, postValue);
+                    DoPost.getInstance().getLocaID() + "/" + key, postValue);
             childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
+                    + DoPost.getInstance().getLocaID() + "/"
                     + LoginSession.getInstance().getUserID() + "/" + key, postValue);
             ref.updateChildren(childUpdates, new Firebase.CompletionListener() {
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                    mProgressDialog.dismiss();
                     if (firebaseError != null) {
+                        mProgressDialog.dismiss();
                         Toast.makeText(getActivity(), "Đăng bài bị lỗi" + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.i("postComplete", "completed");
+                        boolean checkComplete = false;
+                        UploadTask uploadTask = null;
+                        try {
+                            if (DoPost.getInstance().getFiles().size() > 0) {
+                                Log.i("size", DoPost.getInstance().getFiles().size() + "");
+                                for (File f : DoPost.getInstance().getFiles()) {
+                                    Uri uri = Uri.fromFile(f);
+                                    StorageReference childRef = storeRef.child(getResources().getString(R.string.users_CODE)
+                                            + getResources().getString(R.string.posts_CODE) + uri.getLastPathSegment());
+                                    uploadTask = childRef.putFile(uri);
+                                }
+                                for (File f : DoPost.getInstance().getFiles()) {
+                                    Uri uri = Uri.fromFile(f);
+                                    StorageReference childRef = storeRef.child(getResources().getString(R.string.locations_CODE)
+                                            + DoPost.getInstance().getLocaID() + "/" + uri.getLastPathSegment());
+                                    uploadTask = childRef.putFile(uri);
+                                }
+                                for (File f : DoPost.getInstance().getFiles()) {
+                                    Uri uri = Uri.fromFile(f);
+                                    StorageReference childRef = storeRef.child(getResources().getString(R.string.posts_CODE)
+                                            + key + "/" + uri.getLastPathSegment());
+                                    uploadTask = childRef.putFile(uri);
+                                }
+                                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        mProgressDialog.dismiss();
+                                        Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
+                                        getActivity().finish();
 
-                        Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
+                                    }
+                                });
+                            } else {
+                                mProgressDialog.dismiss();
+                                Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
+                                getActivity().finish();
+                            }
+                        } catch (NullPointerException mess) {
+                            mProgressDialog.dismiss();
+                            Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
+                            getActivity().finish();
+                        }
+
+
                     }
                 }
             });
-
         }
     }
 }
