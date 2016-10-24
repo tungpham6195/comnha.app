@@ -60,22 +60,6 @@ public class ProfiledetailFragment extends Fragment {
                 new FragmentPagerAdapter(activity.getSupportFragmentManager(), activity.getApplicationContext())
         );
         tabLayout.setupWithViewPager(viewPager);
-//        dynamicToolbarColor();
-//        toolbarTextApperance();
-    }
-
-    private void toolbarTextApperance() {
-//        Bitmap bitmap= BitmapFactory.decodeResource(getResources(),R.drawable.ic_logo);
-//        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-//            @Override
-//            public void onGenerated(Palette palette) {
-//                collapsLayout.setContentScrimColor(palette.getMutedColor(R.color.colorPrimary));
-//                collapsLayout.setStatusBarScrimColor(palette.getMutedColor(R.color.colorPrimaryDark));
-//            }
-//        });
-    }
-
-    private void dynamicToolbarColor() {
     }
 
     @Override

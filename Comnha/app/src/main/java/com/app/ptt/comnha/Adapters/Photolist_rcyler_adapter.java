@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,9 @@ import android.widget.ImageView;
 
 import com.app.ptt.comnha.R;
 
+import java.io.File;
+import java.util.ArrayList;
+
 /**
  * Created by PTT on 10/23/2016.
  */
@@ -21,9 +25,11 @@ import com.app.ptt.comnha.R;
 public class Photolist_rcyler_adapter extends RecyclerView.Adapter<Photolist_rcyler_adapter.ViewHolder> {
     private Cursor mMediaStoreCursor;
     private final Activity mActivity;
+    ArrayList<File> paths;
 
     public Photolist_rcyler_adapter(Activity mActivity) {
         this.mActivity = mActivity;
+        paths = new ArrayList<>();
     }
 
     @Override
@@ -33,11 +39,46 @@ public class Photolist_rcyler_adapter extends RecyclerView.Adapter<Photolist_rcy
         return new ViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    private boolean clicked;
+
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         Bitmap bitmap = getBitmapFromMediaStore(position);
+
+        mMediaStoreCursor.moveToPosition(position);
+        Log.i("onbindView", position + "");
+        final File path = new File(mMediaStoreCursor.getString(mMediaStoreCursor.getColumnIndex(MediaStore.Images.Media.DATA)));
         if (bitmap != null) {
             holder.getImageView().setImageBitmap(bitmap);
+            try {
+                if (paths.size() > 0) {
+                    Log.i("size", "lon hon 0");
+                    if (paths.get(paths.indexOf(path))==null) {
+                        holder.checkBox.setChecked(false);
+                        Log.i("checkbox " + position, "false");
+                    } else {
+                        Log.i("checkbox1 " + position, "true");
+                        holder.checkBox.setChecked(true);
+                        Log.i("path", path.toString());
+                        Log.i("path1", paths.get(paths.indexOf(path)).toString());
+                    }
+                }
+            } catch (ArrayIndexOutOfBoundsException mess) {
+                Log.i("checkbox2 " + position, "false");
+                holder.checkBox.setChecked(false);
+            }
+            holder.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (holder.checkBox.isChecked()) {
+                        holder.checkBox.setChecked(false);
+                        paths.remove(paths.indexOf(path));
+                    } else {
+                        holder.checkBox.setChecked(true);
+                        paths.add(path);
+                    }
+                }
+            });
+
         }
     }
 
@@ -46,9 +87,10 @@ public class Photolist_rcyler_adapter extends RecyclerView.Adapter<Photolist_rcy
         return (mMediaStoreCursor == null) ? 0 : mMediaStoreCursor.getCount();
     }
 
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView imageView;
-        CheckBox checkBox;
+        public ImageView imageView;
+        public CheckBox checkBox;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -80,30 +122,18 @@ public class Photolist_rcyler_adapter extends RecyclerView.Adapter<Photolist_rcy
         }
     }
 
+    public ArrayList<File> getFiles() {
+        return paths;
+    }
+
     private Bitmap getBitmapFromMediaStore(int position) {
-        int idIndex = mMediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns._ID);
-        int mediaTypeIndex = mMediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
+        int dataIndex = mMediaStoreCursor.getColumnIndex(MediaStore.Images.Media.DATA);
         mMediaStoreCursor.moveToPosition(position);
         Bitmap bitmap = null;
-//        try {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 8;
         bitmap = BitmapFactory.decodeFile(
-                mMediaStoreCursor.getString(mMediaStoreCursor.getColumnIndex(MediaStore.Images.Media.DATA)), options);
-
-//                    bitmap = MediaStore.Images.Media.getBitmap(mActivity.getContentResolver(),
-//                            Uri.parse(mMediaStoreCursor.getString(mMediaStoreCursor.getColumnIndex(MediaStore.Images.Media.DATA))));
-//        } catch (IOException mess) {
-//
-//        }
-
+                mMediaStoreCursor.getString(dataIndex), options);
         return bitmap;
-//        switch (mMediaStoreCursor.getInt(mediaTypeIndex)) {
-//            case MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE:
-//                return MediaStore.Images.Thumbnails.getThumbnail(mActivity.getContentResolver(),
-//                        mMediaStoreCursor.getString());
-//            default:
-//                return null;
-//        }
     }
 }

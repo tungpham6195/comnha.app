@@ -77,8 +77,12 @@
     <string name="txt_logging">Đang đăng nhập &#8230;</string>
     <string name="txt_addinloca">Đang thêm địa điểm mới &#8230;</string>
     <string name="txt_addinpost">Đang đăng review mới &#8230;</string>
+    <string name="txt_choose">Chọn</string>
+
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
+    <string name="firebaseStorage_path">gs://com-nha.appspot.com/</string>
+
     <!--PATH-->
 
     <!--NAV-->

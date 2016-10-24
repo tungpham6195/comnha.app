@@ -14,7 +14,7 @@ import android.util.Log;
 
 import com.app.ptt.comnha.AdapterActivity;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Main2Activity;
+import com.app.ptt.comnha.MainActivity;
 import com.app.ptt.comnha.Modules.DirectionFinder;
 import com.app.ptt.comnha.Modules.DirectionFinderListener;
 import com.app.ptt.comnha.Modules.Route;
@@ -240,7 +240,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     public void sendBroadcast(){
         if(flag==4){
             Log.i(LOG, "SendBroadcast");
-            broadcastIntent.setAction(Main2Activity.mBroadcast);
+            broadcastIntent.setAction(MainActivity.mBroadcast);
             broadcastIntent.putExtra("LocationError",false);
             sendBroadcast(broadcastIntent);
         }
