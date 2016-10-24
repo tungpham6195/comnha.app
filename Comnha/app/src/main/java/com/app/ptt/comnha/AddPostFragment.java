@@ -229,6 +229,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                                 for (File f : DoPost.getInstance().getFiles()) {
                                     Uri uri = Uri.fromFile(f);
                                     StorageReference childRef = storeRef.child(getResources().getString(R.string.users_CODE)
+                                            + LoginSession.getInstance().getUserID()
                                             + getResources().getString(R.string.posts_CODE) + uri.getLastPathSegment());
                                     uploadTask = childRef.putFile(uri);
                                 }

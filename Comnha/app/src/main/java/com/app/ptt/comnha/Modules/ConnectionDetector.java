@@ -9,9 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 
-import com.app.ptt.comnha.Main2Activity;
-
-import java.util.ArrayList;
+import com.app.ptt.comnha.MainActivity;
 
 /**
  * Created by cuong on 10/16/2016.
@@ -72,7 +70,7 @@ public class ConnectionDetector {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                Intent main=new Intent(mContext,Main2Activity.class);
+                Intent main=new Intent(mContext,MainActivity.class);
                 mContext.startActivity(main);
             }
         });
@@ -85,7 +83,7 @@ public class ConnectionDetector {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent main=new Intent(mContext,Main2Activity.class);
+                Intent main=new Intent(mContext,MainActivity.class);
                 mContext.startActivity(main);
             }
         });
@@ -97,7 +95,7 @@ public class ConnectionDetector {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent main=new Intent(mContext,Main2Activity.class);
+                Intent main=new Intent(mContext,MainActivity.class);
                 mContext.startActivity(main);
             }
         });

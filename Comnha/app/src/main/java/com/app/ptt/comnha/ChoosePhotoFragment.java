@@ -55,7 +55,7 @@ public class ChoosePhotoFragment extends Fragment implements LoaderManager.Loade
 
     private void anhxa(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_choosept_recyclerV);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 1);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mAdapter = new Photolist_rcyler_adapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);

@@ -233,7 +233,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         } else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    DovoteFragment dovoteFragment = new DovoteFragment();
+                    DoVoteFragment dovoteFragment = new DoVoteFragment();
                     dovoteFragment.setArguments(getIntent().getExtras());
                     getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, dovoteFragment)
                             .commit();

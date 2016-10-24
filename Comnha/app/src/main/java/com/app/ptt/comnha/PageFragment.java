@@ -2,7 +2,9 @@ package com.app.ptt.comnha;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +18,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.ptt.comnha.Adapters.Photos_rcyler_adapter;
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
 import com.app.ptt.comnha.FireBase.Account;
 import com.app.ptt.comnha.FireBase.Post;
@@ -27,6 +31,10 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -38,6 +46,8 @@ public class PageFragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage; //1.profile, 2.activity, 3.photo
     Firebase ref;
+    StorageReference storageRef;
+    FirebaseStorage storage;
 
     public static PageFragment newInstance(int page) {
         Bundle agrs = new Bundle();
@@ -66,6 +76,8 @@ public class PageFragment extends Fragment {
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         Log.i("pageNumb", "" + mPage);
         ref = new Firebase(getResources().getString(R.string.firebase_path));
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl(getResources().getString(R.string.firebaseStorage_path));
         switch (mPage) {
             case 1://frg_profile
                 view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -253,5 +265,29 @@ public class PageFragment extends Fragment {
     }
 
     void anhxaPage3(View view) {
+        RecyclerView mRecyclerView;
+        RecyclerView.Adapter mAdapter;
+        RecyclerView.LayoutManager manager;
+        ArrayList<Uri> photoList;
+        photoList = new ArrayList<>();
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_photo_recyclerV);
+        manager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mRecyclerView.setLayoutManager(manager);
+        mAdapter = new Photos_rcyler_adapter(photoList, getActivity());
+        mRecyclerView.setAdapter(mAdapter);
+        storageRef.child(getResources().getString(R.string.users_CODE)
+                + LoginSession.getInstance().getUserID()
+                + getResources().getString(R.string.posts_CODE))
+                .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Toast.makeText(getActivity(), uri.getPath(), Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
