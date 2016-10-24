@@ -130,7 +130,7 @@ public class Photolist_rcyler_adapter extends RecyclerView.Adapter<Photolist_rcy
         int dataIndex = mMediaStoreCursor.getColumnIndex(MediaStore.Images.Media.DATA);
         mMediaStoreCursor.moveToPosition(position);
         Bitmap bitmap = null;
-        final BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 8;
         bitmap = BitmapFactory.decodeFile(
                 mMediaStoreCursor.getString(dataIndex), options);
