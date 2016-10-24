@@ -1,4 +1,5 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frg_post"
     android:layout_width="match_parent"
@@ -65,7 +66,8 @@
 
         <LinearLayout
             android:id="@+id/L_1"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/frg_post_cardv_location"
@@ -88,14 +90,14 @@
 
             <Button
                 android:id="@+id/btn_save"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_save" />
         </LinearLayout>
     </RelativeLayout>
 
-    <com.github.clans.fab.FloatingActionMenu xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:fab="http://schemas.android.com/apk/res-auto"
+    <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/frg_post_fabMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -103,45 +105,45 @@
         android:paddingBottom="20dp"
         android:paddingEnd="20dp"
         android:paddingStart="0dp"
-        fab:menu_animationDelayPerItem="55"
-        fab:menu_backgroundColor="@android:color/transparent"
-        fab:menu_buttonSpacing="0dp"
-        fab:menu_colorNormal="@color/colorgia"
-        fab:menu_colorPressed="@color/colorgia"
-        fab:menu_colorRipple="#99d4d4d4"
-        fab:menu_fab_size="normal"
-        fab:menu_icon="@drawable/fab_add"
-        fab:menu_labels_colorNormal="#333"
-        fab:menu_labels_colorPressed="#444"
-        fab:menu_labels_colorRipple="#66efecec"
-        fab:menu_labels_cornerRadius="3dp"
-        fab:menu_labels_ellipsize="none"
-        fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
-        fab:menu_labels_margin="0dp"
-        fab:menu_labels_maxLines="-1"
-        fab:menu_labels_padding="8dp"
-        fab:menu_labels_position="left"
-        fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
-        fab:menu_labels_showShadow="true"
-        fab:menu_labels_singleLine="false"
-        fab:menu_labels_textColor="#f2f1f1"
-        fab:menu_labels_textSize="15sp"
-        fab:menu_openDirection="up"
-        fab:menu_shadowColor="#66101010"
-        fab:menu_shadowRadius="1dp"
-        fab:menu_shadowXOffset="0.5dp"
-        fab:menu_shadowYOffset="0.5dp"
-        fab:menu_showShadow="true">
+        app:menu_animationDelayPerItem="55"
+        app:menu_backgroundColor="@android:color/transparent"
+        app:menu_buttonSpacing="0dp"
+        app:menu_colorNormal="@color/colorAccent"
+        app:menu_colorPressed="@color/colorAccent"
+        app:menu_colorRipple="@color/colorFabRipple"
+        app:menu_fab_size="normal"
+        app:menu_icon="@drawable/fab_add"
+        app:menu_labels_colorNormal="#333"
+        app:menu_labels_colorPressed="#444"
+        app:menu_labels_colorRipple="#66efecec"
+        app:menu_labels_cornerRadius="3dp"
+        app:menu_labels_ellipsize="none"
+        app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+        app:menu_labels_margin="0dp"
+        app:menu_labels_maxLines="-1"
+        app:menu_labels_padding="8dp"
+        app:menu_labels_position="left"
+        app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+        app:menu_labels_showShadow="true"
+        app:menu_labels_singleLine="false"
+        app:menu_labels_textColor="#f2f1f1"
+        app:menu_labels_textSize="15sp"
+        app:menu_openDirection="up"
+        app:menu_shadowColor="@color/colorFabShadow"
+        app:menu_shadowRadius="@dimen/fabShadowRadius"
+        app:menu_shadowXOffset="0.5dp"
+        app:menu_shadowYOffset="0.5dp"
+        app:menu_showShadow="true">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/frg_post_fabchoseloca"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_chooseloca_white_18dp"
-            app:fab_colorNormal="@color/colorFloat2dark"
-            app:fab_colorPressed="@color/colorFloat2dark"
-            fab:fab_label="@string/text_chooseLocation"
-            fab:fab_size="mini" />
+            app:fab_colorNormal="@color/colorgia"
+            app:fab_colorPressed="@color/colorgia"
+            app:fab_label="@string/text_chooseLocation"
+            app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/frg_post_fabchoseimg"
@@ -150,8 +152,8 @@
             android:src="@drawable/ic_add_a_photo_white_18dp"
             app:fab_colorNormal="@color/colorvesinh"
             app:fab_colorPressed="@color/colorvesinh"
-            fab:fab_label="@string/text_upImage"
-            fab:fab_size="mini" />
+            app:fab_label="@string/text_upImage"
+            app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/frg_post_fabrate"
@@ -160,8 +162,8 @@
             android:src="@drawable/ic__review_white_18dp"
             app:fab_colorNormal="@color/colorPrimary"
             app:fab_colorPressed="@color/colorPrimary"
-            fab:fab_label="@string/text_vote"
-            fab:fab_size="mini" />
+            app:fab_label="@string/text_vote"
+            app:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

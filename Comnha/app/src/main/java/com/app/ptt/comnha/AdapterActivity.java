@@ -39,15 +39,11 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.savedInstanceState = savedInstanceState;
-        Log.i(LOG, "onCreate");
-        doBindService();
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(mBroadcast);
-        registerReceiver(mReceiver, mIntentFilter);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adapter);
-
+        Log.i(LOG, "onCreate");
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mBroadcast);
     }
 
     public void doBindService() {
@@ -64,9 +60,6 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     public void finish() {
         Log.i(LOG, "finish");
         super.finish();
-        doUnbindService();
-        unregisterReceiver(mReceiver);
-
     }
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -85,7 +78,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
             if (myService == null) {
                 Log.i(LOG, "CCCCCCCCCCCCCCCCCCCCCCCCCCCc");
             } else {
-                loadData(savedInstanceState);
+                loadData();
             }
 
         }
@@ -167,156 +160,116 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         }
     }
 
-    public void loadData(Bundle savedInstanceState) {
+    public void loadData() {
         Intent intent = getIntent();
         String FRAGMENT_CODE = intent.getExtras().getString(getResources().getString(R.string.fragment_CODE));
         Log.d("FRAGMENT_CODE", FRAGMENT_CODE);
         if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_localist_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
-                }
                 LocatlistFragment locatlistFragment = new LocatlistFragment();
                 locatlistFragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, locatlistFragment).commit();
             }
         } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_addloca_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
-                }
                 AddlocaFragment addlocaFragment = new AddlocaFragment();
                 addlocaFragment.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, addlocaFragment).commit();
             }
         } else if (FRAGMENT_CODE.equals(getString(R.string.frag_locadetail_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
+                    LocadetailFragment locadetailFragment = new LocadetailFragment();
+                    locadetailFragment.setLocaID(intent.getStringExtra(getResources().getString(R.string.key_CODE)));
+                    locadetailFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, locadetailFragment).commit();
                 }
-                LocadetailFragment locadetailFragment = new LocadetailFragment();
-                locadetailFragment.setLocaID(intent.getStringExtra(getResources().getString(R.string.key_CODE)));
-                locadetailFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, locadetailFragment).commit();
             }
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_chooseloca_CODE))) {
+        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_chooseloca_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
                     ChooselocaFragment chooselocaFragment = new ChooselocaFragment();
                     chooselocaFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_adapter, chooselocaFragment)
-                            .commit();
-                } else {
-
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, chooselocaFragment).commit();
                 }
-                ChooselocaFragment chooselocaFragment = new ChooselocaFragment();
-                chooselocaFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, chooselocaFragment)
-                        .commit();
             }
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_addpost_CODE))) {
+        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_chooseimg_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
+                    ChoosePhotoFragment choosePhotoFragment = new ChoosePhotoFragment();
+                    choosePhotoFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, choosePhotoFragment).commit();
                 }
-                AddPostFragment addpostFragment = new AddPostFragment();
-                addpostFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, addpostFragment)
-                        .commit();
             }
+
         } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewpost_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
+                    ViewpostFragment viewpostFragment = new ViewpostFragment();
+                    viewpostFragment.setPostID(intent.getExtras().getString(getString(R.string.key_CODE)));
+                    viewpostFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, viewpostFragment)
+                            .commit();
                 }
-                ViewpostFragment viewpostFragment = new ViewpostFragment();
-                viewpostFragment.setPostID(intent.getExtras().getString(getString(R.string.key_CODE)));
-                viewpostFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, viewpostFragment)
-                        .commit();
             }
         } else if (FRAGMENT_CODE.equals(getString(R.string.frg_signin_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
+                    SigninFragment signinFragment = new SigninFragment();
+                    signinFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, signinFragment)
+                            .commit();
                 }
-                SigninFragment signinFragment = new SigninFragment();
-                signinFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, signinFragment)
-                        .commit();
             }
         } else if (FRAGMENT_CODE.equals(getString(R.string.frg_signup_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
+                    SignupFragment signupFragment = new SignupFragment();
+                    signupFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, signupFragment)
+                            .commit();
                 }
-                SignupFragment signupFragment = new SignupFragment();
-                signupFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, signupFragment)
-                        .commit();
-            }
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_chooseimg_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
-                }
-                ChoosePhotoFragment choosePhotoFragment = new ChoosePhotoFragment();
-                choosePhotoFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, choosePhotoFragment)
-                        .commit();
             }
         } else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-
-                } else {
-
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
+                    DovoteFragment dovoteFragment = new DovoteFragment();
+                    dovoteFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, dovoteFragment)
+                            .commit();
                 }
-                DoVoteFragment dovoteFragment = new DoVoteFragment();
-                dovoteFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, dovoteFragment)
-                        .commit();
             }
         } else if (FRAGMENT_CODE.equals(getString(R.string.frag_map_CODE))) {
             Log.i(LOG, "frag_map_CODE");
             if (findViewById(R.id.frame_adapter) != null) {
-                if (savedInstanceState != null) {
-                }
-                if (!ConnectionDetector.canGetLocation(this)) {
-                    if (!ConnectionDetector.networkStatus(this)) {
-                        ConnectionDetector.showNoConnectAlert(this);
-                    } else {
-                        ConnectionDetector.showSettingAlert(this);
-                    }
-                    routes = null;
-                } else {
-                    if (!ConnectionDetector.networkStatus(this)) {
-                        ConnectionDetector.showNetworkAlert(this);
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
+                    if (!ConnectionDetector.canGetLocation(this)) {
+                        if (!ConnectionDetector.networkStatus(this)) {
+                            Toast.makeText(getApplicationContext(), "Không có kết nối internet và gps", Toast.LENGTH_LONG).show();
+                        } else {
+                            ConnectionDetector.showSettingAlert(this);
+                        }
                         routes = null;
                     } else {
-                        openMap();
+                        if (!ConnectionDetector.networkStatus(this)) {
+                            Toast.makeText(getApplicationContext(), "Không có kết nối internet", Toast.LENGTH_LONG).show();
+                            routes = null;
+                        } else {
+                            openMap();
+                        }
                     }
                 }
-
-
             }
 
+        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frg_prodetail_CODE))) {
+            if (findViewById(R.id.frame_adapter) != null) {
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
+                    ProfiledetailFragment proDetailFrag = new ProfiledetailFragment();
+                    proDetailFrag.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, proDetailFrag)
+                            .commit();
+                }
+            }
         }
     }
 
@@ -360,7 +313,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(LOG,"onPause");
+        Log.i(LOG, "onPause");
 //        failed startActitityforResult
 //        Intent intent1 = new Intent();
 //        intent1.putExtra("result", locaKey);
@@ -373,4 +326,19 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     public void passData(String data) {
         locaKey = data;
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        doBindService();
+        registerReceiver(mReceiver, mIntentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        doUnbindService();
+        unregisterReceiver(mReceiver);
+    }
 }
+

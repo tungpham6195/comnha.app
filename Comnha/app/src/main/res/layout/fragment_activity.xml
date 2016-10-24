@@ -1,0 +1,44 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.app.ptt.comnha.PageFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/frg_activity_btnChoseloca"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_location_black_18dp"
+                android:drawablePadding="5dp"
+                android:text="@string/text_chooseLocation"
+                android:textAllCaps="false" />
+            <TextView
+                android:id="@+id/frg_activity_txtLoca"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No locationn was chosen"
+                android:maxLength="25" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/frg_activity_recyler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical" />
+    </LinearLayout>
+
+</FrameLayout>

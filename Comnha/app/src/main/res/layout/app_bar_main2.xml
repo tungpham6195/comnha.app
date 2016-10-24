@@ -6,21 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.app.ptt.comnha.Main2Activity">
+    tools:context="com.app.ptt.comnha.MainActivity">
 
 
-    <!--<android.support.design.widget.AppBarLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:theme="@style/AppTheme.AppBarOverlay">-->
-
-    <!---->
-
-    <!--</android.support.design.widget.AppBarLayout>-->
-    <RelativeLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -29,12 +22,18 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:fitsSystemWindows="true">
 
         <FrameLayout
             android:id="@+id/frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar"
             android:fitsSystemWindows="true" />
     </RelativeLayout>
 
@@ -50,9 +49,9 @@
         fab:menu_animationDelayPerItem="55"
         fab:menu_backgroundColor="@android:color/transparent"
         fab:menu_buttonSpacing="0dp"
-        fab:menu_colorNormal="@color/colorFloat2"
-        fab:menu_colorPressed="@color/colorFloat2"
-        fab:menu_colorRipple="#99d4d4d4"
+        fab:menu_colorNormal="@color/colorAccent"
+        fab:menu_colorPressed="@color/colorAccent"
+        fab:menu_colorRipple="@color/colorFabRipple"
         fab:menu_fab_size="normal"
         fab:menu_icon="@drawable/fab_add"
         fab:menu_labels_colorNormal="#333"
@@ -71,8 +70,8 @@
         fab:menu_labels_textColor="#f2f1f1"
         fab:menu_labels_textSize="15sp"
         fab:menu_openDirection="up"
-        fab:menu_shadowColor="#53101010"
-        fab:menu_shadowRadius="1dp"
+        fab:menu_shadowColor="@color/colorFabShadow"
+        fab:menu_shadowRadius="@dimen/fabShadowRadius"
         fab:menu_shadowXOffset="0.3dp"
         fab:menu_shadowYOffset="0.3dp"
         fab:menu_showShadow="true">
@@ -82,8 +81,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic__review_white_18dp"
-            app:fab_colorNormal="@color/colorAccent"
-            app:fab_colorPressed="@color/colorAccent"
+            app:fab_colorNormal="@color/colorphucvu"
+            app:fab_colorPressed="@color/colorphucvu"
             fab:fab_label="@string/action_addpost"
             fab:fab_size="mini" />
 

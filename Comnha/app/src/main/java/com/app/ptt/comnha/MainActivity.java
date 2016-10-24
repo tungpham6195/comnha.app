@@ -13,80 +13,109 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.Modules.Route;
+import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.firebase.client.Firebase;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, FloatingActionButton.OnClickListener {
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private MyService myService;
+    private static final String LOG = "MainActivity2";
+    private Boolean isBound = false;
+    private Bundle savedInstanceState;
     public static final String mBroadcast = "mBroadcastComplete";
     private ProgressDialog progressDialog;
     private int progressBarStatus = 0;
     private Handler progressBarHandler = new Handler();
-
-    private MyService myService;
-    private static final String LOG = "MainActivity";
-    private Boolean isBound = false;
-    private Button btn_posts, btn_postlist, btn_newloca, btn_map, btn_search, btn_load;
-    private Bundle savedInstanceState;
     private IntentFilter mIntentFilter;
+
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    int fileSize;
-    boolean isComplete = false;
-    public String userID;
-    ArrayList<Route> routes;
+
+    private int fileSize;
+    public String userID, username, email;
 
     private Toolbar mtoolbar;
     private DrawerLayout mdrawer;
     private ActionBarDrawerToggle mtoggle;
     private NavigationView mnavigationView;
+    private TextView txt_email, txt_un;
+    private FloatingActionMenu fabmenu;
+    private boolean checkConnection = true;
+    private FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
+    private Firebase ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        this.savedInstanceState = savedInstanceState;
+        setContentView(R.layout.activity_main2);
+        Firebase.setAndroidContext(this);
+        ref = new Firebase(getResources().getString(R.string.firebase_path));
+        anhXa();
+
+        mtoolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mtoolbar);
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcast);
+        mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mtoggle = new ActionBarDrawerToggle(
+                this, mdrawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mdrawer.setDrawerListener(mtoggle);
+        mtoggle.syncState();
+        mnavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mnavigationView.setNavigationItemSelectedListener(this);
+        View header = mnavigationView.getHeaderView(0);
+        txt_email = (TextView) header.findViewById(R.id.nav_head_email);
+        txt_un = (TextView) header.findViewById(R.id.nav_head_username);
+        this.savedInstanceState = savedInstanceState;
 
         Log.i(LOG, "onCreate");
-        routes = new ArrayList<>();
-        anhXa();
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-
                 if (user != null) {
                     userID = user.getUid();
-                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                     LoginSession.getInstance().setUserID(userID);
+                    LoginSession.getInstance().setUsername(user.getDisplayName());
+                    LoginSession.getInstance().setEmail(user.getEmail());
+                    txt_email.setText(user.getEmail());
+                    txt_un.setText(user.getDisplayName());
                     Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getUid());
+                    Log.i("email", LoginSession.getInstance().getEmail());
                 } else {
+                    txt_email.setText(getResources().getString(R.string.text_hello));
+                    txt_un.setText(getResources().getString(R.string.text_user));
                     userID = "";
                     LoginSession.getInstance().setUserID(null);
+                    LoginSession.getInstance().setUsername(null);
+                    LoginSession.getInstance().setEmail(null);
                     Toast.makeText(getApplicationContext(), "Signed out", Toast.LENGTH_SHORT).show();
                     Log.d("signed_out", "onAuthStateChanged:signed_out");
                 }
             }
         };
-
 
     }
 
@@ -94,167 +123,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcast)) {
-                isComplete = intent.getBooleanExtra("LoadingComplete", false);
-                Log.i(LOG, "isComplete=" + isComplete);
+                checkConnection = intent.getBooleanExtra("LocationError", true);
+                Log.i(LOG, "checkConnection=" + checkConnection);
+                if (!checkConnection) {
+                    if (!ConnectionDetector.canGetLocation(MainActivity.this)) {
+                        ConnectionDetector.showSettingAlert(MainActivity.this);
+                    }
+                }
             }
         }
     };
 
-
     void anhXa() {
-//        btn_posts = (Button) findViewById(R.id.btn_post);
-//        btn_postlist = (Button) findViewById(R.id.btn_postlst);
-//        btn_newloca = (Button) findViewById(R.id.btn_newlocation);
-//        btn_map = (Button) findViewById(R.id.btn_map);
-//        btn_search = (Button) findViewById(R.id.btn_search);
-//        btn_load = (Button) findViewById(R.id.btn_load);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.actmain_toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.main_nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-//        btn_posts.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
-//                intent.putExtra(getString(R.string.fragment_CODE),
-//                        getString(R.string.frag_addpost_CODE));
-//                startActivity(intent);
-//            }
-//        });
-//        btn_postlist.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                LocatlistFragment locatlistFragment = new LocatlistFragment();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.frame, locatlistFragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
-//            }
-//        });
-//        btn_newloca.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
-//                intent.putExtra(getString(R.string.fragment_CODE),
-//                        getString(R.string.frag_addloca_CODE));
-//                startActivity(intent);
-//
-//            }
-//        });
-//        btn_load.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//        btn_map.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                progressDialog = new ProgressDialog(v.getContext());
-//                progressDialog.setCancelable(true);
-//                progressDialog.setMessage("Loading data");
-//                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//                progressDialog.setProgressStyle(0);
-//                progressDialog.setMax(100);
-//                progressDialog.show();
-//                progressBarStatus = 0;
-//                fileSize = 0;
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        myService.getDataInFireBase();
-//                        while (progressBarStatus < 100) {
-//                            progressBarStatus = loadProgress();
-//                            try {
-//
-//                                Thread.sleep(1000);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                            progressBarHandler.post(new Runnable() {
-//                                public void run() {
-//                                    progressDialog.setProgress(progressBarStatus);
-//                                }
-//
-//                            });
-//                            if (progressBarStatus >= 100) {
-//                                try {
-//                                    Thread.sleep(2000);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
-//                                if (isComplete == true) {
-//                                    routes = myService.returnRoute();
-//                                    if (routes == null) {
-//                                        Toast.makeText(MainActivity.this, "Khong load dc dia diem", Toast.LENGTH_LONG).show();
-//                                    } else {
-//                                        MapFragment mapFragment = new MapFragment();
-//                                        mapFragment.getMethod(routes);
-//                                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                                        transaction.replace(R.id.frame, mapFragment);
-//                                        transaction.addToBackStack(null);
-//                                        transaction.commit();
-//                                    }
-//                                }
-//                                progressDialog.dismiss();
-//                            }
-//
-//
-//                        }
-//                    }
-//                }).start();
-//
-//
-//            }
-//        });
-//
-//        btn_search.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SearchFragment searchFragment = new SearchFragment();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.frame, searchFragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
-//            }
-//        });
-    }
-
-    public int loadProgress() {
-        if (!isComplete) {
-            while (fileSize <= 1000000) {
-                fileSize++;
-
-                if (fileSize == 100000) {
-                    return 10;
-                } else if (fileSize == 200000) {
-                    return 20;
-                } else if (fileSize == 300000) {
-                    return 30;
-                } else if (fileSize == 400000) {
-                    return 40;
-                } else if (fileSize == 500000) {
-                    return 50;
-                } else if (fileSize == 700000) {
-                    return 70;
-                } else if (fileSize == 800000) {
-                    return 80;
-                }
-            }
-            return 0;
-        } else {
-            return 100;
-        }
+        fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
+        fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
+        fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
+        fab_uploadpho = (FloatingActionButton) findViewById(R.id.main_fabitem1);
+        fab_review.setOnClickListener(this);
+        fab_addloca.setOnClickListener(this);
+        fab_uploadpho.setOnClickListener(this);
+        fabmenu.setClosedOnTouchOutside(true);
     }
 
 
@@ -279,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i(LOG, "onResume");
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -298,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
         unregisterReceiver(mReceiver);
+
         Log.i(LOG, "Pause");
     }
 
@@ -344,8 +234,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -353,35 +242,67 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.options, menu);
-        return false;
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
         switch (item.getItemId()) {
             case R.id.nav_profile:
+                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frg_prodetail_CODE));
+                startActivity(intent);
                 break;
             case R.id.nav_homepage:
-                break;
-            case R.id.nav_activity:
+                LocatlistFragment locatlistFragment = new LocatlistFragment();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame, locatlistFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
                 break;
             case R.id.nav_share:
                 break;
             case R.id.nav_send:
                 break;
             case R.id.nav_signin:
-//                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
-//                intent.putExtra(getString(R.string.fragment_CODE),
-//                        getString(R.string.frg_signin_CODE));
-//                startActivity(intent);
-                Log.d("signinbtt", "clicked");
+                Intent intent1 = new Intent(MainActivity.this, AdapterActivity.class);
+                intent1.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frg_signin_CODE));
+                startActivity(intent1);
+                break;
+            case R.id.nav_signout:
+                mAuth.signOut();
+                break;
+            case R.id.nav_map:
+                Intent intent2 = new Intent(MainActivity.this, AdapterActivity.class);
+                intent2.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_map_CODE));
+                startActivity(intent2);
                 break;
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main);
-        drawer.closeDrawer(GravityCompat.START);
+        mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mdrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.main_fabitem1:
+                break;
+            case R.id.main_fabitem2:
+                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_addloca_CODE));
+                startActivity(intent);
+                break;
+            case R.id.main_fabitem3:
+                Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
+                intent1.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_addpost_CODE));
+                startActivity(intent1);
+                break;
+
+        }
     }
 }

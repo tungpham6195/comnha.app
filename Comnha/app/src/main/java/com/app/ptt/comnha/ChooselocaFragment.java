@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.app.ptt.comnha.Adapters.Chooseloca_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
+import com.app.ptt.comnha.SingletonClasses.DoPost;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -72,9 +72,9 @@ public class ChooselocaFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 String key = list.get(position).getLocaID();
                 passingData.passData(key);
-                ChooseLoca.getInstance().setLocaID(key);
-                ChooseLoca.getInstance().setName(list.get(position).getName());
-                ChooseLoca.getInstance().setAddress(list.get(position).getDiachi());
+                DoPost.getInstance().setLocaID(key);
+                DoPost.getInstance().setName(list.get(position).getName());
+                DoPost.getInstance().setAddress(list.get(position).getDiachi());
                 getActivity().finish();
             }
         }));

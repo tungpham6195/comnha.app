@@ -38,7 +38,8 @@
     <dimen name="cardv_cornerRadius_infowindow">2dp</dimen>
     <dimen name="cardv_info_width">40dp</dimen>
     <dimen name="cardv_info_height">40dp</dimen>
-
+    <dimen name="marginStart_line_profile">60dp</dimen>
     <dimen name="rcyler_paddingTop">3dp</dimen>
-
+    <dimen name="fabShadowRadius">1dp</dimen>
+    <dimen name="marginEnd20dp">20dp</dimen>
 </resources>

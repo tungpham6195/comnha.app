@@ -68,7 +68,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         ref = new Firebase(getString(R.string.firebase_path));
         Log.d("postID", postID);
-        ref.child(getString(R.string.posts_CODE) + "/" + postID).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child(getString(R.string.posts_CODE) + postID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
@@ -142,10 +142,10 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                     newComment.setDate(new Times().getDate());
                     newComment.setTime(new Times().getTime());
                     edt_comment.setText(null);
-                    String key = ref.child(getResources().getString(R.string.postcomment_CODE) + "/" + postID).push().getKey();
+                    String key = ref.child(getResources().getString(R.string.postcomment_CODE) + postID).push().getKey();
                     Map<String, Object> commentValues = newComment.toMap();
                     Map<String, Object> childUpdates = new HashMap<String, Object>();
-                    childUpdates.put("/" + getResources().getString(R.string.postcomment_CODE) + "/" + postID + "/" + key, commentValues);
+                    childUpdates.put(getResources().getString(R.string.postcomment_CODE) + postID + "/" + key, commentValues);
                     ref.updateChildren(childUpdates, new Firebase.CompletionListener() {
                         @Override
                         public void onComplete(FirebaseError firebaseError, Firebase firebase) {

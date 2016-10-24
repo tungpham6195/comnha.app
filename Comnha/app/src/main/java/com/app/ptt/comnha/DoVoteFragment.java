@@ -16,7 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.app.ptt.comnha.SingletonClasses.DoRate;
+import com.app.ptt.comnha.SingletonClasses.DoPost;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
@@ -46,7 +46,7 @@ public class DoVoteFragment extends DialogFragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_vote, container, false);
+        View view = inflater.inflate(R.layout.fragment_dovote, container, false);
         return view;
     }
 
@@ -81,22 +81,22 @@ public class DoVoteFragment extends DialogFragment implements View.OnClickListen
     @Override
     public void onStart() {
         super.onStart();
-        if (DoRate.getInstance().getGia() > 0
-                && DoRate.getInstance().getVesinh() > 0
-                && DoRate.getInstance().getPhucvu() > 0) {
+        if (DoPost.getInstance().getGia() > 0
+                && DoPost.getInstance().getVesinh() > 0
+                && DoPost.getInstance().getPhucvu() > 0) {
 //            txt_gia.setText(getResources().getString(R.string.text_rategia) + ": " +
 //                    DoRate.getInstance().getGia());
 //            txt_vs.setText(getResources().getString(R.string.text_ratevs) + ": " +
 //                    DoRate.getInstance().getVesinh());
 //            txt_pv.setText(getResources().getString(R.string.text_ratepv) + ": " +
 //                    DoRate.getInstance().getPhucvu());
-            mSeekBarGia.setProgress((int) DoRate.getInstance().getGia());
-            mSeekBarVS.setProgress((int) DoRate.getInstance().getVesinh());
-            mSeekBarPV.setProgress((int) DoRate.getInstance().getPhucvu());
+            mSeekBarGia.setProgress((int) DoPost.getInstance().getGia());
+            mSeekBarVS.setProgress((int) DoPost.getInstance().getVesinh());
+            mSeekBarPV.setProgress((int) DoPost.getInstance().getPhucvu());
         } else {
-            mSeekBarGia.setProgress((int) DoRate.getInstance().getGia());
-            mSeekBarVS.setProgress((int) DoRate.getInstance().getVesinh());
-            mSeekBarPV.setProgress((int) DoRate.getInstance().getPhucvu());
+            mSeekBarGia.setProgress((int) DoPost.getInstance().getGia());
+            mSeekBarVS.setProgress((int) DoPost.getInstance().getVesinh());
+            mSeekBarPV.setProgress((int) DoPost.getInstance().getPhucvu());
         }
     }
 
@@ -104,9 +104,9 @@ public class DoVoteFragment extends DialogFragment implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.frg_vote_btn_vote:
-                DoRate.getInstance().setGia(gia);
-                DoRate.getInstance().setPhucvu(pv);
-                DoRate.getInstance().setVesinh(vs);
+                DoPost.getInstance().setGia(gia);
+                DoPost.getInstance().setPhucvu(pv);
+                DoPost.getInstance().setVesinh(vs);
                 this.dismiss();
                 break;
         }
