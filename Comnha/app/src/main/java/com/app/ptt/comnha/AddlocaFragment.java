@@ -1,27 +1,46 @@
 package com.app.ptt.comnha;
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.PlaceAPI;
+import com.app.ptt.comnha.Modules.Route;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 /**
@@ -31,6 +50,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
     FloatingActionButton fab_save;
     EditText edt_tenquan, edt_diachi, edt_timeend, edt_timestart, edt_sdt, edt_giamin, edt_giamax;
+    ImageButton imageButton;
     ProgressDialog mProgressDialog;
     Firebase ref;
     ImageView img_ic;
@@ -38,7 +58,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     TimePickerDialog tpd;
     int edtID;
     int hour, min;
-
+    AutoCompleteTextView autoCompleteText;
     public AddlocaFragment() {
         // Required empty public constructor
     }
@@ -53,12 +73,28 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         anhXa(view);
         Firebase.setAndroidContext(getActivity());
         ref = new Firebase("https://com-nha.firebaseio.com/");
+        autoCompleteText=(AutoCompleteTextView) view.findViewById(R.id.autocomplete);
+        autoCompleteText.setAdapter(new PlacesAutoCompleteAdapter(getActivity(),R.layout.autocomplete_list_item));
         return view;
     }
 
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+           autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Snackbar.make(view,parent.getItemIdAtPosition(position)+"", Snackbar.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
     void anhXa(View view) {
+        imageButton=(ImageButton) view.findViewById(R.id.iv_check_location);
         edt_tenquan = (EditText) view.findViewById(R.id.frg_addloction_edt_tenquan);
-        edt_diachi = (EditText) view.findViewById(R.id.frg_addloction_edt_diachi);
+        //edt_diachi = (EditText) view.findViewById(R.id.frg_addloction_edt_diachi);
         edt_timeend = (EditText) view.findViewById(R.id.frg_addloction_edt_giodong);
         edt_timestart = (EditText) view.findViewById(R.id.frg_addloction_edt_giomo);
         edt_sdt = (EditText) view.findViewById(R.id.frg_addloction_edt_sdt);
@@ -78,6 +114,58 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         fab_save.setOnClickListener(this);
         edt_timestart.setOnClickListener(this);
         edt_timeend.setOnClickListener(this);
+        imageButton.setOnClickListener(this);
+    }
+    class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
+        ArrayList<String> resultList;
+        Context mContext;
+        int mResource;
+        PlaceAPI mPlaceAPI=new PlaceAPI();
+        public PlacesAutoCompleteAdapter(Context context, int resource) {
+            super(context, resource);
+            mContext=context;
+            mResource=resource;
+        }
+
+        @Override
+        public int getCount() {
+            return resultList.size();
+        }
+
+        @Nullable
+        @Override
+        public String getItem(int position) {
+            return resultList.get(position);
+        }
+
+        @NonNull
+        @Override
+        public Filter getFilter() {
+            final Filter filter=new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults filterResults= new FilterResults();
+                    if(constraint!=null){
+                        resultList=mPlaceAPI.autocomplete(constraint.toString());
+                        filterResults.values=resultList;
+                        filterResults.count=resultList.size();
+                    }
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if(results!=null &&results.count>0){
+                        notifyDataSetChanged();
+                    } else{
+                        notifyDataSetInvalidated();
+                    }
+
+                }
+
+            };
+            return filter;
+        }
     }
 
     private void addNewLoca() {
@@ -142,6 +230,24 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 edtID = R.id.frg_addloction_edt_giodong;
                 tpd.show(getActivity().getFragmentManager(), "Datepickerdialog");
                 break;
+            case R.id.iv_check_location:
+                if (autoCompleteText.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_nodiachi), Snackbar.LENGTH_SHORT).show();
+                }else{
+                    Geocoder gc=new Geocoder(getContext());
+                    try {
+                        List<Address> list=gc.getFromLocationName(autoCompleteText.getText().toString(),1);
+                        Address address= list.get(0);
+                        String yourLocation = address.getAddressLine(0) +
+                                " " + address.getSubLocality() +
+                                " " + address.getSubAdminArea() +
+                                " " + address.getAdminArea();
+                        Snackbar.make(view,yourLocation, Snackbar.LENGTH_SHORT).show();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
         }
     }
 

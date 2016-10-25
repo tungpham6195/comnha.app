@@ -18,7 +18,7 @@ public class Adapter2Activity extends AppCompatActivity {
         if (FRAGMENT_CODE.equals(getString(R.string.frag_addpost_CODE))) {
             if (findViewById(R.id.frame_adapter2) != null) {
                 if (savedInstanceState == null) {
-                    AddpostFragment addpostFragment = new AddpostFragment();
+                    AddPostFragment addpostFragment = new AddPostFragment();
                     addpostFragment.setArguments(getIntent().getExtras());
                     getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, addpostFragment)
                             .commit();

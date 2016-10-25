@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.Modules.Route;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,7 +38,6 @@ public class MapFragment extends Fragment {
     private AutoCompleteTextView acText;
     private ArrayList<Route> list;
     private ArrayList<String> listName;
-    MaterialSearchView materialSearchView;
     ArrayAdapter<String> a;
     TextView txt_TenQuan, txt_DiaChi, txt_GioMo, txt_DiemGia, txt_DiemPhucVu, txt_DiemVeSinh;
 
@@ -60,17 +60,10 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        materialSearchView=(MaterialSearchView) view.findViewById(R.id.msv);
-        materialSearchView.addSuggestions(new String[]{"Cuong"});
-        materialSearchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                materialSearchView.openSearch();
-            }
-        });
 //        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, listName);
 //        acText.setAdapter(arrayAdapter);
 //        acText.setThreshold(1);
+       // PlaceAutocompleteFragment placeAutocompleteFragment=(PlaceAutocompleteFragment) view.find(R.id.place_autocomplete_fragment);
         return view;
     }
 
