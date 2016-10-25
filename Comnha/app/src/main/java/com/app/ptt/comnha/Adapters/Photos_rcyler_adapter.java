@@ -1,8 +1,6 @@
 package com.app.ptt.comnha.Adapters;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.app.ptt.comnha.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -28,10 +27,9 @@ public class Photos_rcyler_adapter extends RecyclerView.Adapter<Photos_rcyler_ad
 
     @Override
     public void onBindViewHolder(Viewholder holder, int position) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
-        Bitmap bitmap = BitmapFactory.decodeFile(photoList.get(position).getPath(), options);
-        holder.imageView.setImageBitmap(bitmap);
+        Picasso.with(activity)
+                .load(photoList.get(position))
+                .into(holder.imageView);
     }
 
     private Activity activity;

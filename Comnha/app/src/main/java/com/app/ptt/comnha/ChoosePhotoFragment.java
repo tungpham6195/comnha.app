@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Photolist_rcyler_adapter;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
@@ -76,8 +77,14 @@ public class ChoosePhotoFragment extends Fragment implements LoaderManager.Loade
                 getActivity().finish();
                 return true;
             case R.id.action_chosept:
-                DoPost.getInstance().setFiles(mAdapter.getFiles());
-                getActivity().finish();
+                try {
+                    if (mAdapter.getFiles().size() > 0) {
+                        DoPost.getInstance().setFiles(mAdapter.getFiles());
+                        getActivity().finish();
+                    }
+                } catch (NullPointerException mess) {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.txt_nochosephoto), Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

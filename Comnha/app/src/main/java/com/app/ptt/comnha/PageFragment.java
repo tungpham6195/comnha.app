@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,13 +27,14 @@ import com.app.ptt.comnha.FireBase.Account;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -45,9 +47,10 @@ import java.util.ArrayList;
 public class PageFragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
     private int mPage; //1.profile, 2.activity, 3.photo
-    Firebase ref;
     StorageReference storageRef;
     FirebaseStorage storage;
+    FirebaseDatabase database;
+    DatabaseReference dbRef;
 
     public static PageFragment newInstance(int page) {
         Bundle agrs = new Bundle();
@@ -67,17 +70,19 @@ public class PageFragment extends Fragment {
     }
 
     View view;
+//    Firebase ref;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mPage = getArguments().getInt(ARG_PAGE);
-        Firebase.setAndroidContext(getActivity().getApplicationContext());
         Log.i("pageNumb", "" + mPage);
-        ref = new Firebase(getResources().getString(R.string.firebase_path));
+//        ref = new Firebase(getResources().getString(R.string.firebase_path));
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReferenceFromUrl(getResources().getString(R.string.firebaseStorage_path));
+        database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference();
         switch (mPage) {
             case 1://frg_profile
                 view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -103,21 +108,21 @@ public class PageFragment extends Fragment {
         txt_email = (TextView) view.findViewById(R.id.frag_profile_txtEmail);
         txt_email.setText(LoginSession.getInstance().getEmail());
         txt_un.setText(LoginSession.getInstance().getUsername());
-        ref.child(getResources().getString(R.string.users_CODE) +//liệt kê tất cả
-                LoginSession.getInstance().getUserID()).
-                addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Account account = dataSnapshot.getValue(Account.class);
-                        txt_Hoten.setText(account.getHo() + " " + account.getTenlot() + " " + account.getTen());
-                        txt_Ngsinh.setText(account.getBirth());
-                    }
+        ValueEventListener profileValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Account account = dataSnapshot.getValue(Account.class);
+                txt_Hoten.setText(account.getHo() + " " + account.getTenlot() + " " + account.getTen());
+                txt_Ngsinh.setText(account.getBirth());
+            }
 
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+            }
+        };
+        dbRef.child(getResources().getString(R.string.users_CODE) +//liệt kê tất cả
+                LoginSession.getInstance().getUserID()).addListenerForSingleValueEvent(profileValueEventListener);
     }
 
     void anhxaPage2(View view) {
@@ -188,37 +193,37 @@ public class PageFragment extends Fragment {
                 postList.clear();
                 mAdapter = new Reviewlist_rcyler_adapter(postList, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
-                ref.child(getResources().getString(R.string.userpost_CODE)
-                        + "/" + LoginSession.getInstance().getUserID()).
-                        addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                Post post = dataSnapshot.getValue(Post.class);
-                                post.setPostID(dataSnapshot.getKey());
-                                postList.add(post);
-                                mAdapter.notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                            }
-
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                            }
-
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                            }
-
-                            @Override
-                            public void onCancelled(FirebaseError firebaseError) {
-
-                            }
-                        });
+//                ref.child(getResources().getString(R.string.userpost_CODE)
+//                        + "/" + LoginSession.getInstance().getUserID()).
+//                        addChildEventListener(new ChildEventListener() {
+//                            @Override
+//                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                                Post post = dataSnapshot.getValue(Post.class);
+//                                post.setPostID(dataSnapshot.getKey());
+//                                postList.add(post);
+//                                mAdapter.notifyDataSetChanged();
+//                            }
+//
+//                            @Override
+//                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(FirebaseError firebaseError) {
+//
+//                            }
+//                        });
                 break;
             case 2://hiện tất cả review theo vị trí xác định
 //                Toast.makeText(getActivity(), ChooseLoca.getInstance().getLocaID(), Toast.LENGTH_SHORT).show();
@@ -229,65 +234,100 @@ public class PageFragment extends Fragment {
                 mRecyclerView.setLayoutManager(mlayoutManager);
                 mAdapter = new Reviewlist_rcyler_adapter(postList, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
-                ref.child(getResources().getString(R.string.locauserpost_CODE)
-                        + "/" + ChooseLoca.getInstance().getLocaID() + "/" +
-                        LoginSession.getInstance().getUserID()).addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Post post = dataSnapshot.getValue(Post.class);
-                        post.setPostID(dataSnapshot.getKey());
-                        postList.add(post);
-                        mAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-
-                    }
-                });
+//                ref.child(getResources().getString(R.string.locauserpost_CODE)
+//                        + "/" + ChooseLoca.getInstance().getLocaID() + "/" +
+//                        LoginSession.getInstance().getUserID()).addChildEventListener(new ChildEventListener() {
+//                    @Override
+//                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                        Post post = dataSnapshot.getValue(Post.class);
+//                        post.setPostID(dataSnapshot.getKey());
+//                        postList.add(post);
+//                        mAdapter.notifyDataSetChanged();
+//                    }
+//
+//                    @Override
+//                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(FirebaseError firebaseError) {
+//
+//                    }
+//                });
                 break;
         }
     }
 
     void anhxaPage3(View view) {
         RecyclerView mRecyclerView;
-        RecyclerView.Adapter mAdapter;
-        RecyclerView.LayoutManager manager;
-        ArrayList<Uri> photoList;
+        final RecyclerView.Adapter mAdapter;
+        GridLayoutManager gridLayoutManager;
+        final ArrayList<Uri> photoList;
         photoList = new ArrayList<>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_photo_recyclerV);
-        manager = new LinearLayoutManager(getActivity().getApplicationContext());
-        mRecyclerView.setLayoutManager(manager);
+        gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 3);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
         mAdapter = new Photos_rcyler_adapter(photoList, getActivity());
         mRecyclerView.setAdapter(mAdapter);
-        storageRef.child(getResources().getString(R.string.users_CODE)
-                + LoginSession.getInstance().getUserID()
-                + getResources().getString(R.string.posts_CODE))
-                .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        ChildEventListener imgageValueEventListener = new ChildEventListener() {
             @Override
-            public void onSuccess(Uri uri) {
-                Toast.makeText(getActivity(), uri.getPath(), Toast.LENGTH_SHORT).show();
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                try {
+//                    Toast.makeText(getActivity(), dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
+                    storageRef.child(getResources().getString(R.string.users_CODE)
+                            + LoginSession.getInstance().getUserID() + "/"
+                            + getResources().getString(R.string.posts_CODE) + dataSnapshot.getValue().toString())
+                            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            photoList.add(uri);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (NullPointerException mess) {
+
+                }
             }
-        }).addOnFailureListener(new OnFailureListener() {
+
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
             }
-        });
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        dbRef.child(getResources().getString(R.string.images_CODE)
+                + getResources().getString(R.string.users_CODE)
+                + LoginSession.getInstance().getUserID() + "/"
+                + getResources().getString(R.string.posts_CODE)).addChildEventListener(imgageValueEventListener);
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Com nha</string>
+    <string name="app_name">Cơm nhà</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -73,6 +73,7 @@
     <string name="txt_norate">Warning: Chưa đánh giá</string>
     <string name="txt_giawarn">Warning: Giá cuối cùng phải lớn hơn giá bắt đầu</string>
     <string name="txt_addinlocaerr">Error: Không thể thêm địa điểm mới</string>
+    <string name="txt_nochosephoto">Warning: Chưa chọn ảnh nào</string>
     <string name="txt_plzwait">Please wait &#8230;</string>
     <string name="txt_logging">Đang đăng nhập &#8230;</string>
     <string name="txt_addinloca">Đang thêm địa điểm mới &#8230;</string>
@@ -118,14 +119,15 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!--Firebase-->
-    <string name="users_CODE">/Users/</string>
-    <string name="locations_CODE">/Locations/</string>
-    <string name="posts_CODE">/Posts/</string>
-    <string name="locationpost_CODE">/LocationPost/</string>
-    <string name="userpost_CODE">/UserPost/</string>
-    <string name="comments_CODE">Comments</string>
-    <string name="postcomment_CODE">/PostComment/</string>
-    <string name="locauserpost_CODE">/LocationUserPost/</string>
+    <string name="users_CODE">Users/</string>
+    <string name="locations_CODE">Locations/</string>
+    <string name="posts_CODE">Posts/</string>
+    <string name="images_CODE">Images/</string>
+    <string name="locationpost_CODE">LocationPost/</string>
+    <string name="userpost_CODE">UserPost/</string>
+    <string name="comments_CODE">Comments/</string>
+    <string name="postcomment_CODE">PostComment/</string>
+    <string name="locauserpost_CODE">LocationUserPost/</string>
     <!--Firebase-->
 
     <string name="action_example">Example action</string>

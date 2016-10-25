@@ -101,7 +101,11 @@ public class MainActivity extends AppCompatActivity
                     LoginSession.getInstance().setUsername(user.getDisplayName());
                     LoginSession.getInstance().setEmail(user.getEmail());
                     txt_email.setText(user.getEmail());
-                    txt_un.setText(user.getDisplayName());
+                    try{
+                        txt_un.setText(user.getDisplayName());
+                    }catch (NullPointerException mess){
+
+                    }
                     Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getUid());
                     Log.i("email", LoginSession.getInstance().getEmail());
                 } else {
