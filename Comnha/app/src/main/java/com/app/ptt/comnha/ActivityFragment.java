@@ -126,7 +126,7 @@ public class ActivityFragment extends Fragment {
             Log.e("nullLocaName", mess.getMessage());
         }
         final PopupMenu popup = new PopupMenu(getActivity(), txt_locaName, Gravity.START);
-        popup.getMenuInflater().inflate(R.menu.profile_activity, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.popup_menu_view_activity, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

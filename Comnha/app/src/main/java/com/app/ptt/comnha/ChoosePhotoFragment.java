@@ -93,7 +93,7 @@ public class ChoosePhotoFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_chosept, menu);
+        inflater.inflate(R.menu.option_menu_chosept, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

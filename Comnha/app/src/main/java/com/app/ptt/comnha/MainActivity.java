@@ -11,6 +11,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -20,8 +21,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,9 +36,13 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabReselectListener;
+import com.roughike.bottombar.OnTabSelectListener;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FloatingActionButton.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener
+        , FloatingActionButton.OnClickListener {
 
 
     private MyService myService;
@@ -63,6 +70,8 @@ public class MainActivity extends AppCompatActivity
     private boolean checkConnection = true;
     private FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
     private Firebase ref;
+    private BottomBar bottomBar;
+    private PopupMenu popupMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,14 +105,14 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     userID = user.getUid();
-                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                     LoginSession.getInstance().setUserID(userID);
-                    LoginSession.getInstance().setUsername(user.getDisplayName());
                     LoginSession.getInstance().setEmail(user.getEmail());
-                    txt_email.setText(user.getEmail());
-                    try{
+                    try {
+                        LoginSession.getInstance().setUsername(user.getDisplayName());
+                        txt_email.setText(user.getEmail());
                         txt_un.setText(user.getDisplayName());
-                    }catch (NullPointerException mess){
+                    } catch (NullPointerException mess) {
 
                     }
                     Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getUid());
@@ -139,6 +148,7 @@ public class MainActivity extends AppCompatActivity
     };
 
     void anhXa() {
+        bottomBar = (BottomBar) findViewById(R.id.bottomBar);
         fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
         fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
         fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
@@ -147,6 +157,80 @@ public class MainActivity extends AppCompatActivity
         fab_addloca.setOnClickListener(this);
         fab_uploadpho.setOnClickListener(this);
         fabmenu.setClosedOnTouchOutside(true);
+        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelected(@IdRes int tabId) {
+                FragmentTransaction transaction;
+                switch (tabId) {
+                    case R.id.tab_reviews:
+                        ReviewFragment reviewFragment = new ReviewFragment();
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, reviewFragment);
+                        transaction.commit();
+                        break;
+                    case R.id.tab_stores:
+                        LocatlistFragment locatlistFragment = new LocatlistFragment();
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, locatlistFragment);
+                        transaction.commit();
+                        break;
+                    case R.id.tab_locations:
+                        break;
+                }
+            }
+        });
+        bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
+            @Override
+            public void onTabReSelected(@IdRes int tabId) {
+                switch (tabId) {
+                    case R.id.tab_reviews:
+                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_reviews), Gravity.END);
+                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewpost, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_viewpost_lastnews:
+                                        ReviewFragment reviewFragment = new ReviewFragment();
+                                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                        transaction.replace(R.id.frame, reviewFragment);
+                                        transaction.commit();
+                                        break;
+                                    case R.id.popup_viewpost_mostcomment:
+                                        break;
+                                    case R.id.popup_viewpost_mostlike:
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
+                        popupMenu.show();
+
+                        break;
+                    case R.id.tab_stores:
+                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_stores), Gravity.CENTER);
+                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_viewquan_gia:
+                                        break;
+                                    case R.id.popup_viewquan_pv:
+                                        break;
+                                    case R.id.popup_viewquan_vs:
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
+                        popupMenu.show();
+                        break;
+                    case R.id.tab_locations:
+                        break;
+                }
+            }
+        });
     }
 
 

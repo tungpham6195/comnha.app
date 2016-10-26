@@ -81,6 +81,12 @@
     <string name="txt_choose">Chọn</string>
     <string name="txt_chosefromloca">Bộ nhớ</string>
     <string name="txt_chosefromuploaded">Ảnh đã đăng</string>
+    <string name="txt_lastnews">Tin cuối</string>
+    <string name="txt_mostcomment">Quan tâm</string>
+    <string name="txt_mostlike">Yêu thích</string>
+    <string name="txt_myloca">Vị trí của tôi</string>
+    <string name="txt_review">Review</string>
+    <string name="txt_quanan">Quán ăn</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <string name="firebaseStorage_path">gs://com-nha.appspot.com/</string>

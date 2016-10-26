@@ -92,7 +92,7 @@ public class ProfiledetailFragment extends Fragment implements View.OnClickListe
         switch (v.getId()) {
             case R.id.frag_prodetail_imgV_profile:
                 PopupMenu popupMenu = new PopupMenu(getActivity(), profileImgV, Gravity.CENTER_HORIZONTAL|Gravity.TOP);
-                popupMenu.getMenuInflater().inflate(R.menu.menu_upavatar, popupMenu.getMenu());
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_upavatar, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
