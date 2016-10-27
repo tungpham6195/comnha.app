@@ -36,12 +36,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , FloatingActionButton.OnClickListener {
 
-
-<<<<<<< HEAD
 //    private MyService myService;
-=======
+
     //private MyService myService;
->>>>>>> origin/master
     private static final String LOG = MainActivity.class.getSimpleName();
     //private Boolean isBound = false;
     private Bundle savedInstanceState;
@@ -245,11 +242,10 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-<<<<<<< HEAD
+
 //        doBinService();
-=======
+
         //doBinService();
->>>>>>> origin/master
 //        gpsService.init();
         Log.i(LOG, "onStart");
     }
@@ -257,13 +253,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-<<<<<<< HEAD
 //        if (!isMyServiceRunning(MyService.class)) {
 //            final Intent intent = new Intent(this, MyService.class);
 //            startService(intent);
 //        }
-=======
->>>>>>> origin/master
 //        registerReceiver(mReceiver, mIntentFilter);
         Log.i(LOG, "onResume");
     }
@@ -283,21 +276,15 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
-<<<<<<< HEAD
 //        doUnbinService();
-=======
         //doUnbinService();
->>>>>>> origin/master
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-<<<<<<< HEAD
 //        unregisterReceiver(mReceiver);
-=======
         //unregisterReceiver(mReceiver);
->>>>>>> origin/master
 
         Log.i(LOG, "Pause");
     }
@@ -310,8 +297,6 @@ public class MainActivity extends AppCompatActivity
 //        }
 //    }
 
-<<<<<<< HEAD
-=======
 //    public void doBinService() {
 //        if (!isBound) {
 //            Intent intent = new Intent(this, MyService.class);
@@ -320,7 +305,6 @@ public class MainActivity extends AppCompatActivity
 //        }
 //    }
 //
->>>>>>> origin/master
 //    public void doUnbinService() {
 //        if (isBound) {
 //            unbindService(serviceConnection);

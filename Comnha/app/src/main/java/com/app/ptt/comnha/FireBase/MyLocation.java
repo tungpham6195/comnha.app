@@ -11,6 +11,8 @@ public class MyLocation {
     String name, diachi, sdt, timestart, timeend;
     long giamin, giamax;
     String locaID;
+    long giaTong = 0, vsTong = 0, pvTong = 0;
+    long size=0;
 
     public MyLocation() {
     }
@@ -79,6 +81,38 @@ public class MyLocation {
         return locaID;
     }
 
+    public void setGiaTong(long giaTong) {
+        this.giaTong = giaTong;
+    }
+
+    public void setVsTong(long vsTong) {
+        this.vsTong = vsTong;
+    }
+
+    public void setPvTong(long pvTong) {
+        this.pvTong = pvTong;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public long getPvTong() {
+        return pvTong;
+    }
+
+    public long getVsTong() {
+        return vsTong;
+    }
+
+    public long getGiaTong() {
+        return giaTong;
+    }
+
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("name", name);
@@ -88,6 +122,10 @@ public class MyLocation {
         result.put("timestart", timestart);
         result.put("giamax", giamax);
         result.put("giamin", giamin);
+        result.put("giaTong", giaTong);
+        result.put("vsTong", vsTong);
+        result.put("pvTong", pvTong);
+        result.put("size", size);
         return result;
     }
 }

@@ -1,5 +1,7 @@
 package com.app.ptt.comnha.SingletonClasses;
 
+import com.app.ptt.comnha.FireBase.MyLocation;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -11,7 +13,7 @@ public class DoPost {
     private long gia, vesinh, phucvu;
     private ArrayList<File> files;
     private String locaID, name, address;
-
+    private MyLocation myLocation;
     public static DoPost getInstance() {
         if (ourInstance == null) {
             ourInstance = new DoPost();
@@ -76,5 +78,13 @@ public class DoPost {
 
     public ArrayList<File> getFiles() {
         return files;
+    }
+
+    public MyLocation getMyLocation() {
+        return myLocation;
+    }
+
+    public void setMyLocation(MyLocation myLocation) {
+        this.myLocation = myLocation;
     }
 }

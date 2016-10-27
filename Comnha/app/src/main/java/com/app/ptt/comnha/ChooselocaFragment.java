@@ -15,10 +15,11 @@ import com.app.ptt.comnha.Adapters.Chooseloca_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,8 @@ public class ChooselocaFragment extends Fragment {
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mlayoutManager;
     ArrayList<MyLocation> list;
-    Firebase ref;
+    DatabaseReference dbRef;
+    ChildEventListener locaChildEventListener;
 
     public interface onPassDatafromChooseLocaFrg {
         void passData(String data);
@@ -59,7 +61,42 @@ public class ChooselocaFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chooseloca, container, false);
         Firebase.setAndroidContext(getActivity().getApplicationContext());
-        ref = new Firebase(getString(R.string.firebase_path));
+        dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
+        anhxa(view);
+        locaChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
+                newLocation.setLocaID(dataSnapshot.getKey());
+                list.add(newLocation);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(com.google.firebase.database.DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        dbRef.child("Locations").addChildEventListener(locaChildEventListener);
+        return view;
+    }
+
+    private void anhxa(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_chooseloca);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -75,49 +112,10 @@ public class ChooselocaFragment extends Fragment {
                 DoPost.getInstance().setLocaID(key);
                 DoPost.getInstance().setName(list.get(position).getName());
                 DoPost.getInstance().setAddress(list.get(position).getDiachi());
+                DoPost.getInstance().setMyLocation(list.get(position));
                 getActivity().finish();
             }
         }));
-
-        ref.child("Locations").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
-                newLocation.setLocaID(dataSnapshot.getKey());
-                list.add(newLocation);
-                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                Location newLocation = dataSnapshot.getValue(Location.class);
-//                String key = dataSnapshot.getKey();
-//                for (Location lc : list
-//                        ) {
-//                    if (lc.getLocaID().equals(key)) {
-//                        newLocation.setLocaID(key);
-//                        list.set(list.indexOf(lc), newLocation);
-//                    }
-//                }
-//                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-        return view;
     }
 
     @Override
@@ -125,4 +123,5 @@ public class ChooselocaFragment extends Fragment {
         super.onDestroy();
         Log.d("destroy", "destroy");
     }
+
 }

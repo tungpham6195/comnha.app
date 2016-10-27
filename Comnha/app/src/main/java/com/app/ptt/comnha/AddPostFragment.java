@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.Posts;
 import com.app.ptt.comnha.Classes.Times;
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
@@ -260,6 +261,14 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
                 + DoPost.getInstance().getLocaID() + "/"
                 + LoginSession.getInstance().getUserID() + "/" + key, postValue);
+        MyLocation updateLoca = DoPost.getInstance().getMyLocation();
+        updateLoca.setGiaTong(updateLoca.getGiaTong() + DoPost.getInstance().getGia());
+        updateLoca.setVsTong(updateLoca.getVsTong() + DoPost.getInstance().getVesinh());
+        updateLoca.setPvTong(updateLoca.getPvTong() + DoPost.getInstance().getPhucvu());
+        updateLoca.setSize(updateLoca.getSize() + 1);
+
+        childUpdates.put(getResources().getString(R.string.locations_CODE)
+                + updateLoca.getLocaID(), updateLoca);
         try {
             for (File f : DoPost.getInstance().getFiles()) {
                 Uri uri = Uri.fromFile(f);
