@@ -12,7 +12,7 @@ public class MyLocation {
     long giamin, giamax;
     String locaID;
     long giaTong = 0, vsTong = 0, pvTong = 0;
-    long size=0;
+    long size=1;
 
     public MyLocation() {
     }
@@ -96,11 +96,9 @@ public class MyLocation {
     public void setSize(long size) {
         this.size = size;
     }
-
     public long getSize() {
         return size;
     }
-
     public long getPvTong() {
         return pvTong;
     }

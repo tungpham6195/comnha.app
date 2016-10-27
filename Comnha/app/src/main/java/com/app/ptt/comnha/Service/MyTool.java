@@ -102,7 +102,6 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     public void onDirectionFinderSuccess(ArrayList<Route> routes) {
         Log.i(LOG+".FinderSuccess","Them route thanh cong");
         this.routes=routes;
-        addToRoute();
         flag=1;
 //        routes.get(routes.size()-1).setEndAddress(returnLocationByLatLng(
 //                geocoder,
@@ -137,10 +136,10 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         }
         startLocationUpdate();
     }
+
     @Override
     public void onLocationChanged(Location location) {
-
-        if (location.getLatitude() != latitude && location.getLongitude() != longtitude) {
+        if (location.getLatitude() != this.latitude && location.getLongitude() != this.longtitude) {
             Log.i(LOG+".onLocationChanged","Vi tri cua ban bi thay doi");
             this.latitude = location.getLatitude();
             this.longtitude = location.getLongitude();
@@ -153,9 +152,17 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             for (MyLocation a : listLocation) {
                 loadListPlace(a.getDiachi(),a.getLocaID());
             }
-
-
         }
+    }
+    public MyLocation returnMyLocationByID(String ID){
+        for(MyLocation location: listLocation){
+            Log.i(LOG+".returnMyLocationByID"," ID truyen vao"+ID);
+            if(location.getLocaID()==(ID)) {
+                Log.i(LOG+".returnMyLocationByID","location can tim"+location.getDiachi());
+                return location;
+            }
+        }
+        return null;
     }
     public void sendBroadcast(String a){
         Log.i(LOG+".sendBroadcast","gui broadcast voi flag="+flag);
@@ -189,8 +196,8 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
 
     private void initLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(30000);
-        mLocationRequest.setFastestInterval(30000);
+        mLocationRequest.setInterval(15000);
+        mLocationRequest.setFastestInterval(15000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
     private void startLocationUpdate() {
@@ -224,11 +231,12 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         ref.child(mContext.getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                listLocation.add(dataSnapshot.getValue(MyLocation.class));
+                MyLocation myLocation=dataSnapshot.getValue(MyLocation.class);
+                myLocation.setLocaID(dataSnapshot.getKey());
+                listLocation.add(myLocation);
                 Log.i(LOG+".onChildAdded", "Ten quan: "+dataSnapshot.getValue(MyLocation.class).getName());
                 Log.i(LOG+".onChildAdded", "Dia chi: "+dataSnapshot.getValue(MyLocation.class).getDiachi());
-                listLocation.get(listLocation.size()-1).setLocaID(dataSnapshot.getKey());
-                loadListPlace(listLocation.get(listLocation.size()-1).getDiachi(),listLocation.get(listLocation.size()-1).getLocaID());
+                loadListPlace(myLocation.getDiachi(),myLocation.getLocaID());
             }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String  s) {
@@ -325,22 +333,6 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     }
     public void returnYourLatLng(Double latitude,Double longtitude){
         yourLatLng= new LatLng(latitude,longtitude);
-    }
-
-    public void addToRoute(){
-        Log.i(LOG,"addToRoute");
-        Route a=routes.get(routes.size()-1);
-        for(MyLocation location: listLocation){
-            if(a.getLocalID()==location.getLocaID()){
-                Log.i(LOG,"Da zo day"+location.getName()+" ."+location.getTimestart()+" ."+location.getTimeend()+"."+location.getSdt());
-                a.setTenQuan(location.getName());
-                a.setGioMo(location.getTimestart());
-                a.setGioDong(location.getTimeend());
-                a.setSdt(location.getSdt());
-                a.setGiaMin(location.getGiamin());
-                a.setGiaMax(location.getGiamax());
-            }
-        }
     }
     public LatLng returnLatLngByName(String address) {
         List<Address> addresses=new ArrayList<>();

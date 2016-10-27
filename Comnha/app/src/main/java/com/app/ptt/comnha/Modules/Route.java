@@ -21,8 +21,32 @@ public class Route {
     private String startAddress;
     private LatLng startLocation;
     private List<LatLng> points;
-    private String tenQuan,sdt,gioMo,gioDong,LocalID;
-    private Long giaMin,giaMax;
+    private String LocalID;
+    private  long giaTong = 0, vsTong = 0, pvTong = 0;
+    private long size=0;
+    public long getGiaTong() {
+        return giaTong;
+    }
+
+    public void setGiaTong(long giaTong) {
+        this.giaTong = giaTong;
+    }
+
+    public long getVsTong() {
+        return vsTong;
+    }
+
+    public void setVsTong(long vsTong) {
+        this.vsTong = vsTong;
+    }
+
+    public long getPvTong() {
+        return pvTong;
+    }
+
+    public void setPvTong(long pvTong) {
+        this.pvTong = pvTong;
+    }
 
     public MyDistance getDistance() {
         return distance;
@@ -87,39 +111,6 @@ public class Route {
     public void setPoints(List<LatLng> points) {
         this.points = points;
     }
-
-    public String getTenQuan() {
-        return tenQuan;
-    }
-
-    public void setTenQuan(String tenQuan) {
-        this.tenQuan = tenQuan;
-    }
-
-    public String getSdt() {
-        return sdt;
-    }
-
-    public void setSdt(String sdt) {
-        this.sdt = sdt;
-    }
-
-    public String getGioMo() {
-        return gioMo;
-    }
-
-    public void setGioMo(String gioMo) {
-        this.gioMo = gioMo;
-    }
-
-    public String getGioDong() {
-        return gioDong;
-    }
-
-    public void setGioDong(String gioDong) {
-        this.gioDong = gioDong;
-    }
-
     public String getLocalID() {
         return LocalID;
     }
@@ -128,19 +119,4 @@ public class Route {
         LocalID = localID;
     }
 
-    public Long getGiaMax() {
-        return giaMax;
-    }
-
-    public void setGiaMax(Long giaMax) {
-        this.giaMax = giaMax;
-    }
-
-    public Long getGiaMin() {
-        return giaMin;
-    }
-
-    public void setGiaMin(Long giaMin) {
-        this.giaMin = giaMin;
-    }
 }

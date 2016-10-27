@@ -36,9 +36,12 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , FloatingActionButton.OnClickListener {
 
+
+
 //    private MyService myService;
 
     //private MyService myService;
+
     private static final String LOG = MainActivity.class.getSimpleName();
     //private Boolean isBound = false;
     private Bundle savedInstanceState;
@@ -246,6 +249,7 @@ public class MainActivity extends AppCompatActivity
 //        doBinService();
 
         //doBinService();
+
 //        gpsService.init();
         Log.i(LOG, "onStart");
     }
@@ -253,10 +257,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
 //        if (!isMyServiceRunning(MyService.class)) {
 //            final Intent intent = new Intent(this, MyService.class);
 //            startService(intent);
 //        }
+
 //        registerReceiver(mReceiver, mIntentFilter);
         Log.i(LOG, "onResume");
     }
@@ -276,15 +282,21 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
+
 //        doUnbinService();
+
         //doUnbinService();
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
 //        unregisterReceiver(mReceiver);
+
         //unregisterReceiver(mReceiver);
+
 
         Log.i(LOG, "Pause");
     }

@@ -20,8 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.Route;
-import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.Service.MyTool;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -124,16 +124,20 @@ public class MapFragment extends Fragment {
                                     txt_DiemGia = (TextView) view1.findViewById(R.id.txt_DiemGia);
                                     txt_DiemPhucVu = (TextView) view1.findViewById(R.id.txt_DiemPhucVu);
                                     txt_DiemVeSinh = (TextView) view1.findViewById(R.id.txt_DiemVeSinh);
-                                    Route a = returnRoute(marker);
-                                    if (a == null) {
-                                    } else {
-                                        txt_TenQuan.setText(a.getTenQuan());
-
-                                        txt_DiaChi.setText(a.getEndAddress());
-                                        txt_GioMo.setText(a.getGioMo() + ":" + a.getGioDong());
-                                        txt_DiemVeSinh.setText("5");
-                                        txt_DiemGia.setText("6");
-                                        txt_DiemPhucVu.setText("8");
+                                    MyLocation a = returnMyLocation(marker);
+                                    if (a != null) {
+                                        txt_TenQuan.setText(a.getName());
+                                        txt_DiaChi.setText(a.getDiachi());
+                                        txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
+                                        if(a.getSize()==0){
+                                            txt_DiemVeSinh.setText("0");
+                                            txt_DiemGia.setText("0");
+                                            txt_DiemPhucVu.setText("0");
+                                        }else {
+                                            txt_DiemVeSinh.setText(a.getVsTong() / a.getSize() + "");
+                                            txt_DiemGia.setText(a.getGiaTong() / a.getSize() + "");
+                                            txt_DiemPhucVu.setText(a.getPvTong() / a.getSize() + "");
+                                        }
                                     }
                                     return view1;
                                 } else {
@@ -173,10 +177,7 @@ public class MapFragment extends Fragment {
                         list.add(route);
                         addMarker(route);
                     }
-
-
                 }
-
                 if(intent.getIntExtra("STT",0)==3 &&intent.getBooleanExtra("Location",false)){
                     Log.i(LOG+".BroadcastReceiver","Nhan vi tri cua ban:");
                     yourLatLng = myTool.getYourLatLng();
@@ -242,11 +243,17 @@ public class MapFragment extends Fragment {
                 .position(route.getEndLocation()));
     }
 
-    public Route returnRoute(Marker marker) {
+    public MyLocation returnMyLocation(Marker marker) {
         Log.i(LOG+".returnRoute","Tra ve route ung voi marker");
         for (Route a : list) {
             if (marker.getPosition().latitude == a.getEndLocation().latitude && marker.getPosition().longitude == a.getEndLocation().longitude)
-                return a;
+            {
+                Log.i(LOG+".returnMyLocation",a.getLocalID());
+
+               MyLocation myLocation= myTool.returnMyLocationByID(a.getLocalID());
+                Log.i(LOG+".returnMyLocation","location tra ve: "+myLocation.getLocaID()+". Dia chi:"+myLocation.getDiachi());
+                return myLocation;
+            }
         }
         return null;
     }

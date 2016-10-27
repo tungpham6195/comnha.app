@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Route;
-import com.app.ptt.comnha.Service.MyService;
+
 
 import java.util.ArrayList;
 
@@ -28,7 +28,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     private ProgressDialog progressDialog;
     private int progressBarStatus = 0;
     private Handler progressBarHandler = new Handler();
-    MyService myService;
+
     int temp, count;
     Boolean isBound=false;
     private IntentFilter mIntentFilter;
@@ -56,30 +56,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         super.finish();
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(mBroadcast)) {
-                isComplete = intent.getBooleanExtra("LocationChange", false);
-                Log.i(LOG, "isComplete=" + isComplete);
-                openMap();
-            }
-        }
-    };
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MyService.LocalBinder binder = (MyService.LocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
 
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            myService = null;
-        }
-    };
 
     public void showToast(final String a) {
         runOnUiThread(new Runnable() {
@@ -324,30 +301,15 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     protected void onStart() {
         Log.i(LOG,"onStart");
         super.onStart();
-       // doBinService();
-        registerReceiver(mReceiver, mIntentFilter);
-    }
-    public void doBinService() {
-        if (!isBound) {
-            Intent intent = new Intent(this, MyService.class);
-            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-            isBound = true;
-        }
+
+
     }
 
-    public void doUnbinService() {
-        if (isBound) {
-            unbindService(serviceConnection);
-            isBound = false;
-        }
-    }
 
     @Override
     protected void onStop() {
         Log.i(LOG,"onStop");
         super.onStop();
-        //doUnbinService();
-        unregisterReceiver(mReceiver);
     }
 
 }
