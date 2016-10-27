@@ -10,7 +10,6 @@ public class Post {
     //không nên để là private
     String title, content, date, time, postID, username, uid;
     long vesinh, phucvu, gia;
-
     public Post() {
     }
 

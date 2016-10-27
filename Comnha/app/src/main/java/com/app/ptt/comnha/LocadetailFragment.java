@@ -147,7 +147,7 @@ public class LocadetailFragment extends Fragment {
         btn_dangreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), AdapterActivity.class);
+                Intent intent = new Intent(getActivity(), Adapter2Activity.class);
                 intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frag_addpost_CODE));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
