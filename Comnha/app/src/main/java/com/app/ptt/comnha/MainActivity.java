@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private MyService myService;
-    private static final String LOG = "MainActivity2";
+    private static final String LOG = MainActivity.class.getSimpleName();
     private Boolean isBound = false;
     private Bundle savedInstanceState;
     public static final String mBroadcast = "mBroadcastComplete";
@@ -246,11 +246,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isMyServiceRunning(MyService.class)) {
-            final Intent intent = new Intent(this, MyService.class);
-            startService(intent);
-            Log.i("Resume", "Resume");
-        }
+//        if (!isMyServiceRunning(MyService.class)) {
+//            final Intent intent = new Intent(this, MyService.class);
+//            startService(intent);
+//        }
         registerReceiver(mReceiver, mIntentFilter);
         Log.i(LOG, "onResume");
     }
@@ -259,7 +258,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        doUnbinService();
+        //doUnbinService();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -267,13 +266,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onDestroy() {
+        Log.i(LOG, "onDestroy");
+        super.onDestroy();
+        doUnbinService();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        if (isMyServiceRunning(MyService.class)) {
-            final Intent intent = new Intent(this, MyService.class);
-            stopService(intent);
-
-        }
         unregisterReceiver(mReceiver);
 
         Log.i(LOG, "Pause");
@@ -299,7 +300,6 @@ public class MainActivity extends AppCompatActivity
         public void onServiceConnected(ComponentName name, IBinder service) {
             MyService.LocalBinder binder = (MyService.LocalBinder) service;
             myService = binder.getService();
-
             isBound = true;
             Log.i(LOG, "ServiceConnection");
         }

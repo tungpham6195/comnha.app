@@ -45,6 +45,7 @@ public class DirectionFinder {
 
 
     public void execute() throws UnsupportedEncodingException {
+        Log.i(LOG,"BAT DAU TU DAY NHA. ROI VCL");
         if(destination!=null &&origin!=null) {
             listener.onDirectionFinderStart();
             new DowloadRawData().execute(createURL());

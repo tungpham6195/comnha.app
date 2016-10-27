@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,7 +28,6 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -161,7 +159,6 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         DoPost.getInstance().setVesinh(0);
         DoPost.getInstance().setGia(0);
         DoPost.getInstance().setPhucvu(0);
-        DoPost.getInstance().setFiles(null);
     }
 
     private void savePost(View view) {
@@ -196,101 +193,81 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                     getResources().getString(R.string.txt_plzwait),
                     getResources().getString(R.string.txt_addinpost),
                     true, false);
-            UploadTask uploadTask = null;
+            Post newPost = new Post();
+            newPost.setTitle(edt_title.getText().toString());
+            newPost.setContent(edt_content.getText().toString());
+            newPost.setUid(LoginSession.getInstance().getUserID());
+            newPost.setUsername(LoginSession.getInstance().getUsername());
+            newPost.setDate(new Times().getTime());
+            newPost.setTime(new Times().getDate());
+            newPost.setGia(DoPost.getInstance().getGia());
+            newPost.setVesinh(DoPost.getInstance().getVesinh());
+            newPost.setPhucvu(DoPost.getInstance().getPhucvu());
             final String key = ref.child("Posts").push().getKey();
-            try {
-                if (DoPost.getInstance().getFiles().size() > 0) {
-                    Log.i("size", DoPost.getInstance().getFiles().size() + "");
-                    for (File f : DoPost.getInstance().getFiles()) {
-                        Uri uri = Uri.fromFile(f);
-                        StorageReference childRef = storeRef.child(getResources().getString(R.string.users_CODE)
-                                + LoginSession.getInstance().getUserID() + "/"
-                                + getResources().getString(R.string.posts_CODE) + uri.getLastPathSegment());
-                        uploadTask = childRef.putFile(uri);
-                    }
-                    for (File f : DoPost.getInstance().getFiles()) {
-                        Uri uri = Uri.fromFile(f);
-                        StorageReference childRef = storeRef.child(getResources().getString(R.string.locations_CODE)
-                                + DoPost.getInstance().getLocaID() + "/" + uri.getLastPathSegment());
-                        uploadTask = childRef.putFile(uri);
-                    }
-                    for (File f : DoPost.getInstance().getFiles()) {
-                        Uri uri = Uri.fromFile(f);
-                        StorageReference childRef = storeRef.child(getResources().getString(R.string.posts_CODE)
-                                + key + "/" + uri.getLastPathSegment());
-                        uploadTask = childRef.putFile(uri);
-                    }
-                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            addpost(key);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e("OnFailureUploadPhoto", e.getMessage());
-                        }
-                    });
-                } else {
-                    addpost(key);
-                }
-            } catch (NullPointerException mess) {
-                addpost(key);
-            }
+            Map<String, Object> postValue = newPost.toMap();
+            final Map<String, Object> childUpdates = new HashMap<String, Object>();
+            childUpdates.put(getResources().getString(R.string.posts_CODE) + key, postValue);
+            childUpdates.put(getResources().getString(R.string.userpost_CODE)
+                    + LoginSession.getInstance().getUserID() + "/" + key, postValue);
+            childUpdates.put(getResources().getString(R.string.locationpost_CODE) +
+                    DoPost.getInstance().getLocaID() + "/" + key, postValue);
+            childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
+                    + DoPost.getInstance().getLocaID() + "/"
+                    + LoginSession.getInstance().getUserID() + "/" + key, postValue);
+            ref.updateChildren(childUpdates, new Firebase.CompletionListener() {
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if (firebaseError != null) {
+                        mProgressDialog.dismiss();
+                        Toast.makeText(getActivity(), "Đăng bài bị lỗi" + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        boolean checkComplete = false;
+                        UploadTask uploadTask = null;
+                        try {
+                            if (DoPost.getInstance().getFiles().size() > 0) {
+                                Log.i("size", DoPost.getInstance().getFiles().size() + "");
+                                for (File f : DoPost.getInstance().getFiles()) {
+                                    Uri uri = Uri.fromFile(f);
+                                    StorageReference childRef = storeRef.child(getResources().getString(R.string.users_CODE)
+                                            + getResources().getString(R.string.posts_CODE) + uri.getLastPathSegment());
+                                    uploadTask = childRef.putFile(uri);
+                                }
+                                for (File f : DoPost.getInstance().getFiles()) {
+                                    Uri uri = Uri.fromFile(f);
+                                    StorageReference childRef = storeRef.child(getResources().getString(R.string.locations_CODE)
+                                            + DoPost.getInstance().getLocaID() + "/" + uri.getLastPathSegment());
+                                    uploadTask = childRef.putFile(uri);
+                                }
+                                for (File f : DoPost.getInstance().getFiles()) {
+                                    Uri uri = Uri.fromFile(f);
+                                    StorageReference childRef = storeRef.child(getResources().getString(R.string.posts_CODE)
+                                            + key + "/" + uri.getLastPathSegment());
+                                    uploadTask = childRef.putFile(uri);
+                                }
+                                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        mProgressDialog.dismiss();
+                                        Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
+                                        getActivity().finish();
 
+                                    }
+                                });
+                            } else {
+                                mProgressDialog.dismiss();
+                                Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
+                                getActivity().finish();
+                            }
+                        } catch (NullPointerException mess) {
+                            mProgressDialog.dismiss();
+                            Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
+                            getActivity().finish();
+                        }
+
+
+                    }
+                }
+            });
         }
     }
-
-    private void addpost(String key) {
-        Post newPost = new Post();
-        newPost.setTitle(edt_title.getText().toString());
-        newPost.setContent(edt_content.getText().toString());
-        newPost.setUid(LoginSession.getInstance().getUserID());
-        newPost.setUsername(LoginSession.getInstance().getUsername());
-        newPost.setDate(new Times().getTime());
-        newPost.setTime(new Times().getDate());
-        newPost.setGia(DoPost.getInstance().getGia());
-        newPost.setVesinh(DoPost.getInstance().getVesinh());
-        newPost.setPhucvu(DoPost.getInstance().getPhucvu());
-        Map<String, Object> postValue = newPost.toMap();
-        Map<String, Object> childUpdates = new HashMap<String, Object>();
-        childUpdates.put(getResources().getString(R.string.posts_CODE) + key, postValue);
-        childUpdates.put(getResources().getString(R.string.userpost_CODE)
-                + LoginSession.getInstance().getUserID() + "/" + key, postValue);
-        childUpdates.put(getResources().getString(R.string.locationpost_CODE) +
-                DoPost.getInstance().getLocaID() + "/" + key, postValue);
-        childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
-                + DoPost.getInstance().getLocaID() + "/"
-                + LoginSession.getInstance().getUserID() + "/" + key, postValue);
-        try {
-            for (File f : DoPost.getInstance().getFiles()) {
-                Uri uri = Uri.fromFile(f);
-                String fileKey = ref.child(getResources().getString(R.string.images_CODE)).push().getKey();
-                childUpdates.put(getResources().getString(R.string.images_CODE) +
-                        getResources().getString(R.string.posts_CODE) + key + "/" + fileKey, uri.getLastPathSegment());
-                childUpdates.put(getResources().getString(R.string.images_CODE) +
-                        getResources().getString(R.string.users_CODE) + LoginSession.getInstance().getUserID() + "/"
-                        + getResources().getString(R.string.posts_CODE) + "/" + fileKey, uri.getLastPathSegment());
-                childUpdates.put(getResources().getString(R.string.images_CODE) +
-                        getResources().getString(R.string.locations_CODE) + DoPost.getInstance().getLocaID()
-                        + "/" + fileKey, uri.getLastPathSegment());
-            }
-        } catch (NullPointerException mess) {
-
-        }
-        ref.updateChildren(childUpdates, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError != null) {
-                    mProgressDialog.dismiss();
-                    Toast.makeText(getActivity(), "Đăng bài bị lỗi" + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                } else {
-                    mProgressDialog.dismiss();
-                    Toast.makeText(getActivity(), "Đăng bài thành công", Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-            }
-        });
-    }
-
 }

@@ -8,8 +8,8 @@ import java.util.Map;
  */
 public class Post {
     //không nên để là private
-    String title, content, date, time, postID, username, uid;
-    long vesinh, phucvu, gia;
+     private String title, content, date, time, postID, username, uid;
+    private long vesinh, phucvu, gia;
     public Post() {
     }
 

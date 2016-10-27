@@ -11,6 +11,8 @@ import android.provider.Settings;
 
 import com.app.ptt.comnha.MainActivity;
 
+import java.util.ArrayList;
+
 /**
  * Created by cuong on 10/16/2016.
  */

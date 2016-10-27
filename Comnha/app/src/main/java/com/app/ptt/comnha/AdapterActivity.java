@@ -1,5 +1,6 @@
 package com.app.ptt.comnha;
 
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -29,8 +30,9 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     private Handler progressBarHandler = new Handler();
     MyService myService;
     int temp, count;
+    Boolean isBound=false;
     private IntentFilter mIntentFilter;
-    int isComplete = 0;
+    boolean isComplete;
     Bundle savedInstanceState;
     ArrayList<Route> routes;
 
@@ -44,17 +46,9 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         Log.i(LOG, "onCreate");
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcast);
+        loadData();
     }
 
-    public void doBindService() {
-        Log.i(LOG, "doBindService");
-        bindService(new Intent(this, MyService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    public void doUnbindService() {
-        Log.i(LOG, "doUnbindService");
-        unbindService(serviceConnection);
-    }
 
     @Override
     public void finish() {
@@ -66,20 +60,19 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcast)) {
-                isComplete = intent.getIntExtra("LoadingComplete", 0);
+                isComplete = intent.getBooleanExtra("LocationChange", false);
                 Log.i(LOG, "isComplete=" + isComplete);
+                openMap();
+
             }
         }
     };
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            myService = ((MyService.LocalBinder) service).getService();
-            if (myService == null) {
-                Log.i(LOG, "CCCCCCCCCCCCCCCCCCCCCCCCCCCc");
-            } else {
-                loadData();
-            }
+            MyService.LocalBinder binder = (MyService.LocalBinder) service;
+            myService = binder.getService();
+            isBound = true;
 
         }
 
@@ -99,65 +92,73 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     }
 
     private void openMap() {
-        Log.i(LOG, "openMap");
-        if (routes == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(true);
-            progressDialog.setMessage("Loading data");
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setProgressStyle(0);
-            progressDialog.setMax(100);
-            progressDialog.show();
-            progressBarStatus = 0;
-            temp = 0;
-            count = 0;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    myService.getDataInFireBase();
-                    while (progressBarStatus < 100) {
-                        progressBarStatus = loadProgress();
-                        try {
-
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        progressBarHandler.post(new Runnable() {
-                            public void run() {
-                                progressDialog.setProgress(progressBarStatus);
-                            }
-
-                        });
-                        if (progressBarStatus >= 100) {
-                            try {
-                                Thread.sleep(2000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            if (isComplete == 1) {
-                                routes = myService.returnRoute();
-                                MapFragment mapFragment = new MapFragment();
-                                mapFragment.getMethod(routes);
-                                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
-
-                            }
-                            progressDialog.dismiss();
-                        }
-
-                    }
-                    if (progressBarStatus == 101 && isComplete != 1)
-                        showToast("Lỗi rồi");
-                }
-            }).start();
-
-
-        } else {
-
-            MapFragment mapFragment = new MapFragment();
-            mapFragment.getMethod(routes);
-            getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
-        }
+//        Log.i(LOG, "openMap");
+//        try{
+//            routes = myService.returnRoute();
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        if (routes== null) {
+//            progressDialog = new ProgressDialog(this);
+//            progressDialog.setCancelable(true);
+//            progressDialog.setMessage("Loading data");
+//            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            progressDialog.setProgressStyle(0);
+//            progressDialog.setMax(100);
+//            progressDialog.show();
+//            progressBarStatus = 0;
+//            temp = 0;
+//            count = 0;
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    myService.getDataInFireBase();
+//                    while (progressBarStatus < 100) {
+//                        progressBarStatus = loadProgress();
+//                        try {
+//
+//                            Thread.sleep(1000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        progressBarHandler.post(new Runnable() {
+//                            public void run() {
+//                                progressDialog.setProgress(progressBarStatus);
+//                            }
+//
+//                        });
+//                        if (progressBarStatus >= 100) {
+//                            try {
+//                                Thread.sleep(2000);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                            if (isComplete == 1) {
+//                                routes = myService.returnRoute();
+//                                MapFragment mapFragment = new MapFragment();
+//                                mapFragment.getMethod(routes);
+//                                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
+//
+//                            }
+//                            progressDialog.dismiss();
+//                        }
+//
+//                    }
+//
+//                    if (progressBarStatus == 101 && isComplete != 1)
+//                        showToast("Lỗi rồi");
+//                }
+//            }).start();
+//            if (progressBarStatus == 101 && isComplete != 1)
+//                showToast("Lỗi rồi");
+//
+//        } else {
+//            MapFragment mapFragment = new MapFragment();
+//            mapFragment.getMethod(myService.returnRoute());
+//            getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
+     //   }
+        MapFragment mapFragment = new MapFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
     }
 
     public void loadData() {
@@ -249,11 +250,10 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                         } else {
                             ConnectionDetector.showSettingAlert(this);
                         }
-                        routes = null;
                     } else {
                         if (!ConnectionDetector.networkStatus(this)) {
                             Toast.makeText(getApplicationContext(), "Không có kết nối internet", Toast.LENGTH_LONG).show();
-                            routes = null;
+
                         } else {
                             openMap();
                         }
@@ -273,53 +273,47 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         }
     }
 
-    public int loadProgress() {
-        Log.i(LOG, "count= " + count);
-        Log.i(LOG, "temp= " + temp);
-        if (isComplete != 1) {
-            if (count < 60) {
-                count++;
-
-                if (isComplete == -1)
-                    return 101;
-                while (temp <= 1000000) {
-                    temp++;
-
-                    if (temp == 100000) {
-                        return 10;
-                    } else if (temp == 200000) {
-                        return 20;
-                    } else if (temp == 300000) {
-                        return 30;
-                    } else if (temp == 400000) {
-                        return 40;
-                    } else if (temp == 500000) {
-                        return 50;
-                    } else if (temp == 700000) {
-                        return 70;
-                    } else if (temp == 800000) {
-                        return 80;
-                    }
-                }
-                return 0;
-            } else {
-                return 101;
-            }
-        } else {
-            return 100;
-        }
-    }
+//    public int loadProgress() {
+//        Log.i(LOG, "count= " + count);
+//        Log.i(LOG, "temp= " + temp);
+//        if (isComplete != 1) {
+//            if (count < 60) {
+//                count++;
+//                if (isComplete == -1)
+//                    return 101;
+//                while (temp <= 1000000) {
+//                    temp++;
+//
+//                    if (temp == 100000) {
+//                        return 10;
+//                    } else if (temp == 200000) {
+//                        return 20;
+//                    } else if (temp == 300000) {
+//                        return 30;
+//                    } else if (temp == 400000) {
+//                        return 40;
+//                    } else if (temp == 500000) {
+//                        return 50;
+//                    } else if (temp == 700000) {
+//                        return 70;
+//                    } else if (temp == 800000) {
+//                        return 80;
+//                    }
+//                }
+//                return 0;
+//            } else {
+//                return 101;
+//            }
+//        } else {
+//            return 100;
+//        }
+//    }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.i(LOG, "onPause");
-//        failed startActitityforResult
-//        Intent intent1 = new Intent();
-//        intent1.putExtra("result", locaKey);
-//        setResult(Activity.RESULT_OK, intent1);
-//        Log.d("intent",intent1.getStringExtra("result"));
-//        Toast.makeText(getApplicationContext(), "from adapter: "+locaKey, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -329,16 +323,33 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
 
     @Override
     protected void onStart() {
+        Log.i(LOG,"onStart");
         super.onStart();
-        doBindService();
+       // doBinService();
         registerReceiver(mReceiver, mIntentFilter);
+    }
+    public void doBinService() {
+        if (!isBound) {
+            Intent intent = new Intent(this, MyService.class);
+            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+            isBound = true;
+        }
+    }
+
+    public void doUnbinService() {
+        if (isBound) {
+            unbindService(serviceConnection);
+            isBound = false;
+        }
     }
 
     @Override
     protected void onStop() {
+        Log.i(LOG,"onStop");
         super.onStop();
-        doUnbindService();
+        //doUnbinService();
         unregisterReceiver(mReceiver);
     }
+
 }
 
