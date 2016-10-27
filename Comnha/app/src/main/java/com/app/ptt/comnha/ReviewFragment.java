@@ -88,7 +88,7 @@ public class ReviewFragment extends Fragment {
                 break;
             case 2://mostcomment
                 dbRef.child(getResources().getString(R.string.posts_CODE))
-                        .orderByChild("commentCount")
+                        .orderByChild("commentCount").limitToLast(100)
                         .addChildEventListener(lastnewsChildEventListener);
                 break;
             case 3://mostlike

@@ -109,7 +109,7 @@ public class ChoosePhotoFragment extends Fragment implements LoaderManager.Loade
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
         return new CursorLoader(
                 getActivity().getApplicationContext(),
-                MediaStore.Images.Media.getContentUri("/storage/emulated/0"),
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 projection, MediaStore.Images.Media.MIME_TYPE + "=" + "\'image/jpeg\'", null, null);
     }
 

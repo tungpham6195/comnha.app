@@ -1,16 +1,10 @@
 package com.app.ptt.comnha;
 
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -28,8 +22,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.Modules.ConnectionDetector;
-import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 import com.github.clans.fab.FloatingActionButton;
@@ -45,7 +37,7 @@ public class MainActivity extends AppCompatActivity
         , FloatingActionButton.OnClickListener {
 
 
-    private MyService myService;
+//    private MyService myService;
     private static final String LOG = MainActivity.class.getSimpleName();
     private Boolean isBound = false;
     private Bundle savedInstanceState;
@@ -83,8 +75,8 @@ public class MainActivity extends AppCompatActivity
 
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(mBroadcast);
+//        mIntentFilter = new IntentFilter();
+//        mIntentFilter.addAction(mBroadcast);
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mtoggle = new ActionBarDrawerToggle(
                 this, mdrawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -132,20 +124,20 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(mBroadcast)) {
-                checkConnection = intent.getBooleanExtra("LocationError", true);
-                Log.i(LOG, "checkConnection=" + checkConnection);
-                if (!checkConnection) {
-                    if (!ConnectionDetector.canGetLocation(MainActivity.this)) {
-                        ConnectionDetector.showSettingAlert(MainActivity.this);
-                    }
-                }
-            }
-        }
-    };
+//    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (intent.getAction().equals(mBroadcast)) {
+//                checkConnection = intent.getBooleanExtra("LocationError", true);
+//                Log.i(LOG, "checkConnection=" + checkConnection);
+//                if (!checkConnection) {
+//                    if (!ConnectionDetector.canGetLocation(MainActivity.this)) {
+//                        ConnectionDetector.showSettingAlert(MainActivity.this);
+//                    }
+//                }
+//            }
+//        }
+//    };
 
     void anhXa() {
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
@@ -250,7 +242,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        doBinService();
+//        doBinService();
 //        gpsService.init();
         Log.i(LOG, "onStart");
     }
@@ -262,7 +254,7 @@ public class MainActivity extends AppCompatActivity
 //            final Intent intent = new Intent(this, MyService.class);
 //            startService(intent);
 //        }
-        registerReceiver(mReceiver, mIntentFilter);
+//        registerReceiver(mReceiver, mIntentFilter);
         Log.i(LOG, "onResume");
     }
 
@@ -281,56 +273,56 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
-        doUnbinService();
+//        doUnbinService();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mReceiver);
+//        unregisterReceiver(mReceiver);
 
         Log.i(LOG, "Pause");
     }
+//
+//    public void doBinService() {
+//        if (!isBound) {
+//            Intent intent = new Intent(this, MyService.class);
+////            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+//            isBound = true;
+//        }
+//    }
 
-    public void doBinService() {
-        if (!isBound) {
-            Intent intent = new Intent(this, MyService.class);
-            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-            isBound = true;
-        }
-    }
-
-    public void doUnbinService() {
-        if (isBound) {
-            unbindService(serviceConnection);
-            isBound = false;
-        }
-    }
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MyService.LocalBinder binder = (MyService.LocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
-            Log.i(LOG, "ServiceConnection");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
-        }
-    };
-
-    public boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public void doUnbinService() {
+//        if (isBound) {
+//            unbindService(serviceConnection);
+//            isBound = false;
+//        }
+//    }
+//
+//    private ServiceConnection serviceConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            MyService.LocalBinder binder = (MyService.LocalBinder) service;
+//            myService = binder.getService();
+//            isBound = true;
+//            Log.i(LOG, "ServiceConnection");
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            isBound = false;
+//        }
+//    };
+//
+//    public boolean isMyServiceRunning(Class<?> serviceClass) {
+//        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+//            if (serviceClass.getName().equals(service.service.getClassName())) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     @Override
     public void onBackPressed() {
