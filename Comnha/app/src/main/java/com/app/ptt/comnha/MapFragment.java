@@ -14,20 +14,14 @@ import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,23 +34,22 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-import br.com.mauker.materialsearchview.MaterialSearchView;
-
 public class MapFragment extends Fragment {
-    public static final String mBroadcastSendAddress="mBroadcastSendAddress";
-    public static final String mBroadcastChangeLocation="mBroadcastChangeLocation";
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    public static final String mBroadcastChangeLocation = "mBroadcastChangeLocation";
     private IntentFilter mIntentFilter;
     private static final String LOG = MapFragment.class.getSimpleName();
     private SupportMapFragment supportMapFragment;
     MyService myService;
-    private ArrayList<Route> list=new ArrayList<>();
-    private ArrayList<String> listName=new ArrayList<>();
+    private ArrayList<Route> list = new ArrayList<>();
+    private ArrayList<String> listName = new ArrayList<>();
     TextView txt_TenQuan, txt_DiaChi, txt_GioMo, txt_DiemGia, txt_DiemPhucVu, txt_DiemVeSinh;
     GoogleMap myGoogleMap;
     LatLng yourLatLng;
     String yourLocation;
-    boolean isBound=false;
+    boolean isBound = false;
     MarkerOptions yourMarker = null;
+
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -68,26 +61,27 @@ public class MapFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(LOG,"onCreateView");
+        Log.i(LOG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         return view;
     }
+
     @Override
     public void onStart() {
-        Log.i(LOG,"onStart");
+        Log.i(LOG, "onStart");
         super.onStart();
         list = new ArrayList<>();
-        mIntentFilter=new IntentFilter();
+        mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcastSendAddress);
         mIntentFilter.addAction(mBroadcastChangeLocation);
-        getActivity().registerReceiver(mBroadcastReceiver,mIntentFilter);
+        getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
         doBinService();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.i(LOG,"onStop");
+        Log.i(LOG, "onStop");
         getActivity().unregisterReceiver(mBroadcastReceiver);
         doUnbinService();
     }
@@ -95,7 +89,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i(LOG,"onViewCreated");
+        Log.i(LOG, "onViewCreated");
         supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
         if (supportMapFragment == null) {
             FragmentManager fragmentManager = getFragmentManager();
@@ -108,7 +102,7 @@ public class MapFragment extends Fragment {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     if (googleMap != null) {
-                        myGoogleMap=googleMap;
+                        myGoogleMap = googleMap;
                         googleMap.getUiSettings().setZoomControlsEnabled(true);
                         googleMap.getUiSettings().setCompassEnabled(true);
                         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -149,6 +143,7 @@ public class MapFragment extends Fragment {
                                 }
 
                             }
+
                             @Override
                             public View getInfoContents(Marker marker) {
                                 return null;
@@ -162,10 +157,10 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private BroadcastReceiver mBroadcastReceiver =new BroadcastReceiver() {
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(mBroadcastSendAddress)) {
+            if (intent.getAction().equals(mBroadcastSendAddress)) {
 
                 Log.i(LOG, "DANHAN");
                 listName.add(intent.getStringExtra("PlaceID"));
@@ -182,61 +177,71 @@ public class MapFragment extends Fragment {
 
         }
     };
+
     public void addMarker(Route route) {
         //myGoogleMap.animateCamera(CameraUpdateFactory.zoomIn());
         myGoogleMap.addMarker(new MarkerOptions()
                 .position(route.getEndLocation()));
     }
-    public Route returnRoute(Marker marker){
-        for(Route a:list){
-            if(marker.getPosition().latitude==a.getEndLocation().latitude&& marker.getPosition().longitude==a.getEndLocation().longitude)
+
+    public Route returnRoute(Marker marker) {
+        for (Route a : list) {
+            if (marker.getPosition().latitude == a.getEndLocation().latitude && marker.getPosition().longitude == a.getEndLocation().longitude)
                 return a;
         }
         return null;
     }
-    private ServiceConnection serviceConnection=new ServiceConnection() {
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            MyService.LocalBinder binder=(MyService.LocalBinder) service;
-            myService=binder.getService();
-            isBound=true;
-            yourLatLng=myService.getYourLatLng();
-            yourLocation=myService.getYourLocation();
-            if(yourMarker==null){
-                Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
-                BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                yourMarker = new MarkerOptions()
-                        .position(yourLatLng)
-                        .title(yourLocation)
-                        .icon(markerIcon);
-                myGoogleMap.addMarker(yourMarker);
-                myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myService.getYourLatLng(), 13));
+            MyService.LocalBinder binder = (MyService.LocalBinder) service;
+            myService = binder.getService();
+            isBound = true;
+            yourLatLng = myService.getYourLatLng();
+            yourLocation = myService.getYourLocation();
+            try {
+                if (yourMarker == null) {
+                    Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
+                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                    yourMarker = new MarkerOptions()
+                            .position(yourLatLng)
+                            .title(yourLocation)
+                            .icon(markerIcon);
+                    myGoogleMap.addMarker(yourMarker);
+                    myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myService.getYourLatLng(), 13));
+                }
+            } catch (NullPointerException mess) {
+
             }
-            if(myService.returnRoutes()==null) {
+
+            if (myService.returnRoutes() == null) {
                 Log.i(LOG, "getDataInFireBase");
                 myService.getDataInFireBase();
-            }
-            else{
+            } else {
                 Log.i(LOG, "existing route");
                 myService.returnRoutes();
             }
         }
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
 
         }
     };
-    public void doBinService(){
-        if(!isBound){
-            Intent intent=new Intent(getActivity(),MyService.class);
-            getActivity().bindService(intent,serviceConnection,Context.BIND_AUTO_CREATE);
-            isBound=true;
+
+    public void doBinService() {
+        if (!isBound) {
+            Intent intent = new Intent(getActivity(), MyService.class);
+            getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+            isBound = true;
         }
     }
-    public void doUnbinService(){
-        if(isBound){
+
+    public void doUnbinService() {
+        if (isBound) {
             getActivity().unbindService(serviceConnection);
-            isBound=false;
+            isBound = false;
         }
     }
 

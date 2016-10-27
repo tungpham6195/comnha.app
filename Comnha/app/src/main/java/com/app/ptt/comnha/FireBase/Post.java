@@ -8,8 +8,11 @@ import java.util.Map;
  */
 public class Post {
     //không nên để là private
-     private String title, content, date, time, postID, username, uid;
-    private long vesinh, phucvu, gia;
+    String title, content, date, time, postID, username, uid;
+    long vesinh, phucvu, gia;
+    int likeCount, commnetCount;
+    Map<String, Boolean> likes;
+
     public Post() {
     }
 
@@ -39,6 +42,31 @@ public class Post {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public void setCommnetCount(int commnetCount) {
+        this.commnetCount = commnetCount;
+    }
+
+    public void setLikes(Map<String, Boolean> likes) {
+        this.likes = likes;
+    }
+
+    public Map<String, Boolean> getLikes() {
+
+        return likes;
+    }
+
+    public int getCommnetCount() {
+        return commnetCount;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
     }
 
     public void setVesinh(long vesinh) {
@@ -104,6 +132,9 @@ public class Post {
         result.put("vesinh", vesinh);
         result.put("phucvu", phucvu);
         result.put("gia", gia);
+        result.put("commnetCount", commnetCount);
+        result.put("likeCount", likeCount);
+        result.put("likes", likes);
         return result;
     }
 

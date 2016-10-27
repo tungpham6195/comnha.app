@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ptt.comnha.FireBase.Post;
@@ -23,10 +22,10 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
     Activity activity;
     LayoutInflater inflater;
 
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txt_un, txt_postdate, txt_tittle, txt_content, txt_likenumb, txt_time;
+        public TextView txt_un, txt_postdate, txt_tittle, txt_content, txt_likenumb,txt_commentnumb, txt_time;
         public ImageView img_user;
-        public LinearLayout btn_like, btn_comment;
 
         public ViewHolder(View view) {
             super(view);
@@ -36,9 +35,8 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
             txt_postdate = (TextView) view.findViewById(R.id.review_txtv_postdate);
             txt_content = (TextView) view.findViewById(R.id.review_txtv_content);
             txt_likenumb = (TextView) view.findViewById(R.id.review_txtv_likenumb);
+            txt_commentnumb = (TextView) view.findViewById(R.id.review_txtv_commentnumb);
             img_user = (ImageView) view.findViewById(R.id.review_img_user);
-            btn_comment = (LinearLayout) view.findViewById(R.id.review_btn_comment);
-            btn_like = (LinearLayout) view.findViewById(R.id.review_btn_like);
         }
     }
 
@@ -61,6 +59,7 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
         holder.txt_postdate.setText(list.get(position).getDate());
         holder.txt_time.setText(list.get(position).getTime());
         holder.txt_un.setText(list.get(position).getUsername());
+        holder.txt_commentnumb.setText(String.valueOf(list.get(position).getCommnetCount())+" Comments");
     }
 
     @Override

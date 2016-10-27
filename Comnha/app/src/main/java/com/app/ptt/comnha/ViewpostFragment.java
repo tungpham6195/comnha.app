@@ -19,16 +19,15 @@ import com.app.ptt.comnha.Classes.Times;
 import com.app.ptt.comnha.FireBase.Comment;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,7 +41,9 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     RecyclerView.LayoutManager mlayoutManager;
     RecyclerView.Adapter mAdapter;
     ArrayList<Comment> comment_List;
-    Firebase ref;
+    DatabaseReference dbRef;
+    ChildEventListener commentChildEventListener;
+    ValueEventListener postValueEventListener;
 
     public ViewpostFragment() {
         // Required empty public constructor
@@ -57,20 +58,11 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_viewpost, container, false);
+        dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
         anhxa(view);
-        comment_List = new ArrayList<Comment>();
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_viewrev_rcyler_comments);
-        mRecyclerView.setHasFixedSize(true);
-        mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        mRecyclerView.setLayoutManager(mlayoutManager);
-        mAdapter = new Comment_rcyler_adapter(comment_List);
-        mRecyclerView.setAdapter(mAdapter);
-        Firebase.setAndroidContext(getActivity().getApplicationContext());
-        ref = new Firebase(getString(R.string.firebase_path));
-        Log.d("postID", postID);
-        ref.child(getString(R.string.posts_CODE) + postID).addListenerForSingleValueEvent(new ValueEventListener() {
+        postValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
                 txt_title.setText(post.getTitle());
                 txt_date.setText(post.getDate());
@@ -79,38 +71,43 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
-        ref.child(getString(R.string.postcomment_CODE) + "/" + postID).addChildEventListener(new ChildEventListener() {
+        };
+        commentChildEventListener = new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
                 Comment comment = dataSnapshot.getValue(Comment.class);
                 comment_List.add(comment);
                 mAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildRemoved(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMoved(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+        Log.d("postID", postID);
+        dbRef.child(getString(R.string.posts_CODE) + postID)
+                .addListenerForSingleValueEvent(postValueEventListener);
+        dbRef.child(getString(R.string.postcomment_CODE) + "/" + postID)
+                .addChildEventListener(commentChildEventListener);
         return view;
     }
 
@@ -124,6 +121,13 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         btn_comment = (TextView) view.findViewById(R.id.frg_viewrev_txtv_comment);
         btn_sendcomment = (Button) view.findViewById(R.id.frg_viewrev_btn_sendcomment);
         edt_comment = (EditText) view.findViewById(R.id.frg_viewrev_edt_comment);
+        comment_List = new ArrayList<Comment>();
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_viewrev_rcyler_comments);
+        mRecyclerView.setHasFixedSize(true);
+        mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mRecyclerView.setLayoutManager(mlayoutManager);
+        mAdapter = new Comment_rcyler_adapter(comment_List);
+        mRecyclerView.setAdapter(mAdapter);
 //        edt_comment.setFocusable(false);
         btn_sendcomment.setOnClickListener(this);
         btn_like.setOnClickListener(this);
@@ -142,15 +146,18 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                     newComment.setDate(new Times().getDate());
                     newComment.setTime(new Times().getTime());
                     edt_comment.setText(null);
-                    String key = ref.child(getResources().getString(R.string.postcomment_CODE) + postID).push().getKey();
+                    String key = dbRef.child(getResources().getString(R.string.postcomment_CODE) + postID).push().getKey();
                     Map<String, Object> commentValues = newComment.toMap();
                     Map<String, Object> childUpdates = new HashMap<String, Object>();
-                    childUpdates.put(getResources().getString(R.string.postcomment_CODE) + postID + "/" + key, commentValues);
-                    ref.updateChildren(childUpdates, new Firebase.CompletionListener() {
+                    childUpdates.put(getResources().getString(R.string.postcomment_CODE)
+                            + postID + "/" + key, commentValues);
+                    childUpdates.put(getResources().getString(R.string.posts_CODE)
+                            + postID + "/commentCount", comment_List.size() + 1);
+                    dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
                         @Override
-                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                            if (firebaseError != null) {
-                                Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if (databaseError != null) {
+                                Toast.makeText(getActivity().getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

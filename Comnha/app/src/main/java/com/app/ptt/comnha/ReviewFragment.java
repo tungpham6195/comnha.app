@@ -1,6 +1,7 @@
 package com.app.ptt.comnha;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
+import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.Post;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -74,7 +76,7 @@ public class ReviewFragment extends Fragment {
             }
         };
         dbRef.child(getResources().getString(R.string.posts_CODE))
-                .limitToLast(5)
+                .limitToLast(100)
                 .addChildEventListener(lastnewsChildEventListener);
         return view;
     }
@@ -89,6 +91,17 @@ public class ReviewFragment extends Fragment {
         mRecyclerView.setLayoutManager(mRecyclerViewLayoutManager);
         mAdapter = new Reviewlist_rcyler_adapter(postlist, getActivity());
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getActivity(), AdapterActivity.class);
+                intent.putExtra(getResources().getString(R.string.fragment_CODE),
+                        getResources().getString(R.string.frg_viewpost_CODE));
+                intent.putExtra(getResources().getString(R.string.key_CODE),
+                        postlist.get(position).getPostID());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        }));
     }
-
 }

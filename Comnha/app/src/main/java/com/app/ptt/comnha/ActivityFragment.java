@@ -54,7 +54,13 @@ public class ActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_activity, container, false);
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference();
+        Log.d("onCreateViewActFrag", "createdView");
         anhxa(view);
+        try {
+            Log.d("LocaID", ChooseLoca.getInstance().getLocaID());
+        } catch (NullPointerException mess) {
+
+        }
         userPostEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -163,6 +169,7 @@ public class ActivityFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        Log.d("onStopFromActFrag", "Stoped");
         DoPost.getInstance().setLocaID(null);
     }
 

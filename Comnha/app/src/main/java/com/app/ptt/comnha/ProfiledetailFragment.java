@@ -31,6 +31,7 @@ public class ProfiledetailFragment extends Fragment implements View.OnClickListe
     ViewPager viewPager;
     TabLayout tabLayout;
     ImageView profileImgV;
+    FragmentPagerAdapter fragmentPagerAdapter;
 
     public ProfiledetailFragment() {
         // Required empty public constructor
@@ -60,9 +61,10 @@ public class ProfiledetailFragment extends Fragment implements View.OnClickListe
         actionBar.setHomeButtonEnabled(true);
         collapsLayout = (CollapsingToolbarLayout) view.findViewById(R.id.frag_prodetail_collapsing_toolbar);
         collapsLayout.setTitle(LoginSession.getInstance().getUsername());
-        viewPager.setAdapter(
-                new FragmentPagerAdapter(activity.getSupportFragmentManager(), activity.getApplicationContext())
-        );
+        fragmentPagerAdapter = new FragmentPagerAdapter(
+                activity.getSupportFragmentManager(), activity.getApplicationContext());
+        viewPager.setAdapter(fragmentPagerAdapter);
+
         tabLayout.setupWithViewPager(viewPager);
         profileImgV = (ImageView) view.findViewById(R.id.frag_prodetail_imgV_profile);
         profileImgV.setOnClickListener(this);
@@ -91,7 +93,7 @@ public class ProfiledetailFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.frag_prodetail_imgV_profile:
-                PopupMenu popupMenu = new PopupMenu(getActivity(), profileImgV, Gravity.CENTER_HORIZONTAL|Gravity.TOP);
+                PopupMenu popupMenu = new PopupMenu(getActivity(), profileImgV, Gravity.CENTER_HORIZONTAL | Gravity.TOP);
                 popupMenu.getMenuInflater().inflate(R.menu.popup_menu_upavatar, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override

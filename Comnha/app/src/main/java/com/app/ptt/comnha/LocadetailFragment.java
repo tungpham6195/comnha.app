@@ -18,11 +18,12 @@ import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ import java.util.ArrayList;
  */
 public class LocadetailFragment extends Fragment {
     private String locaID;
-    Firebase ref;
+    DatabaseReference dbRef;
     RecyclerView mRecyclerView;
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mlayoutManager;
@@ -40,6 +41,8 @@ public class LocadetailFragment extends Fragment {
     LinearLayout btn_themanh, btn_dangreview;
     Reviewlist_rcyler_adapter reviewlist_rcyler_adapter;
     ArrayList<Post> postlist;
+    ValueEventListener locationValueEventListener;
+    ChildEventListener locapostChildEventListener;
 
     public LocadetailFragment() {
         // Required empty public constructor
@@ -56,28 +59,10 @@ public class LocadetailFragment extends Fragment {
         Log.d("localID", locaID);
         andxa(view);
         Firebase.setAndroidContext(getActivity().getApplicationContext());
-        ref = new Firebase(getString(R.string.firebase_path));
-        postlist = new ArrayList<Post>();
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_lcdetail_rcyler_review);
-        mRecyclerView.setHasFixedSize(true);
-        mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        mRecyclerView.setLayoutManager(mlayoutManager);
-        mAdapter = new Reviewlist_rcyler_adapter(postlist, getActivity());
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity().getApplicationContext()
-                , new RecyclerItemClickListener.OnItemClickListener() {
+        dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
+        locationValueEventListener = new ValueEventListener() {
             @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), AdapterActivity.class);
-                intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frg_viewpost_CODE));
-                intent.putExtra(getString(R.string.key_CODE), postlist.get(position).getPostID());
-                startActivity(intent);
-            }
-        }));
-        Log.d(getResources().getString(R.string.key_CODE), locaID);
-        ref.child("Locations/" + locaID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                 MyLocation location = dataSnapshot.getValue(MyLocation.class);
                 String gio = location.getTimestart() + " - " + location.getTimeend();
                 String tenquan = location.getName();
@@ -92,13 +77,13 @@ public class LocadetailFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
-        ref.child(getResources().getString(R.string.locationpost_CODE) + "/" + locaID).addChildEventListener(new ChildEventListener() {
+        };
+        locapostChildEventListener = new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
                 Post post = dataSnapshot.getValue(Post.class);
                 post.setPostID(dataSnapshot.getKey());
                 postlist.add(post);
@@ -107,29 +92,31 @@ public class LocadetailFragment extends Fragment {
                 txt_vesinh.setText(String.valueOf(newcalcu.calcu().get(1)));
                 txt_phucvu.setText(String.valueOf(newcalcu.calcu().get(2)));
                 mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildRemoved(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            public void onChildMoved(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
 
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
+        };
+        Log.d(getResources().getString(R.string.key_CODE), locaID);
+        dbRef.child("Locations/" + locaID).addValueEventListener(locationValueEventListener);
+        dbRef.child(getResources().getString(R.string.locationpost_CODE) + "/" + locaID).addChildEventListener(locapostChildEventListener);
         return view;
     }
 
@@ -144,6 +131,13 @@ public class LocadetailFragment extends Fragment {
         btn_themanh = (LinearLayout) view.findViewById(R.id.frg_lcdetail_btn_themanh);
         btn_dangreview = (LinearLayout) view.findViewById(R.id.frg_lcdetail_dangreview);
         txt_sdt = (TextView) view.findViewById(R.id.frg_lcdetail_txt_sdt);
+        postlist = new ArrayList<Post>();
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_lcdetail_rcyler_review);
+        mRecyclerView.setHasFixedSize(true);
+        mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mRecyclerView.setLayoutManager(mlayoutManager);
+        mAdapter = new Reviewlist_rcyler_adapter(postlist, getActivity());
+        mRecyclerView.setAdapter(mAdapter);
         btn_dangreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,7 +147,16 @@ public class LocadetailFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity().getApplicationContext()
+                , new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getActivity(), AdapterActivity.class);
+                intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frg_viewpost_CODE));
+                intent.putExtra(getString(R.string.key_CODE), postlist.get(position).getPostID());
+                startActivity(intent);
+            }
+        }));
     }
 
 }
