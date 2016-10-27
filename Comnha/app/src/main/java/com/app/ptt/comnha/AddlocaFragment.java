@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -58,6 +59,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     TimePickerDialog tpd;
     int edtID;
     int hour, min;
+    Geocoder gc;
     AutoCompleteTextView autoCompleteText;
     public AddlocaFragment() {
         // Required empty public constructor
@@ -70,6 +72,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_addloca, container, false);
         now = Calendar.getInstance();
+         gc=new Geocoder(getContext(), Locale.getDefault());
         anhXa(view);
         Firebase.setAndroidContext(getActivity());
         ref = new Firebase("https://com-nha.firebaseio.com/");
@@ -146,7 +149,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults filterResults= new FilterResults();
                     if(constraint!=null){
-                        resultList=mPlaceAPI.autocomplete(constraint.toString());
+                        resultList=mPlaceAPI.autocomplete(constraint.toString(),getContext());
                         filterResults.values=resultList;
                         filterResults.count=resultList.size();
                     }
@@ -171,7 +174,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     private void addNewLoca() {
         MyLocation newLocation = new MyLocation();
         newLocation.setName(edt_tenquan.getText().toString());
-        newLocation.setDiachi(edt_diachi.getText().toString());
+        newLocation.setDiachi(autoCompleteText.getText().toString());
         newLocation.setSdt(edt_sdt.getText().toString());
         newLocation.setTimestart(edt_timestart.getText().toString());
         newLocation.setTimeend(edt_timeend.getText().toString());
@@ -200,11 +203,12 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
     @Override
     public void onClick(View view) {
+        String yourLocation=null;
         switch (view.getId()) {
             case R.id.frg_addloction_btn_save:
                 if (edt_tenquan.getText().toString().trim().equals("")) {
                     Snackbar.make(view, getResources().getText(R.string.txt_notenquan), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_diachi.getText().toString().trim().equals("")) {
+                } else if (autoCompleteText.getText().toString().trim().equals("")) {
                     Snackbar.make(view, getResources().getText(R.string.txt_nodiachi), Snackbar.LENGTH_SHORT).show();
                 } else if (edt_giamin.getText().toString().trim().equals("")) {
                     Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
@@ -219,7 +223,28 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 } else if (Long.valueOf(edt_giamax.getText().toString()) <= Long.valueOf(edt_giamin.getText().toString())) {
                     Snackbar.make(view, getResources().getText(R.string.txt_giawarn), Snackbar.LENGTH_SHORT).show();
                 } else {
-                    addNewLoca();
+
+
+                    try {
+                        Snackbar.make(view, autoCompleteText.getText()+" T thu ti duoc khong?", Snackbar.LENGTH_SHORT).show();
+                        List<Address> list=gc.getFromLocationName(autoCompleteText.getText().toString(),1);
+                        if(list.size()>0) {
+                            Address address = list.get(0);
+                            yourLocation = checkPlaceInput(address);
+                        }
+                        else{
+                            Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(yourLocation!="") {
+                        addNewLoca();
+
+                    } else{
+                        Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case R.id.frg_addloction_edt_giomo:
@@ -230,24 +255,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 edtID = R.id.frg_addloction_edt_giodong;
                 tpd.show(getActivity().getFragmentManager(), "Datepickerdialog");
                 break;
-            case R.id.iv_check_location:
-                if (autoCompleteText.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_nodiachi), Snackbar.LENGTH_SHORT).show();
-                }else{
-                    Geocoder gc=new Geocoder(getContext());
-                    try {
-                        List<Address> list=gc.getFromLocationName(autoCompleteText.getText().toString(),1);
-                        Address address= list.get(0);
-                        String yourLocation = address.getAddressLine(0) +
-                                " " + address.getSubLocality() +
-                                " " + address.getSubAdminArea() +
-                                " " + address.getAdminArea();
-                        Snackbar.make(view,yourLocation, Snackbar.LENGTH_SHORT).show();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
         }
     }
 
@@ -263,6 +270,39 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 min = minute;
                 break;
         }
+    }
+    public String checkPlaceInput(Address address){
+        String e = "";
+        if(address!=null) {
+            String a = address.getAddressLine(0);
+            String b = address.getSubLocality();
+            String c = address.getSubAdminArea();
+            String d = address.getAdminArea();
+
+            if (a != "") {
+                e += a;
+                if (b != "") {
+                    if (a != "")
+                        e += ", " + b;
+                    else
+                        e += b;
+                }
+                if (c != "") {
+                    if ((a != "" || b != ""))
+                        e += ", " + c;
+                    else {
+                        e += c;
+                    }
+                    if (d != "") {
+                        if ((a != "" || b != "" || c != ""))
+                            e += ", " + d;
+                        else
+                            e += d;
+                    }
+                }
+            }
+        }
+        return e;
     }
 
     @Override

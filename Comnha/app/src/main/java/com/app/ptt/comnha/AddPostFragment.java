@@ -42,7 +42,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddPostFragment extends Fragment implements View.OnClickListener {
+public class AddpostFragment extends Fragment implements View.OnClickListener {
 
     Button btn_save;
     ImageView img;
@@ -57,7 +57,7 @@ public class AddPostFragment extends Fragment implements View.OnClickListener {
     ArrayList<Post> postlist;
     CalcuAVGRate newcalcu;
 
-    public AddPostFragment() {
+    public AddpostFragment() {
         // Required empty public constructor
     }
 

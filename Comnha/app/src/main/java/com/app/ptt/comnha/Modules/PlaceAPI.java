@@ -1,5 +1,10 @@
 package com.app.ptt.comnha.Modules;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+import android.support.design.widget.Snackbar;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,54 +17,57 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by cuong on 10/25/2016.
  */
 
 public class PlaceAPI {
-    private static final String LOG=PlaceAPI.class.getSimpleName();
-    private static final String YOUR_API_KEY="AIzaSyCTvqqhbnL3huvHIL8ggBEVCPp_Pz8UQ6I";
-    private static final String PLACE_API_LINK="https://maps.googleapis.com/maps/api/place/autocomplete/json?key="+YOUR_API_KEY+"&type(geocode)" + "&input=";
-    public ArrayList<String> autocomplete(String input){
-        ArrayList<String> resultList=null;
-        HttpURLConnection conn=null;
-        StringBuilder jsonResults=new StringBuilder();
-        try{
-            StringBuilder sb=new StringBuilder(PLACE_API_LINK);
-            sb.append(URLEncoder.encode(input,"utf8"));
-            URL url=new URL(sb.toString());
-            conn=(HttpURLConnection) url.openConnection();
-            InputStreamReader in=new InputStreamReader(conn.getInputStream());
-            int read;
-            char[] buff=new char[1024];
-            while((read=in.read(buff))!=-1){
-                jsonResults.append(buff,0,read);
+    Boolean isCorrectPlace=false;
+    ArrayList<String> resultList=null;
+    public ArrayList<String> autocomplete(String input, Context mContext) {
+        resultList=new ArrayList<>();
+        Geocoder gc=new Geocoder(mContext, Locale.getDefault());
+        try {
+            List<Address> list=gc.getFromLocationName(input,5);
+            for (Address address:list) {
+                String a = address.getAddressLine(0);
+                String b = address.getSubLocality();
+                String c = address.getSubAdminArea();
+                String d = address.getAdminArea();
+                String e="";
+                if(a!=null){
+                    e+=a;
+                    if(b!=null ){
+                        if(a!=null)
+                         e+= ", "+b;
+                        else
+                            e+=b;
+                    }
+                    if(c!=null ){
+                        if((a!=null||b!=null))
+                        e+=", "+c;
+                        else{
+                            e+=c;
+                        }
+                        if(d!=null){
+                            if((a!=null||b!=null||c!=null))
+                            e+=", "+d;
+                            else
+                                e+=d;
+                        }
+                    }
+                }
+                resultList.add(e);
+
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return resultList;
         } catch (IOException e) {
             e.printStackTrace();
-            return resultList;
-        } finally {
-            if(conn!=null){
-                conn.disconnect();
-            }
         }
-        try{
-            JSONObject jsonObject=new JSONObject(jsonResults.toString());
-            JSONArray jsonArray=jsonObject.getJSONArray("predictions");
-            resultList=new ArrayList<>(jsonArray.length());
-            for(int i=0;i<jsonArray.length();i++){
-                resultList.add(jsonArray.getJSONObject(i).getString("description"));
-                //JSONObject jsonStruct_Format=jsonArray.getJSONObject(i).getJSONObject("structured_formatting");
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        if(resultList.size()>0)
+            isCorrectPlace=true;
         return resultList;
     }
 }
