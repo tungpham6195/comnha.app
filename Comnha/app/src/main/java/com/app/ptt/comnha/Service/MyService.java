@@ -58,18 +58,23 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
         broadcastIntent =new Intent();
         mBinder = new LocalBinder();
         geocoder = new Geocoder(this, Locale.getDefault());
-        startGoogleApi();
         Log.i(LOG, "onCreate");
     }
-    public void startGoogleApi(){
+    public void startGoogleApi() {
 
+        if (mGoogleApiClient == null) {
             buildGoogleApiClient();
-            if(!mGoogleApiClient.isConnected()){
-                mGoogleApiClient.connect();
-            }
+        }
+
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
 
     }
-
+    public void stopGoogleApi(){
+        if(mGoogleApiClient.isConnected())
+            mGoogleApiClient.disconnect();
+    }
     public String returnRoutes(){
         if(routes.size()>0){
            for (Route route: routes){
@@ -251,6 +256,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
                 Log.i(LOG, "lng1" + longtitude);
                 returnYourLatLng(l.getLatitude(),l.getLongitude());
                 yourLocation =returnLocationByLatLng(geocoder,l.getLatitude(),l.getLongitude());
+                Log.i(LOG,"Vi tri cua ban la: "+ yourLocation+". Lat= "+yourLatLng.latitude+"va lng= "+yourLatLng.longitude);
             }
             startLocationUpdate();
     }
@@ -292,6 +298,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             this.latitude = location.getLatitude();
             this.longtitude = location.getLongitude();
         }
+        Log.i(LOG, "latitude: " + location.getLatitude() + ". Longitude: " + location.getLongitude());
         if (location.getLatitude() != latitude && location.getLongitude() != longtitude) {
             Log.i(LOG, "latitude: " + location.getLatitude() + ". Longitude: " + location.getLongitude());
             this.latitude = location.getLatitude();
@@ -302,7 +309,6 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             for (MyLocation a : listLocation) {
                 Log.i(LOG,"onLocationChanged: "+a.getDiachi());
                 loadListPlace(a.getDiachi(),a.getLocaID());
-
             }
 //            sendBroadcast("LocationChange");
         }

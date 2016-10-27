@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        doBinService();
+        //doBinService();
 //        gpsService.init();
         Log.i(LOG, "onStart");
     }
@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
-        doUnbinService();
+        //doUnbinService();
     }
 
     @Override

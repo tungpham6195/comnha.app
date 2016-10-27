@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
+import com.app.ptt.comnha.Service.MyTool;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,14 +41,13 @@ public class MapFragment extends Fragment {
     private IntentFilter mIntentFilter;
     private static final String LOG = MapFragment.class.getSimpleName();
     private SupportMapFragment supportMapFragment;
-    MyService myService;
     private ArrayList<Route> list = new ArrayList<>();
     private ArrayList<String> listName = new ArrayList<>();
     TextView txt_TenQuan, txt_DiaChi, txt_GioMo, txt_DiemGia, txt_DiemPhucVu, txt_DiemVeSinh;
     GoogleMap myGoogleMap;
     LatLng yourLatLng;
     String yourLocation;
-    boolean isBound = false;
+    MyTool myTool;
     MarkerOptions yourMarker = null;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -75,15 +75,16 @@ public class MapFragment extends Fragment {
         mIntentFilter.addAction(mBroadcastSendAddress);
         mIntentFilter.addAction(mBroadcastChangeLocation);
         getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
-        doBinService();
+        myTool=new MyTool(getContext());
+        myTool.startGoogleApi();
     }
 
     @Override
     public void onStop() {
+        Log.i(LOG,"onStop");
         super.onStop();
-        Log.i(LOG, "onStop");
         getActivity().unregisterReceiver(mBroadcastReceiver);
-        doUnbinService();
+        myTool.stopGoogleApi();
     }
 
     @Override
@@ -161,16 +162,73 @@ public class MapFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcastSendAddress)) {
+                if(intent.getIntExtra("STT",0)==1) {
+                    Log.i(LOG+".BroadcastReceiver", "Nhan id: " + intent.getStringExtra("PlaceID"));
+                    listName.add(intent.getStringExtra("PlaceID"));
+                    Route route;
+                    route = myTool.getRouteByID(intent.getStringExtra("PlaceID"));
+                    if (route != null) {
+                        Log.i(LOG+".BroadcastReceiver", "Dia Chi Cua ID Vua Nhan: " + route.getEndAddress());
+                        //route.setEndAddress(myTool.returnLocationByName(route.getEndAddress()));
+                        list.add(route);
+                        addMarker(route);
+                    }
 
-                Log.i(LOG, "DANHAN");
-                listName.add(intent.getStringExtra("PlaceID"));
-                //Log.i(LOG, "NHAN DUNG MA"+intent.getStringExtra("PlaceID"));
-                Route route;
-                route = myService.getRouteByID(intent.getStringExtra("PlaceID"));
-                if (route != null) {
-                    //Log.i(LOG, "DIA CHI:" + route.getEndAddress());
-                    list.add(route);
-                    addMarker(route);
+
+                }
+
+                if(intent.getIntExtra("STT",0)==3 &&intent.getBooleanExtra("Location",false)){
+                    Log.i(LOG+".BroadcastReceiver","Nhan vi tri cua ban:");
+                    yourLatLng = myTool.getYourLatLng();
+                    yourLocation = myTool.getYourLocation();
+                    Log.i(LOG+".BroadcastReceiver","Vi tri cua ban nhan duoc: "+yourLocation+"  voi lat: " +yourLatLng.latitude+"lng: "+yourLatLng.longitude);
+                    if (yourMarker == null) {
+                        Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
+                        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                        Log.i(LOG+".BroadcastReceiver","Them marker vi tri cua ban vao map");
+                        yourMarker = new MarkerOptions()
+                                .position(yourLatLng)
+                                .title(yourLocation)
+                                .icon(markerIcon);
+                        myGoogleMap.addMarker(yourMarker);
+                        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLatLng, 13));
+                    }
+                    else{
+                        myGoogleMap.clear();
+                        Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
+                        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                        Log.i(LOG+".BroadcastReceiver","Them marker vi tri cua ban vao map");
+                        yourMarker = new MarkerOptions()
+                                .position(yourLatLng)
+                                .title(yourLocation)
+                                .icon(markerIcon);
+                        myGoogleMap.addMarker(yourMarker);
+                        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLatLng, 13));
+                        list=new ArrayList<>();
+                    }
+                    if(list.size()==0){
+                        myTool.getDataInFireBase();
+                    }
+                }
+                if(intent.getIntExtra("STT",0)==2&&intent.getBooleanExtra("LocationChange",false)) {
+                    Log.i(LOG+".BroadcastReceiver","Nhan su thay doi vi tri cua ban:");
+                    yourLatLng = myTool.getYourLatLng();
+                    yourLocation = myTool.getYourLocation();
+                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ yourLocation + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
+                    Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
+                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                    Log.i(LOG+".BroadcastReceiver", "Clear All Marker");
+                    myGoogleMap.clear();
+                    list=new ArrayList<>();
+                    listName=new ArrayList<>();
+                    Log.i(LOG+".BroadcastReceiver", "Them Marker vi tri cua ban");
+                    yourMarker = new MarkerOptions()
+                            .position(yourLatLng)
+                            .title(yourLocation)
+                            .icon(markerIcon);
+                    myGoogleMap.addMarker(yourMarker);
+                    myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLatLng, 13));
+
                 }
 
             }
@@ -179,12 +237,13 @@ public class MapFragment extends Fragment {
     };
 
     public void addMarker(Route route) {
-        //myGoogleMap.animateCamera(CameraUpdateFactory.zoomIn());
+        Log.i(LOG+".addMarker","Them dia diem nhan duoc: "+route.getEndAddress());
         myGoogleMap.addMarker(new MarkerOptions()
                 .position(route.getEndLocation()));
     }
 
     public Route returnRoute(Marker marker) {
+        Log.i(LOG+".returnRoute","Tra ve route ung voi marker");
         for (Route a : list) {
             if (marker.getPosition().latitude == a.getEndLocation().latitude && marker.getPosition().longitude == a.getEndLocation().longitude)
                 return a;
@@ -192,58 +251,6 @@ public class MapFragment extends Fragment {
         return null;
     }
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MyService.LocalBinder binder = (MyService.LocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
-            yourLatLng = myService.getYourLatLng();
-            yourLocation = myService.getYourLocation();
-            try {
-                if (yourMarker == null) {
-                    Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
-                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                    yourMarker = new MarkerOptions()
-                            .position(yourLatLng)
-                            .title(yourLocation)
-                            .icon(markerIcon);
-                    myGoogleMap.addMarker(yourMarker);
-                    myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myService.getYourLatLng(), 13));
-                }
-            } catch (NullPointerException mess) {
-
-            }
-
-            if (myService.returnRoutes() == null) {
-                Log.i(LOG, "getDataInFireBase");
-                myService.getDataInFireBase();
-            } else {
-                Log.i(LOG, "existing route");
-                myService.returnRoutes();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
-
-    public void doBinService() {
-        if (!isBound) {
-            Intent intent = new Intent(getActivity(), MyService.class);
-            getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-            isBound = true;
-        }
-    }
-
-    public void doUnbinService() {
-        if (isBound) {
-            getActivity().unbindService(serviceConnection);
-            isBound = false;
-        }
-    }
 
 
 }
