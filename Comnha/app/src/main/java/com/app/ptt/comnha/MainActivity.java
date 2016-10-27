@@ -45,9 +45,9 @@ public class MainActivity extends AppCompatActivity
         , FloatingActionButton.OnClickListener {
 
 
-    private MyService myService;
+    //private MyService myService;
     private static final String LOG = MainActivity.class.getSimpleName();
-    private Boolean isBound = false;
+    //private Boolean isBound = false;
     private Bundle savedInstanceState;
     public static final String mBroadcast = "mBroadcastComplete";
     private ProgressDialog progressDialog;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mnavigationView;
     private TextView txt_email, txt_un;
     private FloatingActionMenu fabmenu;
-    private boolean checkConnection = true;
+    //private boolean checkConnection = true;
     private FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
     private Firebase ref;
     private BottomBar bottomBar;
@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity
         Firebase.setAndroidContext(this);
         ref = new Firebase(getResources().getString(R.string.firebase_path));
         anhXa();
-
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
         mIntentFilter = new IntentFilter();
@@ -132,20 +131,20 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(mBroadcast)) {
-                checkConnection = intent.getBooleanExtra("LocationError", true);
-                Log.i(LOG, "checkConnection=" + checkConnection);
-                if (!checkConnection) {
-                    if (!ConnectionDetector.canGetLocation(MainActivity.this)) {
-                        ConnectionDetector.showSettingAlert(MainActivity.this);
-                    }
-                }
-            }
-        }
-    };
+//    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (intent.getAction().equals(mBroadcast)) {
+//                checkConnection = intent.getBooleanExtra("LocationError", true);
+//                Log.i(LOG, "checkConnection=" + checkConnection);
+//                if (!checkConnection) {
+//                    if (!ConnectionDetector.canGetLocation(MainActivity.this)) {
+//                        ConnectionDetector.showSettingAlert(MainActivity.this);
+//                    }
+//                }
+//            }
+//        }
+//    };
 
     void anhXa() {
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
@@ -258,11 +257,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-//        if (!isMyServiceRunning(MyService.class)) {
-//            final Intent intent = new Intent(this, MyService.class);
-//            startService(intent);
-//        }
-        registerReceiver(mReceiver, mIntentFilter);
+//        registerReceiver(mReceiver, mIntentFilter);
         Log.i(LOG, "onResume");
     }
 
@@ -287,50 +282,50 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mReceiver);
+        //unregisterReceiver(mReceiver);
 
         Log.i(LOG, "Pause");
     }
 
-    public void doBinService() {
-        if (!isBound) {
-            Intent intent = new Intent(this, MyService.class);
-            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-            isBound = true;
-        }
-    }
-
-    public void doUnbinService() {
-        if (isBound) {
-            unbindService(serviceConnection);
-            isBound = false;
-        }
-    }
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MyService.LocalBinder binder = (MyService.LocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
-            Log.i(LOG, "ServiceConnection");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
-        }
-    };
-
-    public boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public void doBinService() {
+//        if (!isBound) {
+//            Intent intent = new Intent(this, MyService.class);
+//            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+//            isBound = true;
+//        }
+//    }
+//
+//    public void doUnbinService() {
+//        if (isBound) {
+//            unbindService(serviceConnection);
+//            isBound = false;
+//        }
+//    }
+//
+//    private ServiceConnection serviceConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            MyService.LocalBinder binder = (MyService.LocalBinder) service;
+//            myService = binder.getService();
+//            isBound = true;
+//            Log.i(LOG, "ServiceConnection");
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            isBound = false;
+//        }
+//    };
+//
+//    public boolean isMyServiceRunning(Class<?> serviceClass) {
+//        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+//            if (serviceClass.getName().equals(service.service.getClassName())) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     @Override
     public void onBackPressed() {
