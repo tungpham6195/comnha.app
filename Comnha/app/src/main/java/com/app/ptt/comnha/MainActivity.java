@@ -37,9 +37,13 @@ public class MainActivity extends AppCompatActivity
         , FloatingActionButton.OnClickListener {
 
 
+<<<<<<< HEAD
 //    private MyService myService;
+=======
+    //private MyService myService;
+>>>>>>> origin/master
     private static final String LOG = MainActivity.class.getSimpleName();
-    private Boolean isBound = false;
+    //private Boolean isBound = false;
     private Bundle savedInstanceState;
     public static final String mBroadcast = "mBroadcastComplete";
     private ProgressDialog progressDialog;
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mnavigationView;
     private TextView txt_email, txt_un;
     private FloatingActionMenu fabmenu;
-    private boolean checkConnection = true;
+    //private boolean checkConnection = true;
     private FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
     private Firebase ref;
     private BottomBar bottomBar;
@@ -72,7 +76,6 @@ public class MainActivity extends AppCompatActivity
         Firebase.setAndroidContext(this);
         ref = new Firebase(getResources().getString(R.string.firebase_path));
         anhXa();
-
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
 //        mIntentFilter = new IntentFilter();
@@ -242,7 +245,11 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+<<<<<<< HEAD
 //        doBinService();
+=======
+        //doBinService();
+>>>>>>> origin/master
 //        gpsService.init();
         Log.i(LOG, "onStart");
     }
@@ -250,10 +257,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+<<<<<<< HEAD
 //        if (!isMyServiceRunning(MyService.class)) {
 //            final Intent intent = new Intent(this, MyService.class);
 //            startService(intent);
 //        }
+=======
+>>>>>>> origin/master
 //        registerReceiver(mReceiver, mIntentFilter);
         Log.i(LOG, "onResume");
     }
@@ -273,13 +283,21 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
+<<<<<<< HEAD
 //        doUnbinService();
+=======
+        //doUnbinService();
+>>>>>>> origin/master
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+<<<<<<< HEAD
 //        unregisterReceiver(mReceiver);
+=======
+        //unregisterReceiver(mReceiver);
+>>>>>>> origin/master
 
         Log.i(LOG, "Pause");
     }
@@ -292,6 +310,17 @@ public class MainActivity extends AppCompatActivity
 //        }
 //    }
 
+<<<<<<< HEAD
+=======
+//    public void doBinService() {
+//        if (!isBound) {
+//            Intent intent = new Intent(this, MyService.class);
+//            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+//            isBound = true;
+//        }
+//    }
+//
+>>>>>>> origin/master
 //    public void doUnbinService() {
 //        if (isBound) {
 //            unbindService(serviceConnection);

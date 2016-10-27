@@ -63,7 +63,6 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 isComplete = intent.getBooleanExtra("LocationChange", false);
                 Log.i(LOG, "isComplete=" + isComplete);
                 openMap();
-
             }
         }
     };
