@@ -134,7 +134,10 @@ public class LocadetailFragment extends Fragment {
         postlist = new ArrayList<Post>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_lcdetail_rcyler_review);
         mRecyclerView.setHasFixedSize(true);
-        mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        mlayoutManager = linearLayoutManager;
         mRecyclerView.setLayoutManager(mlayoutManager);
         mAdapter = new Reviewlist_rcyler_adapter(postlist, getActivity());
         mRecyclerView.setAdapter(mAdapter);

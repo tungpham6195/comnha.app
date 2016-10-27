@@ -20,9 +20,12 @@ import com.app.ptt.comnha.FireBase.Comment;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -45,6 +48,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     ChildEventListener commentChildEventListener;
     ValueEventListener postValueEventListener;
 
+
     public ViewpostFragment() {
         // Required empty public constructor
     }
@@ -52,6 +56,8 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     public void setPostID(String postID) {
         this.postID = postID;
     }
+
+    Post post;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,7 +69,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         postValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                Post post = dataSnapshot.getValue(Post.class);
+                post = dataSnapshot.getValue(Post.class);
                 txt_title.setText(post.getTitle());
                 txt_date.setText(post.getDate());
                 txt_content.setText(post.getContent());
@@ -137,6 +143,39 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.frg_viewrev_txtv_like:
+                Toast.makeText(getActivity(), postID, Toast.LENGTH_SHORT).show();
+                dbRef.child(getResources().getString(R.string.posts_CODE)
+                        + postID)
+                        .runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                Toast.makeText(getActivity(), "null", Toast.LENGTH_SHORT).show();
+                                Post post = mutableData.getValue(Post.class);
+                                if (post == null) {
+                                    return Transaction.success(mutableData);
+                                }
+                                if (post.getLikes().containsKey(LoginSession.getInstance().getUserID())) {
+                                    post.setLikeCount(post.getLikeCount() - 1);
+                                    Map<String, Boolean> removeLike = post.getLikes();
+                                    removeLike.remove(LoginSession.getInstance().getUserID());
+                                    post.setLikes(removeLike);
+                                } else {
+                                    post.setLikeCount(post.getLikeCount() + 1);
+                                    Map<String, Boolean> addLike = post.getLikes();
+                                    addLike.put(LoginSession.getInstance().getUserID(), true);
+                                    post.setLikes(addLike);
+                                }
+                                mutableData.setValue(post);
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                            }
+                        });
+                break;
             case R.id.frg_viewrev_btn_sendcomment:
                 if (!edt_comment.getText().toString().equals("")) {
                     Comment newComment = new Comment();
@@ -152,6 +191,15 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                     childUpdates.put(getResources().getString(R.string.postcomment_CODE)
                             + postID + "/" + key, commentValues);
                     childUpdates.put(getResources().getString(R.string.posts_CODE)
+                            + postID + "/commentCount", comment_List.size() + 1);
+                    childUpdates.put(getResources().getString(R.string.locationpost_CODE) + post.getLocaID() + "/"
+                            + postID + "/commentCount", comment_List.size() + 1);
+                    childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
+                            + post.getLocaID() + "/"
+                            + LoginSession.getInstance().getUserID() + "/"
+                            + postID + "/commentCount", comment_List.size() + 1);
+                    childUpdates.put(getResources().getString(R.string.userpost_CODE)
+                            + LoginSession.getInstance().getUserID() + "/"
                             + postID + "/commentCount", comment_List.size() + 1);
                     dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
                         @Override

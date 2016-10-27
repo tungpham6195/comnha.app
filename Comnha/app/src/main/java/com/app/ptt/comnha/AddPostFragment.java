@@ -203,6 +203,8 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             newPost.setGia(DoPost.getInstance().getGia());
             newPost.setVesinh(DoPost.getInstance().getVesinh());
             newPost.setPhucvu(DoPost.getInstance().getPhucvu());
+            newPost.setLocaID(DoPost.getInstance().getLocaID());
+            newPost.setLocaName(DoPost.getInstance().getName());
             final String key = ref.child("Posts").push().getKey();
             Map<String, Object> postValue = newPost.toMap();
             final Map<String, Object> childUpdates = new HashMap<String, Object>();

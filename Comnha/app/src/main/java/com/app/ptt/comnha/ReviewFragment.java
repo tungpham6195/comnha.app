@@ -38,6 +38,11 @@ public class ReviewFragment extends Fragment {
     DatabaseReference dbRef;
     ArrayList<Post> postlist;
     ChildEventListener lastnewsChildEventListener;
+    int sortType;
+
+    public void setSortType(int sortType) {
+        this.sortType = sortType;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,9 +80,22 @@ public class ReviewFragment extends Fragment {
 
             }
         };
-        dbRef.child(getResources().getString(R.string.posts_CODE))
-                .limitToLast(100)
-                .addChildEventListener(lastnewsChildEventListener);
+        switch (sortType) {
+            case 1://lastnews
+                dbRef.child(getResources().getString(R.string.posts_CODE))
+                        .limitToLast(100)
+                        .addChildEventListener(lastnewsChildEventListener);
+                break;
+            case 2://mostcomment
+                dbRef.child(getResources().getString(R.string.posts_CODE))
+                        .orderByChild("commentCount")
+                        .addChildEventListener(lastnewsChildEventListener);
+                break;
+            case 3://mostlike
+                break;
+        }
+
+
         return view;
     }
 
@@ -103,5 +121,6 @@ public class ReviewFragment extends Fragment {
                 startActivity(intent);
             }
         }));
+
     }
 }

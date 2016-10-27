@@ -120,7 +120,10 @@ public class ActivityFragment extends Fragment {
         postList = new ArrayList<>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_activity_recyler);
         mRecyclerView.setHasFixedSize(true);
-        mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        mlayoutManager = linearLayoutManager;
         mRecyclerView.setLayoutManager(mlayoutManager);
         mAdapter = new Reviewlist_rcyler_adapter(postList, getActivity());
         mRecyclerView.setAdapter(mAdapter);

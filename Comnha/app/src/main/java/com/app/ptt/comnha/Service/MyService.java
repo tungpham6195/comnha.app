@@ -304,7 +304,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
                 loadListPlace(a.getDiachi(),a.getLocaID());
 
             }
-            sendBroadcast("LocationChange");
+//            sendBroadcast("LocationChange");
         }
     }
     @Override

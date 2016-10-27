@@ -8,9 +8,9 @@ import java.util.Map;
  */
 public class Post {
     //không nên để là private
-    String title, content, date, time, postID, username, uid;
+    String title, content, date, time, postID, username, uid, locaID, locaName;
     long vesinh, phucvu, gia;
-    int likeCount, commnetCount;
+    int likeCount, commentCount;
     Map<String, Boolean> likes;
 
     public Post() {
@@ -48,8 +48,13 @@ public class Post {
         this.likeCount = likeCount;
     }
 
-    public void setCommnetCount(int commnetCount) {
-        this.commnetCount = commnetCount;
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public int getCommentCount() {
+
+        return commentCount;
     }
 
     public void setLikes(Map<String, Boolean> likes) {
@@ -61,8 +66,20 @@ public class Post {
         return likes;
     }
 
-    public int getCommnetCount() {
-        return commnetCount;
+    public void setLocaID(String locaID) {
+        this.locaID = locaID;
+    }
+
+    public void setLocaName(String locaName) {
+        this.locaName = locaName;
+    }
+
+    public String getLocaID() {
+        return locaID;
+    }
+
+    public String getLocaName() {
+        return locaName;
     }
 
     public int getLikeCount() {
@@ -132,94 +149,11 @@ public class Post {
         result.put("vesinh", vesinh);
         result.put("phucvu", phucvu);
         result.put("gia", gia);
-        result.put("commnetCount", commnetCount);
+        result.put("commentCount", commentCount);
         result.put("likeCount", likeCount);
         result.put("likes", likes);
+        result.put("locaID", locaID);
+        result.put("locaID", locaID);
         return result;
     }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-//    public void setVesinh(long vesinh) {
-//        this.vesinh = vesinh;
-//    }
-//
-//    public void setPhucvu(long phucvu) {
-//        this.phucvu = phucvu;
-//    }
-//
-//    public void setGia(long gia) {
-//        this.gia = gia;
-//    }
-//
-//    public void setDate(String date) {
-//        this.date = date;
-//    }
-//
-//    public void setTime(String time) {
-//        this.time = time;
-//    }
-//
-//    public void setTitle(String title) {
-//        this.title = title;
-//    }
-//
-//    public void setContent(String content) {
-//        this.content = content;
-//    }
-//
-//    public void setPostID(String postID) {
-//        this.postID = postID;
-//    }
-//
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
-//
-//    public String getPostID() {
-//        return postID;
-//    }
-//
-//    public String getTitle() {
-//        return title;
-//    }
-//
-//    public String getContent() {
-//        return content;
-//    }
-//
-//    public String getDate() {
-//        return date;
-//    }
-//
-//    public String getTime() {
-//        return time;
-//    }
-//
-//    public long getVesinh() {
-//        return vesinh;
-//    }
-//
-//    public long getPhucvu() {
-//        return phucvu;
-//    }
-//
-//    public long getGia() {
-//        return gia;
-//    }
-//
-//    public String getUsername() {
-//        return username;
-//    }
-//
-//    public Map<String, Object> toMap() {
-//        HashMap<String, Object> result = new HashMap<>();
-//        result.put("title", title);
-//        result.put("content", content);
-//        result.put("date", date);
-//        result.put("time", time);
-//        result.put("vesinh", vesinh);
-//        result.put("phucvu", phucvu);
-//        result.put("gia", gia);
-//        return result;
-//    }
 }

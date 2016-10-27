@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity
                 switch (tabId) {
                     case R.id.tab_reviews:
                         ReviewFragment reviewFragment = new ReviewFragment();
+                        reviewFragment.setSortType(1);
                         transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame, reviewFragment);
                         transaction.commit();
@@ -192,13 +193,24 @@ public class MainActivity extends AppCompatActivity
                                 switch (item.getItemId()) {
                                     case R.id.popup_viewpost_lastnews:
                                         ReviewFragment reviewFragment = new ReviewFragment();
+                                        reviewFragment.setSortType(1);
                                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                                         transaction.replace(R.id.frame, reviewFragment);
                                         transaction.commit();
                                         break;
                                     case R.id.popup_viewpost_mostcomment:
+                                        ReviewFragment reviewFragment1 = new ReviewFragment();
+                                        reviewFragment1.setSortType(2);
+                                        FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                                        transaction1.replace(R.id.frame, reviewFragment1);
+                                        transaction1.commit();
                                         break;
                                     case R.id.popup_viewpost_mostlike:
+                                        ReviewFragment reviewFragment2 = new ReviewFragment();
+                                        reviewFragment2.setSortType(3);
+                                        FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                                        transaction2.replace(R.id.frame, reviewFragment2);
+                                        transaction2.commit();
                                         break;
                                 }
                                 return true;

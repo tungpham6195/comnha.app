@@ -24,7 +24,7 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txt_un, txt_postdate, txt_tittle, txt_content, txt_likenumb,txt_commentnumb, txt_time;
+        public TextView txt_un, txt_postdate, txt_tittle, txt_content, txt_likenumb, txt_commentnumb, txt_time;
         public ImageView img_user;
 
         public ViewHolder(View view) {
@@ -59,7 +59,8 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
         holder.txt_postdate.setText(list.get(position).getDate());
         holder.txt_time.setText(list.get(position).getTime());
         holder.txt_un.setText(list.get(position).getUsername());
-        holder.txt_commentnumb.setText(String.valueOf(list.get(position).getCommnetCount())+" Comments");
+        holder.txt_likenumb.setText(String.valueOf(list.get(position).getLikeCount()) + " Likes");
+        holder.txt_commentnumb.setText(String.valueOf(list.get(position).getCommentCount()) + " Comments");
     }
 
     @Override
