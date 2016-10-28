@@ -4,10 +4,14 @@ package com.app.ptt.comnha;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -43,6 +47,8 @@ public class LocadetailFragment extends Fragment {
     ArrayList<Post> postlist;
     ValueEventListener locationValueEventListener;
     ChildEventListener locapostChildEventListener;
+    ActionBar actionBar;
+    Toolbar toolbar;
 
     public LocadetailFragment() {
         // Required empty public constructor
@@ -74,6 +80,16 @@ public class LocadetailFragment extends Fragment {
                         " - " + String.valueOf(location.getGiamax()));
                 txt_gio.setText(gio);
                 txt_name.setText(tenquan);
+                try {
+                    txt_gia.setText(String.valueOf(location.getGiaTong() / location.getSize() + ""));
+                    txt_vesinh.setText(String.valueOf(location.getVsTong() / location.getSize() + ""));
+                    txt_phucvu.setText(String.valueOf(location.getPvTong() / location.getSize() + ""));
+                } catch (ArithmeticException mess) {
+                    txt_gia.setText(String.valueOf(0));
+                    txt_vesinh.setText(String.valueOf(0));
+                    txt_phucvu.setText(String.valueOf(0));
+                }
+
             }
 
             @Override
@@ -88,9 +104,7 @@ public class LocadetailFragment extends Fragment {
                 post.setPostID(dataSnapshot.getKey());
                 postlist.add(post);
                 CalcuAVGRate newcalcu = new CalcuAVGRate(postlist);
-                txt_gia.setText(String.valueOf(newcalcu.calcu().get(0)));
-                txt_vesinh.setText(String.valueOf(newcalcu.calcu().get(1)));
-                txt_phucvu.setText(String.valueOf(newcalcu.calcu().get(2)));
+
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -121,6 +135,7 @@ public class LocadetailFragment extends Fragment {
     }
 
     private void andxa(View view) {
+        toolbar = (Toolbar) view.findViewById(R.id.frg_locadetial_toolbar);
         txt_tien = (TextView) view.findViewById(R.id.frg_lcdetail_txt_tien);
         txt_diachi = (TextView) view.findViewById(R.id.frg_lcdetail_txt_diachi);
         txt_name = (TextView) view.findViewById(R.id.frg_lcdetail_txt_tenquan);
@@ -131,6 +146,14 @@ public class LocadetailFragment extends Fragment {
         btn_themanh = (LinearLayout) view.findViewById(R.id.frg_lcdetail_btn_themanh);
         btn_dangreview = (LinearLayout) view.findViewById(R.id.frg_lcdetail_dangreview);
         txt_sdt = (TextView) view.findViewById(R.id.frg_lcdetail_txt_sdt);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        actionBar = activity.getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle("Location Detail");
+        setHasOptionsMenu(true);
         postlist = new ArrayList<Post>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_lcdetail_rcyler_review);
         mRecyclerView.setHasFixedSize(true);
@@ -162,4 +185,14 @@ public class LocadetailFragment extends Fragment {
         }));
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

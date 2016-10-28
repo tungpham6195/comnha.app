@@ -165,12 +165,28 @@ public class MainActivity extends AppCompatActivity
                         transaction.commit();
                         break;
                     case R.id.tab_stores:
-                        LocatlistFragment locatlistFragment = new LocatlistFragment();
+                        StoreFragment storeFragment = new StoreFragment();
+                        storeFragment.setFilter(1);
                         transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.frame, locatlistFragment);
+                        transaction.replace(R.id.frame, storeFragment);
                         transaction.commit();
                         break;
                     case R.id.tab_locations:
+                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_locations), Gravity.START);
+                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_locafilter, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_locafilter_myloca:
+                                        break;
+                                    case R.id.popup_locafilter_choseloca:
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
+                        popupMenu.show();
                         break;
                 }
             }
@@ -220,12 +236,32 @@ public class MainActivity extends AppCompatActivity
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
+                                FragmentTransaction transaction;
+                                StoreFragment storeFragment;
                                 switch (item.getItemId()) {
                                     case R.id.popup_viewquan_gia:
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setFilter(2);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
                                         break;
                                     case R.id.popup_viewquan_pv:
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setFilter(3);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
                                         break;
                                     case R.id.popup_viewquan_vs:
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setFilter(4);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
                                         break;
                                 }
                                 return true;
@@ -234,6 +270,21 @@ public class MainActivity extends AppCompatActivity
                         popupMenu.show();
                         break;
                     case R.id.tab_locations:
+                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_locations), Gravity.START);
+                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_locafilter, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_locafilter_myloca:
+                                        break;
+                                    case R.id.popup_locafilter_choseloca:
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
+                        popupMenu.show();
                         break;
                 }
             }
@@ -371,11 +422,13 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_homepage:
-                LocatlistFragment locatlistFragment = new LocatlistFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame, locatlistFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                bottomBar.selectTabAtPosition(0);
+//
+//                LocatlistFragment locatlistFragment = new LocatlistFragment();
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.frame, locatlistFragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
                 break;
             case R.id.nav_share:
                 break;

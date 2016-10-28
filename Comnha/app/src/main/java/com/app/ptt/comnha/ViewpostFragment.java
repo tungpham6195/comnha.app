@@ -74,6 +74,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                 txt_date.setText(post.getDate());
                 txt_content.setText(post.getContent());
                 txt_un.setText(post.getUsername());
+                txt_likenumb.setText(post.getLikeCount() + " Likes   " + post.getCommentCount() + " Comments");
             }
 
             @Override
@@ -111,7 +112,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         };
         Log.d("postID", postID);
         dbRef.child(getString(R.string.posts_CODE) + postID)
-                .addListenerForSingleValueEvent(postValueEventListener);
+                .addValueEventListener(postValueEventListener);
         dbRef.child(getString(R.string.postcomment_CODE) + "/" + postID)
                 .addChildEventListener(commentChildEventListener);
         return view;
@@ -196,10 +197,10 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                             + postID + "/commentCount", comment_List.size() + 1);
                     childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
                             + post.getLocaID() + "/"
-                            + LoginSession.getInstance().getUserID() + "/"
+                            + post.getUid() + "/"
                             + postID + "/commentCount", comment_List.size() + 1);
                     childUpdates.put(getResources().getString(R.string.userpost_CODE)
-                            + LoginSession.getInstance().getUserID() + "/"
+                            + post.getUid() + "/"
                             + postID + "/commentCount", comment_List.size() + 1);
                     dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
                         @Override

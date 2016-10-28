@@ -17,6 +17,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
+import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
@@ -167,6 +168,18 @@ public class ActivityFragment extends Fragment {
                 popup.show();
             }
         });
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                String key = postList.get(position).getPostID();
+                Intent intent = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
+                intent.putExtra(getResources().getString(R.string.fragment_CODE),
+                        getResources().getString(R.string.frg_viewpost_CODE));
+                intent.putExtra(getResources().getString(R.string.key_CODE), key);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().getApplicationContext().startActivity(intent);
+            }
+        }));
     }
 
     @Override
