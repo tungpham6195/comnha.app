@@ -21,7 +21,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -49,8 +48,9 @@ import java.util.Map;
 public class AddlocaFragment extends Fragment implements View.OnClickListener, TimePickerDialog.OnTimeSetListener,
         DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
     FloatingActionButton fab_save;
-    EditText edt_tenquan, edt_diachi, edt_timeend, edt_timestart, edt_sdt, edt_giamin, edt_giamax;
-    ImageButton imageButton;
+    EditText edt_tenquan, edt_diachi, edt_timeend,
+            edt_timestart, edt_sdt, edt_giamin, edt_giamax,
+            edt_quanhuyen, edt_tinhTP;
     ProgressDialog mProgressDialog;
     DatabaseReference dbRef;
     ImageView img_ic;
@@ -94,7 +94,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     }
 
     void anhXa(View view) {
-        imageButton = (ImageButton) view.findViewById(R.id.iv_check_location);
         edt_tenquan = (EditText) view.findViewById(R.id.frg_addloction_edt_tenquan);
         //edt_diachi = (EditText) view.findViewById(R.id.frg_addloction_edt_diachi);
         edt_timeend = (EditText) view.findViewById(R.id.frg_addloction_edt_giodong);
@@ -104,6 +103,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         edt_giamax = (EditText) view.findViewById(R.id.frg_addloction_edt_giamax);
         fab_save = (FloatingActionButton) view.findViewById(R.id.frg_addloction_btn_save);
         img_ic = (ImageView) view.findViewById(R.id.frg_addloca_ic);
+        edt_quanhuyen = (EditText) view.findViewById(R.id.frg_addloction_edt_quanhuyen);
+        edt_tinhTP = (EditText) view.findViewById(R.id.frg_addloction_edt_tinhtp);
         tpd = TimePickerDialog.newInstance(this, now.get(Calendar.HOUR), now.get(Calendar.MINUTE), now.get(Calendar.SECOND), true);
         tpd.setOnDismissListener(this);
         tpd.setOnCancelListener(this);
@@ -116,7 +117,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         fab_save.setOnClickListener(this);
         edt_timestart.setOnClickListener(this);
         edt_timeend.setOnClickListener(this);
-        imageButton.setOnClickListener(this);
     }
 
     class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
@@ -181,6 +181,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         newLocation.setTimeend(edt_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
+        newLocation.setTinhtp(edt_tinhTP.getText().toString().trim());
+        newLocation.setQuanhuyen(edt_quanhuyen.getText().toString().trim());
         String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
         Map<String, Object> newLocaValue = newLocation.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
@@ -228,6 +230,10 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
                 } else if (Long.valueOf(edt_giamax.getText().toString()) <= Long.valueOf(edt_giamin.getText().toString())) {
                     Snackbar.make(view, getResources().getText(R.string.txt_giawarn), Snackbar.LENGTH_SHORT).show();
+                } else if (edt_tinhTP.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_noprivince), Snackbar.LENGTH_SHORT).show();
+                } else if (edt_quanhuyen.getText().toString().trim().equals("")) {
+                    Snackbar.make(view, getResources().getText(R.string.txt_nodistrict), Snackbar.LENGTH_SHORT).show();
                 } else {
 
 

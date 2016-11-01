@@ -58,6 +58,16 @@ public class ActivityFragment extends Fragment {
 //                        LoginSession.getInstance().getUserID()).addChildEventListener(userPostEventListener);
 //                break;
 //        }
+        if (view.findViewById(R.id.frg_activity_frame_adapter) != null) {
+            if (getActivity().getSupportFragmentManager().findFragmentById(R.id.frg_activity_frame_adapter) == null) {
+                ActListFragment actListFragment = new ActListFragment();
+                actListFragment.setFilter(1);
+                actListFragment.setArguments(getActivity().getIntent().getExtras());
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frg_activity_frame_adapter, actListFragment)
+                        .commit();
+            }
+        }
         return view;
     }
 
@@ -91,7 +101,7 @@ public class ActivityFragment extends Fragment {
 
                         break;
                     case R.id.action_activity_choseLoca:
-                        
+
                         break;
                 }
                 return true;

@@ -8,11 +8,29 @@ import java.util.Map;
  */
 
 public class MyLocation {
-    String name, diachi, sdt, timestart, timeend;
+    String name, diachi, sdt, timestart, timeend, tinhtp, quanhuyen;
+
+    public String getTinhtp() {
+        return tinhtp;
+    }
+
+    public String getQuanhuyen() {
+        return quanhuyen;
+    }
+
+    public void setTinhtp(String tinhtp) {
+
+        this.tinhtp = tinhtp;
+    }
+
+    public void setQuanhuyen(String quanhuyen) {
+        this.quanhuyen = quanhuyen;
+    }
+
     long giamin, giamax;
     String locaID;
     long giaTong = 0, vsTong = 0, pvTong = 0;
-    long size=1;
+    long size = 1;
     long giaAVG, vsAVG, pvAVG, tongAVG;
 
     public void setGiaAVG(long giaAVG) {
@@ -46,6 +64,7 @@ public class MyLocation {
     public long getTongAVG() {
         return tongAVG;
     }
+
     public MyLocation() {
     }
 
@@ -128,9 +147,11 @@ public class MyLocation {
     public void setSize(long size) {
         this.size = size;
     }
+
     public long getSize() {
         return size;
     }
+
     public long getPvTong() {
         return pvTong;
     }
@@ -156,6 +177,8 @@ public class MyLocation {
         result.put("vsTong", vsTong);
         result.put("pvTong", pvTong);
         result.put("size", size);
+        result.put("tinhtp", tinhtp);
+        result.put("quanhuyen", quanhuyen);
         return result;
     }
 }

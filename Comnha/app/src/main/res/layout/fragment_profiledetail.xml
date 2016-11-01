@@ -8,8 +8,8 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:elevation="5dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_scrollFlags="scroll">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -19,7 +19,7 @@
             app:collapsedTitleGravity="start"
             app:contentScrim="@color/colorPrimary"
             app:expandedTitleGravity="bottom|center_horizontal"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|enterAlways"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false">
 
             <RelativeLayout
@@ -84,7 +84,7 @@
             <android.support.v4.view.ViewPager
                 android:id="@+id/frag_prodetail_viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="500dp" />
+                android:layout_height="560dp" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

@@ -6,7 +6,8 @@
     <string name="text_tenquan">Tên quán</string>
     <string name="text_tenMon">Tên món ăn</string>
     <string name="text_themMon">Thêm món ăn</string>
-
+    <string name="text_tinhTP">Tỉnh/Thành phố</string>
+    <string name="text_quanhuyen">Quận/Huyện</string>
     <string name="text_sdt">Số điện thoại</string>
     <string name="text_openningTime">Giờ mở cửa</string>
     <string name="text_start">Từ</string>
@@ -71,6 +72,8 @@
     <string name="txt_nogia">Warning: Chưa nhập giá</string>
     <string name="txt_nosdt">Warning: Chưa nhập số điện thoại</string>
     <string name="txt_noopentime">Warning: Chưa nhập giờ mở cửa</string>
+    <string name="txt_noprivince">Warning: Chưa nhập Tỉnh/Thành phố</string>
+    <string name="txt_nodistrict">Warning: Chưa nhập Quận/Huyện</string>
     <string name="txt_notitle">Warning: Chưa nhập tiêu đề</string>
     <string name="txt_nocontent">Warning: Chưa nhập nội dung</string>
     <string name="txt_nochoseloca">Warning: Chưa chọn địa điểm</string>
@@ -187,4 +190,101 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string-array name="tinhtp">
+        <item>Thành phố Hà Nội</item>
+        <item>Thành phố Hồ Chí Minh</item>
+        <item>Thành phố Hải Phòng</item>
+        <item>Thành Phố Đà Nẵng</item>
+        <item>Tỉnh Hà Giang</item>
+        <item>Tỉnh Cao Bằng</item>
+        <item>Tỉnh Lai Châu</item>
+        <item>Tỉnh Lào Cai</item>
+        <item>Tỉnh Tuyên Quang</item>
+        <item>Tỉnh Lạng Sơn</item>
+        <item>Tỉnh Bắc Kạn</item>
+        <item>Tỉnh Thái Nguyên</item>
+        <item>Tỉnh Yên Bái</item>
+        <item>Tỉnh Sơn La</item>
+        <item>Tỉnh Phú Thọ</item>
+        <item>Tỉnh Vĩnh Phúc</item>
+        <item>Tỉnh Quảng Ninh</item>
+        <item>Tỉnh Bắc Giang</item>
+        <item>Tỉnh Bắc Ninh</item>
+        <item>Tỉnh Hải Dương</item>
+        <item>Tỉnh Hưng Yên</item>
+        <item>Tỉnh Hòa Bình</item>
+        <item>Tỉnh Hà Nam</item>
+        <item>Tỉnh Nam Định</item>
+        <item>Tỉnh Thái Bình</item>
+        <item>Tỉnh Ninh Bình</item>
+        <item>Tỉnh Thanh Hóa</item>
+        <item>Tỉnh Nghệ An</item>
+        <item>Tỉnh Hà Tĩnh</item>
+        <item>Tỉnh Quảng Bình</item>
+        <item>Tỉnh Quảng Trị</item>
+        <item>Tỉnh Thừa Thiên Huế</item>
+        <item>Tỉnh Quảng Nam</item>
+        <item>Tỉnh Quảng Ngãi</item>
+        <item>Tỉnh Kon Tum</item>
+        <item>Tỉnh Bình Định</item>
+        <item>Tỉnh Gia Lai</item>
+        <item>Tỉnh Phú Yên</item>
+        <item>Tỉnh Đăk Lăk</item>
+        <item>Tỉnh Khánh Hòa</item>
+        <item>Tỉnh Lâm Đồng</item>
+        <item>Tỉnh Bình Phước</item>
+        <item>Tỉnh Bình Dương</item>
+        <item>Tỉnh Ninh Thuận</item>
+        <item> Tỉnh Tây Ninh</item>
+        <item>Tỉnh Bình Thuận</item>
+        <item>Tỉnh Đồng Nai</item>
+        <item>Tỉnh Long An</item>
+        <item>Tỉnh Đồng Tháp</item>
+        <item>Tỉnh An Giang</item>
+        <item>Tỉnh Bà Rịa Vũng Tàu</item>
+        <item>Tỉnh Tiền Giang</item>
+        <item>Tỉnh Kiên Giang</item>
+        <item>Tỉnh Trà Vinh</item>
+        <item>Tỉnh Bến Tre</item>
+        <item>Tỉnh Vĩnh Long</item>
+        <item>Tỉnh Trà Vinh</item>
+        <item>Tỉnh Sóc Trăng</item>
+        <item>Tỉnh Bạc Liêu</item>
+        <item>Tỉnh Cà Mau</item>
+        <item>Tỉnh Điện Biên</item>
+        <item>Tỉnh Đắk Nông</item>
+        <item>Tỉnh Hậu Giang</item>
+    </string-array>
+    <string-array name="hanoi">
+        <item>01</item>
+        <item>Quận Ba Đình</item>
+        <item>Quận Hoàn Kiếm</item>
+        <item>Quận Hai Bà Trưng</item>
+        <item>Quận Đống Đa</item>
+        <item>Quận Tây Hồ</item>
+        <item>Quận Cầu Giấy</item>
+        <item>Quận Thanh Xuân</item>
+        <item>Quận Hoàng Mai</item>
+        <item>Quận Long Biên</item>
+        <item>Huyện Từ Liêm</item>
+        <item>Huyện Thanh Trì</item>
+        <item>Huyện Gia Lâm</item>
+        <item>Huyện Đông Anh</item>
+        <item>Huyện Sóc Sơn</item>
+        <item>Quận Hà Đông</item>
+        <item>Thị xã Sơn Tây</item>
+        <item>Huyện Ba Vì</item>
+        <item>Huyện Phúc Thọ</item>
+        <item>Huyện Thạch Thất</item>
+        <item>Huyện Quốc Oai</item>
+        <item>Huyện Chương Mỹ</item>
+        <item>Huyện Đan Phượng</item>
+        <item>Huyện Hoài Đức</item>
+        <item>Huyện Thanh Oai</item>
+        <item>Huyện Mỹ Đức</item>
+        <item>Huyện Ứng Hoà</item>
+        <item>Huyện Thường Tín</item>
+        <item>Huyện Phú Xuyên</item>
+        <item>Huyện Mê Linh</item>
+    </string-array>
 </resources>
