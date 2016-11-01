@@ -16,16 +16,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.roughike.bottombar.BottomBar;
@@ -35,7 +38,6 @@ import com.roughike.bottombar.OnTabSelectListener;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , FloatingActionButton.OnClickListener {
-
 
 
 //    private MyService myService;
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity
     private int progressBarStatus = 0;
     private Handler progressBarHandler = new Handler();
     private IntentFilter mIntentFilter;
-
+    private ProgressDialog logoutDialog;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -98,32 +100,59 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+                Menu menu = mnavigationView.getMenu();
                 if (user != null) {
-                    userID = user.getUid();
-//                    Toast.makeText(getApplicationContext(), "Signed in successfull with " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                    LoginSession.getInstance().setUserID(userID);
-                    LoginSession.getInstance().setEmail(user.getEmail());
                     try {
-                        LoginSession.getInstance().setUsername(user.getDisplayName());
-                        txt_email.setText(user.getEmail());
-                        txt_un.setText(user.getDisplayName());
-                    } catch (NullPointerException mess) {
+                        if (user.getEmail() != null) {
+                            userID = user.getUid();
+                            MenuItem menuItem = menu.findItem(R.id.nav_profile);
+                            menuItem.setEnabled(true);
+                            MenuItem menuItem1 = menu.findItem(R.id.nav_signin);
+                            menuItem1.setEnabled(false);
+                            MenuItem menuItem2 = menu.findItem(R.id.nav_signout);
+                            menuItem2.setEnabled(true);
+                            Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getEmail());
+                            LoginSession.getInstance().setUserID(userID);
+                            LoginSession.getInstance().setEmail(user.getEmail());
+                            LoginSession.getInstance().setUsername(user.getDisplayName());
+                            txt_email.setText(user.getEmail());
+                            txt_un.setText(user.getDisplayName());
+                        } else {
+                            MenuItem menuItem = menu.findItem(R.id.nav_profile);
+                            menuItem.setEnabled(false);
+                            MenuItem menuItem1 = menu.findItem(R.id.nav_signout);
+                            menuItem1.setEnabled(false);
+                            MenuItem menuItem2 = menu.findItem(R.id.nav_signin);
+                            menuItem2.setEnabled(true);
 
+                            txt_email.setText(getResources().getString(R.string.text_hello));
+                            txt_un.setText(getResources().getString(R.string.text_user));
+                            userID = "";
+                            LoginSession.getInstance().setUserID(null);
+                            LoginSession.getInstance().setUsername(null);
+                            LoginSession.getInstance().setEmail(null);
+                        }
+                    } catch (NullPointerException mess) {
+                        txt_email.setText(getResources().getString(R.string.text_hello));
+                        txt_un.setText(getResources().getString(R.string.text_user));
+                        userID = "";
+                        LoginSession.getInstance().setUserID(null);
+                        LoginSession.getInstance().setUsername(null);
+                        LoginSession.getInstance().setEmail(null);
                     }
-                    Log.d("signed_in", "onAuthStateChanged:signed_in: " + user.getUid());
-                    Log.i("email", LoginSession.getInstance().getEmail());
                 } else {
-                    txt_email.setText(getResources().getString(R.string.text_hello));
-                    txt_un.setText(getResources().getString(R.string.text_user));
-                    userID = "";
-                    LoginSession.getInstance().setUserID(null);
-                    LoginSession.getInstance().setUsername(null);
-                    LoginSession.getInstance().setEmail(null);
-                    Toast.makeText(getApplicationContext(), "Signed out", Toast.LENGTH_SHORT).show();
-                    Log.d("signed_out", "onAuthStateChanged:signed_out");
+//                    txt_email.setText(getResources().getString(R.string.text_hello));
+//                    txt_un.setText(getResources().getString(R.string.text_user));
+//                    userID = "";
+//                    LoginSession.getInstance().setUserID(null);
+//                    LoginSession.getInstance().setUsername(null);
+//                    LoginSession.getInstance().setEmail(null);
+////                    Toast.makeText(getApplicationContext(), "Signed out", Toast.LENGTH_SHORT).show();
+//                    Log.d("signed_out", "onAuthStateChanged:signed_out");
                 }
             }
         };
+
 
     }
 
@@ -296,7 +325,44 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+        try {
+            if (mAuth.getCurrentUser() == null) {
+                mAuth.signInAnonymously().addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("signInAnonymously", "signInAnonymously:onComplete:" + task.isSuccessful());
 
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w("signInAnonymouslyError", "signInAnonymously", task.getException());
+//                            Toast.makeText(MainActivity.this, "Authentication failed.",
+//                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+            if (mAuth.getCurrentUser().getEmail() == null) {
+                mAuth.signInAnonymously().addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("signInAnonymously", "signInAnonymously:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w("signInAnonymouslyError", "signInAnonymously", task.getException());
+//                            Toast.makeText(MainActivity.this, "Authentication failed.",
+//                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        } catch (NullPointerException mess) {
+
+        }
 //        doBinService();
 
         //doBinService();
@@ -343,62 +409,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-
-//        unregisterReceiver(mReceiver);
-
-        //unregisterReceiver(mReceiver);
-
-
         Log.i(LOG, "Pause");
     }
-//
-//    public void doBinService() {
-//        if (!isBound) {
-//            Intent intent = new Intent(this, MyService.class);
-////            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-//            isBound = true;
-//        }
-//    }
-
-//    public void doBinService() {
-//        if (!isBound) {
-//            Intent intent = new Intent(this, MyService.class);
-//            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-//            isBound = true;
-//        }
-//    }
-//
-//    public void doUnbinService() {
-//        if (isBound) {
-//            unbindService(serviceConnection);
-//            isBound = false;
-//        }
-//    }
-//
-//    private ServiceConnection serviceConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            MyService.LocalBinder binder = (MyService.LocalBinder) service;
-//            myService = binder.getService();
-//            isBound = true;
-//            Log.i(LOG, "ServiceConnection");
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            isBound = false;
-//        }
-//    };
-//
-//    public boolean isMyServiceRunning(Class<?> serviceClass) {
-//        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-//            if (serviceClass.getName().equals(service.service.getClassName())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
     @Override
     public void onBackPressed() {
@@ -416,32 +428,45 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         switch (item.getItemId()) {
             case R.id.nav_profile:
-                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
+                Intent intent = new Intent(MainActivity.this, Adapter2Activity.class);
                 intent.putExtra(getString(R.string.fragment_CODE),
                         getString(R.string.frg_prodetail_CODE));
                 startActivity(intent);
                 break;
             case R.id.nav_homepage:
-                bottomBar.selectTabAtPosition(0);
-//
-//                LocatlistFragment locatlistFragment = new LocatlistFragment();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.frame, locatlistFragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
+                if (bottomBar.getCurrentTabPosition() != 0) {
+                    bottomBar.selectTabAtPosition(0);
+                }
                 break;
             case R.id.nav_share:
                 break;
             case R.id.nav_send:
                 break;
             case R.id.nav_signin:
-                Intent intent1 = new Intent(MainActivity.this, AdapterActivity.class);
+                Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
                 intent1.putExtra(getString(R.string.fragment_CODE),
                         getString(R.string.frg_signin_CODE));
                 startActivity(intent1);
                 break;
             case R.id.nav_signout:
-                mAuth.signOut();
+                logoutDialog = ProgressDialog.show(this,
+                        getResources().getString(R.string.txt_plzwait),
+                        getResources().getString(R.string.txt_logginout), true, false);
+                mAuth.signInAnonymously().addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("signInAnonymously", "signInAnonymously:onComplete:" + task.isSuccessful());
+                        logoutDialog.dismiss();
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w("signInAnonymouslyError", "signInAnonymously", task.getException());
+//                            Toast.makeText(MainActivity.this, "Authentication failed.",
+//                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 break;
             case R.id.nav_map:
                 Intent intent2 = new Intent(MainActivity.this, AdapterActivity.class);
@@ -461,7 +486,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.main_fabitem1:
                 break;
             case R.id.main_fabitem2:
-                Intent intent = new Intent(MainActivity.this, AdapterActivity.class);
+                Intent intent = new Intent(MainActivity.this, Adapter2Activity.class);
                 intent.putExtra(getString(R.string.fragment_CODE),
                         getString(R.string.frag_addloca_CODE));
                 startActivity(intent);

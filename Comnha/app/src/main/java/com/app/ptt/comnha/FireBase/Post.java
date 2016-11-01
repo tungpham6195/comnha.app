@@ -8,12 +8,21 @@ import java.util.Map;
  */
 public class Post {
     //không nên để là private
-    String title, content, date, time, postID, username, uid, locaID, locaName;
+    String title, content, date, time, postID, username, uid, locaID, locaName, diachi;
     long vesinh, phucvu, gia;
     int likeCount, commentCount;
     Map<String, Boolean> likes;
 
     public Post() {
+    }
+
+    public void setDiachi(String diachi) {
+        this.diachi = diachi;
+    }
+
+    public String getDiachi() {
+
+        return diachi;
     }
 
     public void setUid(String uid) {
@@ -153,7 +162,8 @@ public class Post {
         result.put("likeCount", likeCount);
         result.put("likes", likes);
         result.put("locaID", locaID);
-        result.put("locaID", locaID);
+        result.put("locaName", locaName);
+        result.put("diachi", diachi);
         return result;
     }
 }

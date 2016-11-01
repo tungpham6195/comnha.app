@@ -111,13 +111,13 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.frg_post_fabchoseloca:
-                Intent intent = new Intent(getActivity(), AdapterActivity.class);
+                Intent intent = new Intent(getActivity(), Adapter2Activity.class);
                 intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frag_chooseloca_CODE));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
             case R.id.frg_post_fabchoseimg:
-                Intent intent1 = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
+                Intent intent1 = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                 intent1.putExtra(getResources().getString(R.string.fragment_CODE),
                         getResources().getString(R.string.frag_chooseimg_CODE));
                 intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -137,14 +137,15 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-
-        Log.i("startFrag", "start");
         try {
-            if (!DoPost.getInstance().getLocaID().isEmpty()) {
+            if (DoPost.getInstance().getMyLocation() != null) {
                 img.setVisibility(View.VISIBLE);
                 txt_address.setVisibility(View.VISIBLE);
-                txt_address.setText(DoPost.getInstance().getAddress());
-                txt_name.setText(DoPost.getInstance().getName());
+                txt_address.setText(DoPost.getInstance().getMyLocation().getDiachi());
+                txt_name.setText(DoPost.getInstance().getMyLocation().getName());
+            } else {
+                img.setVisibility(View.GONE);
+                txt_address.setVisibility(View.GONE);
             }
         } catch (NullPointerException mess) {
             img.setVisibility(View.GONE);
@@ -156,11 +157,10 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        DoPost.getInstance().setLocaID(null);
-        DoPost.getInstance().setAddress(null);
-        DoPost.getInstance().setName(null);
+        DoPost.getInstance().setMyLocation(null);
         DoPost.getInstance().setVesinh(0);
         DoPost.getInstance().setGia(0);
+        DoPost.getInstance().setFiles(null);
         DoPost.getInstance().setPhucvu(0);
     }
 
@@ -168,7 +168,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         boolean checloca = false;
         boolean checkrate = false;
         try {
-            if (DoPost.getInstance().getLocaID().equals("")) {
+            if (DoPost.getInstance().getMyLocation() == null) {
                 checloca = true;
             }
         } catch (NullPointerException mess) {
@@ -211,7 +211,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                     for (File f : DoPost.getInstance().getFiles()) {
                         Uri uri = Uri.fromFile(f);
                         StorageReference childRef = storeRef.child(getResources().getString(R.string.locations_CODE)
-                                + DoPost.getInstance().getLocaID() + "/" + uri.getLastPathSegment());
+                                + DoPost.getInstance().getMyLocation().getLocaID() + "/" + uri.getLastPathSegment());
                         uploadTask = childRef.putFile(uri);
                     }
                     for (File f : DoPost.getInstance().getFiles()) {
@@ -251,26 +251,36 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         newPost.setGia(DoPost.getInstance().getGia());
         newPost.setVesinh(DoPost.getInstance().getVesinh());
         newPost.setPhucvu(DoPost.getInstance().getPhucvu());
-        newPost.setLocaID(DoPost.getInstance().getLocaID());
-        newPost.setLocaName(DoPost.getInstance().getName());
+        newPost.setLocaID(DoPost.getInstance().getMyLocation().getLocaID());
+        newPost.setLocaName(DoPost.getInstance().getMyLocation().getName());
+        newPost.setDiachi(DoPost.getInstance().getMyLocation().getDiachi());
         Map<String, Object> postValue = newPost.toMap();
         Map<String, Object> childUpdates = new HashMap<String, Object>();
         childUpdates.put(getResources().getString(R.string.posts_CODE) + key, postValue);
         childUpdates.put(getResources().getString(R.string.userpost_CODE)
                 + LoginSession.getInstance().getUserID() + "/" + key, postValue);
         childUpdates.put(getResources().getString(R.string.locationpost_CODE) +
-                DoPost.getInstance().getLocaID() + "/" + key, postValue);
+                DoPost.getInstance().getMyLocation().getLocaID() + "/" + key, postValue);
         childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
-                + DoPost.getInstance().getLocaID() + "/"
+                + DoPost.getInstance().getMyLocation().getLocaID() + "/"
                 + LoginSession.getInstance().getUserID() + "/" + key, postValue);
         MyLocation updateLoca = DoPost.getInstance().getMyLocation();
-        updateLoca.setGiaTong(updateLoca.getGiaTong() + DoPost.getInstance().getGia());
-        updateLoca.setVsTong(updateLoca.getVsTong() + DoPost.getInstance().getVesinh());
-        updateLoca.setPvTong(updateLoca.getPvTong() + DoPost.getInstance().getPhucvu());
-        updateLoca.setSize(updateLoca.getSize() + 1);
-
+        String locaID = DoPost.getInstance().getMyLocation().getLocaID();
+        updateLoca.setLocaID(null);
+        long giaTong = updateLoca.getGiaTong() + DoPost.getInstance().getGia(),
+                vsTong = updateLoca.getVsTong() + DoPost.getInstance().getVesinh(),
+                pvTong = updateLoca.getPvTong() + DoPost.getInstance().getPhucvu(),
+                size = updateLoca.getSize() + 1;
+        updateLoca.setGiaTong(giaTong);
+        updateLoca.setVsTong(vsTong);
+        updateLoca.setPvTong(pvTong);
+        updateLoca.setSize(size);
+        updateLoca.setGiaAVG(giaTong / size);
+        updateLoca.setVsAVG(vsTong / size);
+        updateLoca.setPvAVG(pvTong / size);
+        updateLoca.setTongAVG((giaTong + vsTong + pvTong) / (size * 3));
         childUpdates.put(getResources().getString(R.string.locations_CODE)
-                + updateLoca.getLocaID(), updateLoca);
+                + locaID, updateLoca);
         try {
             for (File f : DoPost.getInstance().getFiles()) {
                 Uri uri = Uri.fromFile(f);
@@ -281,7 +291,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                         getResources().getString(R.string.users_CODE) + LoginSession.getInstance().getUserID() + "/"
                         + getResources().getString(R.string.posts_CODE) + "/" + fileKey, uri.getLastPathSegment());
                 childUpdates.put(getResources().getString(R.string.images_CODE) +
-                        getResources().getString(R.string.locations_CODE) + DoPost.getInstance().getLocaID()
+                        getResources().getString(R.string.locations_CODE) + locaID
                         + "/" + fileKey, uri.getLastPathSegment());
             }
         } catch (NullPointerException mess) {

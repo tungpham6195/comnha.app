@@ -92,19 +92,19 @@ public class StoreFragment extends Fragment {
                 break;
             case 2:
                 dbRef.child(getResources().getString(R.string.locations_CODE))
-                        .orderByChild("giaTong")
+                        .orderByChild("giaAVG")
                         .limitToLast(200)
                         .addChildEventListener(locaListChildEventListener);
                 break;
             case 3:
                 dbRef.child(getResources().getString(R.string.locations_CODE))
-                        .orderByChild("pvTong")
+                        .orderByChild("pvAVG")
                         .limitToLast(200)
                         .addChildEventListener(locaListChildEventListener);
                 break;
             case 4:
                 dbRef.child(getResources().getString(R.string.locations_CODE))
-                        .orderByChild("vsTong")
+                        .orderByChild("vsAVG")
                         .limitToLast(200)
                         .addChildEventListener(locaListChildEventListener);
                 break;
@@ -128,7 +128,7 @@ public class StoreFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         String key = list_item.get(position).getLocaID();
-                        Intent intent = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
+                        Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                         intent.putExtra(getResources().getString(R.string.fragment_CODE),
                                 getResources().getString(R.string.frag_locadetail_CODE));
                         intent.putExtra(getResources().getString(R.string.key_CODE), key);

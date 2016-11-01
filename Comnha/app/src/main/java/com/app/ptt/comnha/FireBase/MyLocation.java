@@ -13,7 +13,39 @@ public class MyLocation {
     String locaID;
     long giaTong = 0, vsTong = 0, pvTong = 0;
     long size=1;
+    long giaAVG, vsAVG, pvAVG, tongAVG;
 
+    public void setGiaAVG(long giaAVG) {
+        this.giaAVG = giaAVG;
+    }
+
+    public void setVsAVG(long vsAVG) {
+        this.vsAVG = vsAVG;
+    }
+
+    public void setPvAVG(long pvAVG) {
+        this.pvAVG = pvAVG;
+    }
+
+    public void setTongAVG(long tongAVG) {
+        this.tongAVG = tongAVG;
+    }
+
+    public long getGiaAVG() {
+        return giaAVG;
+    }
+
+    public long getVsAVG() {
+        return vsAVG;
+    }
+
+    public long getPvAVG() {
+        return pvAVG;
+    }
+
+    public long getTongAVG() {
+        return tongAVG;
+    }
     public MyLocation() {
     }
 

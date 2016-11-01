@@ -27,7 +27,6 @@ import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.PlaceAPI;
-import com.firebase.client.Firebase;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,7 +74,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         now = Calendar.getInstance();
         gc = new Geocoder(getContext(), Locale.getDefault());
         anhXa(view);
-        Firebase.setAndroidContext(getActivity());
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://com-nha.firebaseio.com/");
         autoCompleteText = (AutoCompleteTextView) view.findViewById(R.id.autocomplete);
         autoCompleteText.setAdapter(new PlacesAutoCompleteAdapter(getActivity(), R.layout.autocomplete_list_item));

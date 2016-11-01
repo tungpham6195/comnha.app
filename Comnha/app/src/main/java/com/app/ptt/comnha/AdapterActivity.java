@@ -1,16 +1,10 @@
 package com.app.ptt.comnha;
 
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,10 +12,9 @@ import android.widget.Toast;
 import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Route;
 
-
 import java.util.ArrayList;
 
-public class AdapterActivity extends AppCompatActivity implements ChooselocaFragment.onPassDatafromChooseLocaFrg {
+public class AdapterActivity extends AppCompatActivity {
     String locaKey;
     public static final String LOG = "AdapterActivity";
     public static final String mBroadcast = "mBroadcastComplete";
@@ -30,7 +23,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     private Handler progressBarHandler = new Handler();
 
     int temp, count;
-    Boolean isBound=false;
+    Boolean isBound = false;
     private IntentFilter mIntentFilter;
     boolean isComplete;
     Bundle savedInstanceState;
@@ -55,7 +48,6 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
         Log.i(LOG, "finish");
         super.finish();
     }
-
 
 
     public void showToast(final String a) {
@@ -132,7 +124,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
 //            MapFragment mapFragment = new MapFragment();
 //            mapFragment.getMethod(myService.returnRoute());
 //            getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
-     //   }
+        //   }
         MapFragment mapFragment = new MapFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
     }
@@ -140,83 +132,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     public void loadData() {
         Intent intent = getIntent();
         String FRAGMENT_CODE = intent.getExtras().getString(getResources().getString(R.string.fragment_CODE));
-        Log.d("FRAGMENT_CODE", FRAGMENT_CODE);
-        if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_localist_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                LocatlistFragment locatlistFragment = new LocatlistFragment();
-                locatlistFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, locatlistFragment).commit();
-            }
-        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_addloca_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                AddlocaFragment addlocaFragment = new AddlocaFragment();
-                addlocaFragment.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, addlocaFragment).commit();
-            }
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_locadetail_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    LocadetailFragment locadetailFragment = new LocadetailFragment();
-                    locadetailFragment.setLocaID(intent.getStringExtra(getResources().getString(R.string.key_CODE)));
-                    locadetailFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, locadetailFragment).commit();
-                }
-            }
-        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_chooseloca_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    ChooselocaFragment chooselocaFragment = new ChooselocaFragment();
-                    chooselocaFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, chooselocaFragment).commit();
-                }
-            }
-        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_chooseimg_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    ChoosePhotoFragment choosePhotoFragment = new ChoosePhotoFragment();
-                    choosePhotoFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, choosePhotoFragment).commit();
-                }
-            }
-
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewpost_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    ViewpostFragment viewpostFragment = new ViewpostFragment();
-                    viewpostFragment.setPostID(intent.getExtras().getString(getString(R.string.key_CODE)));
-                    viewpostFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, viewpostFragment)
-                            .commit();
-                }
-            }
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frg_signin_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    SigninFragment signinFragment = new SigninFragment();
-                    signinFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, signinFragment)
-                            .commit();
-                }
-            }
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frg_signup_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    SignupFragment signupFragment = new SignupFragment();
-                    signupFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, signupFragment)
-                            .commit();
-                }
-            }
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    DoVoteFragment dovoteFragment = new DoVoteFragment();
-                    dovoteFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, dovoteFragment)
-                            .commit();
-                }
-            }
-        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_map_CODE))) {
+        if (FRAGMENT_CODE.equals(getString(R.string.frag_map_CODE))) {
             Log.i(LOG, "frag_map_CODE");
             if (findViewById(R.id.frame_adapter) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
@@ -237,15 +153,6 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
                 }
             }
 
-        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frg_prodetail_CODE))) {
-            if (findViewById(R.id.frame_adapter) != null) {
-                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    ProfiledetailFragment proDetailFrag = new ProfiledetailFragment();
-                    proDetailFrag.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, proDetailFrag)
-                            .commit();
-                }
-            }
         }
     }
 
@@ -293,13 +200,8 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
     }
 
     @Override
-    public void passData(String data) {
-        locaKey = data;
-    }
-
-    @Override
     protected void onStart() {
-        Log.i(LOG,"onStart");
+        Log.i(LOG, "onStart");
         super.onStart();
 
 
@@ -308,7 +210,7 @@ public class AdapterActivity extends AppCompatActivity implements ChooselocaFrag
 
     @Override
     protected void onStop() {
-        Log.i(LOG,"onStop");
+        Log.i(LOG, "onStop");
         super.onStop();
     }
 

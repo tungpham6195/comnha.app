@@ -112,7 +112,7 @@ public class ReviewFragment extends Fragment {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), AdapterActivity.class);
+                Intent intent = new Intent(getActivity(), Adapter2Activity.class);
                 intent.putExtra(getResources().getString(R.string.fragment_CODE),
                         getResources().getString(R.string.frg_viewpost_CODE));
                 intent.putExtra(getResources().getString(R.string.key_CODE),

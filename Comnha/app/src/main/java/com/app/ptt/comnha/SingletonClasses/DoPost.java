@@ -12,7 +12,6 @@ public class DoPost {
     private static DoPost ourInstance;
     private long gia, vesinh, phucvu;
     private ArrayList<File> files;
-    private String locaID, name, address;
     private MyLocation myLocation;
     public static DoPost getInstance() {
         if (ourInstance == null) {
@@ -23,31 +22,6 @@ public class DoPost {
 
     private DoPost() {
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getLocaID() {
-        return locaID;
-    }
-
-    public void setLocaID(String locaID) {
-        this.locaID = locaID;
-    }
-
     public void setPhucvu(long phucvu) {
         this.phucvu = phucvu;
     }

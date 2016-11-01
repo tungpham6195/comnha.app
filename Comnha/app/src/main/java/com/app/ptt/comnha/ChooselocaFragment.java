@@ -1,7 +1,6 @@
 package com.app.ptt.comnha;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,27 +33,9 @@ public class ChooselocaFragment extends Fragment {
     ArrayList<MyLocation> list;
     DatabaseReference dbRef;
     ChildEventListener locaChildEventListener;
-
-    public interface onPassDatafromChooseLocaFrg {
-        void passData(String data);
-    }
-
-    onPassDatafromChooseLocaFrg passingData;
-
     public ChooselocaFragment() {
         // Required empty public constructor
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            passingData = (onPassDatafromChooseLocaFrg) activity;
-        } catch (ClassCastException mess) {
-            throw new ClassCastException(activity.toString() + "must implement onPassDatafromChooseLocaFrg");
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -107,11 +88,6 @@ public class ChooselocaFragment extends Fragment {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity().getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String key = list.get(position).getLocaID();
-                passingData.passData(key);
-                DoPost.getInstance().setLocaID(key);
-                DoPost.getInstance().setName(list.get(position).getName());
-                DoPost.getInstance().setAddress(list.get(position).getDiachi());
                 DoPost.getInstance().setMyLocation(list.get(position));
                 getActivity().finish();
             }

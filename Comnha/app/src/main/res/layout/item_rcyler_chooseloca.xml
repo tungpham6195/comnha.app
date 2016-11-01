@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/item_rcyler_chooseloca_txtTenquan"
                 android:layout_toEndOf="@+id/item_rcyler_chooseloca_imgV"
-                android:maxLength="40"
+                android:maxLength="37"
                 android:text="89 ngô quyên, thủ đức, hồ chí minh"
                 android:textSize="12sp" />
 

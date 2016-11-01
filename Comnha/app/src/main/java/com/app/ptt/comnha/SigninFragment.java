@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.Signin_out;
 import com.github.clans.fab.FloatingActionButton;
@@ -115,7 +116,7 @@ public class SigninFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab_signup:
-                Intent intent = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                 intent.putExtra(getActivity().getResources().getString(R.string.fragment_CODE),
                         getActivity().getResources().getString(R.string.frg_signup_CODE));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -159,6 +160,7 @@ public class SigninFragment extends Fragment implements View.OnClickListener {
                                 mprogressDialog.dismiss();
                                 if (!task.isSuccessful()) {
                                     Log.w(TAG, "signInWithEmail:onComplete", task.getException());
+                                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 //                                    Toast.makeText(getActivity(), "failed login with: " + edt_email.getText().toString(),
 //                                            Toast.LENGTH_SHORT).show();
                                 } else {

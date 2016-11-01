@@ -49,7 +49,7 @@ public class Locatlist_rcyler_adapter extends RecyclerView.Adapter<Locatlist_rcy
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txt_tenquan.setText(list.get(position).getName());
         holder.txt_diachi.setText(list.get(position).getDiachi());
-//        holder.diem.setText(list.get(position).getName());
+        holder.txt_diem.setText(String.valueOf(list.get(position).getTongAVG()));
 //        holder.txt_km.setText(list.get(position).getName());
 //        holder.imgV.setBackground();
     }

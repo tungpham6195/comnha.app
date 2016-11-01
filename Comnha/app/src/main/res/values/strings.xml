@@ -4,6 +4,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="text_tenquan">Tên quán</string>
+    <string name="text_tenMon">Tên món ăn</string>
+    <string name="text_themMon">Thêm món ăn</string>
+
     <string name="text_sdt">Số điện thoại</string>
     <string name="text_openningTime">Giờ mở cửa</string>
     <string name="text_start">Từ</string>
@@ -53,6 +56,7 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="txt_writecomment">Viết bình luận......</string>
+    <!--ERROR-->
     <string name="txt_noemail">Warning: Chưa nhập email</string>
     <string name="txt_notemail">Error: Email không hợp lệ</string>
     <string name="txt_nopass">Warning: Chưa nhập password</string>
@@ -74,10 +78,17 @@
     <string name="txt_giawarn">Warning: Giá cuối cùng phải lớn hơn giá bắt đầu</string>
     <string name="txt_addinlocaerr">Error: Không thể thêm địa điểm mới</string>
     <string name="txt_nochosephoto">Warning: Chưa chọn ảnh nào</string>
+    <string name="txt_noTenMon">Warning: Chưa nhập tên món ăn</string>
+    <string name="txt_nogiaMon">Warning: Chưa nhập giá món ăn</string>
+    <string name="txt_choseLoca">Bạn đã chọn địa điểm</string>
+
+    <!--ERROR-->
     <string name="txt_plzwait">Please wait &#8230;</string>
     <string name="txt_logging">Đang đăng nhập &#8230;</string>
     <string name="txt_addinloca">Đang thêm địa điểm mới &#8230;</string>
+    <string name="txt_addinmon">Đang thêm món mới &#8230;</string>
     <string name="txt_addinpost">Đang đăng review mới &#8230;</string>
+    <string name="txt_logginout">Đang đăng xuất &#8230;</string>
     <string name="txt_choose">Chọn</string>
     <string name="txt_chosefromloca">Bộ nhớ</string>
     <string name="txt_chosefromuploaded">Ảnh đã đăng</string>
@@ -88,6 +99,9 @@
     <string name="txt_choseloca">Chọn địa điểm</string>
     <string name="txt_review">Review</string>
     <string name="txt_quanan">Quán ăn</string>
+    <string name="txt_album">Album</string>
+    <string name="txt_dsMon">Danh sách món ăn</string>
+    <string name="txt_addedMon">Đã thêm món mới</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <string name="firebaseStorage_path">gs://com-nha.appspot.com/</string>
@@ -115,6 +129,7 @@
     <string name="frg_signup_CODE">signup</string>
     <string name="frg_signin_CODE">signin</string>
     <string name="frg_prodetail_CODE">profiledetail</string>
+    <string name="frg_themmon_CODE">themmon</string>
     <string name="frag_locadetail_CODE">locadetail</string>
     <string name="frag_vote_CODE">vote</string>
     <string name="fragment_CODE">FRAGMENTCODE</string>
@@ -128,6 +143,8 @@
 
     <!--Firebase-->
     <string name="users_CODE">Users/</string>
+    <string name="thucdon_CODE">Menu/</string>
+    <string name="locathucdon_CODE">LocationMenu/</string>
     <string name="locations_CODE">Locations/</string>
     <string name="posts_CODE">Posts/</string>
     <string name="images_CODE">Images/</string>
@@ -136,6 +153,7 @@
     <string name="comments_CODE">Comments/</string>
     <string name="postcomment_CODE">PostComment/</string>
     <string name="locauserpost_CODE">LocationUserPost/</string>
+    <string name="locapostavg_CODE">LocationPostAVG/</string>
     <!--Firebase-->
 
     <string name="action_example">Example action</string>
@@ -156,7 +174,7 @@
     <string name="action_addpost">Đăng review</string>
     <string name="action_addloca">Thêm địa điểm</string>
     <string name="action_uploadphoto">Đăng ảnh</string>
-
+    <string name="menu_locadetail_themmon">Thêm món ăn</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>

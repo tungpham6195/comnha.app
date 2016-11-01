@@ -101,7 +101,7 @@ public class LocatlistFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         String key = list_item.get(position).getLocaID();
-                        Intent intent = new Intent(getActivity().getApplicationContext(), AdapterActivity.class);
+                        Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                         intent.putExtra(getResources().getString(R.string.fragment_CODE),
                                 getResources().getString(R.string.frag_locadetail_CODE));
                         intent.putExtra(getResources().getString(R.string.key_CODE), key);
