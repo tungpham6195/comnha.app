@@ -1,16 +1,13 @@
 package com.app.ptt.comnha;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -107,7 +104,7 @@ public class MapFragment extends Fragment {
                 public void onMapReady(GoogleMap googleMap) {
                     if (googleMap != null) {
                         myGoogleMap = googleMap;
-                        googleMap.getUiSettings().setZoomControlsEnabled(true);
+                        googleMap.getUiSettings().setZoomControlsEnabled(false);
                         googleMap.getUiSettings().setCompassEnabled(true);
                         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
                         googleMap.getUiSettings().setRotateGesturesEnabled(true);

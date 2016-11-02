@@ -66,7 +66,8 @@
                             android:id="@+id/frg_themMon_txt_tenquan"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:maxLength="20"
+                            android:maxLength="30"
+                            android:maxLines="1"
                             android:text="Tên quán"
                             android:textSize="17sp"
                             android:textStyle="bold" />
@@ -76,7 +77,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
-                            android:maxLength="25"
+                            android:maxLength="40"
+                            android:maxLines="1"
                             android:text="Địa chỉ"
                             android:textSize="15dp" />
                     </LinearLayout>

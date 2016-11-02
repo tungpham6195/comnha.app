@@ -105,6 +105,7 @@
     <string name="txt_album">Album</string>
     <string name="txt_dsMon">Danh sách món ăn</string>
     <string name="txt_addedMon">Đã thêm món mới</string>
+    <string name="txt_entrySearch">Nhập địa điểm &#8230;</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <string name="firebaseStorage_path">gs://com-nha.appspot.com/</string>
@@ -156,7 +157,8 @@
     <string name="comments_CODE">Comments/</string>
     <string name="postcomment_CODE">PostComment/</string>
     <string name="locauserpost_CODE">LocationUserPost/</string>
-    <string name="locapostavg_CODE">LocationPostAVG/</string>
+    <string name="menulocation_CODE">MenuLocation/</string>
+
     <!--Firebase-->
 
     <string name="action_example">Example action</string>

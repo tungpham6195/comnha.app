@@ -8,7 +8,7 @@ import java.util.Map;
  */
 
 public class ThucDon {
-    String tenmon, locaID, locaName, diachi;
+    String tenmon;
     long gia;
     String monID;
 
@@ -37,30 +37,6 @@ public class ThucDon {
         this.gia = gia;
     }
 
-    public String getLocaID() {
-        return locaID;
-    }
-
-    public String getLocaName() {
-        return locaName;
-    }
-
-    public String getDiachi() {
-        return diachi;
-    }
-
-    public void setLocaID(String locaID) {
-        this.locaID = locaID;
-    }
-
-    public void setLocaName(String locaName) {
-        this.locaName = locaName;
-    }
-
-    public void setDiachi(String diachi) {
-        this.diachi = diachi;
-    }
-
     public ThucDon() {
     }
 
@@ -68,9 +44,6 @@ public class ThucDon {
         Map<String, Object> result = new HashMap<>();
         result.put("tenmon", tenmon);
         result.put("gia", gia);
-        result.put("locaID", locaID);
-        result.put("locaName", locaName);
-        result.put("diachi", diachi);
         return result;
     }
 }

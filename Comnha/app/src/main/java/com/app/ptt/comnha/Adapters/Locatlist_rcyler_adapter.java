@@ -50,9 +50,7 @@ public class Locatlist_rcyler_adapter extends RecyclerView.Adapter<Locatlist_rcy
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txt_tenquan.setText(list.get(position).getName());
-        holder.txt_diachi.setText(list.get(position).getDiachi()
-                + ", " + list.get(position).getQuanhuyen()
-                + ", " + list.get(position).getTinhtp());
+        holder.txt_diachi.setText(list.get(position).getDiachi());
         holder.txt_diem.setText(String.valueOf(list.get(position).getTongAVG()));
         if (position > previuosPosition) {
             AnimationUtils.animateItemRcylerV(holder, true);
