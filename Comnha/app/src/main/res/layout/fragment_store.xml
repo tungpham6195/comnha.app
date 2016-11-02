@@ -1,13 +1,29 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.app.ptt.comnha.StoreFragment">
+
+    <Button
+        android:id="@+id/frg_store_btn_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@android:color/transparent"
+        android:drawablePadding="-10dp"
+        android:drawableStart="@drawable/ic_refresh_green_18dp"
+        android:gravity="center"
+        android:text="Reload"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimary" />
+
     <android.support.v7.widget.RecyclerView
-        android:paddingTop="@dimen/rcyler_paddingTop"
         android:id="@+id/frg_store_recyclerView_localist"
         android:layout_width="match_parent"
         android:layout_height="600dp"
+        android:paddingTop="@dimen/rcyler_paddingTop"
         android:scrollbarStyle="insideOverlay"
         android:scrollbars="vertical" />
-</FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>

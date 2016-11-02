@@ -91,7 +91,9 @@ public class LocadetailFragment extends Fragment {
                 location.setLocaID(dataSnapshot.getKey());
                 String gio = location.getTimestart() + " - " + location.getTimeend();
                 String tenquan = location.getName();
-                String diachi = location.getDiachi();
+                String diachi = location.getDiachi()
+                        + ", " + location.getQuanhuyen()
+                        + ", " + location.getTinhtp();
                 String sdt = location.getSdt();
                 txt_sdt.setText(sdt);
                 txt_diachi.setText(diachi);

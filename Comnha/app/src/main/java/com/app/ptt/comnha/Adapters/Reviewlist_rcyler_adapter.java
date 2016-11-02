@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.R;
 
@@ -21,7 +22,7 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
     ArrayList<Post> list;
     Activity activity;
     LayoutInflater inflater;
-
+    int previuosPosition = 0;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView txt_un, txt_postdate, txt_tittle,
@@ -66,6 +67,14 @@ public class Reviewlist_rcyler_adapter extends RecyclerView.Adapter<Reviewlist_r
         holder.txt_commentnumb.setText(String.valueOf(list.get(position).getCommentCount()) + " Comments");
         holder.txt_tenquan.setText(list.get(position).getLocaName());
         holder.txt_diachi.setText(list.get(position).getDiachi());
+        if (position > previuosPosition) {
+            AnimationUtils.animateItemRcylerV(holder, true);
+
+        } else {
+            AnimationUtils.animateItemRcylerV(holder, false);
+
+        }
+        previuosPosition = position;
     }
 
     @Override

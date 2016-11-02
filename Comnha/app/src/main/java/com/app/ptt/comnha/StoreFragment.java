@@ -9,8 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.google.firebase.database.ChildEventListener;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StoreFragment extends Fragment {
+public class StoreFragment extends Fragment implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -32,6 +34,8 @@ public class StoreFragment extends Fragment {
     private ArrayList<MyLocation> list_item;
     ChildEventListener locaListChildEventListener;
     int filter;
+    Button btn_refresh;
+    private static int STATUS_START = 0;
 
     public void setFilter(int filter) {
         this.filter = filter;
@@ -55,6 +59,11 @@ public class StoreFragment extends Fragment {
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 newLocation.setLocaID(dataSnapshot.getKey());
                 list_item.add(newLocation);
+                if (STATUS_START > 0) {
+                    btn_refresh.setVisibility(View.VISIBLE);
+                    AnimationUtils.animatbtnRefreshIfChange(btn_refresh);
+                }
+                STATUS_START = 1;
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -113,6 +122,7 @@ public class StoreFragment extends Fragment {
     }
 
     private void anhxa(View view) {
+        btn_refresh = (Button) view.findViewById(R.id.frg_store_btn_refresh);
         list_item = new ArrayList<>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_store_recyclerView_localist);
         mRecyclerView.setHasFixedSize(true);
@@ -136,6 +146,17 @@ public class StoreFragment extends Fragment {
                         getActivity().getApplicationContext().startActivity(intent);
                     }
                 }));
+        btn_refresh.setVisibility(View.GONE);
+        btn_refresh.setOnClickListener(this);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.frg_store_btn_refresh:
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                btn_refresh.setVisibility(View.GONE);
+                break;
+        }
+    }
 }
