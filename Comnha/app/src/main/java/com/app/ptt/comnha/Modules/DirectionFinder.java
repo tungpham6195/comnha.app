@@ -129,7 +129,8 @@ public class DirectionFinder {
                 Log.i(LOG, "RoutesSize: " + routes.size());
 
             }
-                listener.onDirectionFinderSuccess(routes);
+
+            listener.onDirectionFinderSuccess(routes);
         }
     }
     private List<LatLng> decodePolyLine(final String poly) {

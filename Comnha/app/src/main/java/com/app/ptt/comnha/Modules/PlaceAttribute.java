@@ -10,6 +10,7 @@ public class PlaceAttribute {
     public PlaceAttribute() {
     }
 
+
     public String getDistrict() {
         return district;
     }

@@ -168,7 +168,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                         mPlaceAttribute= mPlaceAPI.autocomplete(constraint.toString());
                         if(mPlaceAttribute!=null) {
                             a=mPlaceAttribute.getFullname();
-                            Log.i(LOG+".getFilter", mPlaceAttribute.getFullname()+"");
                             resultList=new ArrayList<>();
                             resultList.add(a);
                             filterResults.values = resultList;
@@ -177,7 +176,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                         else{
                             a=null;
                         }
-
                     }
                     return filterResults;
                 }
@@ -189,19 +187,49 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     } else {
                         notifyDataSetInvalidated();
                     }
-
                 }
-
             };
             return filter;
         }
     }
 
+    public String returnFullname(){
+        String a = mPlaceAttribute.getStreet_number();
+        String b = mPlaceAttribute.getRoute();
+        String c = mPlaceAttribute.getLocality();
+        String d = mPlaceAttribute.getDistrict();
+        String f = mPlaceAttribute.getState();
+        String e="";
+        if(a!=null)
+            e+=a;
+        if(b!=null )
+            if(a==null)
+                e += b;
+            else
+                e += ", "+ b;
+
+        if(c!=null)
+            if(a==null &&b==null)
+                e+=c;
+            else
+                e+=", "+c;
+        if(d!=null)
+            if(a==null && b==null && c==null)
+                e+=d;
+            else
+                e+=", "+d;
+        if(f!=null)
+            if(a==null &&b==null && c==null)
+                e+=f;
+            else
+                e+=", "+f;
+        return e;
+    }
     private void addNewLoca() {
         Log.i(LOG+".addNewLoca","Da toi đây");
         MyLocation newLocation = new MyLocation();
         newLocation.setName(edt_tenquan.getText().toString());
-        newLocation.setDiachi(a);
+        newLocation.setDiachi(returnFullname());
         newLocation.setSdt(edt_sdt.getText().toString());
         newLocation.setTimestart(edt_timestart.getText().toString());
         newLocation.setTimeend(edt_timeend.getText().toString());
@@ -269,7 +297,14 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
                     if(a!=null) {
                         Log.i(LOG + ".onClick", a);
-                        addNewLoca();
+                        if(mPlaceAttribute.getStreet_number()==null)
+                            Snackbar.make(view, "Không có số nhà, xin thử lại", Snackbar.LENGTH_SHORT).show();
+                        else
+                        if(mPlaceAttribute.getRoute()==null)
+                            Snackbar.make(view, "Không có tên đường, xin thử lại", Snackbar.LENGTH_SHORT).show();
+
+                        else
+                            addNewLoca();
                     }
                     else
                         Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();

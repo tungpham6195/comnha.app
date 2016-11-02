@@ -21,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.PlaceAPI;
+import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyTool;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,6 +45,7 @@ public class MapFragment extends Fragment {
     private SupportMapFragment supportMapFragment;
     private ArrayList<Route> list = new ArrayList<>();
     private ArrayList<String> listName = new ArrayList<>();
+    private ArrayList<MyLocation> listLocation;
     TextView txt_TenQuan, txt_DiaChi, txt_GioMo, txt_DiemGia, txt_DiemPhucVu, txt_DiemVeSinh;
     GoogleMap myGoogleMap;
     LatLng yourLatLng;
@@ -128,9 +131,7 @@ public class MapFragment extends Fragment {
                                     if (a != null) {
                                         txt_TenQuan.setText(a.getName());
 
-                                        txt_DiaChi.setText( myTool.returnLocationByLatLng(marker.getPosition().latitude,marker.getPosition().longitude)
-                                               // a.getDiachi()
-                                        );
+                                        txt_DiaChi.setText(a.getDiachi());
                                         txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
                                         if(a.getSize()==0){
                                             txt_DiemVeSinh.setText("0");
@@ -179,13 +180,21 @@ public class MapFragment extends Fragment {
                         //route.setEndAddress(myTool.returnLocationByName(route.getEndAddress()));
                         list.add(route);
                         addMarker(route);
+                       // listLocation=new ArrayList<>();
+                       // listLocation=myTool.returnListLocation();
                     }
                 }
                 if(intent.getIntExtra("STT",0)==3 &&intent.getBooleanExtra("Location",false)){
                     Log.i(LOG+".BroadcastReceiver","Nhan vi tri cua ban:");
                     yourLatLng = myTool.getYourLatLng();
                     yourLocation = myTool.getYourLocation();
-                    Log.i(LOG+".BroadcastReceiver","Vi tri cua ban nhan duoc: "+yourLocation+"  voi lat: " +yourLatLng.latitude+"lng: "+yourLatLng.longitude);
+//                    PlaceAPI placeAPI=new PlaceAPI();
+//                    PlaceAttribute a=new PlaceAttribute();
+//                            a=placeAPI.autocomplete(yourLocation);
+////                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ yourLocation + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
+//                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ a.getFullname() + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
+
+                    //Log.i(LOG+".BroadcastReceiver","Vi tri cua ban nhan duoc: "+yourLocation+"  voi lat: " +yourLatLng.latitude+"lng: "+yourLatLng.longitude);
                     if (yourMarker == null) {
                         Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
@@ -218,7 +227,10 @@ public class MapFragment extends Fragment {
                     Log.i(LOG+".BroadcastReceiver","Nhan su thay doi vi tri cua ban:");
                     yourLatLng = myTool.getYourLatLng();
                     yourLocation = myTool.getYourLocation();
-                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ yourLocation + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
+//                    PlaceAPI placeAPI=new PlaceAPI();
+//                    PlaceAttribute a=placeAPI.autocomplete(yourLocation);
+////                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ yourLocation + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
+//                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ a.getFullname() + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
                     Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                     BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                     Log.i(LOG+".BroadcastReceiver", "Clear All Marker");
@@ -253,8 +265,14 @@ public class MapFragment extends Fragment {
             {
                 Log.i(LOG+".returnMyLocation",a.getLocalID());
 
+//                for(MyLocation b:listLocation){
+//                    if(a.getLocalID()==b.getLocaID()) {
+//                        Log.i(LOG + ".returnMyLocation", "location tra ve: " + b.getLocaID() + ". Dia chi:" + b.getDiachi());
+//                        return b;
+//                    }
+//                }
                MyLocation myLocation= myTool.returnMyLocationByID(a.getLocalID());
-                Log.i(LOG+".returnMyLocation","location tra ve: "+myLocation.getLocaID()+". Dia chi:"+myLocation.getDiachi());
+
                 return myLocation;
             }
         }

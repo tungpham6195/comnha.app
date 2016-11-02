@@ -75,67 +75,82 @@ public class PlaceAPI {
 //        return resultList;
 //    }
     private static final String LOG = PlaceAPI.class.getSimpleName();
-    PlaceAttribute mPlaceAttributes=new PlaceAttribute();
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     private static final String API_KEY = "AIzaSyDU6VmWjBJP-k6yWgP4v4X5EVFhyCljulo";
     String fullname;
+    PlaceAttribute mPlaceAttributes;
     public PlaceAttribute autocomplete (String input) {
-        HttpURLConnection conn = null;
-        StringBuilder jsonResults = new StringBuilder();
-
+//        HttpURLConnection conn = null;
+//        StringBuilder jsonResults = new StringBuilder();
+//
+//        try {
+//            StringBuilder sb = new StringBuilder(PLACES_API_BASE);
+//            sb.append( URLEncoder.encode(input, "utf8"));
+//            sb.append("&key=" + API_KEY);
+//            Log.i("LOG NE",sb.toString());
+//            URL url = new URL(sb.toString());
+//            conn = (HttpURLConnection) url.openConnection();
+//            InputStreamReader in = new InputStreamReader(conn.getInputStream());
+//            // Load the results into a StringBuilder
+//            int read;
+//            char[] buff = new char[1024];
+//            while ((read = in.read(buff)) != -1) {
+//                jsonResults.append(buff, 0, read);
+//            }
+//        } catch (MalformedURLException e) {
+//            Log.e(LOG, "Error processing Places API URL", e);
+//            return null;
+//        } catch (IOException e) {
+//            Log.e(LOG, "Error connecting to Places API", e);
+//            return null;
+//        } finally {
+////            if (conn != null) {
+////                conn.disconnect();
+////            }
+//        }
+        String name;
+        StringBuffer stringBuffer=new StringBuffer();
+        StringBuilder sb = new StringBuilder(PLACES_API_BASE);
         try {
-            StringBuilder sb = new StringBuilder(PLACES_API_BASE);
-            sb.append( URLEncoder.encode(input, "utf8"));
-            sb.append("&key=" + API_KEY);
-            Log.i("LOG NE",sb.toString());
-
-            URL url = new URL(sb.toString());
-            conn = (HttpURLConnection) url.openConnection();
-            InputStreamReader in = new InputStreamReader(conn.getInputStream());
-            // Load the results into a StringBuilder
-            int read;
-            char[] buff = new char[1024];
-            while ((read = in.read(buff)) != -1) {
-                jsonResults.append(buff, 0, read);
+            sb.append(URLEncoder.encode(input, "utf8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        sb.append("&key=" + API_KEY);
+        String link=sb.toString();
+        try{
+            URL url=new URL(link);
+            mPlaceAttributes=new PlaceAttribute();
+            InputStream is=url.openConnection().getInputStream();
+            BufferedReader reader=new BufferedReader(new InputStreamReader(is));
+            String line;
+            while((line=reader.readLine())!=null){
+                stringBuffer.append(line+"\n");
             }
         } catch (MalformedURLException e) {
-            Log.e(LOG, "Error processing Places API URL", e);
-            return null;
+            e.printStackTrace();
         } catch (IOException e) {
-            Log.e(LOG, "Error connecting to Places API", e);
-            return null;
-        } finally {
-//            if (conn != null) {
-//                conn.disconnect();
-//            }
+            e.printStackTrace();
         }
         try {
-            String name;
-            JSONObject jsonObj = new JSONObject(jsonResults.toString());
+            JSONObject jsonObj = new JSONObject(stringBuffer.toString());
             JSONArray resultsJsonResult = jsonObj.getJSONArray("results");
             if (resultsJsonResult.length()>0) {
-                JSONObject a = resultsJsonResult.getJSONObject(0);
-                fullname = a.getString("formatted_address");
+                JSONObject temp = resultsJsonResult.getJSONObject(0);
+                fullname = temp.getString("formatted_address");
                 // Extract the Place descriptions from the results
-                JSONArray jsonAddresses=a.getJSONArray("address_components");
+                JSONArray jsonAddresses=temp.getJSONArray("address_components");
                 for(int i=0;i<jsonAddresses.length();i++){
                     JSONObject jsonObject=jsonAddresses.getJSONObject(i);
                     name=jsonObject.getString("long_name");
                     JSONArray jsonType=jsonObject.getJSONArray("types");
-                    List<String> temp = new ArrayList<>();
+                    List<String> list = new ArrayList<>();
                     for(int j=0;j<jsonType.length();j++) {
-                        temp.add(jsonType.getString(j));
-                        addtoPlaceAttribute(temp,name);
+                        list.add(jsonType.getString(j));
+                        addtoPlaceAttribute(list,name);
                     }
-
-
-
                 }
-                mPlaceAttributes.setFullname(mPlaceAttributes.getStreet_number()+" "
-                        +mPlaceAttributes.getRoute()+", "
-                        +mPlaceAttributes.getLocality()+", "
-                        +mPlaceAttributes.getDistrict()+", "
-                        +mPlaceAttributes.getState());
+                mPlaceAttributes.setFullname(fullname);
                 return mPlaceAttributes;
             }
 
@@ -145,7 +160,10 @@ public class PlaceAPI {
         }
         return null;
     }
+
     public PlaceAttribute addtoPlaceAttribute(List<String> list,String name){
+        if(name==null)
+            name="";
         for(int i=0;i<list.size();i++){
             switch (list.get(i).toString()){
                 case "street_number":
@@ -167,7 +185,9 @@ public class PlaceAPI {
                     break;
             }
         }
+
         Log.i(LOG+".addtoPlaceAttribute","Full name: "+mPlaceAttributes.getFullname());
+        Log.i(LOG+".addtoPlaceAttribute","Street number: "+mPlaceAttributes.getStreet_number());
         Log.i(LOG+".addtoPlaceAttribute","Route: "+mPlaceAttributes.getRoute());
         Log.i(LOG+".addtoPlaceAttribute","Locality: "+mPlaceAttributes.getLocality());
         Log.i(LOG+".addtoPlaceAttribute","District: "+mPlaceAttributes.getDistrict());

@@ -102,6 +102,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     @Override
     public void onDirectionFinderSuccess(ArrayList<Route> routes) {
         Log.i(LOG+".FinderSuccess","Them route thanh cong");
+
         this.routes=routes;
         flag=1;
         sendBroadcast(routes.get(routes.size()-1).getLocalID());
@@ -143,19 +144,18 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 returnYourLatLng(location.getLatitude(), location.getLongitude());
                 yourLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
                 Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLatLng.latitude + "va lng= " + yourLatLng.longitude);
-                flag = 2;
-                sendBroadcast("LocationChange");
-                routes = new ArrayList<>();
-                for (MyLocation a : listLocation) {
-                    loadListPlace(a.getDiachi(), a.getLocaID());
-                }
+//                flag = 2;
+//                sendBroadcast("LocationChange");
+//                routes = new ArrayList<>();
+//                for (MyLocation a : listLocation) {
+//                    loadListPlace(a.getDiachi(), a.getLocaID());
+//                }
             }
 
         }
     }
     public MyLocation returnMyLocationByID(String ID){
         for(MyLocation location: listLocation){
-            Log.i(LOG+".returnMyLocationByID"," ID truyen vao"+ID);
             if(location.getLocaID()==(ID)) {
                 Log.i(LOG+".returnMyLocationByID","location can tim"+location.getDiachi());
                 return location;
@@ -230,6 +230,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         ref.child(mContext.getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
                 MyLocation myLocation=dataSnapshot.getValue(MyLocation.class);
                 myLocation.setLocaID(dataSnapshot.getKey());
                 listLocation.add(myLocation);
@@ -268,6 +269,11 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             e.printStackTrace();
         }
     }
+    public ArrayList<MyLocation> returnListLocation(){
+        if(listLocation!=null)
+            return listLocation;
+        return null;
+    }
     public void loadListPlace(String destination,String ID) {
         Log.i(LOG, "loadListPlace");
         String origin =null;
@@ -296,28 +302,23 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                     String c = address.getSubAdminArea();
                     String d = address.getAdminArea();
                     String e="";
-                    if(a!=null){
+                    if(a!=null)
                         e+=a;
-                        if(b!=null ){
-                            if(a!="")
-                                e+= ", "+b;
-                            else
-                                e+=b;
-                        }
-                        if(c!="" ){
-                            if((a!=""||b!=""))
-                                e+=", "+c;
-                            else{
-                                e+=c;
-                            }
-                            if(d!=null){
-                                if((a!=""||b!=""||c!=""))
-                                    e+=", "+d;
-                                else
-                                    e+=d;
-                            }
-                        }
+                    if(b!=null && a!=null) {
+                        e += ", " + b;
+                    }else{
+                        e+=b;
                     }
+                    if(c!=null)
+                        if(a==null &&b==null)
+                            e+=c;
+                        else
+                            e+=", "+c;
+                    if(d!=null)
+                        if(a==null && b==null && c==null)
+                            e+=d;
+                        else
+                            e+=", "+d;
                     return e;
                 }
                 return null;
@@ -360,28 +361,24 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             String c = temp.getSubAdminArea();
             String d = temp.getAdminArea();
             String e="";
-            if(a!=null){
+            if(a!=null)
                 e+=a;
-                if(b!=null ){
-                    if(a!="")
-                        e+= ", "+b;
-                    else
-                        e+=b;
-                }
-                if(c!="" ){
-                    if((a!=""||b!=""))
-                        e+=", "+c;
-                    else{
-                        e+=c;
-                    }
-                    if(d!=null){
-                        if((a!=""||b!=""||c!=""))
-                            e+=", "+d;
-                        else
-                            e+=d;
-                    }
-                }
-            }
+            if(b!=null )
+                if(a==null)
+                    e += b;
+                else
+                    e += ", "+ b;
+
+            if(c!=null)
+                if(a==null &&b==null)
+                    e+=c;
+                else
+                    e+=", "+c;
+            if(d!=null)
+                if(a==null && b==null && c==null)
+                    e+=d;
+                else
+                    e+=", "+d;
             return e;
         }
         return null;
