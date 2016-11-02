@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.R;
 
@@ -34,6 +35,7 @@ public class Locatlist_rcyler_adapter extends RecyclerView.Adapter<Locatlist_rcy
 
     Activity activity;
     ArrayList<MyLocation> list;
+    int previuosPosition = 0;
 
     public Locatlist_rcyler_adapter(ArrayList<MyLocation> list) {
         this.list = list;
@@ -48,8 +50,18 @@ public class Locatlist_rcyler_adapter extends RecyclerView.Adapter<Locatlist_rcy
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txt_tenquan.setText(list.get(position).getName());
-        holder.txt_diachi.setText(list.get(position).getDiachi());
+        holder.txt_diachi.setText(list.get(position).getDiachi()
+                + ", " + list.get(position).getQuanhuyen()
+                + ", " + list.get(position).getTinhtp());
         holder.txt_diem.setText(String.valueOf(list.get(position).getTongAVG()));
+        if (position > previuosPosition) {
+            AnimationUtils.animateItemRcylerV(holder, true);
+
+        } else {
+            AnimationUtils.animateItemRcylerV(holder, false);
+
+        }
+        previuosPosition = position;
 //        holder.txt_km.setText(list.get(position).getName());
 //        holder.imgV.setBackground();
     }

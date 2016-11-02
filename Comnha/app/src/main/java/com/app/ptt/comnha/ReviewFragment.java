@@ -9,8 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.Post;
 import com.google.firebase.database.ChildEventListener;
@@ -25,8 +27,8 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ReviewFragment extends Fragment {
-
+public class ReviewFragment extends Fragment implements View.OnClickListener {
+    private static int STATUS_START = 0;
 
     public ReviewFragment() {
         // Required empty public constructor
@@ -39,6 +41,7 @@ public class ReviewFragment extends Fragment {
     ArrayList<Post> postlist;
     ChildEventListener lastnewsChildEventListener;
     int sortType;
+    Button btn_refresh;
 
     public void setSortType(int sortType) {
         this.sortType = sortType;
@@ -57,7 +60,13 @@ public class ReviewFragment extends Fragment {
                 Post post = dataSnapshot.getValue(Post.class);
                 post.setPostID(dataSnapshot.getKey());
                 postlist.add(post);
+                if (STATUS_START > 0) {
+                    btn_refresh.setVisibility(View.VISIBLE);
+                    AnimationUtils.animatbtnRefreshIfChange(btn_refresh);
+                }
+                STATUS_START = 1;
                 mAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -100,6 +109,7 @@ public class ReviewFragment extends Fragment {
     }
 
     private void anhxa(View view) {
+        btn_refresh = (Button) view.findViewById(R.id.frg_review_btn_refresh);
         postlist = new ArrayList<>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_review);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -121,6 +131,18 @@ public class ReviewFragment extends Fragment {
                 startActivity(intent);
             }
         }));
+        btn_refresh.setVisibility(View.GONE);
+        btn_refresh.setOnClickListener(this);
+    }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.frg_review_btn_refresh:
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                AnimationUtils.animatbtnRefreshIfClick(btn_refresh);
+                btn_refresh.setVisibility(View.GONE);
+                break;
+        }
     }
 }

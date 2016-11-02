@@ -157,6 +157,8 @@
     <string name="postcomment_CODE">PostComment/</string>
     <string name="locauserpost_CODE">LocationUserPost/</string>
     <string name="locapostavg_CODE">LocationPostAVG/</string>
+    <string name="tinhtp_CODE">TinhTP/</string>
+    <string name="quanhuyen_CODE">QuanHuyen/</string>
     <!--Firebase-->
 
     <string name="action_example">Example action</string>
