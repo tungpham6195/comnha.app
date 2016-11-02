@@ -127,7 +127,10 @@ public class MapFragment extends Fragment {
                                     MyLocation a = returnMyLocation(marker);
                                     if (a != null) {
                                         txt_TenQuan.setText(a.getName());
-                                        txt_DiaChi.setText(a.getDiachi());
+
+                                        txt_DiaChi.setText( myTool.returnLocationByLatLng(marker.getPosition().latitude,marker.getPosition().longitude)
+                                               // a.getDiachi()
+                                        );
                                         txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
                                         if(a.getSize()==0){
                                             txt_DiemVeSinh.setText("0");

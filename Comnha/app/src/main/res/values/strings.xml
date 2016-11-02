@@ -287,4 +287,31 @@
         <item>Huyện Phú Xuyên</item>
         <item>Huyện Mê Linh</item>
     </string-array>
+    <string-array name="hochiminh">
+        <item>2</item>
+        <item>Quận 1</item>
+        <item>Quận 2</item>
+        <item>Quận 3</item>
+        <item>Quận 4</item>
+        <item>Quận 5</item>
+        <item>Quận 6</item>
+        <item>Quận 7</item>
+        <item>Quận 8</item>
+        <item>Quận 9</item>
+        <item>Quận 10</item>
+        <item>Quận 11</item>
+        <item>Quận 12</item>
+        <item>Quận Gò Vấp</item>
+        <item>Quận Tân Bình</item>
+        <item>Quận Tân Phú</item>
+        <item>Quận Bình Thạnh</item>
+        <item>Quận Phú Nhuận</item>
+        <item>Quận Thủ Đức</item>
+        <item>Quận Bình Tân</item>
+        <item>Huyện Bình Chánh</item>
+        <item>Huyện Củ Chi</item>
+        <item>Huyện Hóc Môn</item>
+        <item>Huyện Nhà Bè</item>
+        <item>Huyện Cần Giờ</item>
+    </string-array>
 </resources>

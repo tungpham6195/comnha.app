@@ -55,6 +55,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     Intent broadcastIntent;
     ArrayList<Route> routes;
     String yourLocation=null;
+    int a=0;
     LatLng yourLatLng;
     int flag;
     public MyTool(Context context) {
@@ -103,11 +104,6 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         Log.i(LOG+".FinderSuccess","Them route thanh cong");
         this.routes=routes;
         flag=1;
-//        routes.get(routes.size()-1).setEndAddress(returnLocationByLatLng(
-//                geocoder,
-//                routes.get(routes.size()-1).getEndLocation().latitude,
-//                routes.get(routes.size()-1).getEndLocation().longitude
-//        ));
         sendBroadcast(routes.get(routes.size()-1).getLocalID());
     }
 
@@ -129,7 +125,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             this.latitude = l.getLatitude();
             this.longtitude = l.getLongitude();
             returnYourLatLng(l.getLatitude(),l.getLongitude());
-            yourLocation =returnLocationByLatLng(geocoder,l.getLatitude(),l.getLongitude());
+            yourLocation =returnLocationByLatLng(l.getLatitude(),l.getLongitude());
             flag=2;
             sendBroadcast("Location");
 
@@ -139,19 +135,22 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location.getLatitude() != this.latitude && location.getLongitude() != this.longtitude) {
-            Log.i(LOG+".onLocationChanged","Vi tri cua ban bi thay doi");
-            this.latitude = location.getLatitude();
-            this.longtitude = location.getLongitude();
-            returnYourLatLng(location.getLatitude(),location.getLongitude());
-            yourLocation= returnLocationByLatLng(geocoder,location.getLatitude(),location.getLongitude());
-            Log.i(LOG+".onLocationChanged","Vi tri moi: "+ yourLocation+". Lat= "+yourLatLng.latitude+"va lng= "+yourLatLng.longitude);
-            flag=2;
-            sendBroadcast("LocationChange");
-            routes=new ArrayList<>();
-            for (MyLocation a : listLocation) {
-                loadListPlace(a.getDiachi(),a.getLocaID());
+        if (location != null) {
+            if (location.getLatitude() != this.latitude && location.getLongitude() != this.longtitude) {
+                Log.i(LOG + ".onLocationChanged", "Vi tri cua ban bi thay doi");
+                this.latitude = location.getLatitude();
+                this.longtitude = location.getLongitude();
+                returnYourLatLng(location.getLatitude(), location.getLongitude());
+                yourLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
+                Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLatLng.latitude + "va lng= " + yourLatLng.longitude);
+                flag = 2;
+                sendBroadcast("LocationChange");
+                routes = new ArrayList<>();
+                for (MyLocation a : listLocation) {
+                    loadListPlace(a.getDiachi(), a.getLocaID());
+                }
             }
+
         }
     }
     public MyLocation returnMyLocationByID(String ID){
@@ -237,6 +236,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 Log.i(LOG+".onChildAdded", "Ten quan: "+dataSnapshot.getValue(MyLocation.class).getName());
                 Log.i(LOG+".onChildAdded", "Dia chi: "+dataSnapshot.getValue(MyLocation.class).getDiachi());
                 loadListPlace(myLocation.getDiachi(),myLocation.getLocaID());
+
             }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String  s) {
@@ -281,7 +281,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         return yourLocation;
     }
 
-    public String returnLocationByLatLng(Geocoder geocoder, Double latitude, Double longitude) {
+    public String returnLocationByLatLng(Double latitude, Double longitude) {
         Log.i(LOG+".returnLocationByLatLng", "ReturnLocationByLatLng");
         List<Address> addresses=new ArrayList<>();
         Double lat = latitude;

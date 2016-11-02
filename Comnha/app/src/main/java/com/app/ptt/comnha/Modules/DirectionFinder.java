@@ -45,7 +45,6 @@ public class DirectionFinder {
 
 
     public void execute() throws UnsupportedEncodingException {
-        Log.i(LOG,"BAT DAU TU DAY NHA. ROI VCL");
         if(destination!=null &&origin!=null) {
             listener.onDirectionFinderStart();
             new DowloadRawData().execute(createURL());
@@ -124,7 +123,7 @@ public class DirectionFinder {
                 }
 
                 routes.add(route);
-                Log.i(LOG, "route.endAddress: " + route.getEndAddress());
+                Log.i(LOG, "route.distric: " + route.getDistrict());
                 Log.i(LOG,"lat="+route.getEndLocation().latitude+" lon="+route.getEndLocation().longitude);
                 Log.i(LOG,route.getLocalID()+"");
                 Log.i(LOG, "RoutesSize: " + routes.size());
