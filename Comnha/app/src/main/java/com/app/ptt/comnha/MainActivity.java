@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 import com.github.clans.fab.FloatingActionButton;
@@ -39,11 +40,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , FloatingActionButton.OnClickListener {
 
-
-//    private MyService myService;
-
+    //    private MyService myService;
     //private MyService myService;
-
     private static final String LOG = MainActivity.class.getSimpleName();
     //private Boolean isBound = false;
     private Bundle savedInstanceState;
@@ -192,6 +190,7 @@ public class MainActivity extends AppCompatActivity
                         transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame, reviewFragment);
                         transaction.commit();
+                        AnimationUtils.animatfabMenuIn(fabmenu);
                         break;
                     case R.id.tab_stores:
                         StoreFragment storeFragment = new StoreFragment();
@@ -199,23 +198,14 @@ public class MainActivity extends AppCompatActivity
                         transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame, storeFragment);
                         transaction.commit();
+                        AnimationUtils.animatfabMenuIn(fabmenu);
                         break;
                     case R.id.tab_locations:
-                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_locations), Gravity.START);
-                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_locafilter, popupMenu.getMenu());
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.popup_locafilter_myloca:
-                                        break;
-                                    case R.id.popup_locafilter_choseloca:
-                                        break;
-                                }
-                                return true;
-                            }
-                        });
-                        popupMenu.show();
+                        FilterFragment filterFragment = new FilterFragment();
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, filterFragment);
+                        transaction.commit();
+                        AnimationUtils.animatfabMenuOut(fabmenu);
                         break;
                 }
             }

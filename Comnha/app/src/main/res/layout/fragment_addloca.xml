@@ -76,6 +76,7 @@
                                 android:hint="@string/text_tenquan"
                                 android:inputType="textEmailAddress" />
                         </android.support.design.widget.TextInputLayout>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -93,7 +94,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:hint="@string/text_address"
-                                    android:inputType="textPostalAddress" />
+                                    android:inputType="textEmailAddress" />
                             </android.support.design.widget.TextInputLayout>
 
                         </LinearLayout>
@@ -167,12 +168,13 @@
                                 android:textColor="@android:color/black"
                                 android:textSize="18sp" />
 
-                            <EditText
-                                android:id="@+id/frg_addloction_edt_giomo"
+                            <Button
+                                android:id="@+id/frg_addloction_btn_giomo"
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/text_start"
-                                android:inputType="textEmailAddress" />
+                                android:text="9H"
+                                android:textAllCaps="true"
+                                android:theme="@style/AppTheme.ButtonPickTime" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -182,13 +184,15 @@
                                 android:textColor="@android:color/black"
                                 android:textSize="18dp" />
 
-                            <EditText
-                                android:id="@+id/frg_addloction_edt_giodong"
+                            <Button
+                                android:id="@+id/frg_addloction_btn_giodong"
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:hint="@string/text_end"
-                                android:inputType="textEmailAddress" />
+                                android:inputType="textEmailAddress"
+                                android:text="9H"
+                                android:textAllCaps="true"
+                                android:theme="@style/AppTheme.ButtonPickTime" />
                         </LinearLayout>
                     </LinearLayout>
                     <!--<LinearLayout-->
@@ -217,7 +221,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="90dp"
             android:src="@drawable/ic_check_white_36dp"
-            app:fab_colorNormal="@color/colorFloat2"
-            app:fab_colorPressed="@color/colorFloat2dark" />
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimary" />
     </RelativeLayout>
 </FrameLayout>

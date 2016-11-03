@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.R;
 
@@ -34,6 +35,7 @@ public class Chooseloca_rcyler_adapter extends RecyclerView.Adapter<Chooseloca_r
 
     Activity activity;
     ArrayList<MyLocation> list;
+    int previuosPosition = 0;
 
     public Chooseloca_rcyler_adapter(ArrayList<MyLocation> list) {
         this.list = list;
@@ -49,6 +51,14 @@ public class Chooseloca_rcyler_adapter extends RecyclerView.Adapter<Chooseloca_r
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txt_tenquan.setText(list.get(position).getName());
         holder.txt_diachi.setText(list.get(position).getDiachi());
+        if (position > previuosPosition) {
+            AnimationUtils.animateItemRcylerV(holder, false);
+
+        } else {
+            AnimationUtils.animateItemRcylerV(holder, true);
+
+        }
+        previuosPosition = position;
 //        holder.diem.setText(list.get(position).getName());
 //        holder.txt_km.setText(list.get(position).getName());
 //        holder.imgV.setBackground();

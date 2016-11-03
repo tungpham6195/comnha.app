@@ -12,7 +12,7 @@
         android:layout_gravity="top|center_horizontal"
         android:background="@android:color/transparent"
         android:drawablePadding="-10dp"
-        android:drawableStart="@drawable/ic_refresh_green_18dp"
+        android:drawableStart="@drawable/ic_refresh_18dp"
         android:gravity="center"
         android:text="Reload"
         android:textAllCaps="false"

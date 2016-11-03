@@ -18,8 +18,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Modules.PlaceAPI;
-import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyTool;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -75,13 +73,13 @@ public class MapFragment extends Fragment {
         mIntentFilter.addAction(mBroadcastSendAddress);
         mIntentFilter.addAction(mBroadcastChangeLocation);
         getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
-        myTool=new MyTool(getContext());
+        myTool = new MyTool(getContext());
         myTool.startGoogleApi();
     }
 
     @Override
     public void onStop() {
-        Log.i(LOG,"onStop");
+        Log.i(LOG, "onStop");
         super.onStop();
         getActivity().unregisterReceiver(mBroadcastReceiver);
         myTool.stopGoogleApi();
@@ -130,11 +128,11 @@ public class MapFragment extends Fragment {
 
                                         txt_DiaChi.setText(a.getDiachi());
                                         txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
-                                        if(a.getSize()==0){
+                                        if (a.getSize() == 0) {
                                             txt_DiemVeSinh.setText("0");
                                             txt_DiemGia.setText("0");
                                             txt_DiemPhucVu.setText("0");
-                                        }else {
+                                        } else {
                                             txt_DiemVeSinh.setText(a.getVsTong() / a.getSize() + "");
                                             txt_DiemGia.setText(a.getGiaTong() / a.getSize() + "");
                                             txt_DiemPhucVu.setText(a.getPvTong() / a.getSize() + "");
@@ -167,22 +165,22 @@ public class MapFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcastSendAddress)) {
-                if(intent.getIntExtra("STT",0)==1) {
-                    Log.i(LOG+".BroadcastReceiver", "Nhan id: " + intent.getStringExtra("PlaceID"));
+                if (intent.getIntExtra("STT", 0) == 1) {
+                    Log.i(LOG + ".BroadcastReceiver", "Nhan id: " + intent.getStringExtra("PlaceID"));
                     listName.add(intent.getStringExtra("PlaceID"));
                     Route route;
                     route = myTool.getRouteByID(intent.getStringExtra("PlaceID"));
                     if (route != null) {
-                        Log.i(LOG+".BroadcastReceiver", "Dia Chi Cua ID Vua Nhan: " + route.getEndAddress());
+                        Log.i(LOG + ".BroadcastReceiver", "Dia Chi Cua ID Vua Nhan: " + route.getEndAddress());
                         //route.setEndAddress(myTool.returnLocationByName(route.getEndAddress()));
                         list.add(route);
                         addMarker(route);
-                       // listLocation=new ArrayList<>();
-                       // listLocation=myTool.returnListLocation();
+                        // listLocation=new ArrayList<>();
+                        // listLocation=myTool.returnListLocation();
                     }
                 }
-                if(intent.getIntExtra("STT",0)==3 &&intent.getBooleanExtra("Location",false)){
-                    Log.i(LOG+".BroadcastReceiver","Nhan vi tri cua ban:");
+                if (intent.getIntExtra("STT", 0) == 3 && intent.getBooleanExtra("Location", false)) {
+                    Log.i(LOG + ".BroadcastReceiver", "Nhan vi tri cua ban:");
                     yourLatLng = myTool.getYourLatLng();
                     yourLocation = myTool.getYourLocation();
 //                    PlaceAPI placeAPI=new PlaceAPI();
@@ -195,33 +193,32 @@ public class MapFragment extends Fragment {
                     if (yourMarker == null) {
                         Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                        Log.i(LOG+".BroadcastReceiver","Them marker vi tri cua ban vao map");
+                        Log.i(LOG + ".BroadcastReceiver", "Them marker vi tri cua ban vao map");
                         yourMarker = new MarkerOptions()
                                 .position(yourLatLng)
                                 .title(yourLocation)
                                 .icon(markerIcon);
                         myGoogleMap.addMarker(yourMarker);
                         myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLatLng, 13));
-                    }
-                    else{
+                    } else {
                         myGoogleMap.clear();
                         Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                        Log.i(LOG+".BroadcastReceiver","Them marker vi tri cua ban vao map");
+                        Log.i(LOG + ".BroadcastReceiver", "Them marker vi tri cua ban vao map");
                         yourMarker = new MarkerOptions()
                                 .position(yourLatLng)
                                 .title(yourLocation)
                                 .icon(markerIcon);
                         myGoogleMap.addMarker(yourMarker);
                         myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLatLng, 13));
-                        list=new ArrayList<>();
+                        list = new ArrayList<>();
                     }
-                    if(list.size()==0){
+                    if (list.size() == 0) {
                         myTool.getDataInFireBase();
                     }
                 }
-                if(intent.getIntExtra("STT",0)==2&&intent.getBooleanExtra("LocationChange",false)) {
-                    Log.i(LOG+".BroadcastReceiver","Nhan su thay doi vi tri cua ban:");
+                if (intent.getIntExtra("STT", 0) == 2 && intent.getBooleanExtra("LocationChange", false)) {
+                    Log.i(LOG + ".BroadcastReceiver", "Nhan su thay doi vi tri cua ban:");
                     yourLatLng = myTool.getYourLatLng();
                     yourLocation = myTool.getYourLocation();
 //                    PlaceAPI placeAPI=new PlaceAPI();
@@ -230,11 +227,11 @@ public class MapFragment extends Fragment {
 //                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ a.getFullname() + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
                     Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                     BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                    Log.i(LOG+".BroadcastReceiver", "Clear All Marker");
+                    Log.i(LOG + ".BroadcastReceiver", "Clear All Marker");
                     myGoogleMap.clear();
-                    list=new ArrayList<>();
-                    listName=new ArrayList<>();
-                    Log.i(LOG+".BroadcastReceiver", "Them Marker vi tri cua ban");
+                    list = new ArrayList<>();
+                    listName = new ArrayList<>();
+                    Log.i(LOG + ".BroadcastReceiver", "Them Marker vi tri cua ban");
                     yourMarker = new MarkerOptions()
                             .position(yourLatLng)
                             .title(yourLocation)
@@ -250,17 +247,16 @@ public class MapFragment extends Fragment {
     };
 
     public void addMarker(Route route) {
-        Log.i(LOG+".addMarker","Them dia diem nhan duoc: "+route.getEndAddress());
+        Log.i(LOG + ".addMarker", "Them dia diem nhan duoc: " + route.getEndAddress());
         myGoogleMap.addMarker(new MarkerOptions()
                 .position(route.getEndLocation()));
     }
 
     public MyLocation returnMyLocation(Marker marker) {
-        Log.i(LOG+".returnRoute","Tra ve route ung voi marker");
+        Log.i(LOG + ".returnRoute", "Tra ve route ung voi marker");
         for (Route a : list) {
-            if (marker.getPosition().latitude == a.getEndLocation().latitude && marker.getPosition().longitude == a.getEndLocation().longitude)
-            {
-                Log.i(LOG+".returnMyLocation",a.getLocalID());
+            if (marker.getPosition().latitude == a.getEndLocation().latitude && marker.getPosition().longitude == a.getEndLocation().longitude) {
+                Log.i(LOG + ".returnMyLocation", a.getLocalID());
 
 //                for(MyLocation b:listLocation){
 //                    if(a.getLocalID()==b.getLocaID()) {
@@ -268,14 +264,13 @@ public class MapFragment extends Fragment {
 //                        return b;
 //                    }
 //                }
-               MyLocation myLocation= myTool.returnMyLocationByID(a.getLocalID());
+                MyLocation myLocation = myTool.returnMyLocationByID(a.getLocalID());
 
                 return myLocation;
             }
         }
         return null;
     }
-
 
 
 }
