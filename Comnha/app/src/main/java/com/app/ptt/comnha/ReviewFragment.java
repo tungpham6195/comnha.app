@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,12 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     ChildEventListener lastnewsChildEventListener;
     int sortType;
     Button btn_refresh;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
 
     public void setSortType(int sortType) {
         this.sortType = sortType;

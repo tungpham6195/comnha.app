@@ -9,6 +9,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.app.ptt.comnha.Modules.DirectionFinder;
 import com.app.ptt.comnha.Modules.DirectionFinderListener;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.R;
+import com.app.ptt.comnha.StoreFragment;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -55,9 +57,10 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     Intent broadcastIntent;
     ArrayList<Route> routes;
     String yourLocation=null;
-    int a=0;
+    int temp=1;
     LatLng yourLatLng;
     int flag;
+    Route route=null;
     public MyTool(Context context) {
         Log.i(LOG +".MyTool","Khoi chay MyTool");
         this.mContext=context;
@@ -66,14 +69,10 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         broadcastIntent =new Intent();
         geocoder = new Geocoder(mContext, Locale.getDefault());
     }
-
-
-
     @Override
     public void onConnectionSuspended(int i) {
 
     }
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -92,7 +91,6 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
-
     }
     public void stopGoogleApi(){
         Log.i(LOG+".stopGoogleApi","Tat GoogleApiClient");
@@ -100,13 +98,26 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             mGoogleApiClient.disconnect();
     }
     @Override
-    public void onDirectionFinderSuccess(ArrayList<Route> routes) {
+    public void onDirectionFinderSuccess(Route route) {
         Log.i(LOG+".FinderSuccess","Them route thanh cong");
-
-        this.routes=routes;
+        //myToolSuccess.onSuccess(route.getDistance().text);
+        for(MyLocation location:listLocation){
+            if(route.getLocalID()==location.getLocaID()) {
+                location.setKhoangcach(route.getDistance().text);
+                Log.i(LOG+".FinderSuccess","Khoang cach: "+location.getKhoangcach());
+            }
+        }
+        this.route=route;
+        routes.add(route);
         flag=1;
-        sendBroadcast(routes.get(routes.size()-1).getLocalID());
+        sendBroadcast(route.getLocalID());
+        flag=3;
+        sendBroadcast(route.getLocalID());
     }
+    public interface MyToolSuccess{
+        void onSuccess(String a);
+    }
+    MyToolSuccess myToolSuccess;
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -127,32 +138,25 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             this.longtitude = l.getLongitude();
             returnYourLatLng(l.getLatitude(),l.getLongitude());
             yourLocation =returnLocationByLatLng(l.getLatitude(),l.getLongitude());
+            Log.i(yourLocation,yourLatLng+"");
             flag=2;
             sendBroadcast("Location");
-
         }
         startLocationUpdate();
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location != null) {
-            if (location.getLatitude() != this.latitude && location.getLongitude() != this.longtitude) {
-                Log.i(LOG + ".onLocationChanged", "Vi tri cua ban bi thay doi");
-                this.latitude = location.getLatitude();
-                this.longtitude = location.getLongitude();
-                returnYourLatLng(location.getLatitude(), location.getLongitude());
-                yourLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
-                Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLatLng.latitude + "va lng= " + yourLatLng.longitude);
-//                flag = 2;
-//                sendBroadcast("LocationChange");
-//                routes = new ArrayList<>();
-//                for (MyLocation a : listLocation) {
-//                    loadListPlace(a.getDiachi(), a.getLocaID());
-//                }
-            }
-
-        }
+//        if (location != null) {
+//            if (location.getLatitude() != this.latitude && location.getLongitude() != this.longtitude) {
+//                Log.i(LOG + ".onLocationChanged", "Vi tri cua ban bi thay doi");
+//                this.latitude = location.getLatitude();
+//                this.longtitude = location.getLongitude();
+//                returnYourLatLng(location.getLatitude(), location.getLongitude());
+//                yourLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
+//                Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLatLng.latitude + "va lng= " + yourLatLng.longitude);
+//            }
+//        }
     }
     public MyLocation returnMyLocationByID(String ID){
         for(MyLocation location: listLocation){
@@ -167,10 +171,24 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         Log.i(LOG+".sendBroadcast","gui broadcast voi flag="+flag);
 
         if(routes.size()>0 &&flag==1) {
-            Log.i(LOG+".sendBroadcast", "gui place id: "+a);
+            Log.i(LOG+".sendBroadcast", "gui place id: MapFragment: "+temp);
             broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
             broadcastIntent.putExtra("PlaceID",a);
             broadcastIntent.putExtra("STT",1);
+            mContext.sendBroadcast(broadcastIntent);
+            flag=-1;
+        }
+        if(routes.size()>0 &&flag==3) {
+            Log.i(LOG+".sendBroadcast", "gui place id: StoreFragment"+temp);
+            broadcastIntent.setAction(StoreFragment.mBroadcastSendAddress);
+            broadcastIntent.putExtra("PlaceID",a);
+            broadcastIntent.putExtra("STT",1);
+            broadcastIntent.putExtra("TEMP",temp++);
+            String b="0";
+            for(Route route:routes)
+                if(route.getLocalID().equals(a))
+                    b=route.getDistance().text;
+            broadcastIntent.putExtra("Distance",b);
             mContext.sendBroadcast(broadcastIntent);
             flag=-1;
         }
@@ -183,10 +201,17 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 mContext.sendBroadcast(broadcastIntent);
             }
             if (a == "Location") {
-                Log.i(LOG+".sendBroadcast", "Vi tri cua ban");
+                Log.i(LOG+".sendBroadcast", "Vi tri cua ban :MapFragment");
                 broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
                 broadcastIntent.putExtra("Location", true);
                 broadcastIntent.putExtra("STT",3);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+            if (a == "Location") {
+                Log.i(LOG+".sendBroadcast", "Vi tri cua ban:StoreFragment");
+                broadcastIntent.setAction(StoreFragment.mBroadcastSendAddress);
+                broadcastIntent.putExtra("Location", true);
+                broadcastIntent.putExtra("STT",4);
                 mContext.sendBroadcast(broadcastIntent);
             }
             flag=-1;
@@ -195,10 +220,11 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
 
     private void initLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(15000);
-        mLocationRequest.setFastestInterval(15000);
+        mLocationRequest.setInterval(100);
+        mLocationRequest.setFastestInterval(100);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
+
     private void startLocationUpdate() {
         initLocationRequest();
         if (ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -222,64 +248,66 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
 
     }
     public void getDataInFireBase(){
-        Log.i(LOG+".getDataInFireBase", "Lay du lieu tren firebase");
-        routes=new ArrayList<>();
-        listLocation=new ArrayList<>();
+        routes = new ArrayList<>();
+        listLocation = new ArrayList<>();
         Firebase.setAndroidContext(mContext);
         ref = new Firebase(mContext.getString(R.string.firebase_path));
-        ref.child(mContext.getString(R.string.locations_CODE)).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        ref.child(mContext.getString(R.string.locations_CODE))
+                .addChildEventListener(
+                        new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                MyLocation myLocation = dataSnapshot.getValue(MyLocation.class);
+                                myLocation.setLocaID(dataSnapshot.getKey());
+                                listLocation.add(myLocation);
+                                loadListPlace(myLocation.getDiachi(),myLocation.getLocaID(),1);
+                                Log.i(LOG + ".onChildAdded", "Ten quan: " + dataSnapshot.getValue(MyLocation.class).getName());
+                                Log.i(LOG + ".onChildAdded", "Dia chi: " + dataSnapshot.getValue(MyLocation.class).getDiachi());
+                                flag=5;
+                            }
 
-                MyLocation myLocation=dataSnapshot.getValue(MyLocation.class);
-                myLocation.setLocaID(dataSnapshot.getKey());
-                listLocation.add(myLocation);
-                Log.i(LOG+".onChildAdded", "Ten quan: "+dataSnapshot.getValue(MyLocation.class).getName());
-                Log.i(LOG+".onChildAdded", "Dia chi: "+dataSnapshot.getValue(MyLocation.class).getDiachi());
-                loadListPlace(myLocation.getDiachi(),myLocation.getLocaID());
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                flag = 2;
+                                sendBroadcast("Location");
+                            }
 
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String  s) {
-                flag=2;
-                sendBroadcast("Location");
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                            }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                            }
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
 
-            }
-        });
+                            }
+                        }
+                );
+
 
     }
-    public void findDirection(String orgin, String destination,String ID) {
-        Log.i(LOG, "findDirection");
-        try {
-            new DirectionFinder(this, orgin, destination, routes, geocoder,ID).execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public ArrayList<MyLocation> returnListLocation(){
-        if(listLocation!=null)
-            return listLocation;
-        return null;
-    }
-    public void loadListPlace(String destination,String ID) {
+
+    public void loadListPlace(String destination,String ID,int type) {
         Log.i(LOG, "loadListPlace");
         String origin =null;
         origin = getYourLocation();
         if(origin!=null &&destination!=null) {
-            findDirection(origin, destination,ID);
+            findDirection(origin, destination,ID, type);
+        }
+    }
+    public void findDirection(String orgin, String destination,String ID,int type) {
+        Log.i(LOG, "findDirection");
+        try {
+           new DirectionFinder(this, orgin, destination,ID,type).execute();
+           //DirectionFinder a= new DirectionFinder(this, orgin, destination,ID);
+           // a.Temp();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     public String getYourLocation() {
@@ -289,7 +317,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
 
     public String returnLocationByLatLng(Double latitude, Double longitude) {
         Log.i(LOG+".returnLocationByLatLng", "ReturnLocationByLatLng");
-        List<Address> addresses=new ArrayList<>();
+        List<Address> addresses;
         Double lat = latitude;
         Double lon = longitude;
         try {
@@ -304,11 +332,12 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                     String e="";
                     if(a!=null)
                         e+=a;
-                    if(b!=null && a!=null) {
-                        e += ", " + b;
-                    }else{
-                        e+=b;
-                    }
+                    if(b!=null )
+                        if(a==null)
+                            e += b;
+                        else
+                            e += ", "+ b;
+
                     if(c!=null)
                         if(a==null &&b==null)
                             e+=c;
@@ -321,7 +350,6 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                             e+=", "+d;
                     return e;
                 }
-                return null;
             }
             return null;
 

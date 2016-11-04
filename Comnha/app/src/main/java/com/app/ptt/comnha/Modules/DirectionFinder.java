@@ -31,25 +31,22 @@ public class DirectionFinder {
     private String origin;
     private Geocoder geocoder;
     private String destination,ID;
-    private ArrayList<Route> routes;
-    public DirectionFinder(DirectionFinderListener listener,String origin,String destination,ArrayList<Route> routes,Geocoder geocoder,String ID){
+    Route route;
+
+    int type;
+    public DirectionFinder(DirectionFinderListener listener,String origin,String destination,String ID,int type){
         this.listener=listener;
         this.origin=origin;
         this.destination=destination;
-        this.routes=routes;
         this.ID=ID;
-        this.geocoder=geocoder;
+        this.type=type;
         Log.i(LOG,origin+" -> "+destination);
     }
-
-
-
     public void execute() throws UnsupportedEncodingException {
         if(destination!=null &&origin!=null) {
             listener.onDirectionFinderStart();
             new DowloadRawData().execute(createURL());
         }
-
     }
     private String createURL() throws UnsupportedEncodingException {
         String urlOrigin= URLEncoder.encode(origin,"utf-8");
@@ -58,18 +55,17 @@ public class DirectionFinder {
         return DIRECTION_URL_API +"origin="+urlOrigin+"&destination="+urlDestination+"&key="+GOOGLE_API_KEY;
     }
     private class DowloadRawData extends AsyncTask<String,Void,String>{
-
         @Override
         protected String doInBackground(String... params) {
             String link=params[0];
             try{
                 URL url=new URL(link);
-                InputStream is=url.openConnection().getInputStream();
-                StringBuffer stringBuffer=new StringBuffer();
-                BufferedReader reader=new BufferedReader(new InputStreamReader(is));
-                String line;
-                while((line=reader.readLine())!=null){
-                    stringBuffer.append(line+"\n");
+                    InputStream is=url.openConnection().getInputStream();
+                    StringBuffer stringBuffer=new StringBuffer();
+                    BufferedReader reader=new BufferedReader(new InputStreamReader(is));
+                    String line;
+                    while((line=reader.readLine())!=null){
+                        stringBuffer.append(line+"\n");
                 }
                 return stringBuffer.toString();
             } catch (MalformedURLException e) {
@@ -83,54 +79,77 @@ public class DirectionFinder {
         @Override
         protected void onPostExecute(String res){
             try{
-                parseJSon(res);
+                if(type==1) //Lay het thong tin trong route
+                    parseJSon(res);
+                if(type==2) //Chi lay khoang cach
+                    parseJSonCustom(res);
             }catch (JSONException e){
                 e.printStackTrace();
             }
         }
     }
     private void parseJSon(String data) throws JSONException {
+        Log.i(LOG,"Parse Json TYPE=1");
         if(data==null){
             Log.i(LOG,"parseJSon: FAIL");
             return;
         }else {
             JSONObject jsonData = new JSONObject(data);
             JSONArray jsonRoutes = jsonData.getJSONArray("routes");
-            for (int i = 0; i < jsonRoutes.length(); i++) {
+            for (int i = 0; i < 1; i++) {
                 JSONObject jsonRoute = jsonRoutes.getJSONObject(i);
-                Route route = new Route();
-                JSONObject overview_polylineJson = jsonRoute.getJSONObject("overview_polyline");
+                route = new Route();
+                    JSONObject overview_polylineJson = jsonRoute.getJSONObject("overview_polyline");
+                    JSONArray jsonLegs = jsonRoute.getJSONArray("legs");
+                    JSONObject jsonLeg = jsonLegs.getJSONObject(0);
+                    JSONObject jsonDistance = jsonLeg.getJSONObject("distance");
+                    JSONObject jsonDuration = jsonLeg.getJSONObject("duration");
+                    JSONObject jsonEndLocation = jsonLeg.getJSONObject("end_location");
+                    JSONObject jsonStartLocation = jsonLeg.getJSONObject("start_location");
+                    route.setDistance(new MyDistance(jsonDistance.getString("text"), jsonDistance.getInt("value")));
+                    route.setDuration(new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value")));
+                    route.setEndAddress(jsonLeg.getString("end_address"));
+                    route.setStartAddress(jsonLeg.getString("start_address"));
+                    route.setStartLocation(new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng")));
+                    route.setEndLocation(new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng")));
+                    route.setPoints(decodePolyLine(overview_polylineJson.getString("points")));
+                    route.setLocalID(ID);
+                    Log.i(LOG, "lat=" + route.getEndLocation().latitude + " lon=" + route.getEndLocation().longitude);
+                    Log.i(LOG, route.getLocalID() + "");
+            }
+            listener.onDirectionFinderSuccess(route);
+        }
+    }
+    private void parseJSonCustom(String data) throws JSONException {
+        Log.i(LOG,"Parse Json TYPE=2");
+        if(data==null){
+            Log.i(LOG,"parseJSon: FAIL");
+            return;
+        }else {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray jsonRoutes = jsonData.getJSONArray("routes");
+            for (int i = 0; i < 1; i++) {
+                JSONObject jsonRoute = jsonRoutes.getJSONObject(i);
+                route = new Route();
+                // JSONObject overview_polylineJson = jsonRoute.getJSONObject("overview_polyline");
                 JSONArray jsonLegs = jsonRoute.getJSONArray("legs");
                 JSONObject jsonLeg = jsonLegs.getJSONObject(0);
                 JSONObject jsonDistance = jsonLeg.getJSONObject("distance");
-                JSONObject jsonDuration = jsonLeg.getJSONObject("duration");
-                JSONObject jsonEndLocation = jsonLeg.getJSONObject("end_location");
-                JSONObject jsonStartLocation = jsonLeg.getJSONObject("start_location");
-
+                // JSONObject jsonDuration = jsonLeg.getJSONObject("duration");
+                // JSONObject jsonEndLocation = jsonLeg.getJSONObject("end_location");
+                // JSONObject jsonStartLocation = jsonLeg.getJSONObject("start_location");
                 route.setDistance(new MyDistance(jsonDistance.getString("text"), jsonDistance.getInt("value")));
-                route.setDuration( new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value")));
-                route.setEndAddress(jsonLeg.getString("end_address"));
-                route.setStartAddress(jsonLeg.getString("start_address"));
-                route.setStartLocation(new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng")));
-                route.setEndLocation(new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng")));
-                route.setPoints(decodePolyLine(overview_polylineJson.getString("points")));
+                //  route.setDuration(new Duration(jsonDuration.getString("text"), jsonDuration.getInt("value")));
+                //route.setEndAddress(jsonLeg.getString("end_address"));
+                // route.setStartAddress(jsonLeg.getString("start_address"));
+                //route.setStartLocation(new LatLng(jsonStartLocation.getDouble("lat"), jsonStartLocation.getDouble("lng")));
+                //  route.setEndLocation(new LatLng(jsonEndLocation.getDouble("lat"), jsonEndLocation.getDouble("lng")));
+                //  route.setPoints(decodePolyLine(overview_polylineJson.getString("points")));
                 route.setLocalID(ID);
-
-                try {
-                    route.setDistrict(new getDistrict(route.getEndLocation().latitude, route.getEndLocation().longitude, geocoder).execute());
-                } catch (Exception e) {
-                    route.setDistrict("");
-                }
-
-                routes.add(route);
-                Log.i(LOG, "route.distric: " + route.getDistrict());
-                Log.i(LOG,"lat="+route.getEndLocation().latitude+" lon="+route.getEndLocation().longitude);
-                Log.i(LOG,route.getLocalID()+"");
-                Log.i(LOG, "RoutesSize: " + routes.size());
-
+//                    Log.i(LOG, "lat=" + route.getEndLocation().latitude + " lon=" + route.getEndLocation().longitude);
+                //    Log.i(LOG, route.getLocalID() + "");
             }
-
-            listener.onDirectionFinderSuccess(routes);
+            listener.onDirectionFinderSuccess(route);
         }
     }
     private List<LatLng> decodePolyLine(final String poly) {
@@ -169,5 +188,4 @@ public class DirectionFinder {
 
         return decoded;
     }
-
 }

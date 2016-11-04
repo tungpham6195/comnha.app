@@ -15,39 +15,13 @@ import java.util.List;
 public class Route {
     private MyDistance distance;
     private Duration duration;
-    private String district;
     private String endAddress;
     private LatLng endLocation;
     private String startAddress;
     private LatLng startLocation;
     private List<LatLng> points;
     private String LocalID;
-    private  long giaTong = 0, vsTong = 0, pvTong = 0;
     private long size=0;
-    public long getGiaTong() {
-        return giaTong;
-    }
-
-    public void setGiaTong(long giaTong) {
-        this.giaTong = giaTong;
-    }
-
-    public long getVsTong() {
-        return vsTong;
-    }
-
-    public void setVsTong(long vsTong) {
-        this.vsTong = vsTong;
-    }
-
-    public long getPvTong() {
-        return pvTong;
-    }
-
-    public void setPvTong(long pvTong) {
-        this.pvTong = pvTong;
-    }
-
     public MyDistance getDistance() {
         return distance;
     }
@@ -62,14 +36,6 @@ public class Route {
 
     public void setDuration(Duration duration) {
         this.duration = duration;
-    }
-
-    public String getDistrict() {
-        return district;
-    }
-
-    public void setDistrict(String district) {
-        this.district = district;
     }
 
     public String getEndAddress() {

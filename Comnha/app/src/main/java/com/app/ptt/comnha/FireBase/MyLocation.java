@@ -9,6 +9,16 @@ import java.util.Map;
 
 public class MyLocation {
     String name, diachi, sdt, timestart, timeend, tinhtp, quanhuyen;
+    String khoangcach;
+    public String getKhoangcach() {
+        return khoangcach;
+    }
+
+    public void setKhoangcach(String khoangcach) {
+        this.khoangcach = khoangcach;
+    }
+
+
 
     public String getTinhtp() {
         return tinhtp;

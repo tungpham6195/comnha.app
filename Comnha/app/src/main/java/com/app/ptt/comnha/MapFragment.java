@@ -1,5 +1,6 @@
 package com.app.ptt.comnha;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,7 +11,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,6 +28,7 @@ import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyTool;
+import com.google.android.gms.common.internal.zzk;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,13 +49,14 @@ public class MapFragment extends Fragment {
     private SupportMapFragment supportMapFragment;
     private ArrayList<Route> list = new ArrayList<>();
     private ArrayList<String> listName = new ArrayList<>();
-    private ArrayList<MyLocation> listLocation;
     TextView txt_TenQuan, txt_DiaChi, txt_GioMo, txt_DiemGia, txt_DiemPhucVu, txt_DiemVeSinh;
     GoogleMap myGoogleMap;
     LatLng yourLatLng;
     String yourLocation;
     MyTool myTool;
+    ProgressDialog progressDialog;
     MarkerOptions yourMarker = null;
+    Handler handler;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -65,6 +70,17 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(LOG, "onCreateView");
+        progressDialog=new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading");
+        progressDialog.setMax(100);
+        progressDialog.show();
+        handler=new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+
+            }
+        };
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         return view;
     }
@@ -188,14 +204,7 @@ public class MapFragment extends Fragment {
                     Log.i(LOG+".BroadcastReceiver","Nhan vi tri cua ban:");
                     yourLatLng = myTool.getYourLatLng();
                     yourLocation = myTool.getYourLocation();
-//                    PlaceAPI placeAPI=new PlaceAPI();
-//                    PlaceAttribute a=new PlaceAttribute();
-//                            a=placeAPI.autocomplete(yourLocation);
-////                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ yourLocation + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
-//                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ a.getFullname() + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
-
-                    //Log.i(LOG+".BroadcastReceiver","Vi tri cua ban nhan duoc: "+yourLocation+"  voi lat: " +yourLatLng.latitude+"lng: "+yourLatLng.longitude);
-                    if (yourMarker == null) {
+                  if (yourMarker == null) {
                         Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                         Log.i(LOG+".BroadcastReceiver","Them marker vi tri cua ban vao map");
@@ -210,7 +219,6 @@ public class MapFragment extends Fragment {
                         myGoogleMap.clear();
                         Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                        Log.i(LOG+".BroadcastReceiver","Them marker vi tri cua ban vao map");
                         yourMarker = new MarkerOptions()
                                 .position(yourLatLng)
                                 .title(yourLocation)
@@ -220,6 +228,7 @@ public class MapFragment extends Fragment {
                         list=new ArrayList<>();
                     }
                     if(list.size()==0){
+                        Log.i(LOG+".BroadcastReceiver","list.size=0");
                         myTool.getDataInFireBase();
                     }
                 }
@@ -227,10 +236,6 @@ public class MapFragment extends Fragment {
                     Log.i(LOG+".BroadcastReceiver","Nhan su thay doi vi tri cua ban:");
                     yourLatLng = myTool.getYourLatLng();
                     yourLocation = myTool.getYourLocation();
-//                    PlaceAPI placeAPI=new PlaceAPI();
-//                    PlaceAttribute a=placeAPI.autocomplete(yourLocation);
-////                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ yourLocation + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
-//                    Log.i(LOG+".BroadcastReceiver","Vi tri moi cua ban da nhan: "+ a.getFullname() + " voi  lat: " + yourLatLng.latitude + "lng: " + yourLatLng.longitude);
                     Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
                     BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
                     Log.i(LOG+".BroadcastReceiver", "Clear All Marker");
@@ -244,35 +249,24 @@ public class MapFragment extends Fragment {
                             .icon(markerIcon);
                     myGoogleMap.addMarker(yourMarker);
                     myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLatLng, 13));
-
                 }
 
             }
 
         }
     };
-
     public void addMarker(Route route) {
         Log.i(LOG+".addMarker","Them dia diem nhan duoc: "+route.getEndAddress());
         myGoogleMap.addMarker(new MarkerOptions()
                 .position(route.getEndLocation()));
     }
-
     public MyLocation returnMyLocation(Marker marker) {
         Log.i(LOG+".returnRoute","Tra ve route ung voi marker");
         for (Route a : list) {
             if (marker.getPosition().latitude == a.getEndLocation().latitude && marker.getPosition().longitude == a.getEndLocation().longitude)
             {
                 Log.i(LOG+".returnMyLocation",a.getLocalID());
-
-//                for(MyLocation b:listLocation){
-//                    if(a.getLocalID()==b.getLocaID()) {
-//                        Log.i(LOG + ".returnMyLocation", "location tra ve: " + b.getLocaID() + ". Dia chi:" + b.getDiachi());
-//                        return b;
-//                    }
-//                }
                MyLocation myLocation= myTool.returnMyLocationByID(a.getLocalID());
-
                 return myLocation;
             }
         }
