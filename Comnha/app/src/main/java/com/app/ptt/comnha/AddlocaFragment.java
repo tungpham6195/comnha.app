@@ -4,15 +4,12 @@ package com.app.ptt.comnha;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -29,7 +27,6 @@ import android.widget.Toast;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
-import com.app.ptt.comnha.Service.MyTool;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,11 +34,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -52,10 +47,11 @@ import java.util.Map;
 public class AddlocaFragment extends Fragment implements View.OnClickListener, TimePickerDialog.OnTimeSetListener,
         DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
     FloatingActionButton fab_save;
-    public static final String LOG=AddlocaFragment.class.getSimpleName();
-    ArrayList<PlaceAttribute> mPlaceAttribute;
-    EditText edt_tenquan, edt_timeend,
-            edt_timestart, edt_sdt, edt_giamin, edt_giamax;
+    public static final String LOG = AddlocaFragment.class.getSimpleName();
+    PlaceAttribute mPlaceAttribute;
+    EditText edt_tenquan, edt_sdt,
+            edt_giamin, edt_giamax;
+    Button btn_timestart, btn_timeend;
     ProgressDialog mProgressDialog;
     DatabaseReference dbRef;
     ImageView img_ic;
@@ -65,16 +61,12 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     int hour, min;
     Geocoder gc;
     AutoCompleteTextView autoCompleteText;
-    String a="";
-    int pos=0;
+    String a = "";
+
     public AddlocaFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,6 +77,14 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         gc = new Geocoder(getContext(), Locale.getDefault());
         anhXa(view);
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://com-nha.firebaseio.com/");
+        autoCompleteText = (AutoCompleteTextView) view.findViewById(R.id.autocomplete);
+        autoCompleteText.setAdapter(new PlacesAutoCompleteAdapter(getActivity(), R.layout.autocomplete_list_item));
+        autoCompleteText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(LOG, "NE MAY " + a);
+            }
+        });
         return view;
     }
 
@@ -92,16 +92,20 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Snackbar.make(view, parent.getItemIdAtPosition(position) + "", Snackbar.LENGTH_SHORT).show();
 
+            }
+        });
     }
 
     void anhXa(View view) {
-        autoCompleteText = (AutoCompleteTextView) view.findViewById(R.id.autocomplete);
-        autoCompleteText.setAdapter(new PlacesAutoCompleteAdapter(getActivity(), R.layout.autocomplete_list_item));
         edt_tenquan = (EditText) view.findViewById(R.id.frg_addloction_edt_tenquan);
         //edt_diachi = (EditText) view.findViewById(R.id.frg_addloction_edt_diachi);
-        edt_timeend = (EditText) view.findViewById(R.id.frg_addloction_edt_giodong);
-        edt_timestart = (EditText) view.findViewById(R.id.frg_addloction_edt_giomo);
+        btn_timeend = (Button) view.findViewById(R.id.frg_addloction_btn_giodong);
+        btn_timestart = (Button) view.findViewById(R.id.frg_addloction_btn_giomo);
         edt_sdt = (EditText) view.findViewById(R.id.frg_addloction_edt_sdt);
         edt_giamin = (EditText) view.findViewById(R.id.frg_addloction_edt_giamin);
         edt_giamax = (EditText) view.findViewById(R.id.frg_addloction_edt_giamax);
@@ -119,15 +123,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             }
         });
         fab_save.setOnClickListener(this);
-        edt_timestart.setOnClickListener(this);
-        edt_timeend.setOnClickListener(this);
-        autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pos=position;
-                Toast.makeText(getActivity(),pos+"",Toast.LENGTH_LONG).show();
-            }
-        });
+        btn_timeend.setOnClickListener(this);
+        btn_timestart.setOnClickListener(this);
     }
 
     class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
@@ -140,16 +137,15 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         public PlacesAutoCompleteAdapter(Context context, int resource) {
             super(context, resource);
             mContext = context;
-
+            mPlaceAttribute = new PlaceAttribute();
             mResource = resource;
         }
 
         @Override
         public int getCount() {
-            if(resultList!=null) {
+            if (resultList != null) {
                 return resultList.size();
-            }
-            else return 0;
+            } else return 0;
         }
 
         @Nullable
@@ -166,20 +162,16 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
-                        mPlaceAttribute=new ArrayList<>();
-                        mPlaceAttribute= mPlaceAPI.autocomplete(constraint.toString());
-                        if(mPlaceAttribute!=null) {
-                            Log.i("Size= ",mPlaceAttribute.size()+"");
-                            resultList=new ArrayList<>();
-                            a="OK";
-                            for(PlaceAttribute a: mPlaceAttribute){
-                                resultList.add(a.getFullname());
-                            }
+                        mPlaceAttribute = new PlaceAttribute();
+                        mPlaceAttribute = mPlaceAPI.autocomplete(constraint.toString());
+                        if (mPlaceAttribute != null) {
+                            a = mPlaceAttribute.getFullname();
+                            resultList = new ArrayList<>();
+                            resultList.add(a);
                             filterResults.values = resultList;
                             filterResults.count = resultList.size();
-                        }
-                        else{
-                            a=null;
+                        } else {
+                            a = null;
                         }
                     }
                     return filterResults;
@@ -198,50 +190,51 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         }
     }
 
-    public String returnFullname(){
-        String a = mPlaceAttribute.get(pos). getStreet_number();
-        String b = mPlaceAttribute.get(pos).getRoute();
-        String c = mPlaceAttribute.get(pos).getLocality();
-        String d = mPlaceAttribute.get(pos).getDistrict();
-        String f = mPlaceAttribute.get(pos).getState();
-        String e="";
-        if(a!=null)
-            e+=a;
-        if(b!=null )
-            if(a==null)
+    public String returnFullname() {
+        String a = mPlaceAttribute.getStreet_number();
+        String b = mPlaceAttribute.getRoute();
+        String c = mPlaceAttribute.getLocality();
+        String d = mPlaceAttribute.getDistrict();
+        String f = mPlaceAttribute.getState();
+        String e = "";
+        if (a != null)
+            e += a;
+        if (b != null)
+            if (a == null)
                 e += b;
             else
-                e += ", "+ b;
+                e += ", " + b;
 
-        if(c!=null)
-            if(a==null &&b==null)
-                e+=c;
+        if (c != null)
+            if (a == null && b == null)
+                e += c;
             else
-                e+=", "+c;
-        if(d!=null)
-            if(a==null && b==null && c==null)
-                e+=d;
+                e += ", " + c;
+        if (d != null)
+            if (a == null && b == null && c == null)
+                e += d;
             else
-                e+=", "+d;
-        if(f!=null)
-            if(a==null &&b==null && c==null)
-                e+=f;
+                e += ", " + d;
+        if (f != null)
+            if (a == null && b == null && c == null)
+                e += f;
             else
-                e+=", "+f;
+                e += ", " + f;
         return e;
     }
+
     private void addNewLoca() {
-        Log.i(LOG+".addNewLoca","Da toi đây");
+        Log.i(LOG + ".addNewLoca", "Da toi đây");
         MyLocation newLocation = new MyLocation();
         newLocation.setName(edt_tenquan.getText().toString());
         newLocation.setDiachi(returnFullname());
         newLocation.setSdt(edt_sdt.getText().toString());
-        newLocation.setTimestart(edt_timestart.getText().toString());
-        newLocation.setTimeend(edt_timeend.getText().toString());
+        newLocation.setTimestart(btn_timestart.getText().toString());
+        newLocation.setTimeend(btn_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
-        newLocation.setTinhtp(mPlaceAttribute.get(pos).getState());
-        newLocation.setQuanhuyen(mPlaceAttribute.get(pos).getDistrict());
+        newLocation.setTinhtp(mPlaceAttribute.getState());
+        newLocation.setQuanhuyen(mPlaceAttribute.getDistrict());
         String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
         Map<String, Object> newLocaValue = newLocation.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
@@ -282,14 +275,13 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
                 } else if (edt_sdt.getText().toString().trim().equals("")) {
                     Snackbar.make(view, getResources().getText(R.string.txt_nosdt), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_timestart.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_timeend.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
+//                } else if (edt_timestart.getText().toString().trim().equals("")) {
+//                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
+//                } else if (edt_timeend.getText().toString().trim().equals("")) {
+//                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
                 } else if (Long.valueOf(edt_giamax.getText().toString()) <= Long.valueOf(edt_giamin.getText().toString())) {
                     Snackbar.make(view, getResources().getText(R.string.txt_giawarn), Snackbar.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
 //                    PlaceAPI placeAPI= new PlaceAPI();
 //                    ArrayList<String> list ;
 //                    list= placeAPI.autocomplete(autoCompleteText.getText().toString());
@@ -300,27 +292,25 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 //                        Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
 //                    }
 
-                    if(a!=null) {
+                    if (a != null) {
                         Log.i(LOG + ".onClick", a);
-                        if(mPlaceAttribute.get(pos).getStreet_number()==null)
+                        if (mPlaceAttribute.getStreet_number() == null)
                             Snackbar.make(view, "Không có số nhà, xin thử lại", Snackbar.LENGTH_SHORT).show();
-                        else
-                        if(mPlaceAttribute.get(pos).getRoute()==null)
+                        else if (mPlaceAttribute.getRoute() == null)
                             Snackbar.make(view, "Không có tên đường, xin thử lại", Snackbar.LENGTH_SHORT).show();
 
                         else
                             addNewLoca();
-                    }
-                    else
+                    } else
                         Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.frg_addloction_edt_giomo:
-                edtID = R.id.frg_addloction_edt_giomo;
+            case R.id.frg_addloction_btn_giomo:
+                edtID = R.id.frg_addloction_btn_giomo;
                 tpd.show(getActivity().getFragmentManager(), "Datepickerdialog");
                 break;
-            case R.id.frg_addloction_edt_giodong:
-                edtID = R.id.frg_addloction_edt_giodong;
+            case R.id.frg_addloction_btn_giodong:
+                edtID = R.id.frg_addloction_btn_giodong;
                 tpd.show(getActivity().getFragmentManager(), "Datepickerdialog");
                 break;
         }
@@ -329,16 +319,17 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     @Override
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
         switch (edtID) {
-            case R.id.frg_addloction_edt_giomo:
+            case R.id.frg_addloction_btn_giomo:
                 hour = hourOfDay;
                 min = minute;
                 break;
-            case R.id.frg_addloction_edt_giodong:
+            case R.id.frg_addloction_btn_giodong:
                 hour = hourOfDay;
                 min = minute;
                 break;
         }
     }
+
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         hour = -1;
@@ -349,14 +340,14 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     public void onDismiss(DialogInterface dialogInterface) {
         Log.d("dismiss" + String.valueOf(edtID), String.valueOf(hour));
         switch (edtID) {
-            case R.id.frg_addloction_edt_giomo:
+            case R.id.frg_addloction_btn_giomo:
                 if (hour > -1) {
-                    edt_timestart.setText(hour + "h" + min);
+                    btn_timestart.setText(hour + "h" + min);
                 }
                 break;
-            case R.id.frg_addloction_edt_giodong:
+            case R.id.frg_addloction_btn_giodong:
                 if (hour > -1) {
-                    edt_timeend.setText(hour + "h" + min);
+                    btn_timeend.setText(hour + "h" + min);
                 }
                 break;
         }

@@ -29,4 +29,18 @@ public class AnimationUtils {
         animatorTranslateY.setDuration(1000);
         animatorTranslateY.start();
     }
+
+    public static void animatfabMenuIn(View view) {
+        ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view,
+                "translationX", 500, 0);
+        animatorTranslateX.setDuration(1000);
+        animatorTranslateX.start();
+    }
+
+    public static void animatfabMenuOut(View view) {
+        ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view,
+                "translationX", 0, 500);
+        animatorTranslateX.setDuration(1000);
+        animatorTranslateX.start();
+    }
 }

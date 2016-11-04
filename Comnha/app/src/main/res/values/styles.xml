@@ -10,10 +10,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="AppTheme.LocationDetial" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:statusBarColor">@android:color/black</item>
     </style>
+
     <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu">
         <!--<item name="android:gravity">end|bottom</item>-->
         <item name="android:popupElevation">3dp</item>
@@ -33,6 +35,11 @@
     <style name="AppTheme.ButtonFB" parent="Widget.AppCompat.Button.Colored">
         <item name="android:colorButtonNormal">@android:color/holo_blue_dark</item>
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.ButtonPickTime" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+        <item name="android:textColor">#57d43d</item>
     </style>
 
     <style name="AppTheme.ButtonExit" parent="Widget.AppCompat.Button.Borderless">

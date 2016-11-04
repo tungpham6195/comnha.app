@@ -1,16 +1,10 @@
 package com.app.ptt.comnha;
 
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -28,8 +22,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.app.ptt.comnha.Service.MyService;
-import com.app.ptt.comnha.Service.MyTool;
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 import com.github.clans.fab.FloatingActionButton;
@@ -47,45 +40,46 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , FloatingActionButton.OnClickListener {
 
-
-//    private MyService myService;
-
+    //    private MyService myService;
     //private MyService myService;
-
     private static final String LOG = MainActivity.class.getSimpleName();
     //private Boolean isBound = false;
     private Bundle savedInstanceState;
+    public static final String mBroadcast = "mBroadcastComplete";
+    private ProgressDialog progressDialog;
+    private int progressBarStatus = 0;
+    private Handler progressBarHandler = new Handler();
+    private IntentFilter mIntentFilter;
     private ProgressDialog logoutDialog;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private int fileSize;
     public String userID, username, email;
-    private MyService myService;
+
     private Toolbar mtoolbar;
     private DrawerLayout mdrawer;
     private ActionBarDrawerToggle mtoggle;
     private NavigationView mnavigationView;
     private TextView txt_email, txt_un;
-    private Boolean isBound = false;
     private FloatingActionMenu fabmenu;
     //private boolean checkConnection = true;
     private FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
     private Firebase ref;
     private BottomBar bottomBar;
     private PopupMenu popupMenu;
-    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-       Firebase.setAndroidContext(this);
+        Firebase.setAndroidContext(this);
         ref = new Firebase(getResources().getString(R.string.firebase_path));
-
         anhXa();
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
+//        mIntentFilter = new IntentFilter();
+//        mIntentFilter.addAction(mBroadcast);
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mtoggle = new ActionBarDrawerToggle(
                 this, mdrawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -97,6 +91,7 @@ public class MainActivity extends AppCompatActivity
         txt_email = (TextView) header.findViewById(R.id.nav_head_email);
         txt_un = (TextView) header.findViewById(R.id.nav_head_username);
         this.savedInstanceState = savedInstanceState;
+
         Log.i(LOG, "onCreate");
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -195,6 +190,7 @@ public class MainActivity extends AppCompatActivity
                         transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame, reviewFragment);
                         transaction.commit();
+                        AnimationUtils.animatfabMenuIn(fabmenu);
                         break;
                     case R.id.tab_stores:
                         StoreFragment storeFragment = new StoreFragment();
@@ -202,23 +198,14 @@ public class MainActivity extends AppCompatActivity
                         transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame, storeFragment);
                         transaction.commit();
+                        AnimationUtils.animatfabMenuIn(fabmenu);
                         break;
                     case R.id.tab_locations:
-                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_locations), Gravity.START);
-                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_locafilter, popupMenu.getMenu());
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.popup_locafilter_myloca:
-                                        break;
-                                    case R.id.popup_locafilter_choseloca:
-                                        break;
-                                }
-                                return true;
-                            }
-                        });
-                        popupMenu.show();
+                        FilterFragment filterFragment = new FilterFragment();
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, filterFragment);
+                        transaction.commit();
+                        AnimationUtils.animatfabMenuOut(fabmenu);
                         break;
                 }
             }
@@ -327,7 +314,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        //doBinService();
         mAuth.addAuthStateListener(mAuthListener);
         try {
             if (mAuth.getCurrentUser() == null) {
@@ -392,7 +378,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-
+        //doUnbinService();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -403,9 +389,12 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
-        //doUnbinService();
-    }
 
+//        doUnbinService();
+
+        //doUnbinService();
+
+    }
 
     @Override
     protected void onPause() {
@@ -413,34 +402,6 @@ public class MainActivity extends AppCompatActivity
         Log.i(LOG, "Pause");
     }
 
-    public void doBinService() {
-        if (!isBound) {
-            Intent intent = new Intent(this, MyService.class);
-            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-            isBound = true;
-        }
-    }
-
-    public void doUnbinService() {
-        if (isBound) {
-            unbindService(serviceConnection);
-            isBound = false;
-        }
-    }
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MyService.LocalBinder binder = (MyService.LocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
-            Log.i(LOG, "ServiceConnection");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
-        }
-    };
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

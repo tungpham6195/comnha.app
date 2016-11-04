@@ -91,9 +91,7 @@ public class LocadetailFragment extends Fragment {
                 location.setLocaID(dataSnapshot.getKey());
                 String gio = location.getTimestart() + " - " + location.getTimeend();
                 String tenquan = location.getName();
-                String diachi = location.getDiachi()
-                        + ", " + location.getQuanhuyen()
-                        + ", " + location.getTinhtp();
+                String diachi = location.getDiachi();
                 String sdt = location.getSdt();
                 txt_sdt.setText(sdt);
                 txt_diachi.setText(diachi);
@@ -322,9 +320,7 @@ public class LocadetailFragment extends Fragment {
                 intent.putExtra(getResources().getString(R.string.fragment_CODE),
                         getResources().getString(R.string.frg_themmon_CODE));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ChooseLoca.getInstance().setLocaID(location.getLocaID());
-                ChooseLoca.getInstance().setName(location.getName());
-                ChooseLoca.getInstance().setAddress(location.getDiachi());
+                DoPost.getInstance().setMyLocation(location);
                 startActivity(intent);
                 return true;
             default:
