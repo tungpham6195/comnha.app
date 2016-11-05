@@ -109,8 +109,9 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         }
         this.route=route;
         routes.add(route);
-        flag=1;
-        sendBroadcast(route.getLocalID());
+        Log.i(LOG+".FinderSuccess","Route SIZE : "+routes.size()+": "+"distance"+route.getDistance().text);
+       // flag=1;
+       // sendBroadcast(route.getLocalID());
         flag=3;
         sendBroadcast(route.getLocalID());
     }
@@ -179,11 +180,10 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             flag=-1;
         }
         if(routes.size()>0 &&flag==3) {
-            Log.i(LOG+".sendBroadcast", "gui place id: StoreFragment"+temp);
+            Log.i(LOG+".sendBroadcast", "gui place id: StoreFragment"+temp++);
             broadcastIntent.setAction(StoreFragment.mBroadcastSendAddress);
             broadcastIntent.putExtra("PlaceID",a);
             broadcastIntent.putExtra("STT",1);
-            broadcastIntent.putExtra("TEMP",temp++);
             String b="0";
             for(Route route:routes)
                 if(route.getLocalID().equals(a))
@@ -314,7 +314,6 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         Log.i(LOG+".returnLocation", "Lay vi tri cua ban");
         return yourLocation;
     }
-
     public String returnLocationByLatLng(Double latitude, Double longitude) {
         Log.i(LOG+".returnLocationByLatLng", "ReturnLocationByLatLng");
         List<Address> addresses;

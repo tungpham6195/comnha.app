@@ -22,10 +22,6 @@ public class LoadJson implements DirectionFinderListener {
 
     }
 
-    @Override
-    public void onDistanceFinderSuccess(String a) {
-        this.a=a;
-    }
     public String returnDistance(){
         return a;
     }

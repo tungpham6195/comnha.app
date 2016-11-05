@@ -48,7 +48,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
     FloatingActionButton fab_save;
     public static final String LOG = AddlocaFragment.class.getSimpleName();
-    PlaceAttribute mPlaceAttribute;
+    ArrayList<PlaceAttribute> mPlaceAttribute;
     EditText edt_tenquan, edt_sdt,
             edt_giamin, edt_giamax;
     Button btn_timestart, btn_timeend;
@@ -57,7 +57,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     ImageView img_ic;
     Calendar now;
     TimePickerDialog tpd;
-    int edtID;
+    int edtID,pos;
     int hour, min;
     Geocoder gc;
     AutoCompleteTextView autoCompleteText;
@@ -79,10 +79,11 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://com-nha.firebaseio.com/");
         autoCompleteText = (AutoCompleteTextView) view.findViewById(R.id.autocomplete);
         autoCompleteText.setAdapter(new PlacesAutoCompleteAdapter(getActivity(), R.layout.autocomplete_list_item));
-        autoCompleteText.setOnClickListener(new View.OnClickListener() {
+        autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                Log.i(LOG, "NE MAY " + a);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pos=position;
+                Log.i(LOG+".onCreateView","pos= "+pos);
             }
         });
         return view;
@@ -137,7 +138,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         public PlacesAutoCompleteAdapter(Context context, int resource) {
             super(context, resource);
             mContext = context;
-            mPlaceAttribute = new PlaceAttribute();
+            mPlaceAttribute = new ArrayList<>();
             mResource = resource;
         }
 
@@ -162,12 +163,13 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
-                        mPlaceAttribute = new PlaceAttribute();
+                        mPlaceAttribute = new ArrayList<>();
                         mPlaceAttribute = mPlaceAPI.autocomplete(constraint.toString());
                         if (mPlaceAttribute != null) {
-                            a = mPlaceAttribute.getFullname();
+                            a = "OK";
                             resultList = new ArrayList<>();
-                            resultList.add(a);
+                            for (PlaceAttribute placeAttribute:mPlaceAttribute)
+                            resultList.add(placeAttribute.getFullname());
                             filterResults.values = resultList;
                             filterResults.count = resultList.size();
                         } else {
@@ -191,11 +193,11 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     }
 
     public String returnFullname() {
-        String a = mPlaceAttribute.getStreet_number();
-        String b = mPlaceAttribute.getRoute();
-        String c = mPlaceAttribute.getLocality();
-        String d = mPlaceAttribute.getDistrict();
-        String f = mPlaceAttribute.getState();
+        String a = mPlaceAttribute.get(pos) .getStreet_number();
+        String b = mPlaceAttribute.get(pos) .getRoute();
+        String c = mPlaceAttribute.get(pos) .getLocality();
+        String d = mPlaceAttribute.get(pos) .getDistrict();
+        String f = mPlaceAttribute.get(pos) .getState();
         String e = "";
         if (a != null)
             e += a;
@@ -233,8 +235,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         newLocation.setTimeend(btn_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
-        newLocation.setTinhtp(mPlaceAttribute.getState());
-        newLocation.setQuanhuyen(mPlaceAttribute.getDistrict());
+        newLocation.setTinhtp(mPlaceAttribute.get(pos) .getState());
+        newLocation.setQuanhuyen(mPlaceAttribute.get(pos) .getDistrict());
         String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
         Map<String, Object> newLocaValue = newLocation.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
@@ -294,9 +296,9 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
                     if (a != null) {
                         Log.i(LOG + ".onClick", a);
-                        if (mPlaceAttribute.getStreet_number() == null)
+                        if (mPlaceAttribute.get(pos) .getStreet_number() == null)
                             Snackbar.make(view, "Không có số nhà, xin thử lại", Snackbar.LENGTH_SHORT).show();
-                        else if (mPlaceAttribute.getRoute() == null)
+                        else if (mPlaceAttribute.get(pos) .getRoute() == null)
                             Snackbar.make(view, "Không có tên đường, xin thử lại", Snackbar.LENGTH_SHORT).show();
 
                         else

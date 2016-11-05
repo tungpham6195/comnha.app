@@ -99,17 +99,19 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
                     progressDialog1.show();
                     count=0;
                     for (MyLocation location: list_item){
-                        if(count==list_item.size()) {
-                            Log.i("Count= max ","count= "+count);
-                            progressDialog1.dismiss();
-                        }
+
                         if(location.getKhoangcach()==null) {
                             Log.i("loadListPlace ","START");
-                            myTool.loadListPlace(location.getDiachi(), location.getLocaID(), 2);
+                            Log.i("get Count ","count= "+count);
+                            myTool.loadListPlace(location.getDiachi(), location.getLocaID(),2);
                         } else {
                             Log.i("get Count ","count= "+count);
                             count++;
                         }
+                    }
+                    if(count==list_item.size()) {
+                        Log.i("Count= max ","count= "+count);
+                        progressDialog1.dismiss();
                     }
 
                 }
@@ -119,13 +121,21 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
                         if(location.getLocaID().equals(intent.getStringExtra("PlaceID"))){
                             location.setKhoangcach(intent.getStringExtra("Distance"));
                             Log.i("ID:"+intent.getStringExtra("PlaceID") ,"Distance= "+intent.getStringExtra("Distance"));
+                            count++;
+                            Log.i("get Count ","count= "+count);
                         }
                     }
+                 //  mAdapter.notifyDataSetChanged();
 
-                if(intent.getIntExtra("TEMP",0)==listSize) {
+//                if(intent.getIntExtra("TEMP",0)==listSize) {
+//                    mAdapter.notifyDataSetChanged();
+//                    progressDialog1.dismiss();
+//                    Log.i("listSize= ",listSize+" ");
+//                }
+                if(count==listSize) {
                     mAdapter.notifyDataSetChanged();
                     progressDialog1.dismiss();
-                    Log.i("listSize= ",listSize+" ");
+                    Log.i("listSize= ", listSize + " ");
                 }
                 Log.i("listSize: ",listSize+" ");
                 Log.i("TEMP: ",""+intent.getIntExtra("TEMP",0));
