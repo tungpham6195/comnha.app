@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -97,8 +96,8 @@ public class PickFoodDialogFragment extends DialogFragment {
     private void anhxa(View view) {
         thucdonList = new ArrayList<>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_pickFood_rcylerV);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3, LinearLayoutManager.VERTICAL, false);
-        layoutManager = gridLayoutManager;
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        layoutManager = linearLayoutManager;
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new Thucdon_rcyler_adapter(thucdonList, getActivity());
         mRecyclerView.setAdapter(mAdapter);

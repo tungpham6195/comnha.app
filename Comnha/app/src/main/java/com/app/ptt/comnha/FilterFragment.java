@@ -2,6 +2,7 @@ package com.app.ptt.comnha;
 
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +39,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     ThucDon mon;
     DatabaseReference dbRef;
     ChildEventListener locaMenuChildEventListener;
+    String tinh, quan;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -106,15 +108,20 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
         FragmentManager fm = getActivity().getSupportFragmentManager();
         switch (v.getId()) {
             case R.id.frg_filter_txttinh:
+
                 PickProvinceDialogFragment pickProvinceFrg = new PickProvinceDialogFragment();
                 pickProvinceFrg.show(fm, "fragment_pickProvince");
                 pickProvinceFrg.setOnPickProvinceListener(this);
                 break;
             case R.id.frg_filter_txtquan:
-                PickDistrictDialogFragment pickDistrictFrg = new PickDistrictDialogFragment();
-                pickDistrictFrg.setWhatprovince(whatProvince);
-                pickDistrictFrg.show(fm, "fragment_pickDistrict");
-                pickDistrictFrg.setOnPickDistricListener(this);
+                if (whatProvince < 1) {
+                    Snackbar.make(v, getString(R.string.txt_noChoseProvince), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    PickDistrictDialogFragment pickDistrictFrg = new PickDistrictDialogFragment();
+                    pickDistrictFrg.setWhatprovince(whatProvince);
+                    pickDistrictFrg.show(fm, "fragment_pickDistrict");
+                    pickDistrictFrg.setOnPickDistricListener(this);
+                }
                 break;
             case R.id.frg_filter_txtmon:
                 PickFoodDialogFragment pickFoodFrg = new PickFoodDialogFragment();
@@ -122,9 +129,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
                 pickFoodFrg.setOnPickFoodListener(this);
                 break;
             case R.id.frg_filter_btnTim:
-                dbRef.child(getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
-                        .orderByChild("quanhuyen").equalTo("Thủ Đức")
-                        .addChildEventListener(locaMenuChildEventListener);
+                querySomething();
                 break;
         }
     }
@@ -132,17 +137,41 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     @Override
     public void onPickDistrict(String district) {
         txt_quan.setText(district);
+        quan = district;
     }
 
     @Override
     public void onPickProvince(String province, int position) {
         txt_tinh.setText(province);
         whatProvince = position + 1;
+        tinh = province;
     }
 
     @Override
     public void onPickFood(ThucDon thucDon) {
         txt_mon.setText(thucDon.getTenmon());
         mon = thucDon;
+    }
+
+    private void querySomething() {
+        locaList.clear();
+        mAdapter.notifyDataSetChanged();
+        if (quan == null && mon != null) {//tìm món ở tất cả các quán
+            dbRef.child(getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
+                    .addChildEventListener(locaMenuChildEventListener);
+        } else if (tinh != null && mon == null) {//tìm tất cả các quán theo tỉnh
+            dbRef.child(getString(R.string.locations_CODE))
+                    .orderByChild("tinhtp")
+                    .addChildEventListener(locaMenuChildEventListener);
+        } else if (quan != null && mon == null) {
+            dbRef.child(getString(R.string.locations_CODE))
+                    .orderByChild("quanhuyen")
+                    .addChildEventListener(locaMenuChildEventListener);
+        } else if (quan != null && mon != null) {
+            dbRef.child(getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
+                    .orderByChild("quanhuyen").equalTo(quan)
+                    .addChildEventListener(locaMenuChildEventListener);
+        }
+
     }
 }
