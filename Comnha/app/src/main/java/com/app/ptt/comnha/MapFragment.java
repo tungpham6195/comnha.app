@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
@@ -47,6 +49,8 @@ public class MapFragment extends Fragment {
     String yourLocation;
     MyTool myTool;
     MarkerOptions yourMarker = null;
+    ImageButton btn_search;
+    AutoCompleteTextView edt_content;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -61,7 +65,13 @@ public class MapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(LOG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+        anhxa(view);
         return view;
+    }
+
+    private void anhxa(View view) {
+        btn_search = (ImageButton) view.findViewById(R.id.frg_map_btnsearch);
+        edt_content = (AutoCompleteTextView) view.findViewById(R.id.frg_map_edtsearch);
     }
 
     @Override

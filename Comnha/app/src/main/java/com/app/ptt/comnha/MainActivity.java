@@ -78,8 +78,6 @@ public class MainActivity extends AppCompatActivity
         anhXa();
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
-//        mIntentFilter = new IntentFilter();
-//        mIntentFilter.addAction(mBroadcast);
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mtoggle = new ActionBarDrawerToggle(
                 this, mdrawer, mtoolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -91,7 +89,6 @@ public class MainActivity extends AppCompatActivity
         txt_email = (TextView) header.findViewById(R.id.nav_head_email);
         txt_un = (TextView) header.findViewById(R.id.nav_head_username);
         this.savedInstanceState = savedInstanceState;
-
         Log.i(LOG, "onCreate");
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -185,6 +182,7 @@ public class MainActivity extends AppCompatActivity
                 FragmentTransaction transaction;
                 switch (tabId) {
                     case R.id.tab_reviews:
+                        fabmenu.close(true);
                         ReviewFragment reviewFragment = new ReviewFragment();
                         reviewFragment.setSortType(1);
                         transaction = getSupportFragmentManager().beginTransaction();
@@ -193,6 +191,7 @@ public class MainActivity extends AppCompatActivity
                         AnimationUtils.animatfabMenuIn(fabmenu);
                         break;
                     case R.id.tab_stores:
+                        fabmenu.close(true);
                         StoreFragment storeFragment = new StoreFragment();
                         storeFragment.setFilter(1);
                         transaction = getSupportFragmentManager().beginTransaction();
@@ -206,6 +205,7 @@ public class MainActivity extends AppCompatActivity
                         transaction.replace(R.id.frame, filterFragment);
                         transaction.commit();
                         AnimationUtils.animatfabMenuOut(fabmenu);
+                        fabmenu.close(true);
                         break;
                 }
             }
