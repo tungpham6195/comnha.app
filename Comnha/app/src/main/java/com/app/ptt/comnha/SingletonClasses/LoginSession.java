@@ -5,7 +5,7 @@ package com.app.ptt.comnha.SingletonClasses;
  */
 public class LoginSession {
     private static LoginSession ourInstance;
-    private String userID, username, email;
+    private String userID, username, email, tinh, huyen;
 
     public static LoginSession getInstance() {
         if (ourInstance == null) {
@@ -39,5 +39,22 @@ public class LoginSession {
 
     public String getEmail() {
         return email;
+    }
+
+    public void setTinh(String tinh) {
+        this.tinh = tinh;
+    }
+
+    public void setHuyen(String huyen) {
+        this.huyen = huyen;
+    }
+
+    public String getTinh() {
+
+        return tinh;
+    }
+
+    public String getHuyen() {
+        return huyen;
     }
 }

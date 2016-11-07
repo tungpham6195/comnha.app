@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.FireBase.MyLocation;
@@ -39,7 +40,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     ThucDon mon;
     DatabaseReference dbRef;
     ChildEventListener locaMenuChildEventListener;
-    String tinh, quan;
+    String tinh = "", quan = "";
 
     public FilterFragment() {
         // Required empty public constructor
@@ -114,7 +115,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
                 pickProvinceFrg.setOnPickProvinceListener(this);
                 break;
             case R.id.frg_filter_txtquan:
-                if (whatProvince < 1) {
+                if (tinh.trim().equals("")) {
                     Snackbar.make(v, getString(R.string.txt_noChoseProvince), Snackbar.LENGTH_SHORT).show();
                 } else {
                     PickDistrictDialogFragment pickDistrictFrg = new PickDistrictDialogFragment();
@@ -129,7 +130,13 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
                 pickFoodFrg.setOnPickFoodListener(this);
                 break;
             case R.id.frg_filter_btnTim:
-                querySomething();
+                if (tinh.equals("")) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
+                } else if (quan.equals("")) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseDistrict), Toast.LENGTH_SHORT).show();
+                } else {
+                    querySomething();
+                }
                 break;
         }
     }
@@ -157,21 +164,23 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
         locaList.clear();
         mAdapter.notifyDataSetChanged();
         if (quan == null && mon != null) {//tìm món ở tất cả các quán
-            dbRef.child(getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
+            dbRef.child(tinh + "/" + quan + "/" +
+                    getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
                     .addChildEventListener(locaMenuChildEventListener);
         } else if (tinh != null && mon == null) {//tìm tất cả các quán theo tỉnh
-            dbRef.child(getString(R.string.locations_CODE))
-                    .orderByChild("tinhtp")
-                    .addChildEventListener(locaMenuChildEventListener);
-        } else if (quan != null && mon == null) {
-            dbRef.child(getString(R.string.locations_CODE))
-                    .orderByChild("quanhuyen")
-                    .addChildEventListener(locaMenuChildEventListener);
+            if (quan != null) {
+                dbRef.child(tinh + "/" + quan + "/" +
+                        getString(R.string.locations_CODE))
+                        .addChildEventListener(locaMenuChildEventListener);
+            } else {
+                dbRef.child(tinh + "/" + quan + "/" +
+                        getString(R.string.locations_CODE))
+                        .addChildEventListener(locaMenuChildEventListener);
+            }
+
         } else if (quan != null && mon != null) {
-            dbRef.child(getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
-                    .orderByChild("quanhuyen").equalTo(quan)
+            dbRef.child(tinh + "/" + quan + "/" + getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
                     .addChildEventListener(locaMenuChildEventListener);
         }
-
     }
 }

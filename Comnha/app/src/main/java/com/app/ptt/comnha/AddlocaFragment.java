@@ -57,7 +57,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     ImageView img_ic;
     Calendar now;
     TimePickerDialog tpd;
-    int edtID,pos;
+    int edtID, pos;
     int hour, min;
     Geocoder gc;
     AutoCompleteTextView autoCompleteText;
@@ -82,8 +82,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pos=position;
-                Log.i(LOG+".onCreateView","pos= "+pos);
+                pos = position;
+                Log.i(LOG + ".onCreateView", "pos= " + pos);
             }
         });
         return view;
@@ -168,8 +168,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                         if (mPlaceAttribute != null) {
                             a = "OK";
                             resultList = new ArrayList<>();
-                            for (PlaceAttribute placeAttribute:mPlaceAttribute)
-                            resultList.add(placeAttribute.getFullname());
+                            for (PlaceAttribute placeAttribute : mPlaceAttribute)
+                                resultList.add(placeAttribute.getFullname());
                             filterResults.values = resultList;
                             filterResults.count = resultList.size();
                         } else {
@@ -193,11 +193,11 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     }
 
     public String returnFullname() {
-        String a = mPlaceAttribute.get(pos) .getStreet_number();
-        String b = mPlaceAttribute.get(pos) .getRoute();
-        String c = mPlaceAttribute.get(pos) .getLocality();
-        String d = mPlaceAttribute.get(pos) .getDistrict();
-        String f = mPlaceAttribute.get(pos) .getState();
+        String a = mPlaceAttribute.get(pos).getStreet_number();
+        String b = mPlaceAttribute.get(pos).getRoute();
+        String c = mPlaceAttribute.get(pos).getLocality();
+        String d = mPlaceAttribute.get(pos).getDistrict();
+        String f = mPlaceAttribute.get(pos).getState();
         String e = "";
         if (a != null)
             e += a;
@@ -235,12 +235,12 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         newLocation.setTimeend(btn_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
-        newLocation.setTinhtp(mPlaceAttribute.get(pos) .getState());
-        newLocation.setQuanhuyen(mPlaceAttribute.get(pos) .getDistrict());
+        String tinh = mPlaceAttribute.get(pos).getState() + "/";
+        String huyen = mPlaceAttribute.get(pos).getDistrict() + "/";
         String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
         Map<String, Object> newLocaValue = newLocation.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(getResources().getString(R.string.locations_CODE)
+        childUpdates.put(tinh + huyen + getResources().getString(R.string.locations_CODE)
                 + key, newLocaValue);
         mProgressDialog = ProgressDialog.show(getActivity(),
                 getResources().getString(R.string.txt_plzwait),
@@ -296,9 +296,9 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
                     if (a != null) {
                         Log.i(LOG + ".onClick", a);
-                        if (mPlaceAttribute.get(pos) .getStreet_number() == null)
+                        if (mPlaceAttribute.get(pos).getStreet_number() == null)
                             Snackbar.make(view, "Không có số nhà, xin thử lại", Snackbar.LENGTH_SHORT).show();
-                        else if (mPlaceAttribute.get(pos) .getRoute() == null)
+                        else if (mPlaceAttribute.get(pos).getRoute() == null)
                             Snackbar.make(view, "Không có tên đường, xin thử lại", Snackbar.LENGTH_SHORT).show();
 
                         else

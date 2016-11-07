@@ -48,14 +48,12 @@
                         android:layout_height="wrap_content"
                         android:maxLength="25"
                         android:text="@string/text_chooseLocation"
-                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/frg_post_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:maxLength="25"
                         android:text="@string/text_chooseLocation"
                         android:textSize="15sp" />
                 </LinearLayout>

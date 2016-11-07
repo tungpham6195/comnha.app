@@ -40,7 +40,7 @@ public class MyLocation {
     long giamin, giamax;
     String locaID;
     long giaTong = 0, vsTong = 0, pvTong = 0;
-    long size = 1;
+    long size = 0;
     long giaAVG, vsAVG, pvAVG, tongAVG;
 
     public void setGiaAVG(long giaAVG) {

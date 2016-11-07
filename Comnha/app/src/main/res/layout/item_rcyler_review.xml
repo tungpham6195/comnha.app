@@ -48,7 +48,6 @@
                         android:layout_height="wrap_content"
                         android:text="Android User"
                         android:textColor="@android:color/black"
-                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -56,7 +55,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="20/11/2016"
-                        android:textSize="13sp"
                         android:textStyle="normal" />
 
                     <TextView
@@ -64,14 +62,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="16:30:16"
-                        android:textSize="13sp"
                         android:textStyle="normal" />
 
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
                         android:layout_gravity="center_horizontal"
+                        android:layout_marginEnd="5dp"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/horizontal_line" />
                 </LinearLayout>
@@ -99,7 +96,6 @@
                         android:layout_marginTop="5dp"
                         android:text="Quán cơm 1"
                         android:textColor="@android:color/black"
-                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -108,8 +104,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:text="89 ngô quyền"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp" />
+                        android:textColor="@android:color/black" />
                 </LinearLayout>
 
                 <ImageView
@@ -127,7 +122,6 @@
                     android:layout_height="wrap_content"
                     android:text="Tittle"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -136,8 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="Content"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:textColor="@android:color/black" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

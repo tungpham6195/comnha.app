@@ -167,6 +167,8 @@ public class MainActivity extends AppCompatActivity
 //    };
 
     void anhXa() {
+        LoginSession.getInstance().setHuyen("Quận 9");
+        LoginSession.getInstance().setTinh("Hồ Chí Minh");
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
         fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
         fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
@@ -184,6 +186,8 @@ public class MainActivity extends AppCompatActivity
                     case R.id.tab_reviews:
                         fabmenu.close(true);
                         ReviewFragment reviewFragment = new ReviewFragment();
+                        reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                        reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
                         reviewFragment.setSortType(1);
                         transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame, reviewFragment);
@@ -194,6 +198,8 @@ public class MainActivity extends AppCompatActivity
                         fabmenu.close(true);
                         StoreFragment storeFragment = new StoreFragment();
                         storeFragment.setFilter(1);
+                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
                         transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame, storeFragment);
                         transaction.commit();
@@ -224,6 +230,8 @@ public class MainActivity extends AppCompatActivity
                                     case R.id.popup_viewpost_lastnews:
                                         ReviewFragment reviewFragment = new ReviewFragment();
                                         reviewFragment.setSortType(1);
+                                        reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
                                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                                         transaction.replace(R.id.frame, reviewFragment);
                                         transaction.commit();
@@ -231,6 +239,8 @@ public class MainActivity extends AppCompatActivity
                                     case R.id.popup_viewpost_mostcomment:
                                         ReviewFragment reviewFragment1 = new ReviewFragment();
                                         reviewFragment1.setSortType(2);
+                                        reviewFragment1.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment1.setHuyen(LoginSession.getInstance().getHuyen());
                                         FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
                                         transaction1.replace(R.id.frame, reviewFragment1);
                                         transaction1.commit();
@@ -238,6 +248,8 @@ public class MainActivity extends AppCompatActivity
                                     case R.id.popup_viewpost_mostlike:
                                         ReviewFragment reviewFragment2 = new ReviewFragment();
                                         reviewFragment2.setSortType(3);
+                                        reviewFragment2.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment2.setHuyen(LoginSession.getInstance().getHuyen());
                                         FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
                                         transaction2.replace(R.id.frame, reviewFragment2);
                                         transaction2.commit();
@@ -260,6 +272,8 @@ public class MainActivity extends AppCompatActivity
                                 switch (item.getItemId()) {
                                     case R.id.popup_viewquan_gia:
                                         storeFragment = new StoreFragment();
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
                                         storeFragment.setFilter(2);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()
@@ -268,6 +282,8 @@ public class MainActivity extends AppCompatActivity
                                         break;
                                     case R.id.popup_viewquan_pv:
                                         storeFragment = new StoreFragment();
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
                                         storeFragment.setFilter(3);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()
@@ -276,6 +292,8 @@ public class MainActivity extends AppCompatActivity
                                         break;
                                     case R.id.popup_viewquan_vs:
                                         storeFragment = new StoreFragment();
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
                                         storeFragment.setFilter(4);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()

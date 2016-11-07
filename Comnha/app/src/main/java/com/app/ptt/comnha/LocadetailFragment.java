@@ -31,7 +31,9 @@ import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.FireBase.ThucDon;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
+import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
+import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -50,7 +52,7 @@ import java.util.ArrayList;
  * A simple {@link Fragment} subclass.
  */
 public class LocadetailFragment extends Fragment {
-    private String locaID;
+    private String locaID, tinh, huyen;
     DatabaseReference dbRef;
     RecyclerView mRecyclerView, menuRecyclerView, albumRecyclerView;
     RecyclerView.Adapter mAdapter, menuAdapter, albumAdapter;
@@ -71,15 +73,16 @@ public class LocadetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setLocaID(String locaID) {
-        this.locaID = locaID;
-    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locadetail, container, false);
+        locaID = ChooseLoca.getInstance().getLocaID();
+        tinh = ChooseLoca.getInstance().getTinh();
+        huyen = ChooseLoca.getInstance().getHuyen();
         Log.d("localID", locaID);
+
         andxa(view);
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
         storageRef = FirebaseStorage.getInstance()
@@ -89,6 +92,8 @@ public class LocadetailFragment extends Fragment {
             public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                 location = dataSnapshot.getValue(MyLocation.class);
                 location.setLocaID(dataSnapshot.getKey());
+                location.setQuanhuyen(LoginSession.getInstance().getHuyen());
+                location.setTinhtp(LoginSession.getInstance().getTinh());
                 String gio = location.getTimestart() + " - " + location.getTimeend();
                 String tenquan = location.getName();
                 String diachi = location.getDiachi();
@@ -222,11 +227,15 @@ public class LocadetailFragment extends Fragment {
             }
         };
         Log.d(getResources().getString(R.string.key_CODE), locaID);
-        dbRef.child("Locations/" + locaID).addValueEventListener(locationValueEventListener);
-        dbRef.child(getResources().getString(R.string.locationpost_CODE) + "/" + locaID).addChildEventListener(locapostChildEventListener);
-        dbRef.child(getResources().getString(R.string.locathucdon_CODE)
+        dbRef.child(tinh + "/" + huyen + "" + "/"
+                + getString(R.string.locations_CODE) + locaID).addValueEventListener(locationValueEventListener);
+        dbRef.child(tinh + "/" + huyen + "" + "/" +
+                getResources().getString(R.string.locationpost_CODE) + "/" + locaID).addChildEventListener(locapostChildEventListener);
+        dbRef.child(tinh + "/" + huyen + "" + "/" +
+                getResources().getString(R.string.locathucdon_CODE)
                 + locaID).addChildEventListener(locaMenuChildEventListener);
-        dbRef.child(getResources().getString(R.string.images_CODE)
+        dbRef.child(tinh + "/" + huyen + "" + "/" +
+                getResources().getString(R.string.images_CODE)
                 + getResources().getString(R.string.locations_CODE)
                 + locaID).addChildEventListener(imagelocaChildEventListener);
         return view;
@@ -297,7 +306,9 @@ public class LocadetailFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), Adapter2Activity.class);
                 intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frg_viewpost_CODE));
-                intent.putExtra(getString(R.string.key_CODE), postlist.get(position).getPostID());
+                ChoosePost.getInstance().setPostID(postlist.get(position).getPostID());
+                ChoosePost.getInstance().setTinh(tinh);
+                ChoosePost.getInstance().setHuyen(huyen);
                 startActivity(intent);
             }
         }));
@@ -334,5 +345,8 @@ public class LocadetailFragment extends Fragment {
         ChooseLoca.getInstance().setLocaID(null);
         ChooseLoca.getInstance().setName(null);
         ChooseLoca.getInstance().setAddress(null);
+        ChoosePost.getInstance().setPostID(null);
+        ChoosePost.getInstance().setTinh(null);
+        ChoosePost.getInstance().setHuyen(null);
     }
 }

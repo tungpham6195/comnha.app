@@ -2,19 +2,21 @@ package com.app.ptt.comnha;
 
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.app.ptt.comnha.Adapters.Chooseloca_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
-import com.firebase.client.Firebase;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,28 +28,36 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChooselocaFragment extends Fragment {
+public class ChooselocaFragment extends Fragment implements View.OnClickListener, PickProvinceDialogFragment.OnnPickProvinceListener, PickDistrictDialogFragment.OnPickDistricListener {
     RecyclerView mRecyclerView;
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mlayoutManager;
     ArrayList<MyLocation> list;
     DatabaseReference dbRef;
     ChildEventListener locaChildEventListener;
+    PickDistrictDialogFragment pickDistrictDialog;
+    PickProvinceDialogFragment pickProvinceDialog;
+    FragmentManager fmDialog;
+    TextView txt_huyen, txt_tinh;
+    int whatProcince = 0;
+
     public ChooselocaFragment() {
         // Required empty public constructor
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chooseloca, container, false);
-        Firebase.setAndroidContext(getActivity().getApplicationContext());
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
         anhxa(view);
         locaChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
+                newLocation.setTinhtp(txt_tinh.getText().toString());
+                newLocation.setQuanhuyen(txt_huyen.getText().toString());
                 newLocation.setLocaID(dataSnapshot.getKey());
                 list.add(newLocation);
                 mAdapter.notifyDataSetChanged();
@@ -73,11 +83,15 @@ public class ChooselocaFragment extends Fragment {
 
             }
         };
-        dbRef.child("Locations").addChildEventListener(locaChildEventListener);
         return view;
     }
 
     private void anhxa(View view) {
+        txt_huyen = (TextView) view.findViewById(R.id.frg_chooseloca_txthuyen);
+        txt_tinh = (TextView) view.findViewById(R.id.frg_chooseloca_txttinh);
+        fmDialog = getActivity().getSupportFragmentManager();
+        pickDistrictDialog = new PickDistrictDialogFragment();
+        pickProvinceDialog = new PickProvinceDialogFragment();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_chooseloca);
         mRecyclerView.setHasFixedSize(true);
         mlayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -92,6 +106,10 @@ public class ChooselocaFragment extends Fragment {
                 getActivity().finish();
             }
         }));
+        txt_huyen.setOnClickListener(this);
+        txt_tinh.setOnClickListener(this);
+        pickProvinceDialog.setOnPickProvinceListener(this);
+        pickDistrictDialog.setOnPickDistricListener(this);
     }
 
     @Override
@@ -100,4 +118,36 @@ public class ChooselocaFragment extends Fragment {
         Log.d("destroy", "destroy");
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.frg_chooseloca_txttinh:
+                pickProvinceDialog.show(fmDialog, "fragment_pickProvince");
+                break;
+            case R.id.frg_chooseloca_txthuyen:
+                if (whatProcince < 1) {
+                    Snackbar.make(v, getString(R.string.txt_noChoseProvince), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    pickDistrictDialog.setWhatprovince(whatProcince);
+                    pickDistrictDialog.show(fmDialog, "fragment_pickDistrict");
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onPickProvince(String province, int position) {
+        whatProcince = position + 1;
+        txt_tinh.setText(province);
+    }
+
+    @Override
+    public void onPickDistrict(String district) {
+        txt_huyen.setText(district);
+        list.clear();
+        mAdapter.notifyDataSetChanged();
+        dbRef.child(txt_tinh.getText() + "/"
+                + txt_huyen.getText() + "/"
+                + getString(R.string.locations_CODE)).addChildEventListener(locaChildEventListener);
+    }
 }
