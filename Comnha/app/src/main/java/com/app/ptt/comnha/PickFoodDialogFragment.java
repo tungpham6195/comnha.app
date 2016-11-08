@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.app.ptt.comnha.Adapters.Thucdon_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
-import com.app.ptt.comnha.FireBase.ThucDon;
+import com.app.ptt.comnha.FireBase.Food;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,7 +30,7 @@ public class PickFoodDialogFragment extends DialogFragment {
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager layoutManager;
     RecyclerView.Adapter mAdapter;
-    ArrayList<ThucDon> thucdonList;
+    ArrayList<Food> thucdonList;
     DatabaseReference dbRef;
     ChildEventListener thucdonChildEventListener;
 
@@ -50,9 +50,9 @@ public class PickFoodDialogFragment extends DialogFragment {
         thucdonChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ThucDon thucDon = dataSnapshot.getValue(ThucDon.class);
-                thucDon.setMonID(dataSnapshot.getKey());
-                thucdonList.add(thucDon);
+                Food food = dataSnapshot.getValue(Food.class);
+                food.setMonID(dataSnapshot.getKey());
+                thucdonList.add(food);
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -88,7 +88,7 @@ public class PickFoodDialogFragment extends DialogFragment {
     }
 
     public interface OnPickFoodListener {
-        void onPickFood(ThucDon thucDon);
+        void onPickFood(Food food);
     }
 
     OnPickFoodListener onPickFoodListener;

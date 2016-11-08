@@ -1,6 +1,7 @@
 package com.app.ptt.comnha;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -15,8 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
+import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.FireBase.ThucDon;
+import com.app.ptt.comnha.FireBase.Food;
+import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,7 +40,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     RecyclerView.Adapter mAdapter;
     ArrayList<MyLocation> locaList;
     int whatProvince;
-    ThucDon mon;
+    Food mon;
     DatabaseReference dbRef;
     ChildEventListener locaMenuChildEventListener;
     String tinh = "", quan = "";
@@ -102,6 +105,20 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
         txt_quan.setOnClickListener(this);
         txt_mon.setOnClickListener(this);
         btn_tim.setOnClickListener(this);
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                String key = locaList.get(position).getLocaID();
+                Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
+                intent.putExtra(getResources().getString(R.string.fragment_CODE),
+                        getResources().getString(R.string.frag_locadetail_CODE));
+                ChooseLoca.getInstance().setHuyen(quan);
+                ChooseLoca.getInstance().setLocaID(key);
+                ChooseLoca.getInstance().setTinh(tinh);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        }));
     }
 
     @Override
@@ -155,9 +172,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     }
 
     @Override
-    public void onPickFood(ThucDon thucDon) {
-        txt_mon.setText(thucDon.getTenmon());
-        mon = thucDon;
+    public void onPickFood(Food food) {
+        txt_mon.setText(food.getTenmon());
+        mon = food;
     }
 
     private void querySomething() {

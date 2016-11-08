@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.app.ptt.comnha.FireBase.ThucDon;
+import com.app.ptt.comnha.FireBase.Food;
 import com.app.ptt.comnha.R;
 
 import java.util.ArrayList;
@@ -17,11 +17,11 @@ import java.util.ArrayList;
  */
 
 public class Thucdon_rcyler_adapter extends RecyclerView.Adapter<Thucdon_rcyler_adapter.ViewHolder> {
-    ArrayList<ThucDon> thucDonList;
+    ArrayList<Food> foodList;
     Activity activity;
 
-    public Thucdon_rcyler_adapter(ArrayList<ThucDon> thucDonList, Activity activity) {
-        this.thucDonList = thucDonList;
+    public Thucdon_rcyler_adapter(ArrayList<Food> foodList, Activity activity) {
+        this.foodList = foodList;
         this.activity = activity;
     }
 
@@ -33,13 +33,13 @@ public class Thucdon_rcyler_adapter extends RecyclerView.Adapter<Thucdon_rcyler_
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.txt_gia.setText(thucDonList.get(position).getGia() + "đ");
-        holder.txt_tenMon.setText(thucDonList.get(position).getTenmon());
+        holder.txt_gia.setText(foodList.get(position).getGia() + "đ");
+        holder.txt_tenMon.setText(foodList.get(position).getTenmon());
     }
 
     @Override
     public int getItemCount() {
-        return thucDonList.size();
+        return foodList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -113,9 +113,9 @@ public class Adapter2Activity extends AppCompatActivity {
         } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frg_themmon_CODE))) {
             if (findViewById(R.id.frame_adapter2) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
-                    ThemMonFragment themMonFragment = new ThemMonFragment();
-                    themMonFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, themMonFragment)
+                    AddFoodFragment addFoodFragment = new AddFoodFragment();
+                    addFoodFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, addFoodFragment)
                             .commit();
                 }
             }

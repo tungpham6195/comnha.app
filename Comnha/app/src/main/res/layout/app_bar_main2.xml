@@ -47,8 +47,7 @@
         app:bb_showShadow="true"
         app:bb_tabXmlResource="@xml/bottombar_tabs" />
 
-    <com.github.clans.fab.FloatingActionMenu xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:fab="http://schemas.android.com/apk/res-auto"
+    <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/main_fabMenu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -91,8 +90,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic__review_white_18dp"
-            app:fab_colorNormal="@color/colorphucvu"
-            app:fab_colorPressed="@color/colorphucvu"
+            fab:fab_colorNormal="@color/colorphucvu"
+            fab:fab_colorPressed="@color/colorphucvu"
             fab:fab_label="@string/action_addpost"
             fab:fab_size="mini" />
 
@@ -101,8 +100,8 @@
             android:layout_width="430dp"
             android:layout_height="0dp"
             android:src="@drawable/ic_add_location_white_18dp"
-            app:fab_colorNormal="@color/colorvesinh"
-            app:fab_colorPressed="@color/colorvesinh"
+            fab:fab_colorNormal="@color/colorvesinh"
+            fab:fab_colorPressed="@color/colorvesinh"
             fab:fab_label="@string/action_addloca"
             fab:fab_size="mini" />
 
@@ -112,8 +111,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_a_photo_white_18dp"
             android:visibility="gone"
-            app:fab_colorNormal="@color/colorgia"
-            app:fab_colorPressed="@color/colorgia"
+            fab:fab_colorNormal="@color/colorgia"
+            fab:fab_colorPressed="@color/colorgia"
             fab:fab_label="@string/action_uploadphoto"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>

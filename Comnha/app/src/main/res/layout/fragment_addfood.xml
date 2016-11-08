@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.app.ptt.comnha.ThemMonFragment">
+    tools:context="com.app.ptt.comnha.AddFoodFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -77,7 +77,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
-                            android:maxLength="40"
+                            android:maxLength="43"
                             android:maxLines="1"
                             android:text="Địa chỉ"
                             android:textSize="15dp" />
@@ -88,6 +88,26 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="5dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/text_foodcateg"
+                                android:textAllCaps="false" />
+
+                            <Button
+                                android:id="@+id/frg_addfood_btnchoosecatego"
+                                style="@style/Widget.AppCompat.Button.Borderless"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/text_choosefoodcateg"
+                                android:textAllCaps="false" />
+                        </LinearLayout>
 
                         <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"

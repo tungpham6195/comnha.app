@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Photos_rcyler_adapter;
+import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,7 +40,7 @@ public class PhotoFragment extends Fragment {
     RecyclerView mRecyclerView;
     RecyclerView.Adapter mAdapter;
     GridLayoutManager gridLayoutManager;
-    ArrayList<Uri> photoList;
+    ArrayList<Image> photoList;
     ChildEventListener imgageValueEventListener;
 
     public PhotoFragment() {
@@ -61,13 +62,15 @@ public class PhotoFragment extends Fragment {
                 try {
 //                    Toast.makeText(getActivity(), dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
                     Log.d("checkListenerFromImages", "have changed");
-                    storageRef.child(getResources().getString(R.string.users_CODE)
-                            + LoginSession.getInstance().getUserID() + "/"
-                            + getResources().getString(R.string.posts_CODE) + dataSnapshot.getValue().toString())
+                    final Image image = dataSnapshot.getValue(Image.class);
+                    image.setImageID(dataSnapshot.getKey());
+                    storageRef.child(getResources().getString(R.string.images_CODE)
+                            + image.getName())
                             .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            photoList.add(uri);
+                            image.setPath(uri);
+                            photoList.add(image);
                             mAdapter.notifyDataSetChanged();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -101,10 +104,10 @@ public class PhotoFragment extends Fragment {
 
             }
         };
-        dbRef.child(getResources().getString(R.string.images_CODE)
-                + getResources().getString(R.string.users_CODE)
-                + LoginSession.getInstance().getUserID() + "/"
-                + getResources().getString(R.string.posts_CODE)).addChildEventListener(imgageValueEventListener);
+        dbRef.child(getResources().getString(R.string.images_CODE))
+                .orderByChild("userID")
+                .equalTo(LoginSession.getInstance().getUserID())
+                .addChildEventListener(imgageValueEventListener);
         return view;
     }
 

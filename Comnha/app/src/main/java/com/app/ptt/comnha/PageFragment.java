@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.Adapters.Photos_rcyler_adapter;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -274,8 +273,8 @@ public class PageFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_photo_recyclerV);
         gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
-        mAdapter = new Photos_rcyler_adapter(photoList, getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+//        mAdapter = new Photos_rcyler_adapter(photoList, getActivity());
+//        mRecyclerView.setAdapter(mAdapter);
         imgageValueEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -288,7 +287,7 @@ public class PageFragment extends Fragment {
                         @Override
                         public void onSuccess(Uri uri) {
                             photoList.add(uri);
-                            mAdapter.notifyDataSetChanged();
+//                            mAdapter.notifyDataSetChanged();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

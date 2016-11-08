@@ -4,14 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/mapwhere"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:focusableInTouchMode="true" />
-
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -21,6 +13,14 @@
         android:layout_marginTop="10dp"
         app:cardCornerRadius="@dimen/cardv_cornerRadius"
         app:cardElevation="@dimen/cardv_elevation">
+
+        <ImageButton
+            android:id="@+id/frg_map_btnsearch"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/ic_search_grey_600_24dp" />
 
         <AutoCompleteTextView
             android:id="@+id/frg_map_edtsearch"
@@ -32,44 +32,60 @@
             android:background="@android:color/transparent"
             android:hint="@string/txt_entrySearch"
             android:inputType="textAutoComplete" />
-
-        <ImageButton
-            android:id="@+id/frg_map_btnsearch"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end|center_vertical"
-            android:src="@drawable/ic_search_grey_600_24dp" />
     </android.support.v7.widget.CardView>
-    <android.support.v7.widget.CardView
+
+
+    <LinearLayout
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        app:cardCornerRadius="@dimen/cardv_cornerRadius"
-        app:cardElevation="@dimen/cardv_elevation"
-        android:layout_gravity="bottom|right">
-        <AutoCompleteTextView
-            android:id="@+id/frg_map_edtsort"
+        android:layout_gravity="bottom|start"
+        android:orientation="vertical">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/frg_map_fablocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_location_black_18dp"
+            app:fab_colorNormal="@android:color/white"
+            app:fab_colorPressed="@android:color/white"
+            app:fab_colorRipple="#68000000"
+            app:fab_shadowColor="#80000000"
+            app:fab_shadowRadius="2dp"
+            app:fab_shadowXOffset="1dp"
+            app:fab_shadowYOffset="1dp"
+            app:fab_showShadow="true"
+            app:fab_size="mini"
+            app:layout_anchor="@+id/mapwhere"
+            app:layout_anchorGravity="bottom|left" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_marginTop="20dp"
+            android:id="@+id/frg_map_fabfilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_rate_black_18dp"
+            app:fab_colorNormal="@android:color/white"
+            app:fab_colorPressed="@android:color/white"
+            app:fab_colorRipple="#68000000"
+            app:fab_shadowColor="#80000000"
+            app:fab_shadowRadius="2dp"
+            app:fab_shadowXOffset="1dp"
+            app:fab_shadowYOffset="1dp"
+            app:fab_showShadow="true"
+            app:fab_size="mini"
+            app:layout_anchor="@+id/mapwhere"
+            app:layout_anchorGravity="bottom|left" />
+
+        <FrameLayout
+            android:id="@+id/mapwhere"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="10dp"
-            android:background="@android:color/transparent"
-            android:hint="Nhập thành phố"
-            android:inputType="textAutoComplete" />
-        <ImageButton
-            android:id="@+id/frg_map_btnreload"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end|center_vertical"
-            android:src="@drawable/ic_refresh_18dp" />
-
-    </android.support.v7.widget.CardView>
-
+            android:layout_alignParentStart="true"
+            android:focusableInTouchMode="true" />
+    </LinearLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

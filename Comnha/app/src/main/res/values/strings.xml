@@ -15,11 +15,15 @@
     <string name="text_end">Đến</string>
     <string name="text_gia">Giá</string>
     <string name="text_more">Mở rộng</string>
+    <string name="text_foodcateg">Loại món ăn</string>
+    <string name="text_choosefoodcateg">Chọn loại món ăn</string>
     <string name="text_rategia">Giá</string>
     <string name="text_ratevs">Vệ sinh</string>
     <string name="text_ratepv">Phục vụ</string>
     <string name="text_save">Save</string>
     <string name="text_add">Thêm mới</string>
+    <string name="text_foodcateName">Tên loại món</string>
+    <string name="text_cancel">Hủy</string>
     <string name="text_address">Địa chỉ</string>
     <string name="text_email">Email</string>
     <string name="text_username">Username</string>
@@ -40,6 +44,7 @@
     <string name="text_pickProvince">Chọn Tỉnh/Thành Phố</string>
     <string name="text_pickFood">Chọn món ăn</string>
     <string name="text_pickDistrict">Chọn Quận/Huyện</string>
+    <string name="text_addfoodCate">Thêm loại món</string>
     <string name="text_title">Tiêu đề</string>
     <string name="text_content">Nội dung</string>
     <string name="text_upImage">Chọn ảnh</string>
@@ -48,6 +53,7 @@
     <string name="text_select">Chọn</string>
     <string name="text_taomoi">Tạo mới</string>
     <string name="text_signup_successful">Đăng kí thành công!!!</string>
+    <string name="text_addnewFoodCate_successful">Thêm loại món mới thành công!!!</string>
     <string name="text_noti_addloca_succes">Thêm địa điểm thành công</string>
     <string name="title_activity_nav_draw">NavDrawActivity</string>
     <string name="text_themdiadiem">Thêm địa điểm mới</string>
@@ -61,6 +67,7 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="txt_writecomment">Viết bình luận......</string>
+
     <!--ERROR-->
     <string name="txt_noemail">Warning: Chưa nhập email</string>
     <string name="txt_notemail">Error: Email không hợp lệ</string>
@@ -90,6 +97,7 @@
     <string name="txt_noChoseProvince">Warning: Chưa chọn Tỉnh/Thành phố</string>
     <string name="txt_noChoseDistrict">Warning: Chưa chọn Quận/Huyện</string>
     <string name="txt_noChoseFood">Warning: Chưa chọn món ăn</string>
+    <string name="txt_noFoodCateName">Warning: Chưa nhập tên loại món ăn</string>
     <string name="txt_choseLoca">Bạn đã chọn địa điểm</string>
 
     <!--ERROR-->
@@ -172,7 +180,8 @@
     <string name="menulocation_CODE">FoodLocation/</string>
     <string name="usertrackloca_CODE">UserTrackLoca/</string>
     <string name="common_CODE">Common/</string>
-    <string name="district_CODE">District</string>
+    <string name="district_CODE">District/</string>
+    <string name="foodcategory_CODE">FoodCategory/</string>
     <!--Firebase-->
 
     <string name="action_example">Example action</string>

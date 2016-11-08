@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.Posts;
 import com.app.ptt.comnha.Classes.Times;
+import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
@@ -208,26 +209,19 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             try {
                 if (DoPost.getInstance().getFiles().size() > 0) {
                     Log.i("size", DoPost.getInstance().getFiles().size() + "");
+//                    for (File f : DoPost.getInstance().getFiles()) {
+//                        Uri uri = Uri.fromFile(f);
+//                        StorageReference childRef = storeRef.child(
+//                                tinh+"/"+huyen+"/"+
+//                                getResources().getString(R.string.users_CODE) + LoginSession.getInstance().getUserID() + "/"
+//                                        + getResources().getString(R.string.posts_CODE) + uri.getLastPathSegment());
+//                        uploadTask = childRef.putFile(uri);
+//                    }
                     for (File f : DoPost.getInstance().getFiles()) {
                         Uri uri = Uri.fromFile(f);
                         StorageReference childRef = storeRef.child(
-                                getResources().getString(R.string.users_CODE)
-                                        + LoginSession.getInstance().getUserID() + "/"
-                                        + getResources().getString(R.string.posts_CODE) + uri.getLastPathSegment());
-                        uploadTask = childRef.putFile(uri);
-                    }
-                    for (File f : DoPost.getInstance().getFiles()) {
-                        Uri uri = Uri.fromFile(f);
-                        StorageReference childRef = storeRef.child(tinh + huyen +
-                                getResources().getString(R.string.locations_CODE)
-                                + DoPost.getInstance().getMyLocation().getLocaID() + "/" + uri.getLastPathSegment());
-                        uploadTask = childRef.putFile(uri);
-                    }
-                    for (File f : DoPost.getInstance().getFiles()) {
-                        Uri uri = Uri.fromFile(f);
-                        StorageReference childRef = storeRef.child(tinh + huyen +
-                                getResources().getString(R.string.posts_CODE)
-                                + key + "/" + uri.getLastPathSegment());
+                                getResources().getString(R.string.images_CODE)
+                                        + uri.getLastPathSegment());
                         uploadTask = childRef.putFile(uri);
                     }
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -270,8 +264,8 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                 getResources().getString(R.string.posts_CODE) + key, postValue);
         childUpdates.put(tinh + huyen + getResources().getString(R.string.userpost_CODE)
                 + LoginSession.getInstance().getUserID() + "/" + key, postValue);
-        childUpdates.put(tinh + huyen + getResources().getString(R.string.locationpost_CODE) +
-                locaID + "/" + key, postValue);
+//        childUpdates.put(tinh + huyen + getResources().getString(R.string.locationpost_CODE) +
+//                locaID + "/" + key, postValue);
 //        childUpdates.put(tinh + huyen + getResources().getString(R.string.locauserpost_CODE)
 //                + DoPost.getInstance().getMyLocation().getLocaID() + "/"
 //                + LoginSession.getInstance().getUserID() + "/" + key, postValue);
@@ -297,14 +291,13 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             for (File f : DoPost.getInstance().getFiles()) {
                 Uri uri = Uri.fromFile(f);
                 String fileKey = dbRef.child(getResources().getString(R.string.images_CODE)).push().getKey();
-                childUpdates.put(tinh + huyen + getResources().getString(R.string.images_CODE) +
-                        getResources().getString(R.string.posts_CODE) + key + "/" + fileKey, uri.getLastPathSegment());
-                childUpdates.put(tinh + huyen + getResources().getString(R.string.images_CODE) +
-                        getResources().getString(R.string.users_CODE) + LoginSession.getInstance().getUserID() + "/"
-                        + getResources().getString(R.string.posts_CODE) + "/" + fileKey, uri.getLastPathSegment());
-                childUpdates.put(tinh + huyen + getResources().getString(R.string.images_CODE) +
-                        getResources().getString(R.string.locations_CODE) + locaID
-                        + "/" + fileKey, uri.getLastPathSegment());
+                Image newImage = new Image();
+                newImage.setName(uri.getLastPathSegment());
+                newImage.setPostID(key);
+                newImage.setUserID(LoginSession.getInstance().getUserID());
+                newImage.setLocaID(locaID);
+                childUpdates.put(getResources().getString(R.string.images_CODE)
+                        + fileKey, newImage);
             }
         } catch (NullPointerException mess) {
         }

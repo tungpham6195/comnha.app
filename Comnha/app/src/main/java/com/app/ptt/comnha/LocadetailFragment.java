@@ -27,9 +27,10 @@ import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
 import com.app.ptt.comnha.Adapters.Thucdon_rcyler_adapter;
 import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
+import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
-import com.app.ptt.comnha.FireBase.ThucDon;
+import com.app.ptt.comnha.FireBase.Food;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
@@ -61,13 +62,13 @@ public class LocadetailFragment extends Fragment {
     LinearLayout btn_themanh, btn_dangreview;
     ArrayList<Post> postlist;
     ValueEventListener locationValueEventListener;
-    ChildEventListener locapostChildEventListener, locaMenuChildEventListener, imagelocaChildEventListener;
+    ChildEventListener postChildEventListener, locaMenuChildEventListener, imageChildEventListener;
     ActionBar actionBar;
     Toolbar toolbar;
     MyLocation location;
     StorageReference storageRef;
-    ArrayList<ThucDon> thucDonList;
-    ArrayList<Uri> files;
+    ArrayList<Food> foodList;
+    ArrayList<Image> files;
 
     public LocadetailFragment() {
         // Required empty public constructor
@@ -121,7 +122,7 @@ public class LocadetailFragment extends Fragment {
 
             }
         };
-        locapostChildEventListener = new ChildEventListener() {
+        postChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
                 Post post = dataSnapshot.getValue(Post.class);
@@ -155,9 +156,9 @@ public class LocadetailFragment extends Fragment {
         locaMenuChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ThucDon thucDon = dataSnapshot.getValue(ThucDon.class);
-                thucDon.setMonID(dataSnapshot.getKey());
-                thucDonList.add(thucDon);
+                Food food = dataSnapshot.getValue(Food.class);
+                food.setMonID(dataSnapshot.getKey());
+                foodList.add(food);
                 menuAdapter.notifyDataSetChanged();
             }
 
@@ -181,18 +182,21 @@ public class LocadetailFragment extends Fragment {
 
             }
         };
-        imagelocaChildEventListener = new ChildEventListener() {
+        imageChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 try {
 //                    Toast.makeText(getActivity(), dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
                     Log.d("checkListenerFromImages", "have changed");
-                    storageRef.child(getResources().getString(R.string.locations_CODE)
-                            + locaID + "/" + dataSnapshot.getValue().toString())
+                    final Image image = dataSnapshot.getValue(Image.class);
+                    image.setImageID(dataSnapshot.getKey());
+                    storageRef.child(getString(R.string.images_CODE) + "/"
+                            + image.getName())
                             .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            files.add(uri);
+                            image.setPath(uri);
+                            files.add(image);
                             albumAdapter.notifyDataSetChanged();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -230,14 +234,14 @@ public class LocadetailFragment extends Fragment {
         dbRef.child(tinh + "/" + huyen + "" + "/"
                 + getString(R.string.locations_CODE) + locaID).addValueEventListener(locationValueEventListener);
         dbRef.child(tinh + "/" + huyen + "" + "/" +
-                getResources().getString(R.string.locationpost_CODE) + "/" + locaID).addChildEventListener(locapostChildEventListener);
+                getResources().getString(R.string.posts_CODE)).orderByChild("locaID").equalTo(locaID)
+                .addChildEventListener(postChildEventListener);
         dbRef.child(tinh + "/" + huyen + "" + "/" +
                 getResources().getString(R.string.locathucdon_CODE)
                 + locaID).addChildEventListener(locaMenuChildEventListener);
-        dbRef.child(tinh + "/" + huyen + "" + "/" +
-                getResources().getString(R.string.images_CODE)
-                + getResources().getString(R.string.locations_CODE)
-                + locaID).addChildEventListener(imagelocaChildEventListener);
+        dbRef.child(getResources().getString(R.string.images_CODE))
+                .orderByChild("locaID").equalTo(locaID).limitToFirst(3)
+                .addChildEventListener(imageChildEventListener);
         return view;
     }
 
@@ -279,8 +283,8 @@ public class LocadetailFragment extends Fragment {
         menulayoutManager = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.HORIZONTAL, false);
         menuRecyclerView.setLayoutManager(menulayoutManager);
-        thucDonList = new ArrayList<>();
-        menuAdapter = new Thucdon_rcyler_adapter(thucDonList, getActivity());
+        foodList = new ArrayList<>();
+        menuAdapter = new Thucdon_rcyler_adapter(foodList, getActivity());
         menuRecyclerView.setAdapter(menuAdapter);
 
         albumRecyclerView = (RecyclerView) view.findViewById(R.id.frg_lcdetail_rcyler_album);
@@ -331,7 +335,11 @@ public class LocadetailFragment extends Fragment {
                 intent.putExtra(getResources().getString(R.string.fragment_CODE),
                         getResources().getString(R.string.frg_themmon_CODE));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                DoPost.getInstance().setMyLocation(location);
+                ChooseLoca.getInstance().setLocaID(location.getLocaID());
+                ChooseLoca.getInstance().setName(location.getName());
+                ChooseLoca.getInstance().setAddress(location.getDiachi());
+                ChooseLoca.getInstance().setTinh(tinh);
+                ChooseLoca.getInstance().setHuyen(huyen);
                 startActivity(intent);
                 return true;
             default:

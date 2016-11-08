@@ -175,7 +175,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 newLocation.setLocaID(dataSnapshot.getKey());
                 //newLocation.setKhoangcach(myTool.getDistance(yourLatLng,myTool.returnLatLngByName(newLocation.getDiachi()))+"");
                 // myTool.loadListPlace(newLocation.getDiachi(), newLocation.getLocaID(),StoreFragment.class.getSimpleName());
-                list_item.add(newLocation);
+                listLocation.add(newLocation);
 //                listSize++;
                 if (STATUS_START > 0) {
                     btn_refresh.setVisibility(View.VISIBLE);
@@ -251,6 +251,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     private void anhxa(View view) {
         Log.i("anhxa", "RUN");
         //list_item=new ArrayList<>();
+        listLocation = new ArrayList<>();
         btn_refresh = (Button) view.findViewById(R.id.frg_store_btn_refresh);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_store_recyclerView_localist);
         mRecyclerView.setHasFixedSize(true);
@@ -259,21 +260,21 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         linearLayoutManager.setStackFromEnd(true);
         mLayoutManager = linearLayoutManager;
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new Locatlist_rcyler_adapter(list_item);
+        mAdapter = new Locatlist_rcyler_adapter(listLocation);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity().getApplicationContext(),
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        String key = list_item.get(position).getLocaID();
+                        String key = listLocation.get(position).getLocaID();
                         Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                         intent.putExtra(getResources().getString(R.string.fragment_CODE),
                                 getResources().getString(R.string.frag_locadetail_CODE));
                         ChooseLoca.getInstance().setHuyen(huyen);
-                        ChooseLoca.getInstance().setLocaID(listLocation.get(position).getLocaID());
+                        ChooseLoca.getInstance().setLocaID(key);
                         ChooseLoca.getInstance().setTinh(tinh);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getActivity().getApplicationContext().startActivity(intent);
+                        startActivity(intent);
                     }
                 }));
         btn_refresh.setVisibility(View.GONE);

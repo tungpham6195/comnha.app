@@ -22,6 +22,7 @@ import com.app.ptt.comnha.Adapters.Comment_rcyler_adapter;
 import com.app.ptt.comnha.Adapters.Photos_rcyler_adapter;
 import com.app.ptt.comnha.Classes.Times;
 import com.app.ptt.comnha.FireBase.Comment;
+import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
@@ -54,7 +55,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     RecyclerView.LayoutManager mlayoutManager, mlayoutManagerAlbum;
     RecyclerView.Adapter mAdapter, mAdapterAlbum;
     ArrayList<Comment> comment_List;
-    ArrayList<Uri> albumList;
+    ArrayList<Image> albumList;
     DatabaseReference dbRef;
     StorageReference storageRef;
     ChildEventListener commentChildEventListener, albumChildEventListener;
@@ -88,13 +89,15 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                 try {
 //                    Toast.makeText(getActivity(), dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
                     Log.d("checkListenerFromImages", "have changed");
-                    storageRef.child(getResources().getString(R.string.posts_CODE)
-                            + postID + "/"
-                            + dataSnapshot.getValue().toString())
+                    final Image image = dataSnapshot.getValue(Image.class);
+                    image.setImageID(dataSnapshot.getKey());
+                    storageRef.child(getResources().getString(R.string.images_CODE)
+                            + image.getName())
                             .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            albumList.add(uri);
+                            image.setPath(uri);
+                            albumList.add(image);
                             mAdapterAlbum.notifyDataSetChanged();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -183,10 +186,9 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         dbRef.child(tinh + "/" + huyen + "/" +
                 getString(R.string.postcomment_CODE) + "/" + postID)
                 .addChildEventListener(commentChildEventListener);
-        dbRef.child(tinh + "/" + huyen + "/" +
-                getResources().getString(R.string.images_CODE)
-                + getResources().getString(R.string.posts_CODE)
-                + postID)
+        dbRef.child(getResources().getString(R.string.images_CODE))
+                .orderByChild("postID")
+                .equalTo(postID)
                 .limitToFirst(3)
                 .addChildEventListener(albumChildEventListener);
         return view;
