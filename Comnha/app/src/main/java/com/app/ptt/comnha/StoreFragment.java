@@ -24,6 +24,7 @@ import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.Service.MyTool;
+import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseError;
@@ -36,8 +37,8 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StoreFragment extends Fragment implements View.OnClickListener{
-    private static final String LOG=StoreFragment.class.getSimpleName();
+public class StoreFragment extends Fragment implements View.OnClickListener {
+    private static final String LOG = StoreFragment.class.getSimpleName();
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     private IntentFilter mIntentFilter;
     private RecyclerView mRecyclerView;
@@ -47,24 +48,35 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
 
     private RecyclerView.LayoutManager mLayoutManager;
     private DatabaseReference dbRef;
-    private ArrayList<MyLocation>  list_item = new ArrayList<>();
+    private ArrayList<MyLocation> list_item = new ArrayList<>();
     private ArrayList<MyLocation> listLocation;
     ArrayList<Route> list;
     ChildEventListener locaListChildEventListener;
     String yourLocation;
     MyTool myTool;
     View mView;
-    int filter,temp;
+    int filter, temp;
     LatLng yourLatLng;
     Button btn_refresh;
     private static int STATUS_START = 0;
     ProgressDialog progressDialog1;
+
     public void setFilter(int filter) {
         this.filter = filter;
     }
+
     Handler handler;
-    int listSize=0, count;
-    String tinh,huyen;
+    int listSize = 0, count;
+    String tinh, huyen;
+
+    public void setTinh(String tinh) {
+        this.tinh = tinh;
+    }
+
+    public void setHuyen(String huyen) {
+        this.huyen = huyen;
+    }
+
     public StoreFragment() {
     }
 
@@ -72,84 +84,87 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
     public void onStart() {
         Log.i("onStart", "RUN");
         super.onStart();
-       // doBinService();
+        // doBinService();
 
 //        mIntentFilter = new IntentFilter();
 //        mIntentFilter.addAction(mBroadcastSendAddress);
 //        getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
     }
-    private BroadcastReceiver mBroadcastReceiver=new BroadcastReceiver() {
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getIntExtra("STT",0)==4){
-                Log.i(LOG+".BroadcastReceiver","RECEIVE BROASTCAST"+list_item.size());
-                yourLocation=myTool.getYourLocation();
-                yourLatLng=myTool.getYourLatLng();
-                if(list_item!=null &&list_item.size()>0){
-                    progressDialog1=new ProgressDialog(getActivity());
+            if (intent.getIntExtra("STT", 0) == 4) {
+                Log.i(LOG + ".BroadcastReceiver", "RECEIVE BROASTCAST" + list_item.size());
+                yourLocation = myTool.getYourLocation();
+                yourLatLng = myTool.getYourLatLng();
+                if (list_item != null && list_item.size() > 0) {
+                    progressDialog1 = new ProgressDialog(getActivity());
                     progressDialog1.setMessage("LOADING");
                     progressDialog1.show();
-                    count=0;
-                    for (MyLocation location: list_item){
+                    count = 0;
+                    for (MyLocation location : list_item) {
 
-                        if(location.getKhoangcach()==null) {
-                            Log.i("loadListPlace ","START");
-                            Log.i("get Count ","count= "+count);
-                           // location.setKhoangcach(myTool.getDistance(yourLatLng,myTool.returnLatLngByName(location.getDiachi()))+"");
-                            myTool.loadListPlace(location.getDiachi(), location.getLocaID(),StoreFragment.class.getSimpleName());
+                        if (location.getKhoangcach() == null) {
+                            Log.i("loadListPlace ", "START");
+                            Log.i("get Count ", "count= " + count);
+                            // location.setKhoangcach(myTool.getDistance(yourLatLng,myTool.returnLatLngByName(location.getDiachi()))+"");
+                            myTool.loadListPlace(location.getDiachi(), location.getLocaID(), StoreFragment.class.getSimpleName());
 
-                            Log.i("get Count ","count= "+count);
+                            Log.i("get Count ", "count= " + count);
                             count++;
                         }
                     }
-                    if(count==list_item.size()) {
+                    if (count == list_item.size()) {
                         mAdapter.notifyDataSetChanged();
-                        Log.i("Count= max ","count= "+count);
+                        Log.i("Count= max ", "count= " + count);
                         progressDialog1.dismiss();
                     }
 
                 }
             }
-            if(intent.getIntExtra("STT",0)==1) {
-                    for(MyLocation location:list_item){
-                        if(location.getLocaID().equals(intent.getStringExtra("PlaceID"))){
-                            location.setKhoangcach(intent.getStringExtra("Distance"));
-                            Log.i("ID:"+intent.getStringExtra("PlaceID") ,"Distance= "+intent.getStringExtra("Distance"));
-                            count++;
-                            Log.i("get Count ","count= "+count);
-                        }
+            if (intent.getIntExtra("STT", 0) == 1) {
+                for (MyLocation location : list_item) {
+                    if (location.getLocaID().equals(intent.getStringExtra("PlaceID"))) {
+                        location.setKhoangcach(intent.getStringExtra("Distance"));
+                        Log.i("ID:" + intent.getStringExtra("PlaceID"), "Distance= " + intent.getStringExtra("Distance"));
+                        count++;
+                        Log.i("get Count ", "count= " + count);
                     }
-                 //  mAdapter.notifyDataSetChanged();
+                }
+                //  mAdapter.notifyDataSetChanged();
 
 //                if(intent.getIntExtra("TEMP",0)==listSize) {
 //                    mAdapter.notifyDataSetChanged();
 //                    progressDialog1.dismiss();
 //                    Log.i("listSize= ",listSize+" ");
 //                }
-                if(count==listSize) {
+                if (count == listSize) {
                     mAdapter.notifyDataSetChanged();
                     progressDialog1.dismiss();
                     Log.i("listSize= ", listSize + " ");
                 }
-                Log.i("listSize: ",listSize+" ");
-                Log.i("TEMP: ",""+intent.getIntExtra("TEMP",0));
+                Log.i("listSize: ", listSize + " ");
+                Log.i("TEMP: ", "" + intent.getIntExtra("TEMP", 0));
             }
         }
     };
+
     @Override
     public void onStop() {
-        Log.i("onStop","RUN");
+        Log.i("onStop", "RUN");
         super.onStop();
 //        myTool.stopGoogleApi();
 //        getActivity().unregisterReceiver(mBroadcastReceiver);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("onCreateView","RUN");
+        Log.i("onCreateView", "RUN");
         View view = inflater.inflate(R.layout.fragment_store, container, false);
-        mView=view;
-        listSize=0;
+        mView = view;
+        listSize = 0;
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://com-nha.firebaseio.com/");
         anhxa(view);
         locaListChildEventListener = new ChildEventListener() {
@@ -159,7 +174,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
                 //newLocation.setKhoangcach(myTool.getDistance(yourLatLng,myTool.returnLatLngByName(newLocation.getDiachi()))+"");
-               // myTool.loadListPlace(newLocation.getDiachi(), newLocation.getLocaID(),StoreFragment.class.getSimpleName());
+                // myTool.loadListPlace(newLocation.getDiachi(), newLocation.getLocaID(),StoreFragment.class.getSimpleName());
                 list_item.add(newLocation);
                 listSize++;
                 if (STATUS_START > 0) {
@@ -199,36 +214,41 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
         };
         switch (filter) {
             case 1:
-                dbRef.child("Locations").addChildEventListener(locaListChildEventListener);
+                dbRef.child(tinh + "/" + huyen + "/"
+                        + getString(R.string.locations_CODE)).addChildEventListener(locaListChildEventListener);
                 break;
             case 2:
-                dbRef.child(getResources().getString(R.string.locations_CODE))
+                dbRef.child(tinh + "/" + huyen + "/" +
+                        getResources().getString(R.string.locations_CODE))
                         .orderByChild("giaAVG")
                         .limitToLast(200)
                         .addChildEventListener(locaListChildEventListener);
                 break;
             case 3:
-                dbRef.child(getResources().getString(R.string.locations_CODE))
+                dbRef.child(tinh + "/" + huyen + "/" +
+                        getResources().getString(R.string.locations_CODE))
                         .orderByChild("pvAVG")
                         .limitToLast(200)
                         .addChildEventListener(locaListChildEventListener);
                 break;
             case 4:
-                dbRef.child(getResources().getString(R.string.locations_CODE))
+                dbRef.child(tinh + "/" + huyen + "/" +
+                        getResources().getString(R.string.locations_CODE))
                         .orderByChild("vsAVG")
                         .limitToLast(200)
                         .addChildEventListener(locaListChildEventListener);
                 break;
         }
-        myTool=new MyTool(getActivity());
+        myTool = new MyTool(getActivity());
         myTool.startGoogleApi();
 
 
         //new CCC().execute();
         return view;
     }
+
     private void anhxa(View view) {
-        Log.i("anhxa","RUN");
+        Log.i("anhxa", "RUN");
         //list_item=new ArrayList<>();
         btn_refresh = (Button) view.findViewById(R.id.frg_store_btn_refresh);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_store_recyclerView_localist);
@@ -248,7 +268,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
                         Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                         intent.putExtra(getResources().getString(R.string.fragment_CODE),
                                 getResources().getString(R.string.frag_locadetail_CODE));
-                        intent.putExtra(getResources().getString(R.string.key_CODE), key);
+                        ChooseLoca.getInstance().setHuyen(huyen);
+                        ChooseLoca.getInstance().setLocaID(listLocation.get(position).getLocaID());
+                        ChooseLoca.getInstance().setTinh(tinh);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         getActivity().getApplicationContext().startActivity(intent);
                     }
@@ -267,13 +289,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    public void setTinh(String tinh) {
-        this.tinh = tinh;
-    }
 
-    public void setHuyen(String huyen) {
-        this.huyen = huyen;
-    }
 //    public void doBinService() {
 //        if (!isBound) {
 //            Intent intent = new Intent(getActivity(), MyService.class);
