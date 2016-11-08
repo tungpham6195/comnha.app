@@ -311,21 +311,21 @@ public class MainActivity extends AppCompatActivity
                         popupMenu.show();
                         break;
                     case R.id.tab_locations:
-                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_locations), Gravity.START);
-                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_locafilter, popupMenu.getMenu());
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.popup_locafilter_myloca:
-                                        break;
-                                    case R.id.popup_locafilter_choseloca:
-                                        break;
-                                }
-                                return true;
-                            }
-                        });
-                        popupMenu.show();
+//                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_locations), Gravity.START);
+//                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_locafilter, popupMenu.getMenu());
+//                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                            @Override
+//                            public boolean onMenuItemClick(MenuItem item) {
+//                                switch (item.getItemId()) {
+//                                    case R.id.popup_locafilter_myloca:
+//                                        break;
+//                                    case R.id.popup_locafilter_choseloca:
+//                                        break;
+//                                }
+//                                return true;
+//                            }
+//                        });
+//                        popupMenu.show();
                         break;
                 }
             }
