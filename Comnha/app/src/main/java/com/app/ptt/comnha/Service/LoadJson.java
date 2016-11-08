@@ -26,11 +26,4 @@ public class LoadJson implements DirectionFinderListener {
         return a;
     }
 
-    public void layKhoangCach(String a, String b){
-        try {
-            new DirectionFinder(this, a, b,"",2).execute();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
 }

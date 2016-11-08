@@ -36,6 +36,9 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , FloatingActionButton.OnClickListener {
@@ -210,6 +213,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
         bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
             @Override
             public void onTabReSelected(@IdRes int tabId) {
@@ -490,4 +494,5 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+
 }

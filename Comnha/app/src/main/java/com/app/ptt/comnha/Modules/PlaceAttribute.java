@@ -1,5 +1,7 @@
 package com.app.ptt.comnha.Modules;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by cuong on 11/2/2016.
  */
@@ -7,6 +9,15 @@ package com.app.ptt.comnha.Modules;
 public class PlaceAttribute {
     private String fullname,street_number,route,locality,district,state;
 
+    public LatLng getPlaceLatLng() {
+        return placeLatLng;
+    }
+
+    public void setPlaceLatLng(LatLng placeLatLng) {
+        this.placeLatLng = placeLatLng;
+    }
+
+    LatLng placeLatLng;
     public PlaceAttribute() {
     }
 

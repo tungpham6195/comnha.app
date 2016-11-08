@@ -40,7 +40,7 @@ public class PlaceAPI {
         if(input!="") {
             new LongProgress().execute(input);
             Log.i("CCCCCCCCCCCCCCCCCcc", list.size() + "");
-            if (list.size() > 0)
+            if (list.size() >0)
                 return list;
         }
         return null;
@@ -129,6 +129,7 @@ public class PlaceAPI {
                     mPlaceAttributes.setLocality(name);
                     break;
                 case "administrative_area_level_2":
+                    Log.i(LOG+".addtoPlaceAttribute","Quan: "+mPlaceAttributes.getDistrict());
                     mPlaceAttributes.setDistrict(name);
                     break;
                 case "administrative_area_level_1":

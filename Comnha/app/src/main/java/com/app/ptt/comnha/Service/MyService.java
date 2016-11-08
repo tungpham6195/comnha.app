@@ -72,7 +72,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 Log.i("loadListPlace;", listLocation.get(msg.arg1).getDiachi());
-                loadListPlace(listLocation.get(msg.arg1).getDiachi(),listLocation.get(msg.arg1).getLocaID(),1);
+                loadListPlace(listLocation.get(msg.arg1).getDiachi(),listLocation.get(msg.arg1).getLocaID(),"");
                 //flag1=msg.arg1;
                 id=listLocation.get(msg.arg1).getLocaID();
             }
@@ -168,10 +168,8 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             }).start();
         }
     }
-    public int returnflag1(){
-        return flag1;
-    }
-    public void findDirection(String orgin, String destination,String ID,int type) {
+
+    public void findDirection(String orgin, String destination,String ID,String type) {
         Log.i(LOG, "findDirection");
         try {
             new DirectionFinder(this, orgin, destination,ID, type).execute();
@@ -179,7 +177,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             e.printStackTrace();
         }
     }
-    public void loadListPlace(String destination,String ID,int type) {
+    public void loadListPlace(String destination,String ID,String type) {
         Log.i(LOG, "loadListPlace");
         String origin =null;
         try {

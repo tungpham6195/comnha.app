@@ -48,6 +48,7 @@ import java.util.ArrayList;
  * A simple {@link Fragment} subclass.
  */
 public class StoreFragment extends Fragment implements View.OnClickListener{
+    private static final String LOG=StoreFragment.class.getSimpleName();
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     private IntentFilter mIntentFilter;
     private RecyclerView mRecyclerView;
@@ -65,6 +66,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
     MyTool myTool;
     View mView;
     int filter,temp;
+    LatLng yourLatLng;
     Button btn_refresh;
     private static int STATUS_START = 0;
     ProgressDialog progressDialog1;
@@ -81,8 +83,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
         Log.i("onStart", "RUN");
         super.onStart();
        // doBinService();
-        myTool=new MyTool(getActivity());
-        myTool.startGoogleApi();
+
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcastSendAddress);
         getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
@@ -91,8 +92,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getIntExtra("STT",0)==4){
-                Log.i("ON CONNECT","SEND BROASTCAST"+list_item.size());
+                Log.i(LOG+".BroadcastReceiver","RECEIVE BROASTCAST"+list_item.size());
                 yourLocation=myTool.getYourLocation();
+                yourLatLng=myTool.getYourLatLng();
                 if(list_item!=null &&list_item.size()>0){
                     progressDialog1=new ProgressDialog(getActivity());
                     progressDialog1.setMessage("LOADING");
@@ -103,13 +105,15 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
                         if(location.getKhoangcach()==null) {
                             Log.i("loadListPlace ","START");
                             Log.i("get Count ","count= "+count);
-                            myTool.loadListPlace(location.getDiachi(), location.getLocaID(),2);
-                        } else {
+                           // location.setKhoangcach(myTool.getDistance(yourLatLng,myTool.returnLatLngByName(location.getDiachi()))+"");
+                            myTool.loadListPlace(location.getDiachi(), location.getLocaID(),StoreFragment.class.getSimpleName());
+
                             Log.i("get Count ","count= "+count);
                             count++;
                         }
                     }
                     if(count==list_item.size()) {
+                        mAdapter.notifyDataSetChanged();
                         Log.i("Count= max ","count= "+count);
                         progressDialog1.dismiss();
                     }
@@ -164,6 +168,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
+                //newLocation.setKhoangcach(myTool.getDistance(yourLatLng,myTool.returnLatLngByName(newLocation.getDiachi()))+"");
+               // myTool.loadListPlace(newLocation.getDiachi(), newLocation.getLocaID(),StoreFragment.class.getSimpleName());
                 list_item.add(newLocation);
                 listSize++;
                 if (STATUS_START > 0) {
@@ -224,6 +230,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
                         .addChildEventListener(locaListChildEventListener);
                 break;
         }
+        myTool=new MyTool(getActivity());
+        myTool.startGoogleApi();
 
 
         //new CCC().execute();

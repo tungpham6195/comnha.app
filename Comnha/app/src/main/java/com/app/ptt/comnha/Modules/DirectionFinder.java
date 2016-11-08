@@ -32,14 +32,13 @@ public class DirectionFinder {
     private Geocoder geocoder;
     private String destination,ID;
     Route route;
-
-    int type;
-    public DirectionFinder(DirectionFinderListener listener,String origin,String destination,String ID,int type){
+    String type;
+    public DirectionFinder(DirectionFinderListener listener,String origin,String destination,String ID,String className){
         this.listener=listener;
         this.origin=origin;
         this.destination=destination;
         this.ID=ID;
-        this.type=type;
+        this.type=className;
         Log.i(LOG,origin+" -> "+destination);
     }
     public void execute() throws UnsupportedEncodingException {
@@ -79,10 +78,11 @@ public class DirectionFinder {
         @Override
         protected void onPostExecute(String res){
             try{
-                if(type==1) //Lay het thong tin trong route
-                    parseJSon(res);
-                if(type==2) //Chi lay khoang cach
+                Log.i(LOG+".onPstEx","classname:"+type);
+                if(type.equals("StoreFragment")) //Chi lay khoang cach
                     parseJSonCustom(res);
+                else
+                    parseJSon(res);
             }catch (JSONException e){
                 e.printStackTrace();
             }
@@ -96,7 +96,7 @@ public class DirectionFinder {
         }else {
             JSONObject jsonData = new JSONObject(data);
             JSONArray jsonRoutes = jsonData.getJSONArray("routes");
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < jsonRoutes.length(); i++) {
                 JSONObject jsonRoute = jsonRoutes.getJSONObject(i);
                 route = new Route();
                     JSONObject overview_polylineJson = jsonRoute.getJSONObject("overview_polyline");
@@ -128,7 +128,7 @@ public class DirectionFinder {
         }else {
             JSONObject jsonData = new JSONObject(data);
             JSONArray jsonRoutes = jsonData.getJSONArray("routes");
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < jsonRoutes.length(); i++) {
                 JSONObject jsonRoute = jsonRoutes.getJSONObject(i);
                 route = new Route();
                 // JSONObject overview_polylineJson = jsonRoute.getJSONObject("overview_polyline");
@@ -147,7 +147,7 @@ public class DirectionFinder {
                 //  route.setPoints(decodePolyLine(overview_polylineJson.getString("points")));
                 route.setLocalID(ID);
 //                    Log.i(LOG, "lat=" + route.getEndLocation().latitude + " lon=" + route.getEndLocation().longitude);
-                //    Log.i(LOG, route.getLocalID() + "");
+                Log.i(LOG+".JSonCt", route.getDistance().text);
             }
             listener.onDirectionFinderSuccess(route);
         }
