@@ -176,12 +176,13 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 //newLocation.setKhoangcach(myTool.getDistance(yourLatLng,myTool.returnLatLngByName(newLocation.getDiachi()))+"");
                 // myTool.loadListPlace(newLocation.getDiachi(), newLocation.getLocaID(),StoreFragment.class.getSimpleName());
                 list_item.add(newLocation);
-                listSize++;
+//                listSize++;
                 if (STATUS_START > 0) {
                     btn_refresh.setVisibility(View.VISIBLE);
                     AnimationUtils.animatbtnRefreshIfChange(btn_refresh);
                 }
                 STATUS_START = 1;
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -239,8 +240,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                         .addChildEventListener(locaListChildEventListener);
                 break;
         }
-        myTool = new MyTool(getActivity());
-        myTool.startGoogleApi();
+//        myTool = new MyTool(getActivity());
+//        myTool.startGoogleApi();
 
 
         //new CCC().execute();
