@@ -30,6 +30,15 @@ public class AddFoodCategoryDialogFragment extends DialogFragment implements Vie
     Button btn_addnew, btn_cancel;
     EditText edt_cateName;
     DatabaseReference dbRef;
+    OnDismissListener onDismissListener;
+
+    public interface OnDismissListener {
+        void onAddComplete(boolean isComplete);
+    }
+
+    public void setOnDismissListener(OnDismissListener listener) {
+        onDismissListener = listener;
+    }
 
     public AddFoodCategoryDialogFragment() {
         // Required empty public constructor
@@ -76,8 +85,9 @@ public class AddFoodCategoryDialogFragment extends DialogFragment implements Vie
                     dbRef.updateChildren(updateChild).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(getActivity(),
-                                    getString(R.string.text_addnewFoodCate_successful), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),
+                                    getResources().getString(R.string.text_addnewFoodCate_successful), Toast.LENGTH_SHORT).show();
+                            onDismissListener.onAddComplete(true);
                             getDialog().dismiss();
                         }
                     });

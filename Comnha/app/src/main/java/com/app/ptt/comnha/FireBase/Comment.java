@@ -8,8 +8,16 @@ import java.util.Map;
  */
 
 public class Comment {
-    String content, time, date, userID;
-    String username;
+    String content, time, date, username, userID, postID;
+
+    public void setPostID(String postID) {
+        this.postID = postID;
+    }
+
+    public String getPostID() {
+
+        return postID;
+    }
 
     public void setContent(String content) {
         this.content = content;
@@ -61,6 +69,7 @@ public class Comment {
         result.put("date", date);
         result.put("userID", userID);
         result.put("username", username);
+        result.put("postID", postID);
         return result;
     }
 }
