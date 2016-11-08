@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.Post;
+import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,11 +43,20 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     ChildEventListener lastnewsChildEventListener;
     int sortType;
     Button btn_refresh;
+    String tinh, huyen;
 
     @Override
     public void onStart() {
         super.onStart();
 
+    }
+
+    public void setTinh(String tinh) {
+        this.tinh = tinh;
+    }
+
+    public void setHuyen(String huyen) {
+        this.huyen = huyen;
     }
 
     public void setSortType(int sortType) {
@@ -98,12 +107,16 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
         };
         switch (sortType) {
             case 1://lastnews
-                dbRef.child(getResources().getString(R.string.posts_CODE))
+                dbRef.child(tinh + "/"
+                        + huyen + "/" +
+                        getResources().getString(R.string.posts_CODE))
                         .limitToLast(100)
                         .addChildEventListener(lastnewsChildEventListener);
                 break;
             case 2://mostcomment
-                dbRef.child(getResources().getString(R.string.posts_CODE))
+                dbRef.child(tinh + "/"
+                        + huyen + "/" +
+                        getResources().getString(R.string.posts_CODE))
                         .orderByChild("commentCount").limitToLast(100)
                         .addChildEventListener(lastnewsChildEventListener);
                 break;
@@ -132,8 +145,9 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
                 Intent intent = new Intent(getActivity(), Adapter2Activity.class);
                 intent.putExtra(getResources().getString(R.string.fragment_CODE),
                         getResources().getString(R.string.frg_viewpost_CODE));
-                intent.putExtra(getResources().getString(R.string.key_CODE),
-                        postlist.get(position).getPostID());
+                ChoosePost.getInstance().setPostID(postlist.get(position).getPostID());
+                ChoosePost.getInstance().setTinh(tinh);
+                ChoosePost.getInstance().setHuyen(huyen);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
@@ -151,5 +165,13 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
                 btn_refresh.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ChoosePost.getInstance().setPostID(null);
+        ChoosePost.getInstance().setTinh(null);
+        ChoosePost.getInstance().setHuyen(null);
     }
 }

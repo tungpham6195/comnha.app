@@ -5,7 +5,7 @@ package com.app.ptt.comnha.SingletonClasses;
  */
 public class ChooseLoca {
     private static ChooseLoca ourInstance;
-    private String locaID,name,address;
+    private String locaID, name, address, tinh, huyen;
 
     public static ChooseLoca getInstance() {
         if (ourInstance == null) {
@@ -35,6 +35,23 @@ public class ChooseLoca {
 
     public String getLocaID() {
         return locaID;
+    }
+
+    public void setTinh(String tinh) {
+        this.tinh = tinh;
+    }
+
+    public void setHuyen(String huyen) {
+        this.huyen = huyen;
+    }
+
+    public String getTinh() {
+
+        return tinh;
+    }
+
+    public String getHuyen() {
+        return huyen;
     }
 
     public void setLocaID(String locaID) {

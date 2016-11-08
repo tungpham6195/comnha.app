@@ -23,8 +23,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/marginEnd20dp"
                 android:text="@string/text_hoten"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp" />
+                android:textColor="@color/colorPrimary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -37,8 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxLength="20"
-                    android:textColor="@color/colorGrayText"
-                    android:textSize="20sp" />
+                    android:textColor="@color/colorGrayText" />
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -61,8 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/marginEnd20dp"
                 android:text="@string/text_birth"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp" />
+                android:textColor="@color/colorPrimary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -74,8 +71,7 @@
                     android:id="@+id/frag_profilel_txtNgsinh"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorGrayText"
-                    android:textSize="20sp" />
+                    android:textColor="@color/colorGrayText" />
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -99,8 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/marginEnd20dp"
                 android:text="@string/text_email"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp" />
+                android:textColor="@color/colorPrimary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -112,8 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxLength="25"
-                    android:textColor="@color/colorGrayText"
-                    android:textSize="20sp" />
+                    android:textColor="@color/colorGrayText" />
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -136,8 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/marginEnd20dp"
                 android:text="@string/text_username"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp" />
+                android:textColor="@color/colorPrimary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -149,8 +142,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxLength="20"
-                    android:textColor="@color/colorGrayText"
-                    android:textSize="20sp" />
+                    android:textColor="@color/colorGrayText" />
 
                 <ImageView
                     android:layout_width="wrap_content"

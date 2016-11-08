@@ -44,7 +44,6 @@ public class Adapter2Activity extends AppCompatActivity {
             if (findViewById(R.id.frame_adapter2) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
                     LocadetailFragment locadetailFragment = new LocadetailFragment();
-                    locadetailFragment.setLocaID(intent.getStringExtra(getResources().getString(R.string.key_CODE)));
                     locadetailFragment.setArguments(getIntent().getExtras());
                     getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, locadetailFragment).commit();
                 }
@@ -70,7 +69,6 @@ public class Adapter2Activity extends AppCompatActivity {
             if (findViewById(R.id.frame_adapter2) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
                     ViewpostFragment viewpostFragment = new ViewpostFragment();
-                    viewpostFragment.setPostID(intent.getExtras().getString(getString(R.string.key_CODE)));
                     viewpostFragment.setArguments(getIntent().getExtras());
                     getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, viewpostFragment)
                             .commit();

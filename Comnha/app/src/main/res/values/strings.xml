@@ -115,6 +115,9 @@
     <string name="txt_entrySearch">Nhập địa điểm &#8230;</string>
     <string name="txt_filter">Phân loại:</string>
     <string name="txt_searchFilter">Lọc</string>
+    <string name="txt_local">Vị trí:</string>
+    <string name="txt_localview">Xem theo Quán ăn\t</string>
+    <string name="txt_reviewview">Xem theo Review\t</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <string name="firebaseStorage_path">gs://com-nha.appspot.com/</string>
@@ -156,18 +159,20 @@
 
     <!--Firebase-->
     <string name="users_CODE">Users/</string>
-    <string name="thucdon_CODE">Menu/</string>
-    <string name="locathucdon_CODE">LocationMenu/</string>
-    <string name="locations_CODE">Locations/</string>
+    <string name="thucdon_CODE">Food/</string>
+    <string name="locathucdon_CODE">StoreFood/</string>
+    <string name="locations_CODE">Stores/</string>
     <string name="posts_CODE">Posts/</string>
     <string name="images_CODE">Images/</string>
-    <string name="locationpost_CODE">LocationPost/</string>
+    <string name="locationpost_CODE">StorePost/</string>
     <string name="userpost_CODE">UserPost/</string>
     <string name="comments_CODE">Comments/</string>
     <string name="postcomment_CODE">PostComment/</string>
-    <string name="locauserpost_CODE">LocationUserPost/</string>
-    <string name="menulocation_CODE">MenuLocation/</string>
-
+    <string name="locauserpost_CODE">StoreUserPost/</string>
+    <string name="menulocation_CODE">FoodLocation/</string>
+    <string name="usertrackloca_CODE">UserTrackLoca/</string>
+    <string name="common_CODE">Common/</string>
+    <string name="district_CODE">District</string>
     <!--Firebase-->
 
     <string name="action_example">Example action</string>
@@ -310,13 +315,13 @@
         <item>Quận 10</item>
         <item>Quận 11</item>
         <item>Quận 12</item>
-        <item>Quận Gò Vấp</item>
-        <item>Quận Tân Bình</item>
-        <item>Quận Tân Phú</item>
-        <item>Quận Bình Thạnh</item>
-        <item>Quận Phú Nhuận</item>
-        <item>Quận Thủ Đức</item>
-        <item>Quận Bình Tân</item>
+        <item>Gò Vấp</item>
+        <item>Tân Bình</item>
+        <item>Tân Phú</item>
+        <item>Bình Thạnh</item>
+        <item>Phú Nhuận</item>
+        <item>Thủ Đức</item>
+        <item>Bình Tân</item>
         <item>Bình Chánh</item>
         <item>Củ Chi</item>
         <item>Hóc Môn</item>

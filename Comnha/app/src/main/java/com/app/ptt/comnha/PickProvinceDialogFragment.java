@@ -24,6 +24,7 @@ public class PickProvinceDialogFragment extends DialogFragment {
         // Required empty public constructor
     }
 
+
     public interface OnnPickProvinceListener {
         void onPickProvince(String province, int position);
     }

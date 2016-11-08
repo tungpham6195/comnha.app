@@ -23,6 +23,7 @@ import com.app.ptt.comnha.Adapters.Photos_rcyler_adapter;
 import com.app.ptt.comnha.Classes.Times;
 import com.app.ptt.comnha.FireBase.Comment;
 import com.app.ptt.comnha.FireBase.Post;
+import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,7 +44,7 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  */
 public class ViewpostFragment extends Fragment implements View.OnClickListener {
-    private String postID;
+    private String postID, tinh, huyen;
     TextView txt_un, txt_date, txt_title,
             txt_content, txt_likenumb, btn_like, btn_comment,
             txt_gia, txt_vs, txt_pv;
@@ -64,12 +65,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-    public void setPostID(String postID) {
-        this.postID = postID;
-    }
-
     Post post;
-
 
 
     @Override
@@ -82,6 +78,9 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         storageRef = FirebaseStorage
                 .getInstance()
                 .getReferenceFromUrl(getResources().getString(R.string.firebaseStorage_path));
+        tinh = ChoosePost.getInstance().getTinh();
+        huyen = ChoosePost.getInstance().getHuyen();
+        postID = ChoosePost.getInstance().getPostID();
         anhxa(view);
         albumChildEventListener = new ChildEventListener() {
             @Override
@@ -178,16 +177,27 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             }
         };
         Log.d("postID", postID);
-        dbRef.child(getString(R.string.posts_CODE) + postID)
+        dbRef.child(tinh + "/" + huyen + "/" +
+                getString(R.string.posts_CODE) + postID)
                 .addValueEventListener(postValueEventListener);
-        dbRef.child(getString(R.string.postcomment_CODE) + "/" + postID)
+        dbRef.child(tinh + "/" + huyen + "/" +
+                getString(R.string.postcomment_CODE) + "/" + postID)
                 .addChildEventListener(commentChildEventListener);
-        dbRef.child(getResources().getString(R.string.images_CODE)
+        dbRef.child(tinh + "/" + huyen + "/" +
+                getResources().getString(R.string.images_CODE)
                 + getResources().getString(R.string.posts_CODE)
                 + postID)
                 .limitToFirst(3)
                 .addChildEventListener(albumChildEventListener);
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ChoosePost.getInstance().setPostID(null);
+        ChoosePost.getInstance().setTinh(null);
+        ChoosePost.getInstance().setHuyen(null);
     }
 
     private void anhxa(View view) {
@@ -243,17 +253,21 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                     String key = dbRef.child(getResources().getString(R.string.postcomment_CODE) + postID).push().getKey();
                     Map<String, Object> commentValues = newComment.toMap();
                     Map<String, Object> childUpdates = new HashMap<String, Object>();
-                    childUpdates.put(getResources().getString(R.string.postcomment_CODE)
+                    childUpdates.put(tinh + "/" + huyen + "/" +
+                            getResources().getString(R.string.postcomment_CODE)
                             + postID + "/" + key, commentValues);
-                    childUpdates.put(getResources().getString(R.string.posts_CODE)
+                    childUpdates.put(tinh + "/" + huyen + "/" +
+                            getResources().getString(R.string.posts_CODE)
                             + postID + "/commentCount", comment_List.size() + 1);
-                    childUpdates.put(getResources().getString(R.string.locationpost_CODE) + post.getLocaID() + "/"
+                    childUpdates.put(tinh + "/" + huyen + "/" +
+                            getResources().getString(R.string.locationpost_CODE) + post.getLocaID() + "/"
                             + postID + "/commentCount", comment_List.size() + 1);
-                    childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
-                            + post.getLocaID() + "/"
-                            + post.getUid() + "/"
-                            + postID + "/commentCount", comment_List.size() + 1);
-                    childUpdates.put(getResources().getString(R.string.userpost_CODE)
+//                    childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
+//                            + post.getLocaID() + "/"
+//                            + post.getUid() + "/"
+//                            + postID + "/commentCount", comment_List.size() + 1);
+                    childUpdates.put(tinh + "/" + huyen + "/" +
+                            getResources().getString(R.string.userpost_CODE)
                             + post.getUid() + "/"
                             + postID + "/commentCount", comment_List.size() + 1);
                     dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
