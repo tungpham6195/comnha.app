@@ -1,20 +1,13 @@
 package com.app.ptt.comnha;
 
 
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,14 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Modules.DirectionFinder;
-import com.app.ptt.comnha.Modules.DirectionFinderListener;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.Service.MyTool;
@@ -40,7 +30,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 
@@ -75,6 +64,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
     }
     Handler handler;
     int listSize=0, count;
+    String tinh,huyen;
     public StoreFragment() {
     }
 
@@ -84,9 +74,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
         super.onStart();
        // doBinService();
 
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(mBroadcastSendAddress);
-        getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
+//        mIntentFilter = new IntentFilter();
+//        mIntentFilter.addAction(mBroadcastSendAddress);
+//        getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
     }
     private BroadcastReceiver mBroadcastReceiver=new BroadcastReceiver() {
         @Override
@@ -150,8 +140,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
     public void onStop() {
         Log.i("onStop","RUN");
         super.onStop();
-        myTool.stopGoogleApi();
-        getActivity().unregisterReceiver(mBroadcastReceiver);
+//        myTool.stopGoogleApi();
+//        getActivity().unregisterReceiver(mBroadcastReceiver);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -275,6 +265,14 @@ public class StoreFragment extends Fragment implements View.OnClickListener{
                 btn_refresh.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    public void setTinh(String tinh) {
+        this.tinh = tinh;
+    }
+
+    public void setHuyen(String huyen) {
+        this.huyen = huyen;
     }
 //    public void doBinService() {
 //        if (!isBound) {
