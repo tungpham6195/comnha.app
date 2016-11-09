@@ -487,7 +487,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                 if (edt_content.getText().toString() == "") {
                     Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
                 } else {
-                    Log.i(LOG + ".onClick ", "loadListPlace");
+                    Log.i(LOG + ".onClick ", "loadListPlace"+pos);
                     if(pos!=-1) {
                         placeAPI=new PlaceAPI(placeAttributes.get(pos).getFullname(),this);
                     }else{
