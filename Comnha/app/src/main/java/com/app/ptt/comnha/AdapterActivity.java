@@ -136,20 +136,7 @@ public class AdapterActivity extends AppCompatActivity {
             Log.i(LOG, "frag_map_CODE");
             if (findViewById(R.id.frame_adapter) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    if (!ConnectionDetector.canGetLocation(this)) {
-                        if (!ConnectionDetector.networkStatus(this)) {
-                            Toast.makeText(getApplicationContext(), "Không có kết nối internet và gps", Toast.LENGTH_LONG).show();
-                        } else {
-                            ConnectionDetector.showSettingAlert(this);
-                        }
-                    } else {
-                        if (!ConnectionDetector.networkStatus(this)) {
-                            Toast.makeText(getApplicationContext(), "Không có kết nối internet", Toast.LENGTH_LONG).show();
-
-                        } else {
-                            openMap();
-                        }
-                    }
+                    openMap();
                 }
             }
 

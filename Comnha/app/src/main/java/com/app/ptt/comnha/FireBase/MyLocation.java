@@ -1,5 +1,7 @@
 package com.app.ptt.comnha.FireBase;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +44,16 @@ public class MyLocation {
     long giaTong = 0, vsTong = 0, pvTong = 0;
     long size = 0;
     long giaAVG, vsAVG, pvAVG, tongAVG;
+
+    public LatLng getLocationLatLng() {
+        return locationLatLng;
+    }
+
+    public void setLocationLatLng(LatLng locationLatLng) {
+        this.locationLatLng = locationLatLng;
+    }
+
+    private LatLng locationLatLng;
 
     public void setGiaAVG(long giaAVG) {
         this.giaAVG = giaAVG;
@@ -189,6 +201,7 @@ public class MyLocation {
         result.put("size", size);
         result.put("tinhtp", tinhtp);
         result.put("quanhuyen", quanhuyen);
+        result.put("locationLatLng",locationLatLng);
         return result;
     }
 }

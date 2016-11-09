@@ -1,6 +1,8 @@
 package com.app.ptt.comnha;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -23,6 +25,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
+import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Service.MyTool;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
 import com.github.clans.fab.FloatingActionButton;
@@ -48,11 +52,11 @@ public class MainActivity extends AppCompatActivity
     private static final String LOG = MainActivity.class.getSimpleName();
     //private Boolean isBound = false;
     private Bundle savedInstanceState;
-    public static final String mBroadcast = "mBroadcastComplete";
     private ProgressDialog progressDialog;
     private int progressBarStatus = 0;
     private Handler progressBarHandler = new Handler();
     private IntentFilter mIntentFilter;
+    private MyLocation myLocation;
     private ProgressDialog logoutDialog;
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -68,17 +72,20 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionMenu fabmenu;
     //private boolean checkConnection = true;
     private FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     private Firebase ref;
     private BottomBar bottomBar;
     private PopupMenu popupMenu;
-
+    private MyTool myTool;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i(LOG,"onCreate");
         setContentView(R.layout.activity_main2);
         Firebase.setAndroidContext(this);
         ref = new Firebase(getResources().getString(R.string.firebase_path));
-        anhXa();
+        //anhXa();
         mtoolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mtoolbar);
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -154,24 +161,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-//    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            if (intent.getAction().equals(mBroadcast)) {
-//                checkConnection = intent.getBooleanExtra("LocationError", true);
-//                Log.i(LOG, "checkConnection=" + checkConnection);
-//                if (!checkConnection) {
-//                    if (!ConnectionDetector.canGetLocation(MainActivity.this)) {
-//                        ConnectionDetector.showSettingAlert(MainActivity.this);
-//                    }
-//                }
-//            }
-//        }
-//    };
 
     void anhXa() {
-        LoginSession.getInstance().setHuyen("Quận 9");
-        LoginSession.getInstance().setTinh("Hồ Chí Minh");
+        LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
+        LoginSession.getInstance().setTinh(myLocation.getTinhtp());
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
         fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
         fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
@@ -203,6 +196,7 @@ public class MainActivity extends AppCompatActivity
                         storeFragment.setFilter(1);
                         storeFragment.setTinh(LoginSession.getInstance().getTinh());
                         storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                        storeFragment.setYourLocation(myLocation);
                         transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.frame, storeFragment);
                         transaction.commit();
@@ -336,6 +330,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        Log.i(LOG,"onStart");
+        if(myLocation==null) {
+            myTool = new MyTool(getApplicationContext(), MainActivity.class.getSimpleName());
+            myTool.startGoogleApi();
+        }
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        registerReceiver(mBroadcastReceiver, mIntentFilter);
         mAuth.addAuthStateListener(mAuthListener);
         try {
             if (mAuth.getCurrentUser() == null) {
@@ -405,13 +407,14 @@ public class MainActivity extends AppCompatActivity
             mAuth.removeAuthStateListener(mAuthListener);
         }
         Log.i(LOG, "onStop");
+        unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
-
+        myTool.stopGoogleApi();
 //        doUnbinService();
 
         //doUnbinService();
@@ -512,5 +515,17 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getIntExtra("STT", 0) == 2 && intent.getBooleanExtra("Location", false)) {
+                Log.i(LOG + ".MainActivity", "Nhan vi tri cua ban:");
+                myLocation=myTool.getYourLocation();
+
+                anhXa();
+              //  myTool.stopGoogleApi();
+            }
+        }
+    };
 
 }

@@ -7,7 +7,29 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class PlaceAttribute {
-    private String fullname,street_number,route,locality,district,state;
+    private String fullname;
+
+    public String getAddressNum() {
+        return addressNum;
+    }
+
+    public void setAddressNum(String address) {
+        this.addressNum = address;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    private String ID;
+    private String addressNum;
+    private String locality;
+    private String district;
+    private String state;
 
     public LatLng getPlaceLatLng() {
         return placeLatLng;
@@ -46,13 +68,7 @@ public class PlaceAttribute {
         this.fullname = fullname;
     }
 
-    public String getRoute() {
-        return route;
-    }
 
-    public void setRoute(String route) {
-        this.route = route;
-    }
 
     public String getLocality() {
         return locality;
@@ -62,11 +78,4 @@ public class PlaceAttribute {
         this.locality = locality;
     }
 
-    public String getStreet_number() {
-        return street_number;
-    }
-
-    public void setStreet_number(String street_number) {
-        this.street_number = street_number;
-    }
 }

@@ -119,12 +119,12 @@ public class PlaceAPI {
             name="";
         for(int i=0;i<list.size();i++){
             switch (list.get(i).toString()){
-                case "street_number":
-                    mPlaceAttributes.setStreet_number(name);
-                    break;
-                case "route":
-                    mPlaceAttributes.setRoute(name);
-                    break;
+//                case "street_number":
+//                    mPlaceAttributes.setStreet_number(name);
+//                    break;
+//                case "route":
+//                    mPlaceAttributes.setRoute(name);
+//                    break;
                 case "sublocality_level_1":
                     mPlaceAttributes.setLocality(name);
                     break;
@@ -141,8 +141,8 @@ public class PlaceAPI {
         }
 
         Log.i(LOG+".addtoPlaceAttribute","Full name: "+mPlaceAttributes.getFullname());
-        Log.i(LOG+".addtoPlaceAttribute","Street number: "+mPlaceAttributes.getStreet_number());
-        Log.i(LOG+".addtoPlaceAttribute","Route: "+mPlaceAttributes.getRoute());
+//        Log.i(LOG+".addtoPlaceAttribute","Street number: "+mPlaceAttributes.getStreet_number());
+//        Log.i(LOG+".addtoPlaceAttribute","Route: "+mPlaceAttributes.getRoute());
         Log.i(LOG+".addtoPlaceAttribute","Locality: "+mPlaceAttributes.getLocality());
         Log.i(LOG+".addtoPlaceAttribute","District: "+mPlaceAttributes.getDistrict());
         Log.i(LOG+".addtoPlaceAttribute","State: "+mPlaceAttributes.getState());

@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
+import com.app.ptt.comnha.Service.MyTool;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,7 +63,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     Geocoder gc;
     AutoCompleteTextView autoCompleteText;
     String a = "";
-
+    MyTool myTool;
     public AddlocaFragment() {
         // Required empty public constructor
     }
@@ -140,6 +141,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             mContext = context;
             mPlaceAttribute = new ArrayList<>();
             mResource = resource;
+            myTool=new MyTool(getContext(),AddlocaFragment.class.getSimpleName());
         }
 
         @Override
@@ -164,7 +166,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
                         mPlaceAttribute = new ArrayList<>();
-                        mPlaceAttribute = mPlaceAPI.autocomplete(constraint.toString());
+                        mPlaceAttribute=myTool.returnPlaceAttributeByName(constraint.toString());
                         if (mPlaceAttribute != null) {
                             a = "OK";
                             resultList = new ArrayList<>();
@@ -193,11 +195,10 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     }
 
     public String returnFullname() {
-        String a = mPlaceAttribute.get(pos).getStreet_number();
-        String b = mPlaceAttribute.get(pos).getRoute();
-        String c = mPlaceAttribute.get(pos).getLocality();
-        String d = mPlaceAttribute.get(pos).getDistrict();
-        String f = mPlaceAttribute.get(pos).getState();
+        String a = mPlaceAttribute.get(pos).getAddressNum();
+        String b = mPlaceAttribute.get(pos).getLocality();
+        String c = mPlaceAttribute.get(pos).getDistrict();
+        String d = mPlaceAttribute.get(pos).getState();
         String e = "";
         if (a != null)
             e += a;
@@ -217,11 +218,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 e += d;
             else
                 e += ", " + d;
-        if (f != null)
-            if (a == null && b == null && c == null)
-                e += f;
-            else
-                e += ", " + f;
         return e;
     }
 
@@ -296,11 +292,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
                     if (a != null) {
                         Log.i(LOG + ".onClick", a);
-                        if (mPlaceAttribute.get(pos).getStreet_number() == null)
-                            Snackbar.make(view, "Không có số nhà, xin thử lại", Snackbar.LENGTH_SHORT).show();
-                        else if (mPlaceAttribute.get(pos).getRoute() == null)
-                            Snackbar.make(view, "Không có tên đường, xin thử lại", Snackbar.LENGTH_SHORT).show();
-
+                        if (mPlaceAttribute.get(pos).getAddressNum() == null)
+                            Snackbar.make(view, "Không có số nhà và tên đường. Xin thử lại!!", Snackbar.LENGTH_SHORT).show();
                         else
                             addNewLoca();
                     } else
