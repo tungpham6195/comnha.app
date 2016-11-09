@@ -14,8 +14,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,6 +31,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.LocationFinderListener;
 import com.app.ptt.comnha.Modules.PlaceAPI;
@@ -44,14 +49,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class MapFragment extends Fragment implements View.OnClickListener,LocationFinderListener {
+
+public class MapFragment extends Fragment implements View.OnClickListener,LocationFinderListener, PickLocationBottomSheetDialogFragment.onPickListener {
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     public static final String mBroadcastChangeLocation = "mBroadcastChangeLocation";
     private IntentFilter mIntentFilter;
@@ -70,11 +73,18 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
     MyTool myTool;
     Storage storage;
     int pos=-1;
+//    int pos;
     boolean isNearest=false;
     int temp = 1;
     MarkerOptions yourMarker = null;
     ImageButton btn_search;
     AutoCompleteTextView edt_content;
+    FloatingActionButton fab_filter, fab_location;
+    CardView card_pickProvince, card_pickDistrict, card_filterlabel;
+    TextView txt_tinh, txt_huyen, txt_filterLabel;
+    PickLocationBottomSheetDialogFragment pickLocationDialog;
+    FragmentManager fm;
+    int whatProvince = -1;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -96,31 +106,24 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
 
     private void anhxa(View view) {
         btn_search = (ImageButton) view.findViewById(R.id.frg_map_btnsearch);
+        pickLocationDialog = new PickLocationBottomSheetDialogFragment();
+        fm = getActivity().getSupportFragmentManager();
+        card_pickProvince = (CardView) view.findViewById(R.id.frg_map_cardV_chonProvince);
+        card_pickDistrict = (CardView) view.findViewById(R.id.frg_map_cardV_chonDistrict);
+        card_filterlabel = (CardView) view.findViewById(R.id.frg_map_cardV_filterLabel);
+        txt_huyen = (TextView) view.findViewById(R.id.frg_map_txtDistrict);
+        txt_tinh = (TextView) view.findViewById(R.id.frg_map_txtProvince);
+        txt_filterLabel = (TextView) view.findViewById(R.id.frg_map_txtfilterLabel);
+
+        fab_filter = (FloatingActionButton) view.findViewById(R.id.frg_map_fabfilter);
+        fab_location = (FloatingActionButton) view.findViewById(R.id.frg_map_fablocation);
+        btn_search = (ImageButton) view.findViewById(R.id.frg_map_btnsearch);
+        btn_search = (ImageButton) view.findViewById(R.id.frg_map_btnsearch);
 //        btn_reload = (ImageButton) view.findViewById(R.id.frg_map_btnreload);
         edt_content = (AutoCompleteTextView) view.findViewById(R.id.frg_map_edtsearch);
 
-//        edt_sort = (AutoCompleteTextView) view.findViewById(R.id.frg_map_edtsort);
         edt_content.setAdapter(new PlaceAutoCompleteAdapter(getActivity(), R.layout.autocomplete_list_item, 1));
-        // ArrayList<String> a = new ArrayList<>();
-        //   ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), R.layout.autocomplete_list_item, );
-//        edt_sort.setThreshold(1);
-//        edt_sort.setAdapter(arrayAdapter);
-//        edt_sort.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                myGoogleMap.clear();
-//                addMarkerYourLocation();
-//                temp = -1;
-//                for (int i = 0; i < list.size(); i++) {
-//                    if (myTool.checkDistrict(i, list.get(i).getLocalID(), parent.getItemAtPosition(position).toString().trim())) {
-//                        addMarker(list.get(i));
-//                        temp = i;
-//                    }
-//                }
-//                if (temp != -1)
-//                    myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(temp).getEndLocation(), 13));
-//            }
-//        });
+
         edt_content.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -128,7 +131,12 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
             }
         });
         btn_search.setOnClickListener(this);
-//        btn_reload.setOnClickListener(this);
+        fab_filter.setOnClickListener(this);
+        fab_location.setOnClickListener(this);
+        card_pickDistrict.setOnClickListener(this);
+        card_pickProvince.setOnClickListener(this);
+        pickLocationDialog.setOnPickListener(this);
+        pickLocationDialog.setOnPickListener(this);
     }
 
     @Override
@@ -146,6 +154,93 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
 
         //storage.writeFile();
 
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.frg_map_btnsearch:
+                Log.i(LOG + ".onClick ", edt_content.getText().toString());
+                if (edt_content.getText().toString() == "") {
+                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
+                } else {
+                    Log.i(LOG + ".onClick ", "loadListPlace");
+                    myLocationSearch = placeAttributes.get(pos);
+                    changeLocation();
+                    Log.i(LOG + ".onClick->Search", "onEdt:" + edt_content.getText().toString() + " - Trong list:" + placeAttributes.get(pos).getFullname());
+                }
+                break;
+            case R.id.frg_map_fabfilter:
+                PopupMenu popupMenu = new PopupMenu(getActivity(), fab_filter, Gravity.TOP | Gravity.END);
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.popup_viewquan_none:
+                                if (card_filterlabel.getTranslationX() == 0) {
+                                    AnimationUtils.animatHideTagMap2(card_filterlabel);
+                                }
+                                txt_filterLabel.setText(item.getTitle());
+                                break;
+                            case R.id.popup_viewquan_gia:
+                                if (card_filterlabel.getTranslationX() != 0) {
+                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                }
+                                txt_filterLabel.setText(item.getTitle());
+                                break;
+                            case R.id.popup_viewquan_pv:
+                                if (card_filterlabel.getTranslationX() != 0) {
+                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                }
+                                txt_filterLabel.setText(item.getTitle());
+                                break;
+                            case R.id.popup_viewquan_vs:
+                                if (card_filterlabel.getTranslationX() != 0) {
+                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                }
+                                txt_filterLabel.setText(item.getTitle());
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+                break;
+            case R.id.frg_map_fablocation:
+                if (card_pickDistrict.getTranslationY() == 0
+                        && card_pickProvince.getTranslationX() == 0) {
+//                    Log.i("transi", "pro: " + card_pickProvince.getTranslationX()
+//                            + " dis: " + card_pickDistrict.getTranslationY());
+                    AnimationUtils.animatHideTagMap(card_pickProvince, card_pickDistrict);
+                } else {
+                    AnimationUtils.animatShowTagMap(card_pickProvince, card_pickDistrict);
+                }
+                break;
+            case R.id.frg_map_cardV_chonProvince:
+                pickLocationDialog.show(fm, "pickProvinceDialog");
+                break;
+            case R.id.frg_map_cardV_chonDistrict:
+                if (whatProvince >= 0) {
+                    Log.i("province", whatProvince + "");
+                    pickLocationDialog.setWhatProvince(whatProvince);
+                    pickLocationDialog.show(fm, "pickDistrictDialog");
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+        }
+    }
+
+    @Override
+    public void onPicProvince(String province, int position) {
+        whatProvince = position;
+        txt_tinh.setText(province);
+    }
+
+    @Override
+    public void onPickDistrict(String district) {
+        txt_huyen.setText(district);
     }
 
     @Override
@@ -222,6 +317,12 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                                                 int e = c % 1000;
                                                 int f = e / 100;
                                                 txt_KhoangCach.setText(kc + " km");
+//                                                float kc = (float) (returnDistanceLocationSearch(a));
+//                                                int c = Math.round(kc);
+//                                                int d = c / 1000;
+//                                                int e = c % 1000;
+//                                                int f = e / 100;
+                                                txt_KhoangCach.setText(a.getKhoangcach()+" km");
                                                 Log.i(LOG + ".infoWindow- routeTemp", (float) returnDistanceLocationSearch(a) / 1000 + " km");
                                                 txt_KhoangCach.setText(d + "," + f+" km");
                                                 if (a.getSize() == 0) {
@@ -472,85 +573,115 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.frg_map_btnsearch:
-                if(isNearest)
-                    isNearest=false;
-                Log.i(LOG + ".onClick ", edt_content.getText().toString());
-                if (edt_content.getText().toString() == "") {
-                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
-                } else {
-                    Log.i(LOG + ".onClick ", "loadListPlace"+pos);
-                    if(pos!=-1) {
-                        placeAPI=new PlaceAPI(placeAttributes.get(pos).getFullname(),this);
-                    }else{
-                        Snackbar.make(getView(), "Khong tim duoc", Snackbar.LENGTH_LONG).show();
-                    }
-
-                }
-                break;
-        }
-    }
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.frg_map_btnsearch:
+//                if(isNearest)
+//                    isNearest=false;
+//                Log.i(LOG + ".onClick ", edt_content.getText().toString());
+//                if (edt_content.getText().toString() == "") {
+//                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
+//                } else {
+//                    Log.i(LOG + ".onClick ", "loadListPlace"+pos);
+//                    if(pos!=-1) {
+//                        placeAPI=new PlaceAPI(placeAttributes.get(pos).getFullname(),this);
+//                    }else{
+//                        Snackbar.make(getView(), "Khong tim duoc", Snackbar.LENGTH_LONG).show();
+//                    }
+//                    Log.i(LOG + ".onClick ", "loadListPlace");
+//                    myLocationSearch = placeAttributes.get(pos);
+//                    changeLocation();
+//                    Log.i(LOG + ".onClick->Search", "onEdt:" + edt_content.getText().toString() + " - Trong list:" + placeAttributes.get(pos).getFullname());
+//                    isNearest=true;
+//                    if(myLocationSearch.getDistrict().equals(list.get(0).getQuanhuyen())&&myLocationSearch.getState().equals(list.get(0).getTinhtp())){
+//                        for (MyLocation location:list){
+//                            Log.i(LOG + ".onClick ", "==current quan huyen");
+//                            float kc=(float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude),new LatLng(location.getLat(),location.getLng()));
+//                            int c = Math.round(kc);
+//                            int d = c / 1000;
+//                            int e = c % 1000;
+//                            int f = e / 100;
+//                            location.setKhoangcach(d + "," + f);
+//                            addMarker(location);
+//                        }
+//                    }else{
+//                        Log.i(LOG + ".onClick ", "!=current quan huyen");
+//                        getDataInFireBase(myLocationSearch.getState(),myLocationSearch.getDistrict());
+//                    }
+//                }
+//                break;
+//        }
+//    }
 
     public void getDataInFireBase(String tinh, String huyen) {
         Log.i(LOG+".getDataInFireBase","tinh:"+tinh+"- huyen:"+huyen);
-        if(tinh!=null &&huyen!=null) {
-            list = new ArrayList<>();
-            dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
-            dbRef.child(//LoginSession.getInstance().getTinh()
-                    tinh + "/"
-                            +
-                            //LoginSession.getInstance().getHuyen()
-                            huyen + "/"
-                            + getString(R.string.locations_CODE))
-                    .addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
-                            newLocation.setLocaID(dataSnapshot.getKey());
-                            list.add(newLocation);
-                            if (isNearest && myLocationSearch != null) {
-                                Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
-                                    float kc=(float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude),new LatLng(newLocation.getLat(),newLocation.getLng()));
-                                if (kc<5000) {
-                                    addMarker(newLocation);
-                                }
-                            } else {
-                                Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:"+myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())));
-                                float kc=(float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()),new LatLng(newLocation.getLat(),newLocation.getLng()));
-                                int c = Math.round(kc);
-                                int d = c / 1000;
-                                int e = c % 1000;
-                                int f = e / 100;
-                                newLocation.setKhoangcach(d + "," + f);
-                                addMarker(newLocation);
-                            }
-                        }
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-        }else{
-            Toast.makeText(getContext(),"Khong tim thay tinh va huyen",Toast.LENGTH_LONG).show();
-        }
+//        if(tinh!=null &&huyen!=null) {
+//            list = new ArrayList<>();
+//            dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
+//            dbRef.child(//LoginSession.getInstance().getTinh()
+//                    tinh + "/"
+//                            +
+//                            //LoginSession.getInstance().getHuyen()
+//                            huyen + "/"
+//                            + getString(R.string.locations_CODE))
+//                    .addChildEventListener(new ChildEventListener() {
+//                        @Override
+//                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                            MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
+//                            newLocation.setLocaID(dataSnapshot.getKey());
+//                            list.add(newLocation);
+//                            if (isNearest && myLocationSearch != null) {
+//                                Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
+//                                float kc=(float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude),new LatLng(newLocation.getLat(),newLocation.getLng()));
+//                                if (kc<5000) {
+//                                    if (myTool.getDistance(new LatLng(newLocation.getLat(), newLocation.getLng()), myLocationSearch.getPlaceLatLng()) < 5000) {
+//                                        float kc=(float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude),new LatLng(newLocation.getLat(),newLocation.getLng()));
+//                                        int c = Math.round(kc);
+//                                        int d = c / 1000;
+//                                        int e = c % 1000;
+//                                        int f = e / 100;
+//                                        newLocation.setKhoangcach(d + "," + f);
+//                                        //newLocation.setKhoangcach(myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(newLocation.getLat(), newLocation.getLng())) + "");
+//                                        addMarker(newLocation);
+//                                    }
+//                                } else {
+//                                    Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:"+myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())));
+//                                    float kc=(float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()),new LatLng(newLocation.getLat(),newLocation.getLng()));
+//                                    int c = Math.round(kc);
+//                                    int d = c / 1000;
+//                                    int e = c % 1000;
+//                                    int f = e / 100;
+//                                    newLocation.setKhoangcach(d + "," + f);
+//                                    // newLocation.setKhoangcach(myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())) + "");
+//                                    addMarker(newLocation);
+//                                }
+//                        }
+//
+//                        @Override
+//                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//                    };
+//
+//        }else{
+//            Toast.makeText(getContext(),"Khong tim thay tinh va huyen",Toast.LENGTH_LONG).show();
+//        }
     }
 
     /***********************************************************************************************************************/
