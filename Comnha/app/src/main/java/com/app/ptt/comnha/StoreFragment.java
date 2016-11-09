@@ -80,7 +80,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         Log.i(LOG, "onStart");
         super.onStart();
         myTool = new MyTool(getActivity(),StoreFragment.class.getSimpleName());
-        myTool.startGoogleApi();
+       // myTool.startGoogleApi();
     }
     @Override
     public void onStop() {
