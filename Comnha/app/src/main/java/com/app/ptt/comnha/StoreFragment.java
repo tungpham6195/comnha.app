@@ -106,10 +106,12 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
-
-                newLocation.setLocationLatLng(myTool.returnLatLngByName(newLocation.getDiachi()));
-                float kc = (float) myTool.getDistance(myLocation.getLocationLatLng(), newLocation.getLocationLatLng());
+                //newLocation.setLocationLatLng(myTool.returnLatLngByName(newLocation.getDiachi()));
+                float kc = (float) myTool.getDistance(new LatLng(myLocation.getLat(),myLocation.getLng()),new LatLng(newLocation.getLat(), newLocation.getLng()));
+                Log.i("dia chi cua ban:"+myTool.returnLocationByLatLng(myLocation.getLat(),myLocation.getLng()).getDiachi(),
+                        "dia chi:"+myTool.returnLocationByLatLng(newLocation.getLat(),newLocation.getLng()).getDiachi());
                 int c = Math.round(kc);
+                Log.i(LOG+".tinh khoang cach",c+"");
                 int d = c / 1000;
                 int e = c % 1000;
                 int f = e / 100;

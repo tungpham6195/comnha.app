@@ -180,8 +180,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                             @Override
                             public View getInfoWindow(Marker marker) {
                                 Log.i(LOG+".listSize",list.size()+"");
-                                if ((marker.getPosition().latitude == yourLocation.getLocationLatLng().latitude)
-                                        && (marker.getPosition().longitude == yourLocation.getLocationLatLng().longitude)) {
+                                if ((marker.getPosition().latitude == yourLocation.getLat())
+                                        && (marker.getPosition().longitude == yourLocation.getLng())) {
                                     View view1 = getLayoutInflater(savedInstanceState).inflate(R.layout.infowindow_your_location, null);
                                     txt_DiaChi = (TextView) view1.findViewById(R.id.txt_DiaChi);
                                     txt_DiaChi.setText(yourLocation.getDiachi());
@@ -256,7 +256,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public double returnDistanceLocationSearch(MyLocation myLocation) {
         for (MyLocation location : list) {
             if (myLocation.getLocaID().equals(location.getLocaID())) {
-                return myTool.getDistance(new LatLng(location.getLocationLatLng().latitude,location.getLocationLatLng().longitude), new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude));
+                return myTool.getDistance(new LatLng(location.getLat(),location.getLng()), new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude));
             }
         }
         return 0;
@@ -358,7 +358,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         myGoogleMap.addMarker(yourMarker);
         myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationSearch.getPlaceLatLng(), 13));
         for (MyLocation location : list) {
-            if (myTool.getDistance(myLocationSearch.getPlaceLatLng(), location.getLocationLatLng()) < 10000) {
+            if (myTool.getDistance(new LatLng(location.getLat(),location.getLng()),myLocationSearch.getPlaceLatLng()) < 10000) {
                 addMarker(location);
             }
         }
@@ -366,7 +366,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     public void addMarker(MyLocation myLocation) {
         Log.i(LOG + ".addMarker", "Them dia diem nhan duoc: " + myLocation.getDiachi());
-        LatLng locatioLatLng=myLocation.getLocationLatLng();
+        LatLng locatioLatLng=new LatLng(myLocation.getLat(),myLocation.getLng());
         myGoogleMap.addMarker(new MarkerOptions()
                 .position(locatioLatLng));
     }
@@ -375,18 +375,18 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
         yourMarker = new MarkerOptions()
-                .position(yourLocation.getLocationLatLng())
+                .position(new LatLng(yourLocation.getLat(),yourLocation.getLng()))
                 .title(yourLocation.getDiachi())
                 .icon(markerIcon);
         myGoogleMap.addMarker(yourMarker);
-        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLocation.getLocationLatLng(), 13));
+        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(yourLocation.getLat(),yourLocation.getLng()), 13));
     }
 
     public MyLocation returnLocation(Marker marker) {
         Log.i(LOG + ".returnRoute", "Tra ve route ung voi marker");
         for (MyLocation location: list){
-            if(marker.getPosition().latitude==location.getLocationLatLng().latitude
-                    &&marker.getPosition().longitude==location.getLocationLatLng().longitude){
+            if(marker.getPosition().latitude==location.getLat()
+                    &&marker.getPosition().longitude==location.getLng()){
                 return location;
             }
         }
@@ -528,7 +528,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
-                newLocation.setLocationLatLng(myTool.returnLatLngByName(newLocation.getDiachi()));
                 list.add(newLocation);
                 addMarker(newLocation);
                 //   listplaceAttribute.add(returnLocationByName(newLocation.getDiachi(),newLocation.getLocaID()));

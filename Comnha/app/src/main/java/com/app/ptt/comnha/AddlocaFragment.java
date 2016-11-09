@@ -30,6 +30,7 @@ import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Service.MyTool;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -241,11 +242,14 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
     @Override
     public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
-        if (placeAttribute != null) {
+        LatLng newLatLng=myTool.returnLatLngByName(placeAttribute.getFullname());
+        if (placeAttribute != null &&newLatLng!=null) {
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState()+"/";
             huyen = placeAttribute.getDistrict()+"/";
             newLocation.setDiachi(placeAttribute.getFullname());
+            newLocation.setLat(newLatLng.latitude);
+            newLocation.setLng(newLatLng.longitude);
             Log.i(LOG+".onLocation",tinh+" va "+huyen);
             String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
             Map<String, Object> newLocaValue = newLocation.toMap();

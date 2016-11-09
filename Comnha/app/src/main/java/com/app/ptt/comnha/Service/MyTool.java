@@ -182,7 +182,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             this.latitude = l.getLatitude();
             this.longtitude = l.getLongitude();
             yourLocation = returnLocationByLatLng(l.getLatitude(), l.getLongitude());
-            Log.i(LOG + ".onConnected", "Your Location: "+yourLocation.getDiachi()+"-"+yourLocation.getLocationLatLng());
+            Log.i(LOG + ".onConnected", "Your Location: "+yourLocation.getDiachi());
             flag = 2;
             sendBroadcast("Location");
         }
@@ -198,7 +198,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 this.latitude = location.getLatitude();
                 this.longtitude = location.getLongitude();
                 yourLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
-                Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLocation.getLocationLatLng().latitude + "va lng= " + yourLocation.getLocationLatLng().longitude);
+                Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLocation.getLat() + "va lng= " + yourLocation.getLng());
             }
         }
     }
@@ -489,7 +489,8 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                         myLocation.setTinhtp(d);
                     }
                     myLocation.setDiachi(e);
-                    myLocation.setLocationLatLng(new LatLng(lat,lon));
+                    myLocation.setLat(lat);
+                    myLocation.setLng(lon);
                     return myLocation;
                 }
                 return null;
