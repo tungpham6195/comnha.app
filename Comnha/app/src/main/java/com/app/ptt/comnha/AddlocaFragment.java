@@ -29,6 +29,7 @@ import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Service.MyTool;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -64,6 +65,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     AutoCompleteTextView autoCompleteText;
     String a = "";
     MyTool myTool;
+
     public AddlocaFragment() {
         // Required empty public constructor
     }
@@ -141,7 +143,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             mContext = context;
             mPlaceAttribute = new ArrayList<>();
             mResource = resource;
-            myTool=new MyTool(getContext(),AddlocaFragment.class.getSimpleName());
+            myTool = new MyTool(getContext(), AddlocaFragment.class.getSimpleName());
         }
 
         @Override
@@ -166,7 +168,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
                         mPlaceAttribute = new ArrayList<>();
-                        mPlaceAttribute=myTool.returnPlaceAttributeByName(constraint.toString());
+                        mPlaceAttribute = myTool.returnPlaceAttributeByName(constraint.toString());
                         if (mPlaceAttribute != null) {
                             a = "OK";
                             resultList = new ArrayList<>();
@@ -224,6 +226,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     private void addNewLoca() {
         Log.i(LOG + ".addNewLoca", "Da toi đây");
         MyLocation newLocation = new MyLocation();
+        LatLng position = myTool.returnLatLngByName(mPlaceAttribute.get(pos).getFullname());
         newLocation.setName(edt_tenquan.getText().toString());
         newLocation.setDiachi(returnFullname());
         newLocation.setSdt(edt_sdt.getText().toString());
@@ -231,6 +234,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         newLocation.setTimeend(btn_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
+        newLocation.setLocationLatLng(position);
         String tinh = mPlaceAttribute.get(pos).getState() + "/";
         String huyen = mPlaceAttribute.get(pos).getDistrict() + "/";
         String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();

@@ -12,6 +12,7 @@ import java.util.Map;
 public class MyLocation {
     String name, diachi, sdt, timestart, timeend, tinhtp, quanhuyen;
     String khoangcach;
+
     public String getKhoangcach() {
         return khoangcach;
     }
@@ -19,7 +20,6 @@ public class MyLocation {
     public void setKhoangcach(String khoangcach) {
         this.khoangcach = khoangcach;
     }
-
 
 
     public String getTinhtp() {
@@ -39,6 +39,8 @@ public class MyLocation {
         this.quanhuyen = quanhuyen;
     }
 
+    LatLng locationLatLng;
+
     long giamin, giamax;
     String locaID;
     long giaTong = 0, vsTong = 0, pvTong = 0;
@@ -53,7 +55,6 @@ public class MyLocation {
         this.locationLatLng = locationLatLng;
     }
 
-    private LatLng locationLatLng;
 
     public void setGiaAVG(long giaAVG) {
         this.giaAVG = giaAVG;
@@ -201,7 +202,7 @@ public class MyLocation {
         result.put("size", size);
         result.put("tinhtp", tinhtp);
         result.put("quanhuyen", quanhuyen);
-        result.put("locationLatLng",locationLatLng);
+        result.put("locationLatLng", locationLatLng);
         return result;
     }
 }
