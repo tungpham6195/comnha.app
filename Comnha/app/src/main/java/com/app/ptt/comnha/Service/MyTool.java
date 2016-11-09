@@ -448,17 +448,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                     String a = address.getAddressLine(0);
                     String b = address.getSubLocality();
                     String c = address.getSubAdminArea();
-                    Scanner kb = new Scanner(c);
-                    String name;
-                    while (kb.hasNext()) {
-                        name = kb.next();
-                        if (name.equals( "District" )|| name.equals("Quận")) {
-                            c = "Quận";
-                            while(kb.hasNext()){
-                                c+=" "+kb.next();
-                            }
-                        }
-                    }
+
                     String d = address.getAdminArea();
                     String e = "";
                     if (a != null) {
@@ -473,10 +463,22 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                     }
 
                     if (c != null) {
+                        Scanner kb = new Scanner(c);
+                        String name;
+                        while (kb.hasNext()) {
+                            name = kb.next();
+                            if (name.equals( "District" )|| name.equals("Quận")) {
+                                c = "Quận";
+                                while(kb.hasNext()){
+                                    c+=" "+kb.next();
+                                }
+                            }
+                        }
                         if (a == null && b == null)
                             e += c;
                         else
                             e += ", " + c;
+
                         myLocation.setQuanhuyen(c);
                     }
                     if (d != null) {
@@ -503,7 +505,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (addresses != null) {
+        if (addresses.size()>0) {
             Log.i(LOG, "convert: latitude=" + addresses.get(0).getLatitude() + "longitude=" + addresses.get(0).getLongitude());
             return new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
         } else return null;
@@ -523,17 +525,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 String a = address.getAddressLine(0);
                 String b = address.getSubLocality();
                 String c = address.getSubAdminArea();
-                Scanner kb = new Scanner(c);
-                String name;
-                while (kb.hasNext()) {
-                    name = kb.next();
-                    if (name.equals( "District" )|| name.equals("Quận")) {
-                        c = "Quận";
-                        while(kb.hasNext()){
-                            c+=" "+kb.next();
-                        }
-                    }
-                }
+
                 String d = address.getAdminArea();
                 String e = "";
                 if (a != null) {
@@ -550,6 +542,17 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 }
 
                 if (c != null) {
+                    Scanner kb = new Scanner(c);
+                    String name;
+                    while (kb.hasNext()) {
+                        name = kb.next();
+                        if (name.equals( "District" )|| name.equals("Quận")) {
+                            c = "Quận";
+                            while(kb.hasNext()){
+                                c+=" "+kb.next();
+                            }
+                        }
+                    }
                     if (a == null && b == null)
                         e += c;
                     else

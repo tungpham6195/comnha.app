@@ -224,7 +224,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         Log.i(LOG + ".addNewLoca", "Da toi đây");
         newLocation = new MyLocation();
         newLocation.setName(edt_tenquan.getText().toString());
-        newLocation.setDiachi(returnFullname());
+        //newLocation.setDiachi(returnFullname());
         newLocation.setSdt(edt_sdt.getText().toString());
         newLocation.setTimestart(btn_timestart.getText().toString());
         newLocation.setTimeend(btn_timeend.getText().toString());
@@ -242,9 +242,10 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     @Override
     public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
         if (placeAttribute != null) {
-            PlaceAttribute placeAttribute1 = placeAttribute;
+            //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState()+"/";
             huyen = placeAttribute.getDistrict()+"/";
+            newLocation.setDiachi(placeAttribute.getFullname());
             Log.i(LOG+".onLocation",tinh+" va "+huyen);
             String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
             Map<String, Object> newLocaValue = newLocation.toMap();
