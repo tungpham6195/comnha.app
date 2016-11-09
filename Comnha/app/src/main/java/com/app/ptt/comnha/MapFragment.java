@@ -8,19 +8,15 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.github.clans.fab.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.PopupMenu;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,13 +26,15 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
+import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
-import com.github.clans.fab.FloatingActionButton;
+import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -47,9 +45,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 
 import java.util.ArrayList;
 
@@ -71,13 +71,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     MyTool myTool;
     Storage storage;
     int pos;
+    boolean isNearest=false;
     int temp = 1;
     MarkerOptions yourMarker = null;
     ImageButton btn_search;
     AutoCompleteTextView edt_content;
-    FloatingActionButton fab_filter, fab_location;
-    CardView card_pickProvince, card_pickDistrict, card_filterlabel;
-    TextView txt_tinh, txt_huyen, txt_filterLabel;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -92,22 +90,20 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(LOG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.frg_map_fablocation);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), list.size() + "", Toast.LENGTH_SHORT).show();
+            }
+        });
         anhxa(view);
         return view;
     }
 
     private void anhxa(View view) {
-        card_pickProvince = (CardView) view.findViewById(R.id.frg_map_cardV_chonProvince);
-        card_pickDistrict = (CardView) view.findViewById(R.id.frg_map_cardV_chonDistrict);
-        card_filterlabel = (CardView) view.findViewById(R.id.frg_map_cardV_filterLabel);
-        txt_huyen = (TextView) view.findViewById(R.id.frg_map_txtProvince);
-        txt_tinh = (TextView) view.findViewById(R.id.frg_map_txtDistrict);
-        txt_filterLabel = (TextView) view.findViewById(R.id.frg_map_txtfilterLabel);
-
-        fab_filter = (FloatingActionButton) view.findViewById(R.id.frg_map_fabfilter);
-        fab_location = (FloatingActionButton) view.findViewById(R.id.frg_map_fablocation);
         btn_search = (ImageButton) view.findViewById(R.id.frg_map_btnsearch);
-
 //        btn_reload = (ImageButton) view.findViewById(R.id.frg_map_btnreload);
         edt_content = (AutoCompleteTextView) view.findViewById(R.id.frg_map_edtsearch);
 
@@ -139,12 +135,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 pos = position;
             }
         });
-        card_filterlabel.setVisibility(View.INVISIBLE);
-        card_pickDistrict.setVisibility(View.INVISIBLE);
-        card_pickProvince.setVisibility(View.INVISIBLE);
         btn_search.setOnClickListener(this);
-        fab_filter.setOnClickListener(this);
-        fab_location.setOnClickListener(this);
 //        btn_reload.setOnClickListener(this);
     }
 
@@ -163,82 +154,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
         //storage.writeFile();
 
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.frg_map_btnsearch:
-                Log.i(LOG + ".onClick ", edt_content.getText().toString());
-                if (edt_content.getText().toString() == "") {
-                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
-                } else {
-                    Log.i(LOG + ".onClick ", "loadListPlace");
-                    myLocationSearch = placeAttributes.get(pos);
-                    changeLocation();
-                    Log.i(LOG + ".onClick->Search", "onEdt:" + edt_content.getText().toString() + " - Trong list:" + placeAttributes.get(pos).getFullname());
-                }
-                break;
-            case R.id.frg_map_fabfilter:
-                PopupMenu popupMenu = new PopupMenu(getActivity(), fab_filter, Gravity.TOP | Gravity.END);
-                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.popup_viewquan_none:
-                                txt_filterLabel.setText(item.getTitle());
-                                break;
-                            case R.id.popup_viewquan_gia:
-                                txt_filterLabel.setText(item.getTitle());
-                                break;
-                            case R.id.popup_viewquan_pv:
-                                txt_filterLabel.setText(item.getTitle());
-                                break;
-                            case R.id.popup_viewquan_vs:
-                                txt_filterLabel.setText(item.getTitle());
-                                break;
-                        }
-                        return true;
-                    }
-                });
-                popupMenu.show();
-                popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-                    @Override
-                    public void onDismiss(PopupMenu menu) {
-                        AnimationUtils.animatShowTagfromLeft(card_filterlabel);
-                    }
-                });
-                break;
-            case R.id.frg_map_fablocation:
-                if (card_pickDistrict.getVisibility() == View.INVISIBLE) {
-                    AnimationUtils.animatShowTagfromLeft(card_pickProvince);
-                    new CountDownTimer(700, 1000) {
-                        public void onFinish() {
-                            AnimationUtils.animatShowTagfromBottom(card_pickDistrict);
-                        }
-
-                        public void onTick(long millisUntilFinished) {
-                        }
-                    }.start();
-                } else if (card_pickDistrict.getVisibility() == View.VISIBLE) {
-                    AnimationUtils.animatHideTagfromTop(card_pickDistrict);
-                    new CountDownTimer(250, 1000) {
-                        public void onFinish() {
-                            AnimationUtils.animatHideTagfromRight(card_pickProvince);
-                        }
-
-                        public void onTick(long millisUntilFinished) {
-                        }
-                    }.start();
-                }
-                break;
-            case R.id.frg_map_cardV_chonProvince:
-                break;
-            case R.id.frg_map_cardV_chonDistrict:
-                break;
-
-        }
     }
 
     @Override
@@ -310,12 +225,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                                                 txt_TenQuan.setText(a.getName());
                                                 txt_DiaChi.setText(a.getDiachi());
                                                 txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
-                                                float kc = (float) (returnDistanceLocationSearch(a));
-                                                int c = Math.round(kc);
-                                                int d = c / 1000;
-                                                int e = c % 1000;
-                                                int f = e / 100;
-                                                txt_KhoangCach.setText(d + "," + f + " km");
+//                                                float kc = (float) (returnDistanceLocationSearch(a));
+//                                                int c = Math.round(kc);
+//                                                int d = c / 1000;
+//                                                int e = c % 1000;
+//                                                int f = e / 100;
+                                                txt_KhoangCach.setText(a.getKhoangcach()+" km");
                                                 Log.i(LOG + ".infoWindow- routeTemp", (float) returnDistanceLocationSearch(a) / 1000 + " km");
                                                 if (a.getSize() == 0) {
                                                     txt_DiemVeSinh.setText("0");
@@ -375,7 +290,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             txt_TenQuan.setText(a.getName());
             txt_DiaChi.setText(a.getDiachi());
             txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
-            txt_KhoangCach.setText(a.getKhoangcach());
+            txt_KhoangCach.setText(a.getKhoangcach()+" km");
             if (a.getSize() == 0) {
                 txt_DiemVeSinh.setText("0");
                 txt_DiemGia.setText("0");
@@ -403,11 +318,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                         addMarker(myLocation);
                     }
                 }
-//                if (intent.getIntExtra("STT", 0) == 5) {
-//
-//                    changeLocation();
-//
-//                }
                 if (intent.getIntExtra("STT", 0) == 2 && intent.getBooleanExtra("Location", false)) {
                     Log.i(LOG + ".BroadcastReceiver", "Nhan vi tri cua ban:");
                     yourLocation = myTool.getYourLocation();
@@ -417,21 +327,10 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     }
                     Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" + list.size());
                     if (list.size() == 0) {
-                        getDataInFireBase(yourLocation.getQuanhuyen(), yourLocation.getTinhtp());
+                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
                         //myTool.getDataInFireBase(yourLocation.getQuanhuyen(),yourLocation.getTinhtp());
                     }
                 }
-//                if (intent.getIntExtra("STT", 0) == 2 && intent.getBooleanExtra("LocationChange", false)) {
-//                    Log.i(LOG + ".BroadcastReceiver", "Nhan su thay doi vi tri cua ban:");
-//                    yourLocation = myTool.getYourLocation();
-//                    Log.i(LOG + ".BroadcastReceiver", "Clear All Marker");
-//                    myGoogleMap.clear();
-//                    list = new ArrayList<>();
-//                    Log.i(LOG + ".BroadcastReceiver", "Them Marker vi tri cua ban");
-//                    addMarkerYourLocation();
-//
-//                }
-
             }
 
         }
@@ -456,11 +355,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 .icon(markerIcon);
         myGoogleMap.addMarker(yourMarker);
         myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationSearch.getPlaceLatLng(), 13));
-        for (MyLocation location : list) {
-            if (myTool.getDistance(new LatLng(location.getLat(), location.getLng()), myLocationSearch.getPlaceLatLng()) < 10000) {
-                addMarker(location);
-            }
-        }
+
     }
 
     public void addMarker(MyLocation myLocation) {
@@ -556,84 +451,105 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.frg_map_btnsearch:
+                if(isNearest)
+                    isNearest=false;
+                Log.i(LOG + ".onClick ", edt_content.getText().toString());
+                if (edt_content.getText().toString() == "") {
+                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
+                } else {
+                    Log.i(LOG + ".onClick ", "loadListPlace");
+                    myLocationSearch = placeAttributes.get(pos);
+                    changeLocation();
+                    Log.i(LOG + ".onClick->Search", "onEdt:" + edt_content.getText().toString() + " - Trong list:" + placeAttributes.get(pos).getFullname());
+                    isNearest=true;
+                    if(myLocationSearch.getDistrict().equals(list.get(0).getQuanhuyen())&&myLocationSearch.getState().equals(list.get(0).getTinhtp())){
+                        for (MyLocation location:list){
+                            Log.i(LOG + ".onClick ", "==current quan huyen");
+                            float kc=(float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude),new LatLng(location.getLat(),location.getLng()));
+                            int c = Math.round(kc);
+                            int d = c / 1000;
+                            int e = c % 1000;
+                            int f = e / 100;
+                            location.setKhoangcach(d + "," + f);
+                            addMarker(location);
+                        }
+                    }else{
+                        Log.i(LOG + ".onClick ", "!=current quan huyen");
+                        getDataInFireBase(myLocationSearch.getState(),myLocationSearch.getDistrict());
+                    }
+                }
+                break;
+        }
+    }
 
     public void getDataInFireBase(String tinh, String huyen) {
-//        routes = new ArrayList<>();
-        Log.i(LOG + ".getDataInFireBase", "Tinh:" + tinh + "-Huyen:" + huyen);
-//        listLocation = new ArrayList<>();
-//        Firebase.setAndroidContext(mContext);
-//        ref = new Firebase(mContext.getString(R.string.firebase_path));
-//        ref.child(mContext.getString(R.string.locations_CODE))
-//                .addChildEventListener(
-//                        new ChildEventListener() {
-//                            @Override
-//                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                                MyLocation myLocation = dataSnapshot.getValue(MyLocation.class);
-//                                myLocation.setLocaID(dataSnapshot.getKey());
-//                                listLocation.add(myLocation);
-//                                loadListPlace(myLocation.getDiachi(), myLocation.getLocaID(), classSend);
-//                                Log.i(LOG + ".onChildAdded", "Ten quan: " + dataSnapshot.getValue(MyLocation.class).getName());
-//                                Log.i(LOG + ".onChildAdded", "Dia chi: " + dataSnapshot.getValue(MyLocation.class).getDiachi());
-//                            }
-//                            @Override
-//                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                                flag = 2;
-//                                sendBroadcast("Location");
-//                            }
-//                            @Override
-//                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//                            }
-//                            @Override
-//                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//                            }
-//                            @Override
-//                            public void onCancelled(FirebaseError firebaseError) {
-//                            }
-//                        }
-//                );
-//
-        list = new ArrayList<>();
-        // listplaceAttribute=new ArrayList<>();
-        dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
-        locaListChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
-                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
-                Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
-                newLocation.setLocaID(dataSnapshot.getKey());
-                list.add(newLocation);
-                addMarker(newLocation);
-                //   listplaceAttribute.add(returnLocationByName(newLocation.getDiachi(),newLocation.getLocaID()));
-                pos = list.size() - 1;
-                //  flag = 1;
-                //sendBroadcast(newLocation.getLocaID());
-            }
+        if(tinh!=null &&huyen!=null) {
+            list = new ArrayList<>();
+            dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
+            dbRef.child(//LoginSession.getInstance().getTinh()
+                    tinh + "/"
+                            +
+                            //LoginSession.getInstance().getHuyen()
+                            huyen + "/"
+                            + getString(R.string.locations_CODE))
+                    .addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
+                            newLocation.setLocaID(dataSnapshot.getKey());
+                            list.add(newLocation);
+                            if (isNearest && myLocationSearch != null) {
+                                Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
+                                if (myTool.getDistance(new LatLng(newLocation.getLat(), newLocation.getLng()), myLocationSearch.getPlaceLatLng()) < 5000) {
+                                    float kc=(float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude),new LatLng(newLocation.getLat(),newLocation.getLng()));
+                                    int c = Math.round(kc);
+                                    int d = c / 1000;
+                                    int e = c % 1000;
+                                    int f = e / 100;
+                                    newLocation.setKhoangcach(d + "," + f);
+                                    //newLocation.setKhoangcach(myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(newLocation.getLat(), newLocation.getLng())) + "");
+                                    addMarker(newLocation);
+                                }
+                            } else {
+                                Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:"+myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())));
+                                float kc=(float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()),new LatLng(newLocation.getLat(),newLocation.getLng()));
+                                int c = Math.round(kc);
+                                int d = c / 1000;
+                                int e = c % 1000;
+                                int f = e / 100;
+                                newLocation.setKhoangcach(d + "," + f);
+                               // newLocation.setKhoangcach(myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())) + "");
+                                addMarker(newLocation);
+                            }
+                        }
 
-            @Override
-            public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
+                        }
 
-            @Override
-            public void onChildRemoved(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                        }
 
-            @Override
-            public void onChildMoved(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-            }
-        };
-        dbRef.child(tinh + "/" + huyen + "/" + getString(R.string.locations_CODE))
-                .addChildEventListener(locaListChildEventListener);
-        Log.i("Dia chi", "RUN:" + list.size());
-
+                        }
+                    });
+        }else{
+            Toast.makeText(getContext(),"Khong tim thay tinh va huyen",Toast.LENGTH_LONG).show();
+        }
     }
 
 

@@ -359,6 +359,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
                 listLocation.add(newLocation);
+
              //   listplaceAttribute.add(returnLocationByName(newLocation.getDiachi(),newLocation.getLocaID()));
                 pos=listLocation.size()-1;
                 flag = 1;
