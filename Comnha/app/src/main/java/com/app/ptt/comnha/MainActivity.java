@@ -40,9 +40,6 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , FloatingActionButton.OnClickListener {
@@ -77,11 +74,12 @@ public class MainActivity extends AppCompatActivity
     private BottomBar bottomBar;
     private PopupMenu popupMenu;
     private MyTool myTool;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i(LOG,"onCreate");
+        Log.i(LOG, "onCreate");
         setContentView(R.layout.activity_main2);
         Firebase.setAndroidContext(this);
         ref = new Firebase(getResources().getString(R.string.firebase_path));
@@ -163,8 +161,8 @@ public class MainActivity extends AppCompatActivity
 
 
     void anhXa() {
-        LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
-        LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+        LoginSession.getInstance().setHuyen("Quận 9");
+        LoginSession.getInstance().setTinh("Hồ Chí Minh");
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
         fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
         fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
@@ -272,6 +270,7 @@ public class MainActivity extends AppCompatActivity
                                         storeFragment = new StoreFragment();
                                         storeFragment.setTinh(LoginSession.getInstance().getTinh());
                                         storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
                                         storeFragment.setFilter(2);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()
@@ -282,6 +281,7 @@ public class MainActivity extends AppCompatActivity
                                         storeFragment = new StoreFragment();
                                         storeFragment.setTinh(LoginSession.getInstance().getTinh());
                                         storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
                                         storeFragment.setFilter(3);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()
@@ -292,6 +292,7 @@ public class MainActivity extends AppCompatActivity
                                         storeFragment = new StoreFragment();
                                         storeFragment.setTinh(LoginSession.getInstance().getTinh());
                                         storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
                                         storeFragment.setFilter(4);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()
@@ -330,8 +331,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i(LOG,"onStart");
-        if(myLocation==null) {
+        Log.i(LOG, "onStart");
+        if (myLocation == null) {
             myTool = new MyTool(getApplicationContext(), MainActivity.class.getSimpleName());
             myTool.startGoogleApi();
         }
@@ -515,15 +516,16 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getIntExtra("STT", 0) == 2 && intent.getBooleanExtra("Location", false)) {
                 Log.i(LOG + ".MainActivity", "Nhan vi tri cua ban:");
-                myLocation=myTool.getYourLocation();
+                myLocation = myTool.getYourLocation();
 
                 anhXa();
-              //  myTool.stopGoogleApi();
+                //  myTool.stopGoogleApi();
             }
         }
     };

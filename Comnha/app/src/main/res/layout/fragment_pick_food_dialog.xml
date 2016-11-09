@@ -9,6 +9,7 @@
         android:id="@+id/frg_pickFood_rcylerV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
         android:scrollbarStyle="insideOverlay"
         android:scrollbars="vertical" />
 

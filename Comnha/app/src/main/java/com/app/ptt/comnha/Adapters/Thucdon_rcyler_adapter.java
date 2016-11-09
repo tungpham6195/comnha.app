@@ -28,7 +28,7 @@ public class Thucdon_rcyler_adapter extends RecyclerView.Adapter<Thucdon_rcyler_
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_rcyler_thucdon, parent, false));
+                .inflate(R.layout.item_rcyler_food, parent, false));
     }
 
     @Override

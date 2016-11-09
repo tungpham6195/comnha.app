@@ -1,15 +1,21 @@
 package com.app.ptt.comnha;
 
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.app.ptt.comnha.Adapters.Thucdon_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
@@ -33,6 +39,19 @@ public class PickFoodDialogFragment extends DialogFragment {
     ArrayList<Food> thucdonList;
     DatabaseReference dbRef;
     ChildEventListener thucdonChildEventListener;
+    String tinh, huyen, foodCateID;
+
+    public void setTinh(String tinh) {
+        this.tinh = tinh;
+    }
+
+    public void setHuyen(String huyen) {
+        this.huyen = huyen;
+    }
+
+    public void setFoodCateID(String foodCateID) {
+        this.foodCateID = foodCateID;
+    }
 
     public PickFoodDialogFragment() {
         // Required empty public constructor
@@ -76,7 +95,10 @@ public class PickFoodDialogFragment extends DialogFragment {
 
             }
         };
-        dbRef.child(getResources().getString(R.string.thucdon_CODE))
+        dbRef.child(tinh + "/" + huyen + "/" +
+                getResources().getString(R.string.thucdon_CODE))
+                .orderByChild("foodCategoID")
+                .equalTo(foodCateID)
                 .addChildEventListener(thucdonChildEventListener);
         return view;
     }
@@ -96,8 +118,8 @@ public class PickFoodDialogFragment extends DialogFragment {
     private void anhxa(View view) {
         thucdonList = new ArrayList<>();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_pickFood_rcylerV);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        layoutManager = linearLayoutManager;
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false);
+        layoutManager = gridLayoutManager;
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new Thucdon_rcyler_adapter(thucdonList, getActivity());
         mRecyclerView.setAdapter(mAdapter);
@@ -112,5 +134,19 @@ public class PickFoodDialogFragment extends DialogFragment {
 
     public void setOnPickFoodListener(OnPickFoodListener listener) {
         onPickFoodListener = listener;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Window window = getDialog().getWindow();
+        Point size = new Point();
+        // Store dimensions of the screen in `size`
+        Display display = window.getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        // Set the width of the dialog proportional to 75% of the screen width
+        window.setLayout((int) (size.x * 0.95), WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.CENTER);
+
     }
 }

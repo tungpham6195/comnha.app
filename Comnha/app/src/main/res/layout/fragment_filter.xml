@@ -76,7 +76,16 @@
                     android:text="@string/text_thucdon"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimaryDark" />
-
+                <TextView
+                    android:id="@+id/frg_filter_txtloaimon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/location_tag"
+                    android:gravity="center"
+                    android:text="loại món ăn"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white" />
                 <TextView
                     android:id="@+id/frg_filter_txtmon"
                     android:layout_width="wrap_content"
@@ -84,7 +93,7 @@
                     android:layout_marginStart="10dp"
                     android:background="@drawable/location_tag"
                     android:gravity="center"
-                    android:text="món"
+                    android:text="món ăn"
                     android:textAllCaps="false"
                     android:textColor="@android:color/white" />
             </LinearLayout>

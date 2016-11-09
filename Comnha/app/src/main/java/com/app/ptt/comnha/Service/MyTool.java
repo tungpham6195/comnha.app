@@ -7,51 +7,36 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.app.ptt.comnha.Modules.PlaceAttribute;
-import com.google.firebase.database.ChildEventListener;
-import com.app.ptt.comnha.AdapterActivity;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.MainActivity;
 import com.app.ptt.comnha.MapFragment;
 import com.app.ptt.comnha.Modules.DirectionFinder;
 import com.app.ptt.comnha.Modules.DirectionFinderListener;
+import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.R;
-import com.app.ptt.comnha.StoreFragment;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.util.Scanner;
-
-import static android.os.Build.ID;
 
 /**
  * Created by cuong on 10/27/2016.
@@ -182,9 +167,12 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             this.latitude = l.getLatitude();
             this.longtitude = l.getLongitude();
             yourLocation = returnLocationByLatLng(l.getLatitude(), l.getLongitude());
-            Log.i(LOG + ".onConnected", "Your Location: "+yourLocation.getDiachi()+"-"+yourLocation.getLocationLatLng());
-            flag = 2;
-            sendBroadcast("Location");
+            if (yourLocation!=null){
+                Log.i(LOG + ".onConnected", "Your Location: "+yourLocation.getDiachi()+"-"+yourLocation.getLocationLatLng());
+                flag = 2;
+                sendBroadcast("Location");
+            }
+
         }
         startLocationUpdate();
     }

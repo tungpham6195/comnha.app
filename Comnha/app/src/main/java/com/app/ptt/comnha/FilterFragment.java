@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
+import com.app.ptt.comnha.FireBase.FoodCategory;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Food;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
@@ -31,9 +32,9 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FilterFragment extends Fragment implements View.OnClickListener, PickProvinceDialogFragment.OnnPickProvinceListener, PickDistrictDialogFragment.OnPickDistricListener, PickFoodDialogFragment.OnPickFoodListener {
+public class FilterFragment extends Fragment implements View.OnClickListener, PickProvinceDialogFragment.OnnPickProvinceListener, PickDistrictDialogFragment.OnPickDistricListener, PickFoodDialogFragment.OnPickFoodListener, PickFoodCategoDialogFragment.PickFoodCategoryListener {
 
-    TextView txt_tinh, txt_quan, txt_mon;
+    TextView txt_tinh, txt_quan, txt_mon, txt_loaimon;
     Button btn_tim;
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -44,6 +45,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     DatabaseReference dbRef;
     ChildEventListener locaMenuChildEventListener;
     String tinh = "", quan = "";
+    String foodCateID;
 
     public FilterFragment() {
         // Required empty public constructor
@@ -91,6 +93,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     }
 
     private void anhxa(View view) {
+        txt_loaimon = (TextView) view.findViewById(R.id.frg_filter_txtloaimon);
         txt_tinh = (TextView) view.findViewById(R.id.frg_filter_txttinh);
         txt_quan = (TextView) view.findViewById(R.id.frg_filter_txtquan);
         txt_mon = (TextView) view.findViewById(R.id.frg_filter_txtmon);
@@ -105,6 +108,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
         txt_quan.setOnClickListener(this);
         txt_mon.setOnClickListener(this);
         btn_tim.setOnClickListener(this);
+        txt_loaimon.setOnClickListener(this);
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -142,9 +146,18 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
                 }
                 break;
             case R.id.frg_filter_txtmon:
-                PickFoodDialogFragment pickFoodFrg = new PickFoodDialogFragment();
-                pickFoodFrg.show(fm, "fragment_pickFood");
-                pickFoodFrg.setOnPickFoodListener(this);
+                if (tinh.equals("")) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
+                } else if (quan.equals("")) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseDistrict), Toast.LENGTH_SHORT).show();
+                } else {
+                    PickFoodDialogFragment pickFoodFrg = new PickFoodDialogFragment();
+                    pickFoodFrg.setTinh(tinh);
+                    pickFoodFrg.setHuyen(quan);
+                    pickFoodFrg.setFoodCateID(foodCateID);
+                    pickFoodFrg.show(fm, "fragment_pickFood");
+                    pickFoodFrg.setOnPickFoodListener(this);
+                }
                 break;
             case R.id.frg_filter_btnTim:
                 if (tinh.equals("")) {
@@ -153,6 +166,17 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
                     Toast.makeText(getActivity(), getString(R.string.txt_noChoseDistrict), Toast.LENGTH_SHORT).show();
                 } else {
                     querySomething();
+                }
+                break;
+            case R.id.frg_filter_txtloaimon:
+                if (tinh.equals("")) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
+                } else if (quan.equals("")) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseDistrict), Toast.LENGTH_SHORT).show();
+                } else {
+                    PickFoodCategoDialogFragment pickFoodCategoDialogFragment = new PickFoodCategoDialogFragment();
+                    pickFoodCategoDialogFragment.show(fm, "fragment_pickFoodCategory");
+                    pickFoodCategoDialogFragment.setFoodCategoryChildEventListener(this);
                 }
                 break;
         }
@@ -199,5 +223,11 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
             dbRef.child(tinh + "/" + quan + "/" + getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
                     .addChildEventListener(locaMenuChildEventListener);
         }
+    }
+
+    @Override
+    public void onPickFoodCategory(FoodCategory foodCategory) {
+        txt_loaimon.setText(foodCategory.getName());
+        foodCateID = foodCategory.getFoodCategoryID();
     }
 }
