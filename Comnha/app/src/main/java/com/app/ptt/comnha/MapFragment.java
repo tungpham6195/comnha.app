@@ -155,7 +155,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, PickL
         getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
         myTool = new MyTool(getContext(), MapFragment.class.getSimpleName());
         myTool.startGoogleApi();
-        storage = new Storage(getContext());
+
 
         //storage.writeFile();
 
