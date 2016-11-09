@@ -1,6 +1,6 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.app.ptt.comnha.PickFoodCategoDialogFragment">
@@ -10,10 +10,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/frg_chosefCatego_listV"
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="300dp"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical" />
 
         <Button
             android:id="@+id/frg_chosefCatego_btnaddNew"

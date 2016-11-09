@@ -184,7 +184,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                 getString(R.string.posts_CODE) + postID)
                 .addValueEventListener(postValueEventListener);
         dbRef.child(tinh + "/" + huyen + "/" +
-                getString(R.string.postcomment_CODE) + "/" + postID)
+                getString(R.string.postcomment_CODE)).orderByChild("postID").equalTo(postID)
                 .addChildEventListener(commentChildEventListener);
         dbRef.child(getResources().getString(R.string.images_CODE))
                 .orderByChild("postID")
@@ -251,19 +251,20 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                     newComment.setUserID(LoginSession.getInstance().getUserID());
                     newComment.setDate(new Times().getDate());
                     newComment.setTime(new Times().getTime());
+                    newComment.setPostID(postID);
                     edt_comment.setText(null);
                     String key = dbRef.child(getResources().getString(R.string.postcomment_CODE) + postID).push().getKey();
                     Map<String, Object> commentValues = newComment.toMap();
                     Map<String, Object> childUpdates = new HashMap<String, Object>();
                     childUpdates.put(tinh + "/" + huyen + "/" +
                             getResources().getString(R.string.postcomment_CODE)
-                            + postID + "/" + key, commentValues);
+                            + key, commentValues);
                     childUpdates.put(tinh + "/" + huyen + "/" +
                             getResources().getString(R.string.posts_CODE)
                             + postID + "/commentCount", comment_List.size() + 1);
-                    childUpdates.put(tinh + "/" + huyen + "/" +
-                            getResources().getString(R.string.locationpost_CODE) + post.getLocaID() + "/"
-                            + postID + "/commentCount", comment_List.size() + 1);
+//                    childUpdates.put(tinh + "/" + huyen + "/" +
+//                            getResources().getString(R.string.locationpost_CODE) + post.getLocaID() + "/"
+//                            + postID + "/commentCount", comment_List.size() + 1);
 //                    childUpdates.put(getResources().getString(R.string.locauserpost_CODE)
 //                            + post.getLocaID() + "/"
 //                            + post.getUid() + "/"

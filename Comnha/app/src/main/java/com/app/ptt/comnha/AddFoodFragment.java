@@ -139,7 +139,7 @@ public class AddFoodFragment extends Fragment implements View.OnClickListener, P
 
     @Override
     public void onPickFoodCategory(FoodCategory foodCategory) {
-        btn_chooseCatego.setText(foodCategory.getName());
+        btn_chooseCatego.setHint(foodCategory.getName());
         foodCategoID = foodCategory.getFoodCategoryID();
     }
 }

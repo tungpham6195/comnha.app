@@ -237,8 +237,8 @@ public class LocadetailFragment extends Fragment {
                 getResources().getString(R.string.posts_CODE)).orderByChild("locaID").equalTo(locaID)
                 .addChildEventListener(postChildEventListener);
         dbRef.child(tinh + "/" + huyen + "" + "/" +
-                getResources().getString(R.string.locathucdon_CODE)
-                + locaID).addChildEventListener(locaMenuChildEventListener);
+                getResources().getString(R.string.thucdon_CODE)).orderByChild("locaID")
+                .equalTo(locaID).addChildEventListener(locaMenuChildEventListener);
         dbRef.child(getResources().getString(R.string.images_CODE))
                 .orderByChild("locaID").equalTo(locaID).limitToFirst(3)
                 .addChildEventListener(imageChildEventListener);
