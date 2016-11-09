@@ -161,9 +161,11 @@ public class MainActivity extends AppCompatActivity
 
 
     void anhXa() {
-        Log.i(LOG+",anhxa","quan:"+myLocation.getQuanhuyen()+". tp:"+myLocation.getTinhtp());
-        LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
-        LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+        Log.i(LOG + ",anhxa", "quan:" + myLocation.getQuanhuyen() + ". tp:" + myLocation.getTinhtp());
+//        myLocation.getQuanhuyen()
+//                myLocation.getTinhtp()
+        LoginSession.getInstance().setHuyen("Quận 9");
+        LoginSession.getInstance().setTinh("Hồ Chí Minh");
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
         fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
         fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);

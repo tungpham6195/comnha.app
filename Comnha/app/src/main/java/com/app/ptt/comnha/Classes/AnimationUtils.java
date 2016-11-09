@@ -5,6 +5,9 @@ import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 /**
  * Created by PTT on 11/1/2016.
  */

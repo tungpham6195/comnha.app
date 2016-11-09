@@ -336,12 +336,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, PickL
                                                 txt_TenQuan.setText(a.getName());
                                                 txt_DiaChi.setText(a.getDiachi());
                                                 txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
-//                                                float kc = (float) (returnDistanceLocationSearch(a));
-//                                                int c = Math.round(kc);
-//                                                int d = c / 1000;
-//                                                int e = c % 1000;
-//                                                int f = e / 100;
-                                                txt_KhoangCach.setText(a.getKhoangcach() + " km");
+
+                                                float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(a.getLat(), a.getLng()));
+                                                int c = Math.round(kc);
+                                                int d = c / 1000;
+                                                int e = c % 1000;
+                                                int f = e / 100;
+                                                txt_KhoangCach.setText(kc + " km");
                                                 Log.i(LOG + ".infoWindow- routeTemp", (float) returnDistanceLocationSearch(a) / 1000 + " km");
                                                 if (a.getSize() == 0) {
                                                     txt_DiemVeSinh.setText("0");
@@ -631,5 +632,68 @@ public class MapFragment extends Fragment implements View.OnClickListener, PickL
         }
     }
 
+    /***********************************************************************************************************************/
+//    DatabaseReference dbRe;
+//    ArrayList<MyLocation> list;
+//
+//    void query() {
 
+
+//        list = new ArrayList<>();
+//        dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
+//        ChildEventListener childEventListener = new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
+//                newLocation.setLocaID(dataSnapshot.getKey());
+//                list.add(newLocation);
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        };
+            /*R.id.popup_viewquan_none*/
+//        dbRef.child(tinh + "/" + huyen + "/"
+//                + getString(R.string.locations_CODE)).addChildEventListener(locaListChildEventListener);
+
+            /*R.id.popup_viewquan_gia*/
+//        dbRef.child(tinh + "/" + huyen + "/" +
+//                getResources().getString(R.string.locations_CODE))
+//                .orderByChild("giaAVG")
+//                .limitToLast(200)
+//                .addChildEventListener(locaListChildEventListener);
+
+            /*R.id.popup_viewquan_pv*/
+//        dbRef.child(tinh + "/" + huyen + "/" +
+//                getResources().getString(R.string.locations_CODE))
+//                .orderByChild("pvAVG")
+//                .limitToLast(200)
+//                .addChildEventListener(locaListChildEventListener);
+
+            /*R.id.popup_viewquan_vs*/
+//        dbRef.child(tinh + "/" + huyen + "/" +
+//                getResources().getString(R.string.locations_CODE))
+//                .orderByChild("vsAVG")
+//                .limitToLast(200)
+//                .addChildEventListener(locaListChildEventListener);
+//
+//    }
+    /***********************************************************************************************************************/
 }
