@@ -51,40 +51,126 @@
         android:layout_marginStart="15dp"
         android:orientation="vertical">
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/frg_map_fablocation"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_location_black_18dp"
-            app:fab_colorNormal="@android:color/white"
-            app:fab_colorPressed="@android:color/white"
-            app:fab_colorRipple="#68000000"
-            app:fab_shadowColor="#80000000"
-            app:fab_shadowRadius="2dp"
-            app:fab_shadowXOffset="1dp"
-            app:fab_shadowYOffset="1dp"
-            app:fab_showShadow="true"
-            app:fab_size="mini"
-            app:layout_anchor="@+id/mapwhere"
-            app:layout_anchorGravity="bottom|left" />
+            android:orientation="horizontal">
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/frg_map_fabfilter"
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/frg_map_fablocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:src="@drawable/ic_location_black_18dp"
+                app:fab_colorNormal="@android:color/white"
+                app:fab_colorPressed="@android:color/white"
+                app:fab_colorRipple="#618e8c8c"
+                app:fab_shadowColor="#80000000"
+                app:fab_shadowRadius="2dp"
+                app:fab_shadowXOffset="1dp"
+                app:fab_shadowYOffset="1dp"
+                app:fab_showShadow="true"
+                app:fab_size="mini"
+                app:layout_anchor="@+id/mapwhere"
+                app:layout_anchorGravity="bottom|left" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/frg_map_cardV_chonDistrict"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_marginStart="5dp"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="@dimen/cardv_elevation">
+
+                    <TextView
+                        android:id="@+id/frg_map_txtDistrict"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/tagformapfrg"
+                        android:gravity="center"
+                        android:text="Huyện"
+                        android:textColor="@android:color/white" />
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/frg_map_cardV_chonProvince"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_marginStart="5dp"
+                    android:clickable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="@dimen/cardv_elevation">
+
+                    <TextView
+                        android:id="@+id/frg_map_txtProvince"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/tagformapfrg"
+                        android:gravity="center"
+                        android:text="Tỉnh"
+                        android:textColor="@android:color/white" />
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:src="@drawable/ic_rate_black_18dp"
-            app:fab_colorNormal="@android:color/white"
-            app:fab_colorPressed="@android:color/white"
-            app:fab_colorRipple="#68000000"
-            app:fab_shadowColor="#80000000"
-            app:fab_shadowRadius="2dp"
-            app:fab_shadowXOffset="1dp"
-            app:fab_shadowYOffset="1dp"
-            app:fab_showShadow="true"
-            app:fab_size="mini"
-            app:layout_anchor="@+id/mapwhere"
-            app:layout_anchorGravity="bottom|left" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/frg_map_fabfilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_rate_black_18dp"
+                app:fab_colorNormal="@android:color/white"
+                app:fab_colorPressed="@android:color/white"
+                app:fab_colorRipple="#618e8c8c"
+                app:fab_hideAnimation="@anim/fab_slide_in_from_right"
+                app:fab_shadowColor="#80000000"
+                app:fab_shadowRadius="2dp"
+                app:fab_shadowXOffset="1dp"
+                app:fab_shadowYOffset="1dp"
+                app:fab_showAnimation="@anim/fab_slide_in_from_left"
+                app:fab_showShadow="true"
+                app:fab_size="mini"
+                app:layout_anchor="@+id/mapwhere"
+                app:layout_anchorGravity="bottom|left" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/frg_map_cardV_filterLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginStart="5dp"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="@dimen/cardv_elevation">
+
+                <TextView
+                    android:id="@+id/frg_map_txtfilterLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tagformapfrg"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@android:color/white" />
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
     </LinearLayout>
 
 

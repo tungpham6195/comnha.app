@@ -266,6 +266,16 @@ public class MainActivity extends AppCompatActivity
                                 FragmentTransaction transaction;
                                 StoreFragment storeFragment;
                                 switch (item.getItemId()) {
+                                    case R.id.popup_viewquan_none:
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setFilter(1);
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
+                                        transaction = getSupportFragmentManager().beginTransaction();
+                                        transaction.replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        break;
                                     case R.id.popup_viewquan_gia:
                                         storeFragment = new StoreFragment();
                                         storeFragment.setTinh(LoginSession.getInstance().getTinh());

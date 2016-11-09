@@ -1,7 +1,6 @@
 package com.app.ptt.comnha;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -19,7 +18,6 @@ import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.Service.MyTool;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
@@ -108,8 +106,8 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 newLocation.setLocaID(dataSnapshot.getKey());
                 //newLocation.setLocationLatLng(myTool.returnLatLngByName(newLocation.getDiachi()));
                 float kc = (float) myTool.getDistance(new LatLng(myLocation.getLat(),myLocation.getLng()),new LatLng(newLocation.getLat(), newLocation.getLng()));
-                Log.i("dia chi cua ban:"+myTool.returnLocationByLatLng(myLocation.getLat(),myLocation.getLng()).getDiachi(),
-                        "dia chi:"+myTool.returnLocationByLatLng(newLocation.getLat(),newLocation.getLng()).getDiachi());
+//                Log.i("dia chi cua ban:"+myTool.returnLocationByLatLng(myLocation.getLat(),myLocation.getLng()).getDiachi(),
+//                        "dia chi:"+myTool.returnLocationByLatLng(newLocation.getLat(),newLocation.getLng()).getDiachi());
                 int c = Math.round(kc);
                 Log.i(LOG+".tinh khoang cach",c+"");
                 int d = c / 1000;

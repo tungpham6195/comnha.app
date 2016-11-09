@@ -8,14 +8,19 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,12 +31,12 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
-import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,7 +51,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-
 import java.util.ArrayList;
 
 public class MapFragment extends Fragment implements View.OnClickListener {
@@ -60,17 +64,20 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     DatabaseReference dbRef;
     //private ArrayList<String> listName = new ArrayList<>();
     ArrayList<PlaceAttribute> placeAttributes;
-    PlaceAttribute myLocationSearch=null;
+    PlaceAttribute myLocationSearch = null;
     TextView txt_TenQuan, txt_DiaChi, txt_GioMo, txt_DiemGia, txt_DiemPhucVu, txt_DiemVeSinh, txt_KhoangCach;
     GoogleMap myGoogleMap;
     MyLocation yourLocation;
     MyTool myTool;
     Storage storage;
     int pos;
-    int temp =1;
+    int temp = 1;
     MarkerOptions yourMarker = null;
     ImageButton btn_search;
     AutoCompleteTextView edt_content;
+    FloatingActionButton fab_filter, fab_location;
+    CardView card_pickProvince, card_pickDistrict, card_filterlabel;
+    TextView txt_tinh, txt_huyen, txt_filterLabel;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -90,14 +97,24 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     }
 
     private void anhxa(View view) {
+        card_pickProvince = (CardView) view.findViewById(R.id.frg_map_cardV_chonProvince);
+        card_pickDistrict = (CardView) view.findViewById(R.id.frg_map_cardV_chonDistrict);
+        card_filterlabel = (CardView) view.findViewById(R.id.frg_map_cardV_filterLabel);
+        txt_huyen = (TextView) view.findViewById(R.id.frg_map_txtProvince);
+        txt_tinh = (TextView) view.findViewById(R.id.frg_map_txtDistrict);
+        txt_filterLabel = (TextView) view.findViewById(R.id.frg_map_txtfilterLabel);
+
+        fab_filter = (FloatingActionButton) view.findViewById(R.id.frg_map_fabfilter);
+        fab_location = (FloatingActionButton) view.findViewById(R.id.frg_map_fablocation);
         btn_search = (ImageButton) view.findViewById(R.id.frg_map_btnsearch);
+
 //        btn_reload = (ImageButton) view.findViewById(R.id.frg_map_btnreload);
         edt_content = (AutoCompleteTextView) view.findViewById(R.id.frg_map_edtsearch);
 
 //        edt_sort = (AutoCompleteTextView) view.findViewById(R.id.frg_map_edtsort);
         edt_content.setAdapter(new PlaceAutoCompleteAdapter(getActivity(), R.layout.autocomplete_list_item, 1));
-       // ArrayList<String> a = new ArrayList<>();
-     //   ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), R.layout.autocomplete_list_item, );
+        // ArrayList<String> a = new ArrayList<>();
+        //   ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), R.layout.autocomplete_list_item, );
 //        edt_sort.setThreshold(1);
 //        edt_sort.setAdapter(arrayAdapter);
 //        edt_sort.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -122,7 +139,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 pos = position;
             }
         });
+        card_filterlabel.setVisibility(View.INVISIBLE);
+        card_pickDistrict.setVisibility(View.INVISIBLE);
+        card_pickProvince.setVisibility(View.INVISIBLE);
         btn_search.setOnClickListener(this);
+        fab_filter.setOnClickListener(this);
+        fab_location.setOnClickListener(this);
 //        btn_reload.setOnClickListener(this);
     }
 
@@ -135,12 +157,88 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         mIntentFilter.addAction(mBroadcastSendAddress);
         mIntentFilter.addAction(mBroadcastChangeLocation);
         getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
-        myTool = new MyTool(getContext(),MapFragment.class.getSimpleName());
+        myTool = new MyTool(getContext(), MapFragment.class.getSimpleName());
         myTool.startGoogleApi();
         storage = new Storage(getContext());
 
         //storage.writeFile();
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.frg_map_btnsearch:
+                Log.i(LOG + ".onClick ", edt_content.getText().toString());
+                if (edt_content.getText().toString() == "") {
+                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
+                } else {
+                    Log.i(LOG + ".onClick ", "loadListPlace");
+                    myLocationSearch = placeAttributes.get(pos);
+                    changeLocation();
+                    Log.i(LOG + ".onClick->Search", "onEdt:" + edt_content.getText().toString() + " - Trong list:" + placeAttributes.get(pos).getFullname());
+                }
+                break;
+            case R.id.frg_map_fabfilter:
+                PopupMenu popupMenu = new PopupMenu(getActivity(), fab_filter, Gravity.TOP | Gravity.END);
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.popup_viewquan_none:
+                                txt_filterLabel.setText(item.getTitle());
+                                break;
+                            case R.id.popup_viewquan_gia:
+                                txt_filterLabel.setText(item.getTitle());
+                                break;
+                            case R.id.popup_viewquan_pv:
+                                txt_filterLabel.setText(item.getTitle());
+                                break;
+                            case R.id.popup_viewquan_vs:
+                                txt_filterLabel.setText(item.getTitle());
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+                popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+                    @Override
+                    public void onDismiss(PopupMenu menu) {
+                        AnimationUtils.animatShowTagfromLeft(card_filterlabel);
+                    }
+                });
+                break;
+            case R.id.frg_map_fablocation:
+                if (card_pickDistrict.getVisibility() == View.INVISIBLE) {
+                    AnimationUtils.animatShowTagfromLeft(card_pickProvince);
+                    new CountDownTimer(700, 1000) {
+                        public void onFinish() {
+                            AnimationUtils.animatShowTagfromBottom(card_pickDistrict);
+                        }
+
+                        public void onTick(long millisUntilFinished) {
+                        }
+                    }.start();
+                } else if (card_pickDistrict.getVisibility() == View.VISIBLE) {
+                    AnimationUtils.animatHideTagfromTop(card_pickDistrict);
+                    new CountDownTimer(250, 1000) {
+                        public void onFinish() {
+                            AnimationUtils.animatHideTagfromRight(card_pickProvince);
+                        }
+
+                        public void onTick(long millisUntilFinished) {
+                        }
+                    }.start();
+                }
+                break;
+            case R.id.frg_map_cardV_chonProvince:
+                break;
+            case R.id.frg_map_cardV_chonDistrict:
+                break;
+
+        }
     }
 
     @Override
@@ -179,7 +277,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                         googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                             @Override
                             public View getInfoWindow(Marker marker) {
-                                Log.i(LOG+".listSize",list.size()+"");
+                                Log.i(LOG + ".listSize", list.size() + "");
                                 if ((marker.getPosition().latitude == yourLocation.getLat())
                                         && (marker.getPosition().longitude == yourLocation.getLng())) {
                                     View view1 = getLayoutInflater(savedInstanceState).inflate(R.layout.infowindow_your_location, null);
@@ -256,7 +354,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public double returnDistanceLocationSearch(MyLocation myLocation) {
         for (MyLocation location : list) {
             if (myLocation.getLocaID().equals(location.getLocaID())) {
-                return myTool.getDistance(new LatLng(location.getLat(),location.getLng()), new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude));
+                return myTool.getDistance(new LatLng(location.getLat(), location.getLng()), new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude));
             }
         }
         return 0;
@@ -291,15 +389,16 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         Log.i(LOG + ".infoWindow", "a=null");
         return view1;
     }
+
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcastSendAddress)) {
                 if (intent.getIntExtra("STT", 0) == 1) {
                     Log.i(LOG + ".BroadcastReceiver", "Nhan id: " + intent.getStringExtra("PlaceID"));
-                    MyLocation myLocation=myTool.returnLocationInListByID(intent.getStringExtra("PlaceID"));
-                    if(myLocation!=null) {
-                        Log.i(LOG + ".BroadcastReceiver", "Them vi tri thu "+temp++);
+                    MyLocation myLocation = myTool.returnLocationInListByID(intent.getStringExtra("PlaceID"));
+                    if (myLocation != null) {
+                        Log.i(LOG + ".BroadcastReceiver", "Them vi tri thu " + temp++);
                         list.add(myLocation);
                         addMarker(myLocation);
                     }
@@ -316,9 +415,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                         Log.i(LOG + ".BroadcastReceiver", "Them marker vi tri cua ban vao map");
                         addMarkerYourLocation();
                     }
-                    Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" +list.size());
+                    Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" + list.size());
                     if (list.size() == 0) {
-                        getDataInFireBase(yourLocation.getQuanhuyen(),yourLocation.getTinhtp());
+                        getDataInFireBase(yourLocation.getQuanhuyen(), yourLocation.getTinhtp());
                         //myTool.getDataInFireBase(yourLocation.getQuanhuyen(),yourLocation.getTinhtp());
                     }
                 }
@@ -358,7 +457,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         myGoogleMap.addMarker(yourMarker);
         myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocationSearch.getPlaceLatLng(), 13));
         for (MyLocation location : list) {
-            if (myTool.getDistance(new LatLng(location.getLat(),location.getLng()),myLocationSearch.getPlaceLatLng()) < 10000) {
+            if (myTool.getDistance(new LatLng(location.getLat(), location.getLng()), myLocationSearch.getPlaceLatLng()) < 10000) {
                 addMarker(location);
             }
         }
@@ -366,7 +465,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     public void addMarker(MyLocation myLocation) {
         Log.i(LOG + ".addMarker", "Them dia diem nhan duoc: " + myLocation.getDiachi());
-        LatLng locatioLatLng=new LatLng(myLocation.getLat(),myLocation.getLng());
+        LatLng locatioLatLng = new LatLng(myLocation.getLat(), myLocation.getLng());
         myGoogleMap.addMarker(new MarkerOptions()
                 .position(locatioLatLng));
     }
@@ -375,18 +474,18 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
         yourMarker = new MarkerOptions()
-                .position(new LatLng(yourLocation.getLat(),yourLocation.getLng()))
+                .position(new LatLng(yourLocation.getLat(), yourLocation.getLng()))
                 .title(yourLocation.getDiachi())
                 .icon(markerIcon);
         myGoogleMap.addMarker(yourMarker);
-        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(yourLocation.getLat(),yourLocation.getLng()), 13));
+        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(yourLocation.getLat(), yourLocation.getLng()), 13));
     }
 
     public MyLocation returnLocation(Marker marker) {
         Log.i(LOG + ".returnRoute", "Tra ve route ung voi marker");
-        for (MyLocation location: list){
-            if(marker.getPosition().latitude==location.getLat()
-                    &&marker.getPosition().longitude==location.getLng()){
+        for (MyLocation location : list) {
+            if (marker.getPosition().latitude == location.getLat()
+                    && marker.getPosition().longitude == location.getLng()) {
                 return location;
             }
         }
@@ -398,6 +497,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         Context mContext;
         int mResource;
         int adapterRule;
+
         public PlaceAutoCompleteAdapter(Context context, int resource, int adapterRule) {
             super(context, resource);
             this.adapterRule = adapterRule;
@@ -429,7 +529,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     resultList = new ArrayList<>();
                     if (constraint != null) {
                         placeAttributes = new ArrayList<>();
-                        placeAttributes=myTool.returnPlaceAttributeByName(constraint.toString());
+                        placeAttributes = myTool.returnPlaceAttributeByName(constraint.toString());
                         if (placeAttributes != null) {
                             for (PlaceAttribute placeAttribute : placeAttributes) {
                                 resultList.add(placeAttribute.getFullname());
@@ -456,36 +556,10 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.frg_map_btnsearch:
-                Log.i(LOG + ".onClick ", edt_content.getText().toString());
-                if (edt_content.getText().toString() == "") {
-                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
-                } else {
-                    Log.i(LOG + ".onClick ", "loadListPlace");
-                    myLocationSearch=placeAttributes.get(pos);
-                    changeLocation();
-                    Log.i(LOG + ".onClick->Search","onEdt:"+edt_content.getText().toString()+" - Trong list:"+placeAttributes.get(pos).getFullname());
-                }
-                break;
-//            case R.id.frg_map_btnreload:
-////                reloadMarker();
-////                try {
-////                    storage.readCompanyJSONFile();
-////                } catch (IOException e) {
-////                    e.printStackTrace();
-////                } catch (JSONException e) {
-////                    e.printStackTrace();
-////                }
-//                break;
 
-        }
-    }
-    public void getDataInFireBase(String tinh,String huyen) {
+    public void getDataInFireBase(String tinh, String huyen) {
 //        routes = new ArrayList<>();
-        Log.i(LOG + ".getDataInFireBase","Tinh:"+tinh+"-Huyen:"+huyen);
+        Log.i(LOG + ".getDataInFireBase", "Tinh:" + tinh + "-Huyen:" + huyen);
 //        listLocation = new ArrayList<>();
 //        Firebase.setAndroidContext(mContext);
 //        ref = new Firebase(mContext.getString(R.string.firebase_path));
@@ -531,10 +605,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 list.add(newLocation);
                 addMarker(newLocation);
                 //   listplaceAttribute.add(returnLocationByName(newLocation.getDiachi(),newLocation.getLocaID()));
-                pos=list.size()-1;
-              //  flag = 1;
+                pos = list.size() - 1;
+                //  flag = 1;
                 //sendBroadcast(newLocation.getLocaID());
             }
+
             @Override
             public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
 
