@@ -1,7 +1,7 @@
 package com.app.ptt.comnha.Classes;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.os.CountDownTimer;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -45,54 +45,80 @@ public class AnimationUtils {
         animatorTranslateX.start();
     }
 
-    public static void animatShowTagfromLeft(View view) {
-        view.setVisibility(View.VISIBLE);
-        ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view,
-                "translationX", -1000, 0);
-        animatorTranslateX.setDuration(700);
+    public static void animatShowTagMap(View view1, View view2) {
+        final ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view1, "translationX", -1050, 0),
+                animatorTranslateX1 = ObjectAnimator.ofFloat(view2, "translationX", -1050, 0),
+                animatorTranslateY = ObjectAnimator.ofFloat(view2, "translationY", 120, 0);
+        animatorTranslateX.setDuration(500);
+        animatorTranslateX1.setDuration(500);
+        animatorTranslateY.setDuration(180);
+        animatorTranslateX.start();
+        animatorTranslateX1.start();
+        animatorTranslateX.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animatorTranslateY.start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+    }
+
+    public static void animatHideTagMap(View view1, View view2) {
+        final ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view1, "translationX", 0, -1050),
+                animatorTranslateY = ObjectAnimator.ofFloat(view2, "translationY", 0, 120),
+                animatorTranslateX1 = ObjectAnimator.ofFloat(view2, "translationX", 0, -1050);
+        animatorTranslateX.setDuration(500);
+        animatorTranslateX1.setDuration(500);
+        animatorTranslateY.setDuration(180);
+        animatorTranslateY.start();
+        animatorTranslateY.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animatorTranslateX.start();
+                animatorTranslateX1.start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+    }
+
+    public static void animatShowTagMap2(View view1) {
+        final ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view1, "translationX", -1050, 0);
+        animatorTranslateX.setDuration(500);
         animatorTranslateX.start();
     }
 
-    public static void animatHideTagfromRight(final View view) {
-        ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view,
-                "translationX", 0, -1000);
-        animatorTranslateX.setDuration(700);
+    public static void animatHideTagMap2(View view1) {
+        final ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view1, "translationX", 0, -1050);
+        animatorTranslateX.setDuration(500);
         animatorTranslateX.start();
-        view.setVisibility(View.VISIBLE);
-        new CountDownTimer(700, 1000) {
-            public void onFinish() {
-                view.setVisibility(View.INVISIBLE);
-
-            }
-
-            public void onTick(long millisUntilFinished) {
-            }
-        }.start();
     }
 
-    public static void animatShowTagfromBottom(View view) {
-        view.setVisibility(View.VISIBLE);
-        ObjectAnimator animatorTranslateY = ObjectAnimator.ofFloat(view,
-                "translationY", 100, 0);
-        animatorTranslateY.setDuration(250);
-        animatorTranslateY.start();
-
-    }
-
-    public static void animatHideTagfromTop(final View view) {
-        ObjectAnimator animatorTranslateY = ObjectAnimator.ofFloat(view,
-                "translationY", 0, 120);
-        animatorTranslateY.setDuration(250);
-        animatorTranslateY.start();
-        new CountDownTimer(250, 1000) {
-            public void onFinish() {
-                view.setVisibility(View.INVISIBLE);
-
-            }
-
-            public void onTick(long millisUntilFinished) {
-            }
-        }.start();
-
-    }
 }

@@ -87,6 +87,8 @@
                     android:layout_marginStart="5dp"
                     android:clickable="true"
                     android:foreground="?attr/selectableItemBackground"
+                    android:translationX="-350dp"
+                    android:translationY="80dp"
                     app:cardCornerRadius="15dp"
                     app:cardElevation="@dimen/cardv_elevation">
 
@@ -108,6 +110,7 @@
                     android:layout_marginStart="5dp"
                     android:clickable="true"
                     android:foreground="?attr/selectableItemBackground"
+                    android:translationX="-350dp"
                     app:cardCornerRadius="15dp"
                     app:cardElevation="@dimen/cardv_elevation">
 
@@ -158,6 +161,7 @@
                 android:layout_marginStart="5dp"
                 android:clickable="true"
                 android:foreground="?attr/selectableItemBackground"
+                android:translationX="-350dp"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="@dimen/cardv_elevation">
 

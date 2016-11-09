@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -30,6 +29,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
@@ -53,7 +53,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class MapFragment extends Fragment implements View.OnClickListener {
+public class MapFragment extends Fragment implements View.OnClickListener, PickLocationBottomSheetDialogFragment.onPickListener {
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     public static final String mBroadcastChangeLocation = "mBroadcastChangeLocation";
     private IntentFilter mIntentFilter;
@@ -78,6 +78,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     FloatingActionButton fab_filter, fab_location;
     CardView card_pickProvince, card_pickDistrict, card_filterlabel;
     TextView txt_tinh, txt_huyen, txt_filterLabel;
+    PickLocationBottomSheetDialogFragment pickLocationDialog;
+    FragmentManager fm;
+    int whatProvince = -1;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -97,55 +100,36 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     }
 
     private void anhxa(View view) {
+        pickLocationDialog = new PickLocationBottomSheetDialogFragment();
+        fm = getActivity().getSupportFragmentManager();
         card_pickProvince = (CardView) view.findViewById(R.id.frg_map_cardV_chonProvince);
         card_pickDistrict = (CardView) view.findViewById(R.id.frg_map_cardV_chonDistrict);
         card_filterlabel = (CardView) view.findViewById(R.id.frg_map_cardV_filterLabel);
-        txt_huyen = (TextView) view.findViewById(R.id.frg_map_txtProvince);
-        txt_tinh = (TextView) view.findViewById(R.id.frg_map_txtDistrict);
+        txt_huyen = (TextView) view.findViewById(R.id.frg_map_txtDistrict);
+        txt_tinh = (TextView) view.findViewById(R.id.frg_map_txtProvince);
         txt_filterLabel = (TextView) view.findViewById(R.id.frg_map_txtfilterLabel);
 
         fab_filter = (FloatingActionButton) view.findViewById(R.id.frg_map_fabfilter);
         fab_location = (FloatingActionButton) view.findViewById(R.id.frg_map_fablocation);
         btn_search = (ImageButton) view.findViewById(R.id.frg_map_btnsearch);
 
-//        btn_reload = (ImageButton) view.findViewById(R.id.frg_map_btnreload);
         edt_content = (AutoCompleteTextView) view.findViewById(R.id.frg_map_edtsearch);
 
-//        edt_sort = (AutoCompleteTextView) view.findViewById(R.id.frg_map_edtsort);
         edt_content.setAdapter(new PlaceAutoCompleteAdapter(getActivity(), R.layout.autocomplete_list_item, 1));
-        // ArrayList<String> a = new ArrayList<>();
-        //   ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), R.layout.autocomplete_list_item, );
-//        edt_sort.setThreshold(1);
-//        edt_sort.setAdapter(arrayAdapter);
-//        edt_sort.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                myGoogleMap.clear();
-//                addMarkerYourLocation();
-//                temp = -1;
-//                for (int i = 0; i < list.size(); i++) {
-//                    if (myTool.checkDistrict(i, list.get(i).getLocalID(), parent.getItemAtPosition(position).toString().trim())) {
-//                        addMarker(list.get(i));
-//                        temp = i;
-//                    }
-//                }
-//                if (temp != -1)
-//                    myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(list.get(temp).getEndLocation(), 13));
-//            }
-//        });
+
         edt_content.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 pos = position;
             }
         });
-        card_filterlabel.setVisibility(View.INVISIBLE);
-        card_pickDistrict.setVisibility(View.INVISIBLE);
-        card_pickProvince.setVisibility(View.INVISIBLE);
         btn_search.setOnClickListener(this);
         fab_filter.setOnClickListener(this);
         fab_location.setOnClickListener(this);
-//        btn_reload.setOnClickListener(this);
+        card_pickDistrict.setOnClickListener(this);
+        card_pickProvince.setOnClickListener(this);
+        pickLocationDialog.setOnPickListener(this);
+        pickLocationDialog.setOnPickListener(this);
     }
 
     @Override
@@ -187,15 +171,27 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_viewquan_none:
+                                if (card_filterlabel.getTranslationX() == 0) {
+                                    AnimationUtils.animatHideTagMap2(card_filterlabel);
+                                }
                                 txt_filterLabel.setText(item.getTitle());
                                 break;
                             case R.id.popup_viewquan_gia:
+                                if (card_filterlabel.getTranslationX() != 0) {
+                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                }
                                 txt_filterLabel.setText(item.getTitle());
                                 break;
                             case R.id.popup_viewquan_pv:
+                                if (card_filterlabel.getTranslationX() != 0) {
+                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                }
                                 txt_filterLabel.setText(item.getTitle());
                                 break;
                             case R.id.popup_viewquan_vs:
+                                if (card_filterlabel.getTranslationX() != 0) {
+                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                }
                                 txt_filterLabel.setText(item.getTitle());
                                 break;
                         }
@@ -203,42 +199,42 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     }
                 });
                 popupMenu.show();
-                popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-                    @Override
-                    public void onDismiss(PopupMenu menu) {
-                        AnimationUtils.animatShowTagfromLeft(card_filterlabel);
-                    }
-                });
                 break;
             case R.id.frg_map_fablocation:
-                if (card_pickDistrict.getVisibility() == View.INVISIBLE) {
-                    AnimationUtils.animatShowTagfromLeft(card_pickProvince);
-                    new CountDownTimer(700, 1000) {
-                        public void onFinish() {
-                            AnimationUtils.animatShowTagfromBottom(card_pickDistrict);
-                        }
-
-                        public void onTick(long millisUntilFinished) {
-                        }
-                    }.start();
-                } else if (card_pickDistrict.getVisibility() == View.VISIBLE) {
-                    AnimationUtils.animatHideTagfromTop(card_pickDistrict);
-                    new CountDownTimer(250, 1000) {
-                        public void onFinish() {
-                            AnimationUtils.animatHideTagfromRight(card_pickProvince);
-                        }
-
-                        public void onTick(long millisUntilFinished) {
-                        }
-                    }.start();
+                if (card_pickDistrict.getTranslationY() == 0
+                        && card_pickProvince.getTranslationX() == 0) {
+//                    Log.i("transi", "pro: " + card_pickProvince.getTranslationX()
+//                            + " dis: " + card_pickDistrict.getTranslationY());
+                    AnimationUtils.animatHideTagMap(card_pickProvince, card_pickDistrict);
+                } else {
+                    AnimationUtils.animatShowTagMap(card_pickProvince, card_pickDistrict);
                 }
                 break;
             case R.id.frg_map_cardV_chonProvince:
+                pickLocationDialog.show(fm, "pickProvinceDialog");
                 break;
             case R.id.frg_map_cardV_chonDistrict:
+                if (whatProvince >= 0) {
+                    Log.i("province", whatProvince + "");
+                    pickLocationDialog.setWhatProvince(whatProvince);
+                    pickLocationDialog.show(fm, "pickDistrictDialog");
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
+                }
                 break;
 
         }
+    }
+
+    @Override
+    public void onPicProvince(String province, int position) {
+        whatProvince = position;
+        txt_tinh.setText(province);
+    }
+
+    @Override
+    public void onPickDistrict(String district) {
+        txt_huyen.setText(district);
     }
 
     @Override
@@ -492,6 +488,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         return null;
     }
 
+
     class PlaceAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
         ArrayList<String> resultList;
         Context mContext;
@@ -554,6 +551,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             };
             return filter;
         }
+
     }
 
 

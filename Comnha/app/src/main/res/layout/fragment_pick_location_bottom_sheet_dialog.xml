@@ -1,0 +1,17 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom|center"
+    tools:context="com.app.ptt.comnha.PickLocationBottomSheetDialogFragment">
+
+    <ListView
+        android:id="@+id/frg_pickLocaBtmSheetDialog_listV"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_alignParentTop="true"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical" />
+</android.support.design.widget.CoordinatorLayout>
