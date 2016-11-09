@@ -34,16 +34,18 @@ public class PlaceAPI {
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     private static final String API_KEY = "AIzaSyDU6VmWjBJP-k6yWgP4v4X5EVFhyCljulo";
     String fullname;
+    String addressNum;
+    LocationFinderListener location;
     PlaceAttribute mPlaceAttributes;
-    ArrayList<PlaceAttribute> list=new ArrayList<>();
-    public ArrayList<PlaceAttribute> autocomplete (String input) {
+    public PlaceAPI(String input, LocationFinderListener location){
+        this.location=location;
         if(input!="") {
+            Log.i(LOG+".PlaceAPI",input);
+            mPlaceAttributes=new PlaceAttribute();
+            location.onLocationFinderStart();
             new LongProgress().execute(input);
-            Log.i("CCCCCCCCCCCCCCCCCcc", list.size() + "");
-            if (list.size() >0)
-                return list;
+
         }
-        return null;
     }
     private class LongProgress extends AsyncTask<String,Void,String>{
         String name;
@@ -86,10 +88,9 @@ public class PlaceAPI {
                 JSONObject jsonObj = new JSONObject(s.toString());
                 JSONArray resultsJsonResult = jsonObj.getJSONArray("results");
                 if (resultsJsonResult.length()>0) {
-                    list=new ArrayList<>();
-                    for(int k=0;k<resultsJsonResult.length();k++) {
-                        mPlaceAttributes=new PlaceAttribute();
-                        JSONObject temp = resultsJsonResult.getJSONObject(k);
+                    //for(int k=0;k<resultsJsonResult.length();k++) {
+
+                        JSONObject temp = resultsJsonResult.getJSONObject(0);
                         fullname = temp.getString("formatted_address");
                         // Extract the Place descriptions from the results
                         JSONArray jsonAddresses = temp.getJSONArray("address_components");
@@ -98,14 +99,25 @@ public class PlaceAPI {
                             name = jsonObject.getString("long_name");
                             JSONArray jsonType = jsonObject.getJSONArray("types");
                             List<String> list = new ArrayList<>();
+                            addressNum="";
                             for (int j = 0; j < jsonType.length(); j++) {
                                 list.add(jsonType.getString(j));
                                 addtoPlaceAttribute(list, name);
                             }
                         }
                         mPlaceAttributes.setFullname(fullname);
-                        list.add(mPlaceAttributes);
-                    }
+                        Log.i(LOG+".addtoPlaceAttribute","Full name: "+mPlaceAttributes.getFullname());
+                        Log.i(LOG+".addtoPlaceAttribute","Address Number:"+mPlaceAttributes.getAddressNum());
+                        Log.i(LOG+".addtoPlaceAttribute","Locality: "+mPlaceAttributes.getLocality());
+                        Log.i(LOG+".addtoPlaceAttribute","District: "+mPlaceAttributes.getDistrict());
+                        Log.i(LOG+".addtoPlaceAttribute","State: "+mPlaceAttributes.getState());
+                        if (mPlaceAttributes!=null){
+                            location.onLocationFinderSuccess(mPlaceAttributes);
+                        }else{
+                            location.onLocationFinderSuccess(null);
+                        }
+
+                   // }
                 }
 
 
@@ -119,17 +131,17 @@ public class PlaceAPI {
             name="";
         for(int i=0;i<list.size();i++){
             switch (list.get(i).toString()){
-//                case "street_number":
-//                    mPlaceAttributes.setStreet_number(name);
-//                    break;
-//                case "route":
-//                    mPlaceAttributes.setRoute(name);
-//                    break;
+                case "street_number":
+                    addressNum=name;
+                    break;
+                case "route":
+                    addressNum+=" "+name;
+                    break;
                 case "sublocality_level_1":
                     mPlaceAttributes.setLocality(name);
                     break;
                 case "administrative_area_level_2":
-                    Log.i(LOG+".addtoPlaceAttribute","Quan: "+mPlaceAttributes.getDistrict());
+
                     mPlaceAttributes.setDistrict(name);
                     break;
                 case "administrative_area_level_1":
@@ -139,13 +151,8 @@ public class PlaceAPI {
                     break;
             }
         }
+        mPlaceAttributes.setAddressNum(addressNum);
 
-        Log.i(LOG+".addtoPlaceAttribute","Full name: "+mPlaceAttributes.getFullname());
-//        Log.i(LOG+".addtoPlaceAttribute","Street number: "+mPlaceAttributes.getStreet_number());
-//        Log.i(LOG+".addtoPlaceAttribute","Route: "+mPlaceAttributes.getRoute());
-        Log.i(LOG+".addtoPlaceAttribute","Locality: "+mPlaceAttributes.getLocality());
-        Log.i(LOG+".addtoPlaceAttribute","District: "+mPlaceAttributes.getDistrict());
-        Log.i(LOG+".addtoPlaceAttribute","State: "+mPlaceAttributes.getState());
         return mPlaceAttributes;
     }
 

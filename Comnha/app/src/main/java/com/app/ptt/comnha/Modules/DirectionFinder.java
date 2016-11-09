@@ -27,13 +27,13 @@ public class DirectionFinder {
     private static final String DIRECTION_URL_API="https://maps.googleapis.com/maps/api/directions/json?";
     private static final String GOOGLE_API_KEY="AIzaSyDU6VmWjBJP-k6yWgP4v4X5EVFhyCljulo";
     private static final String LOG = "DirectionFinder";
-    private DirectionFinderListener listener;
+    private LocationFinderListener listener;
     private String origin;
     private Geocoder geocoder;
     private String destination,ID;
     Route route;
     String type;
-    public DirectionFinder(DirectionFinderListener listener,String origin,String destination,String ID,String className){
+    public DirectionFinder(LocationFinderListener listener, String origin, String destination, String ID, String className){
         this.listener=listener;
         this.origin=origin;
         this.destination=destination;
@@ -43,7 +43,7 @@ public class DirectionFinder {
     }
     public void execute() throws UnsupportedEncodingException {
         if(destination!=null &&origin!=null) {
-            listener.onDirectionFinderStart();
+          //  listener.onDirectionFinderStart();
             new DowloadRawData().execute(createURL());
         }
     }
@@ -117,7 +117,7 @@ public class DirectionFinder {
                     Log.i(LOG, "lat=" + route.getEndLocation().latitude + " lon=" + route.getEndLocation().longitude);
                     Log.i(LOG, route.getLocalID() + "");
             }
-            listener.onDirectionFinderSuccess(route);
+            //listener.onDirectionFinderSuccess(route);
         }
     }
     private void parseJSonCustom(String data) throws JSONException {
@@ -149,7 +149,7 @@ public class DirectionFinder {
 //                    Log.i(LOG, "lat=" + route.getEndLocation().latitude + " lon=" + route.getEndLocation().longitude);
                 Log.i(LOG+".JSonCt", route.getDistance().text);
             }
-            listener.onDirectionFinderSuccess(route);
+           // listener.onDirectionFinderSuccess(route);
         }
     }
     private List<LatLng> decodePolyLine(final String poly) {

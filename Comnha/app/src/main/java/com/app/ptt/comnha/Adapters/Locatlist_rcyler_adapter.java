@@ -1,9 +1,7 @@
 package com.app.ptt.comnha.Adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +10,9 @@ import android.widget.TextView;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Modules.DirectionFinderListener;
-import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.R;
-import com.app.ptt.comnha.Service.MyTool;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**

@@ -46,18 +46,15 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView.LayoutManager mLayoutManager;
     private DatabaseReference dbRef;
-    private ArrayList<MyLocation> list_item = new ArrayList<>();
+
     private ArrayList<MyLocation> listLocation;
-    ArrayList<Route> list;
     ChildEventListener locaListChildEventListener;
     MyLocation myLocation;
     MyTool myTool;
     View mView;
-    int filter, temp;
-    LatLng yourLatLng;
+    int filter;
     Button btn_refresh;
     private static int STATUS_START = 0;
-    ProgressDialog progressDialog1;
 
     public void setFilter(int filter) {
         this.filter = filter;
@@ -109,13 +106,15 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
+
                 newLocation.setLocationLatLng(myTool.returnLatLngByName(newLocation.getDiachi()));
-                float kc=(float)myTool.getDistance(myLocation.getLocationLatLng(),newLocation.getLocationLatLng());
+                float kc = (float) myTool.getDistance(myLocation.getLocationLatLng(), newLocation.getLocationLatLng());
                 int c = Math.round(kc);
                 int d = c / 1000;
                 int e = c % 1000;
                 int f = e / 100;
                 newLocation.setKhoangcach(d + "," + f + " km");
+                Log.i("Dia chi", "CC:" + newLocation.getKhoangcach());
                 listLocation.add(newLocation);
                 if (STATUS_START > 0) {
                     btn_refresh.setVisibility(View.VISIBLE);

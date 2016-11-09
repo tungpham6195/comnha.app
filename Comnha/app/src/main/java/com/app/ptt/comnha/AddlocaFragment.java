@@ -25,11 +25,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.LocationFinderListener;
 import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Service.MyTool;
 import com.github.clans.fab.FloatingActionButton;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -47,7 +47,7 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  */
 public class AddlocaFragment extends Fragment implements View.OnClickListener, TimePickerDialog.OnTimeSetListener,
-        DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
+        DialogInterface.OnDismissListener, DialogInterface.OnCancelListener,LocationFinderListener {
     FloatingActionButton fab_save;
     public static final String LOG = AddlocaFragment.class.getSimpleName();
     ArrayList<PlaceAttribute> mPlaceAttribute;
@@ -58,10 +58,13 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     DatabaseReference dbRef;
     ImageView img_ic;
     Calendar now;
+    String tinh,huyen;
     TimePickerDialog tpd;
     int edtID, pos;
+    MyLocation newLocation;
     int hour, min;
     Geocoder gc;
+    PlaceAPI placeAPI;
     AutoCompleteTextView autoCompleteText;
     String a = "";
     MyTool myTool;
@@ -86,7 +89,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 pos = position;
-                Log.i(LOG + ".onCreateView", "pos= " + pos);
+                Log.i(LOG + ".onCreateView", "pos= " + pos+"- dia chi:"+mPlaceAttribute.get(pos).getFullname());
+
             }
         });
         return view;
@@ -96,13 +100,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Snackbar.make(view, parent.getItemIdAtPosition(position) + "", Snackbar.LENGTH_SHORT).show();
-
-            }
-        });
     }
 
     void anhXa(View view) {
@@ -131,19 +128,19 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         btn_timestart.setOnClickListener(this);
     }
 
+
+
     class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
         ArrayList<String> resultList;
         Context mContext;
         int mResource;
-
-        PlaceAPI mPlaceAPI = new PlaceAPI();
 
         public PlacesAutoCompleteAdapter(Context context, int resource) {
             super(context, resource);
             mContext = context;
             mPlaceAttribute = new ArrayList<>();
             mResource = resource;
-            myTool = new MyTool(getContext(), AddlocaFragment.class.getSimpleName());
+            myTool=new MyTool(getContext(),AddlocaFragment.class.getSimpleName());
         }
 
         @Override
@@ -168,7 +165,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
                         mPlaceAttribute = new ArrayList<>();
-                        mPlaceAttribute = myTool.returnPlaceAttributeByName(constraint.toString());
+                        mPlaceAttribute=myTool.returnPlaceAttributeByName(constraint.toString());
                         if (mPlaceAttribute != null) {
                             a = "OK";
                             resultList = new ArrayList<>();
@@ -225,8 +222,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
     private void addNewLoca() {
         Log.i(LOG + ".addNewLoca", "Da toi đây");
-        MyLocation newLocation = new MyLocation();
-        LatLng position = myTool.returnLatLngByName(mPlaceAttribute.get(pos).getFullname());
+        newLocation = new MyLocation();
         newLocation.setName(edt_tenquan.getText().toString());
         newLocation.setDiachi(returnFullname());
         newLocation.setSdt(edt_sdt.getText().toString());
@@ -234,35 +230,50 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         newLocation.setTimeend(btn_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
-        newLocation.setLocationLatLng(position);
-        String tinh = mPlaceAttribute.get(pos).getState() + "/";
-        String huyen = mPlaceAttribute.get(pos).getDistrict() + "/";
-        String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
-        Map<String, Object> newLocaValue = newLocation.toMap();
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(tinh + huyen + getResources().getString(R.string.locations_CODE)
-                + key, newLocaValue);
+        placeAPI=new PlaceAPI(mPlaceAttribute.get(pos).getFullname(),this);
+    }
+    @Override
+    public void onLocationFinderStart() {
         mProgressDialog = ProgressDialog.show(getActivity(),
                 getResources().getString(R.string.txt_plzwait),
                 getResources().getString(R.string.txt_addinloca), true, true);
-        dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                    mProgressDialog.dismiss();
-                    Toast.makeText(getActivity(), "Lỗi: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
-                } else {
-                    mProgressDialog.dismiss();
-                    Toast.makeText(getActivity(),
-                            getResources().getString(R.string.text_noti_addloca_succes)
-                            , Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-            }
-        });
-
     }
 
+    @Override
+    public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
+        if (placeAttribute != null) {
+            PlaceAttribute placeAttribute1 = placeAttribute;
+            tinh = placeAttribute.getState()+"/";
+            huyen = placeAttribute.getDistrict()+"/";
+            Log.i(LOG+".onLocation",tinh+" va "+huyen);
+            String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
+            Map<String, Object> newLocaValue = newLocation.toMap();
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put(tinh + huyen + getResources().getString(R.string.locations_CODE)
+                    + key, newLocaValue);
+//            Log.i(LOG + ".addNewLoca", "address:" + address.getFullname());
+            dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    if (databaseError != null) {
+                        mProgressDialog.dismiss();
+                        Toast.makeText(getActivity(), "Lỗi: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    } else {
+                        mProgressDialog.dismiss();
+                        Toast.makeText(getActivity(),
+                                getResources().getString(R.string.text_noti_addloca_succes)
+                                , Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    }
+                }
+
+            });
+        }
+        else{
+            mProgressDialog.dismiss();
+            Toast.makeText(getActivity(), "Lỗi! Kiểm tra dữ liệu nhập vàp ", Toast.LENGTH_LONG).show();
+        }
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -284,22 +295,13 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 } else if (Long.valueOf(edt_giamax.getText().toString()) <= Long.valueOf(edt_giamin.getText().toString())) {
                     Snackbar.make(view, getResources().getText(R.string.txt_giawarn), Snackbar.LENGTH_SHORT).show();
                 } else {
-//                    PlaceAPI placeAPI= new PlaceAPI();
-//                    ArrayList<String> list ;
-//                    list= placeAPI.autocomplete(autoCompleteText.getText().toString());
-//                    if (list!=null) {
-//                        Log.i(LOG+".onClick",list.get(0).toString());
-//                        addNewLoca();
-//                    } else {
-//                        Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
-//                    }
-
                     if (a != null) {
                         Log.i(LOG + ".onClick", a);
                         if (mPlaceAttribute.get(pos).getAddressNum() == null)
                             Snackbar.make(view, "Không có số nhà và tên đường. Xin thử lại!!", Snackbar.LENGTH_SHORT).show();
-                        else
+                        else {
                             addNewLoca();
+                        }
                     } else
                         Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
                 }

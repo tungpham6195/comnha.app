@@ -179,6 +179,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                         googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                             @Override
                             public View getInfoWindow(Marker marker) {
+                                Log.i(LOG+".listSize",list.size()+"");
                                 if ((marker.getPosition().latitude == yourLocation.getLocationLatLng().latitude)
                                         && (marker.getPosition().longitude == yourLocation.getLocationLatLng().longitude)) {
                                     View view1 = getLayoutInflater(savedInstanceState).inflate(R.layout.infowindow_your_location, null);
@@ -317,7 +318,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     }
                     Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" +list.size());
                     if (list.size() == 0) {
-                        getDataInFireBase(yourLocation.getQuanhuyen(),yourLocation.getQuanhuyen());
+                        getDataInFireBase(yourLocation.getQuanhuyen(),yourLocation.getTinhtp());
                         //myTool.getDataInFireBase(yourLocation.getQuanhuyen(),yourLocation.getTinhtp());
                     }
                 }
@@ -397,8 +398,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         Context mContext;
         int mResource;
         int adapterRule;
-        PlaceAPI mPlaceAPI = new PlaceAPI();
-
         public PlaceAutoCompleteAdapter(Context context, int resource, int adapterRule) {
             super(context, resource);
             this.adapterRule = adapterRule;
