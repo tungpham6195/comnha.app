@@ -199,7 +199,6 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                                         View view1 = getLayoutInflater(savedInstanceState).inflate(R.layout.infowindow_your_location, null);
                                         txt_DiaChi = (TextView) view1.findViewById(R.id.txt_DiaChi);
                                         txt_DiaChi.setText(" Vị trí bạn chọn");
-                                        Log.i(LOG + ".infoWindow", "Vị trí bạn chọn");
                                         return view1;
                                     } else {
                                         if (myLocationSearch != null) {
@@ -496,6 +495,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
     }
 
     public void getDataInFireBase(String tinh, String huyen) {
+        Log.i(LOG+".getDataInFireBase","tinh:"+tinh+"- huyen:"+huyen);
         if(tinh!=null &&huyen!=null) {
             list = new ArrayList<>();
             dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
@@ -525,7 +525,6 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                                 int e = c % 1000;
                                 int f = e / 100;
                                 newLocation.setKhoangcach(d + "," + f);
-                               // newLocation.setKhoangcach(myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())) + "");
                                 addMarker(newLocation);
                             }
                         }
