@@ -272,6 +272,7 @@ public class MainActivity extends AppCompatActivity
                                         storeFragment = new StoreFragment();
                                         storeFragment.setTinh(LoginSession.getInstance().getTinh());
                                         storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
                                         storeFragment.setFilter(2);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()
@@ -282,6 +283,7 @@ public class MainActivity extends AppCompatActivity
                                         storeFragment = new StoreFragment();
                                         storeFragment.setTinh(LoginSession.getInstance().getTinh());
                                         storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
                                         storeFragment.setFilter(3);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()
@@ -292,6 +294,7 @@ public class MainActivity extends AppCompatActivity
                                         storeFragment = new StoreFragment();
                                         storeFragment.setTinh(LoginSession.getInstance().getTinh());
                                         storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
                                         storeFragment.setFilter(4);
                                         transaction = getSupportFragmentManager()
                                                 .beginTransaction()

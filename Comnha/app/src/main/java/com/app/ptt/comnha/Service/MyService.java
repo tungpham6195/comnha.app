@@ -16,9 +16,8 @@ import android.util.Log;
 
 import com.app.ptt.comnha.AdapterActivity;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.MainActivity;
 import com.app.ptt.comnha.Modules.DirectionFinder;
-import com.app.ptt.comnha.Modules.DirectionFinderListener;
+import com.app.ptt.comnha.Modules.LocationFinderListener;
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.R;
 import com.firebase.client.ChildEventListener;
@@ -36,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MyService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener,DirectionFinderListener {
+public class MyService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private static final String LOG = "MyService";
     private LocationRequest mLocationRequest;
@@ -117,30 +116,6 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
             return null;
         }
     }
-    @Override
-    public void onDirectionFinderStart() {
-
-    }
-
-
-    @Override
-    public void onDirectionFinderSuccess(Route route) {
-        routes.add(route);
-        if(route.getLocalID().equals(id)) {
-            Log.i("onDirectionFinder","flag1: "+flag1);
-            flag1 = 0;
-        }
-        for(MyLocation location:listLocation){
-            if(route.getLocalID()==location.getLocaID()) {
-                location.setKhoangcach(route.getDistance().text);
-                Log.i(LOG+".FinderSuccess",location.getKhoangcach());
-            }
-        }
-
-
-    }
-
-
 
     public void doST(){
         if(listLocation.size()>0) {
@@ -172,7 +147,7 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     public void findDirection(String orgin, String destination,String ID,String type) {
         Log.i(LOG, "findDirection");
         try {
-            new DirectionFinder(this, orgin, destination,ID, type).execute();
+           // new DirectionFinder(this, orgin, destination,ID, type).execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
