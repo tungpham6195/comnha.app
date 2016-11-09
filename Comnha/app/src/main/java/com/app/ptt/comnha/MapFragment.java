@@ -10,10 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import com.app.ptt.comnha.Modules.LocationFinderListener;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.clans.fab.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,12 +28,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.LocationFinderListener;
 import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
-import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
-import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -53,9 +49,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 
 public class MapFragment extends Fragment implements View.OnClickListener,LocationFinderListener {
@@ -223,21 +216,15 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                                                 txt_TenQuan.setText(a.getName());
                                                 txt_DiaChi.setText(a.getDiachi());
                                                 txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
                                                 float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(a.getLat(), a.getLng()));
                                                 int c = Math.round(kc);
                                                 int d = c / 1000;
                                                 int e = c % 1000;
                                                 int f = e / 100;
-<<<<<<< HEAD
                                                 txt_KhoangCach.setText(kc + " km");
                                                 Log.i(LOG + ".infoWindow- routeTemp", (float) returnDistanceLocationSearch(a) / 1000 + " km");
-=======
                                                 txt_KhoangCach.setText(d + "," + f+" km");
->>>>>>> origin/master
                                                 if (a.getSize() == 0) {
                                                     txt_DiemVeSinh.setText("0");
                                                     txt_DiemGia.setText("0");
