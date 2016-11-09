@@ -251,7 +251,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put(tinh + huyen + getResources().getString(R.string.locations_CODE)
                     + key, newLocaValue);
-//            Log.i(LOG + ".addNewLoca", "address:" + address.getFullname());
             dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
