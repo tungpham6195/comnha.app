@@ -388,7 +388,6 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
             changeLocation();
             Log.i(LOG + ".onLocationFinder", "place:" + placeAttribute.getFullname());
             isNearest = true;
-
             if (myLocationSearch.getDistrict().equals(yourLocation.getQuanhuyen()) && myLocationSearch.getState().equals(yourLocation.getTinhtp())) {
                 if (list.size() > 0) {
                     for (MyLocation location : list) {
