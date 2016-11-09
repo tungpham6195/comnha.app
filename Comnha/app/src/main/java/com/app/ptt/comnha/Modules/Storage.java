@@ -2,7 +2,10 @@ package com.app.ptt.comnha.Modules;
 
 import android.content.Context;
 import android.support.design.widget.Snackbar;
+import android.util.JsonWriter;
 import android.widget.Toast;
+
+import com.app.ptt.comnha.FireBase.MyLocation;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +18,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
+import java.util.List;
 
 /**
  * Created by cuong on 11/7/2016.
@@ -38,10 +43,10 @@ public class Storage {
             "}";
     FileOutputStream outputStream;
 
-    public Storage(Context context){
-        this.mContext=context;
-    }
-    public void writeFile(){
+    //public Storage(Context context){
+       // this.mContext=context;
+   // }
+    public void writeFile(Context mContext){
         try {
             File file = new File(mContext.getCacheDir(), filename);
            // File file = new File(mContext.getCacheDir(), filename);
@@ -78,7 +83,7 @@ public class Storage {
         }
         return null;
     }
-    public void readCompanyJSONFile() throws IOException,JSONException {
+    public void readJSONFile() throws IOException,JSONException {
 
         // Đọc nội dung text của file company.json
         String jsonText = readFile();
@@ -103,4 +108,32 @@ public class Storage {
         Toast.makeText(mContext,"Id:"+id+". Name:"+name+". Street"+street+". City:"+city+". Website"+websites[0].toString(),Toast.LENGTH_LONG).show();
 
     }
+    public static void  parseToJson(Writer out, MyLocation location) throws IOException {
+        JsonWriter jsonWriter = new JsonWriter(out);
+       // jsonWriter.name("locations").beginArray();
+            jsonWriter.beginObject();
+            jsonWriter.name("locaID").value(location.getLocaID());
+            jsonWriter.name("name").value(location.getName());
+            jsonWriter.name("diachi").value(location.getDiachi());
+            jsonWriter.name("sdt").value(location.getSdt());
+            jsonWriter.name("timestart").value(location.getTimestart());
+            jsonWriter.name("timeend").value(location.getTimeend());
+            jsonWriter.name("tinhtp").value(location.getTinhtp());
+            jsonWriter.name("quanhuyen").value(location.getQuanhuyen());
+            jsonWriter.name("khoangcach").value(location.getKhoangcach());
+            jsonWriter.name("lat").value(location.getLat());
+            jsonWriter.name("lng").value(location.getLng());
+            jsonWriter.name("giamin").value(location.getGiamin());
+            jsonWriter.name("giamax").value(location.getGiamax());
+            jsonWriter.name("giaTong").value(location.getGiaTong());
+            jsonWriter.name("vsTong").value(location.getVsTong());
+            jsonWriter.name("pvTong").value(location.getPvTong());
+            jsonWriter.name("size").value(location.getSize());
+            jsonWriter.name("giaAVG").value(location.getGiaAVG());
+            jsonWriter.name("vsAVG").value(location.getVsAVG());
+            jsonWriter.name("pvAVG").value(location.getPvAVG());
+            jsonWriter.name("tongAVG").value(location.getTongAVG());
+            jsonWriter.endObject();
+    }
+
 }

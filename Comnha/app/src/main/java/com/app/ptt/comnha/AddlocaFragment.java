@@ -242,14 +242,17 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
     @Override
     public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
-        LatLng newLatLng=myTool.returnLatLngByName(placeAttribute.getFullname());
-        if (placeAttribute != null &&newLatLng!=null) {
+
+        if (placeAttribute != null ) {
+            LatLng newLatLng=myTool.returnLatLngByName(placeAttribute.getFullname());
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState()+"/";
             huyen = placeAttribute.getDistrict()+"/";
             newLocation.setDiachi(placeAttribute.getFullname());
             newLocation.setLat(newLatLng.latitude);
             newLocation.setLng(newLatLng.longitude);
+            newLocation.setTinhtp(tinh);
+            newLocation.setQuanhuyen(huyen);
             Log.i(LOG+".onLocation",tinh+" va "+huyen);
             String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
             Map<String, Object> newLocaValue = newLocation.toMap();

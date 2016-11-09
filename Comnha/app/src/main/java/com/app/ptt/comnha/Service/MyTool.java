@@ -553,8 +553,14 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 }
                 placeAttribute.setFullname(e);
                 placeAttribute.setPlaceLatLng(new LatLng(address.getLatitude(),address.getLongitude()));
+                Log.i(LOG+".addtoPlaceAttribute","Full name: "+placeAttribute.getFullname());
+                Log.i(LOG+".addtoPlaceAttribute","Address Number:"+placeAttribute.getAddressNum());
+                Log.i(LOG+".addtoPlaceAttribute","Locality: "+placeAttribute.getLocality());
+                Log.i(LOG+".addtoPlaceAttribute","District: "+placeAttribute.getDistrict());
+                Log.i(LOG+".addtoPlaceAttribute","State: "+placeAttribute.getState());
                 listPlaceAttribute.add(placeAttribute);
             }
+
             if(listPlaceAttribute.size()>0)
                 return listPlaceAttribute;
 
