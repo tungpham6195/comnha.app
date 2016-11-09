@@ -96,7 +96,6 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(LOG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        final TextView textView=(TextView) view.findViewById(R.id.textView5);
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.frg_map_fablocation);
         anhxa(view);
         return view;
@@ -404,10 +403,9 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                 getDataInFireBase(myLocationSearch.getState(), myLocationSearch.getDistrict());
             }
             edt_content.setText(placeAttribute.getFullname());
-
             pos = -1;
         } else {
-            Snackbar.make(getView(), "Khong tim duoc la sao ta", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getView(), "Khong tim duoc", Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -494,7 +492,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                     if(pos!=-1) {
                         placeAPI=new PlaceAPI(placeAttributes.get(pos).getFullname(),this);
                     }else{
-                        Snackbar.make(getView(), "Khong tim duoc la sao ta", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(getView(), "Khong tim duoc", Snackbar.LENGTH_LONG).show();
                     }
 
                 }
