@@ -24,7 +24,7 @@ import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.MainActivity;
 import com.app.ptt.comnha.MapFragment;
 import com.app.ptt.comnha.Modules.DirectionFinder;
-import com.app.ptt.comnha.Modules.DirectionFinderListener;
+
 import com.app.ptt.comnha.Modules.Route;
 import com.app.ptt.comnha.R;
 import com.app.ptt.comnha.StoreFragment;
@@ -57,7 +57,7 @@ import static android.os.Build.ID;
  * Created by cuong on 10/27/2016.
  */
 
-public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DirectionFinderListener, com.google.android.gms.location.LocationListener {
+public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     private Context mContext;
     private static final String LOG = MyTool.class.getSimpleName();
     private LocationRequest mLocationRequest;
@@ -99,10 +99,10 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
 
     }
 
-    @Override
-    public void onDirectionFinderStart() {
-
-    }
+//    @Override
+//    public void onDirectionFinderStart() {
+//
+//    }
 
     public void startGoogleApi() {
         Log.i(LOG + ".startGoogleApi", "Khoi dong GoogleApiClient");
@@ -121,36 +121,36 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             mGoogleApiClient.disconnect();
     }
 
-    @Override
-    public void onDirectionFinderSuccess(Route route) {
-        if (route != null) {
-            Log.i(LOG + ".FinderSuccess", "Them route thanh cong");
-            Log.i(LOG + ".FinderSuccess", "className: " + classSend);
-           // this.route = route;
-            if (classSend.equals("MapFragment")) {
-                flag = 5;
-            }
-            if (classSend.equals("")) {
-              //  routes.add(route);
-                for (MyLocation location : listLocation) {
-                    if (route.getLocalID().equals(location.getLocaID())) {
-                        location.setKhoangcach(route.getDistance().text);
-                        Log.i(LOG + ".FinderSuccess", "Khoang cach: " + location.getKhoangcach());
-                    }
-                }
-                flag = 1;
-            }
-            if (classSend.equals("StoreFragment")) {
-                flag = 3;
-               // routes.add(route);
-            }
-            Log.i(LOG + ".FinderSuccess", "flag= " + flag);
-            //Log.i(LOG + ".FinderSuccess", "Route SIZE : " + routes.size() + ": " + "distance" + route.getDistance().text);
-            sendBroadcast(route.getLocalID());
-        } else {
-            Log.i(LOG + ".FinderFail", "Het han request api roi");
-        }
-    }
+//    @Override
+//    public void onDirectionFinderSuccess(Route route) {
+//        if (route != null) {
+//            Log.i(LOG + ".FinderSuccess", "Them route thanh cong");
+//            Log.i(LOG + ".FinderSuccess", "className: " + classSend);
+//           // this.route = route;
+//            if (classSend.equals("MapFragment")) {
+//                flag = 5;
+//            }
+//            if (classSend.equals("")) {
+//              //  routes.add(route);
+//                for (MyLocation location : listLocation) {
+//                    if (route.getLocalID().equals(location.getLocaID())) {
+//                        location.setKhoangcach(route.getDistance().text);
+//                        Log.i(LOG + ".FinderSuccess", "Khoang cach: " + location.getKhoangcach());
+//                    }
+//                }
+//                flag = 1;
+//            }
+//            if (classSend.equals("StoreFragment")) {
+//                flag = 3;
+//               // routes.add(route);
+//            }
+//            Log.i(LOG + ".FinderSuccess", "flag= " + flag);
+//            //Log.i(LOG + ".FinderSuccess", "Route SIZE : " + routes.size() + ": " + "distance" + route.getDistance().text);
+//            sendBroadcast(route.getLocalID());
+//        } else {
+//            Log.i(LOG + ".FinderFail", "Het han request api roi");
+//        }
+//    }
 
     public double getDistance(LatLng LatLng1, LatLng LatLng2) {
         double distance = 0;
@@ -423,7 +423,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     public void findDirection(String orgin, String destination, String ID, String type) {
         Log.i(LOG, "findDirection");
         try {
-            new DirectionFinder(this, orgin, destination, ID, type).execute();
+           // new DirectionFinder(this, orgin, destination, ID, type).execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
