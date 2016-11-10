@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 
 /**
  * Created by cuong on 10/25/2016.
@@ -105,7 +106,7 @@ public class PlaceAPI {
                                 addtoPlaceAttribute(list, name);
                             }
                         }
-                        mPlaceAttributes.setFullname(fullname);
+                        mPlaceAttributes.setFullname(getFullName());
                         Log.i(LOG+".addtoPlaceAttribute","Full name: "+mPlaceAttributes.getFullname());
                         Log.i(LOG+".addtoPlaceAttribute","Address Number:"+mPlaceAttributes.getAddressNum());
                         Log.i(LOG+".addtoPlaceAttribute","Locality: "+mPlaceAttributes.getLocality());
@@ -125,6 +126,40 @@ public class PlaceAPI {
                 Log.e(LOG, "Cannot process JSON results", e);
             }
         }
+    }
+    public String  getFullName(){
+        String a = mPlaceAttributes.getAddressNum();
+        String b = mPlaceAttributes.getLocality();
+        String c = mPlaceAttributes.getDistrict();
+        String d = mPlaceAttributes.getState();
+        String e = "";
+        if (a != null) {
+            e += a;
+
+        }
+        if (b != null) {
+            if (a == null)
+                e += b;
+            else
+                e += ", " + b;
+
+        }
+        if (c != null) {
+
+            if (a == null && b == null)
+                e += c;
+            else
+                e += ", " + c;
+
+        }
+        if (d != null) {
+            if (a == null && b == null && c == null)
+                e += d;
+            else
+                e += ", " + d;
+
+        }
+        return e;
     }
     public PlaceAttribute addtoPlaceAttribute(List<String> list,String name){
         if(name==null)
