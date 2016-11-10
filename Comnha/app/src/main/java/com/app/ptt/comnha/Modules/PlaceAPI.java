@@ -81,7 +81,6 @@ public class PlaceAPI {
             }
             return null;
         }
-
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
@@ -91,36 +90,38 @@ public class PlaceAPI {
                 if (resultsJsonResult.length()>0) {
                     //for(int k=0;k<resultsJsonResult.length();k++) {
 
-                        JSONObject temp = resultsJsonResult.getJSONObject(0);
-                        fullname = temp.getString("formatted_address");
-                        // Extract the Place descriptions from the results
-                        JSONArray jsonAddresses = temp.getJSONArray("address_components");
-                        for (int i = 0; i < jsonAddresses.length(); i++) {
-                            JSONObject jsonObject = jsonAddresses.getJSONObject(i);
-                            name = jsonObject.getString("long_name");
-                            JSONArray jsonType = jsonObject.getJSONArray("types");
-                            List<String> list = new ArrayList<>();
-                            addressNum="";
-                            for (int j = 0; j < jsonType.length(); j++) {
-                                list.add(jsonType.getString(j));
-                                addtoPlaceAttribute(list, name);
-                            }
-                        }
-                        mPlaceAttributes.setFullname(getFullName());
-                        Log.i(LOG+".addtoPlaceAttribute","Full name: "+mPlaceAttributes.getFullname());
-                        Log.i(LOG+".addtoPlaceAttribute","Address Number:"+mPlaceAttributes.getAddressNum());
-                        Log.i(LOG+".addtoPlaceAttribute","Locality: "+mPlaceAttributes.getLocality());
-                        Log.i(LOG+".addtoPlaceAttribute","District: "+mPlaceAttributes.getDistrict());
-                        Log.i(LOG+".addtoPlaceAttribute","State: "+mPlaceAttributes.getState());
-                        if (mPlaceAttributes!=null){
-                            location.onLocationFinderSuccess(mPlaceAttributes);
-                        }else{
-                            location.onLocationFinderSuccess(null);
-                        }
+                    JSONObject temp = resultsJsonResult.getJSONObject(0);
+                    fullname = temp.getString("formatted_address");
+                    // Extract the Place descriptions from the results
+                    JSONArray jsonAddresses = temp.getJSONArray("address_components");
+                    addressNum = "";
+                    for (int i = 0; i < jsonAddresses.length(); i++) {
+                        JSONObject jsonObject = jsonAddresses.getJSONObject(i);
+                        name = jsonObject.getString("long_name");
+                        JSONArray jsonType = jsonObject.getJSONArray("types");
+                        List<String> list = new ArrayList<>();
 
-                   // }
+                        for (int j = 0; j < jsonType.length(); j++) {
+                            list.add(jsonType.getString(j));
+                            addtoPlaceAttribute(list, name);
+                        }
+                    }
+
+                    Log.i(LOG + ".fullAddress", addressNum);
+                    mPlaceAttributes.setFullname(getFullName());
+                    Log.i(LOG + ".addtoPlaceAttribute", "Full name: " + mPlaceAttributes.getFullname());
+                    Log.i(LOG + ".addtoPlaceAttribute", "Address Number:" + mPlaceAttributes.getAddressNum());
+                    Log.i(LOG + ".addtoPlaceAttribute", "Locality: " + mPlaceAttributes.getLocality());
+                    Log.i(LOG + ".addtoPlaceAttribute", "District: " + mPlaceAttributes.getDistrict());
+                    Log.i(LOG + ".addtoPlaceAttribute", "State: " + mPlaceAttributes.getState());
+                    if (mPlaceAttributes != null) {
+                        location.onLocationFinderSuccess(mPlaceAttributes);
+                    } else {
+                        location.onLocationFinderSuccess(null);
+                    }
+
+                    // }
                 }
-
 
             } catch (JSONException e) {
                 Log.e(LOG, "Cannot process JSON results", e);
@@ -135,7 +136,6 @@ public class PlaceAPI {
         String e = "";
         if (a != null) {
             e += a;
-
         }
         if (b != null) {
             if (a == null)
@@ -159,34 +159,43 @@ public class PlaceAPI {
                 e += ", " + d;
 
         }
+        Log.i(LOG+".getFullName",e);
         return e;
-    }
-    public PlaceAttribute addtoPlaceAttribute(List<String> list,String name){
-        if(name==null)
-            name="";
-        for(int i=0;i<list.size();i++){
-            switch (list.get(i).toString()){
-                case "street_number":
-                    addressNum=name;
-                    break;
-                case "route":
-                    addressNum+=" "+name;
-                    break;
-                case "sublocality_level_1":
-                    mPlaceAttributes.setLocality(name);
-                    break;
-                case "administrative_area_level_2":
 
-                    mPlaceAttributes.setDistrict(name);
-                    break;
-                case "administrative_area_level_1":
-                    mPlaceAttributes.setState(name);
-                    break;
-                default:
-                    break;
+    }
+    public PlaceAttribute addtoPlaceAttribute(List<String> list,String name) {
+        if (name == null)
+            name = "";
+
+        else{
+            Log.i(LOG + ".street_number", addressNum);
+            for (int i = 0; i < list.size(); i++) {
+                switch (list.get(i).toString()) {
+                    case "street_number":
+                        addressNum += name;
+                        break;
+                    case "route":
+                        addressNum += " " + name;
+                        mPlaceAttributes.setAddressNum(addressNum);
+                        Log.i(LOG + ".route", addressNum);
+                        break;
+                    case "sublocality_level_1":
+                        mPlaceAttributes.setLocality(name);
+                        break;
+                    case "administrative_area_level_2":
+
+                        mPlaceAttributes.setDistrict(name);
+                        break;
+                    case "administrative_area_level_1":
+                        mPlaceAttributes.setState(name);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
-        mPlaceAttributes.setAddressNum(addressNum);
+
+
 
         return mPlaceAttributes;
     }

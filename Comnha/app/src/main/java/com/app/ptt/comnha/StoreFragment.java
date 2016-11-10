@@ -220,17 +220,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.frg_store_btn_refresh:
-                //mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
                 btn_refresh.setVisibility(View.GONE);
-                StringWriter out =new StringWriter();
-                try {
-                    Storage.parseToJson(out,listLocation);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                String a=out.toString();
-                Toast.makeText(getContext(),a,Toast.LENGTH_LONG).show();
-                Storage.writeFile(getContext(),a);
+
                 break;
         }
     }
