@@ -48,7 +48,7 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  */
 public class AddlocaFragment extends Fragment implements View.OnClickListener, TimePickerDialog.OnTimeSetListener,
-        DialogInterface.OnDismissListener, DialogInterface.OnCancelListener,LocationFinderListener {
+        DialogInterface.OnDismissListener, DialogInterface.OnCancelListener, LocationFinderListener {
     FloatingActionButton fab_save;
     public static final String LOG = AddlocaFragment.class.getSimpleName();
     ArrayList<PlaceAttribute> mPlaceAttribute;
@@ -59,7 +59,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     DatabaseReference dbRef;
     ImageView img_ic;
     Calendar now;
-    String tinh,huyen;
+    String tinh, huyen;
     TimePickerDialog tpd;
     int edtID, pos;
     MyLocation newLocation;
@@ -128,7 +128,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     }
 
 
-
     class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
         ArrayList<String> resultList;
         Context mContext;
@@ -139,7 +138,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             mContext = context;
             mPlaceAttribute = new ArrayList<>();
             mResource = resource;
-            myTool=new MyTool(getContext(),AddlocaFragment.class.getSimpleName());
+            myTool = new MyTool(getContext(), AddlocaFragment.class.getSimpleName());
         }
 
         @Override
@@ -164,7 +163,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     FilterResults filterResults = new FilterResults();
                     if (constraint != null) {
                         mPlaceAttribute = new ArrayList<>();
-                        mPlaceAttribute=myTool.returnPlaceAttributeByName(constraint.toString());
+                        mPlaceAttribute = myTool.returnPlaceAttributeByName(constraint.toString());
                         if (mPlaceAttribute != null) {
                             a = "OK";
                             resultList = new ArrayList<>();
@@ -229,8 +228,9 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         newLocation.setTimeend(btn_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
-        placeAPI=new PlaceAPI(mPlaceAttribute.get(pos).getFullname(),this);
+        placeAPI = new PlaceAPI(mPlaceAttribute.get(pos).getFullname(), this);
     }
+
     @Override
     public void onLocationFinderStart() {
         mProgressDialog = ProgressDialog.show(getActivity(),
@@ -241,18 +241,18 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     @Override
     public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
 
-        if (placeAttribute != null ) {
-            LatLng newLatLng=myTool.returnLatLngByName(placeAttribute.getFullname());
+        if (placeAttribute != null) {
+            LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
             //PlaceAttribute placeAttribute1 = placeAttribute;
-            tinh = placeAttribute.getState()+"/";
-            huyen = placeAttribute.getDistrict()+"/";
+            tinh = placeAttribute.getState() + "/";
+            huyen = placeAttribute.getDistrict() + "/";
             newLocation.setDiachi(placeAttribute.getFullname());
-            Log.i(LOG+".onLocationFinder",placeAttribute.getState()+"-"+placeAttribute.getDistrict());
+            Log.i(LOG + ".onLocationFinder", placeAttribute.getState() + "-" + placeAttribute.getDistrict());
             newLocation.setLat(newLatLng.latitude);
             newLocation.setLng(newLatLng.longitude);
             newLocation.setTinhtp(placeAttribute.getState());
             newLocation.setQuanhuyen(placeAttribute.getDistrict());
-            Log.i(LOG+".onLocation",tinh+" va "+huyen);
+            Log.i(LOG + ".onLocation", tinh + " va " + huyen);
             String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
             Map<String, Object> newLocaValue = newLocation.toMap();
             Map<String, Object> childUpdates = new HashMap<>();
@@ -274,12 +274,12 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 }
 
             });
-        }
-        else{
+        } else {
             mProgressDialog.dismiss();
             Toast.makeText(getActivity(), "Lỗi! Kiểm tra dữ liệu nhập vàp ", Toast.LENGTH_LONG).show();
         }
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {

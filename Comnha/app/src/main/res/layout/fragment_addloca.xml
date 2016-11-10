@@ -172,8 +172,8 @@
                                 android:id="@+id/frg_addloction_btn_giomo"
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
-                                android:text="9H"
-                                android:textAllCaps="true"
+                                android:text="9h"
+                                android:textAllCaps="false"
                                 android:theme="@style/AppTheme.ButtonPickTime" />
 
                             <TextView
@@ -190,8 +190,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:inputType="textEmailAddress"
-                                android:text="9H"
-                                android:textAllCaps="true"
+                                android:text="9h"
+                                android:textAllCaps="false"
                                 android:theme="@style/AppTheme.ButtonPickTime" />
                         </LinearLayout>
                     </LinearLayout>

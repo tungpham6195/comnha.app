@@ -26,7 +26,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -44,7 +43,6 @@ import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
-import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -64,7 +62,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 
-public class MapFragment extends Fragment implements View.OnClickListener, LocationFinderListener, PickLocationBottomSheetDialogFragment.onPickListener, TextView.OnEditorActionListener {
+public class MapFragment extends Fragment implements View.OnClickListener,
+        LocationFinderListener,
+        PickLocationBottomSheetDialogFragment.onPickListener,
+        View.OnKeyListener {
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     public static final String mBroadcastChangeLocation = "mBroadcastChangeLocation";
     private IntentFilter mIntentFilter;
@@ -82,21 +83,22 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
     MyLocation yourLocation;
     MyTool myTool;
     Storage storage;
-    int pos = -1,option=1;
+    int pos = -1, option = 1;
     //    int pos;
     boolean isNearest = false;
     int temp = 1;
     MarkerOptions yourMarker = null;
     ImageButton btn_search;
     AutoCompleteTextView edt_content;
-    FloatingActionButton fab_filter, fab_location,fab_reload;
-    CardView card_pickProvince, card_pickDistrict, card_filterlabel;
+    FloatingActionButton fab_filter, fab_location, fab_refresh;
+    CardView card_pickProvince, card_pickDistrict, card_filterlabel, card_mylocation;
     TextView txt_tinh, txt_huyen, txt_filterLabel;
     PickLocationBottomSheetDialogFragment pickLocationDialog;
     FragmentManager fm;
     int whatProvince = -1;
     String tinh, huyen;
     ProgressDialog progressDialog;
+
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -116,6 +118,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
     }
 
     private void anhxa(View view) {
+        card_mylocation = (CardView) view.findViewById(R.id.frg_map_cardV_mylocation);
+        fab_refresh = (FloatingActionButton) view.findViewById(R.id.frg_map_fabrefresh);
         btn_search = (ImageButton) view.findViewById(R.id.frg_map_btnsearch);
         pickLocationDialog = new PickLocationBottomSheetDialogFragment();
         fm = getActivity().getSupportFragmentManager();
@@ -140,11 +144,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
         btn_search.setOnClickListener(this);
         fab_filter.setOnClickListener(this);
         fab_location.setOnClickListener(this);
+        fab_refresh.setOnClickListener(this);
         card_pickDistrict.setOnClickListener(this);
         card_pickProvince.setOnClickListener(this);
+        card_mylocation.setOnClickListener(this);
         pickLocationDialog.setOnPickListener(this);
         pickLocationDialog.setOnPickListener(this);
-        edt_content.setOnEditorActionListener(this);
+        edt_content.setOnKeyListener(this);
         edt_content.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -153,7 +159,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btn_search.setImageResource(R.drawable.ic_close_grey_600_18dp);
+                btn_search.setImageResource(R.drawable.ic_close_grey_600_24dp);
             }
 
             @Override
@@ -166,9 +172,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
     }
 
     @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_NULL
-                && event.getAction() == KeyEvent.ACTION_DOWN) {
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                (keyCode == KeyEvent.KEYCODE_ENTER)) {
             search();
             View view = getActivity().getCurrentFocus();
             if (view != null) {
@@ -176,6 +182,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
                         .getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
+            return true;
         }
         return false;
     }
@@ -200,6 +207,18 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.frg_map_cardV_mylocation:
+                break;
+            case R.id.frg_map_fabrefresh:
+                if (card_pickDistrict.getTranslationY() == 0
+                        && card_pickProvince.getTranslationX() == 0) {
+                    AnimationUtils.animatHideTagMap(card_pickProvince, card_pickDistrict);
+                }
+                if (card_filterlabel.getTranslationX() == 0) {
+                    AnimationUtils.animatHideTagMap2(card_filterlabel);
+                }
+                reloadMap();
+                break;
             case R.id.frg_map_fabfilter:
                 PopupMenu popupMenu = new PopupMenu(getActivity(), fab_filter, Gravity.TOP | Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
@@ -212,11 +231,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
                                     AnimationUtils.animatHideTagMap2(card_filterlabel);
                                 }
                                 txt_filterLabel.setText(item.getTitle());
-                                option=1;
-                                if(tinh!=null&&huyen!=null)
-                                    getDataInFireBase(tinh,huyen);
+                                option = 1;
+                                if (tinh != null && huyen != null)
+                                    getDataInFireBase(tinh, huyen);
                                 else
-                                    getDataInFireBase(yourLocation.getTinhtp(),yourLocation.getQuanhuyen());
+                                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
 
                                 break;
                             case R.id.popup_viewquan_gia:
@@ -224,36 +243,36 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
                                     AnimationUtils.animatShowTagMap2(card_filterlabel);
                                 }
                                 txt_filterLabel.setText(item.getTitle());
-                                option=2;
+                                option = 2;
 
 
-                                if(tinh!=null&&huyen!=null)
-                                    getDataInFireBase(tinh,huyen);
+                                if (tinh != null && huyen != null)
+                                    getDataInFireBase(tinh, huyen);
                                 else
-                                    getDataInFireBase(yourLocation.getTinhtp(),yourLocation.getQuanhuyen());
+                                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
                                 break;
                             case R.id.popup_viewquan_pv:
                                 if (card_filterlabel.getTranslationX() != 0) {
                                     AnimationUtils.animatShowTagMap2(card_filterlabel);
                                 }
                                 txt_filterLabel.setText(item.getTitle());
-                                option=3;
+                                option = 3;
 
-                                if(tinh!=null&&huyen!=null)
-                                    getDataInFireBase(tinh,huyen);
+                                if (tinh != null && huyen != null)
+                                    getDataInFireBase(tinh, huyen);
                                 else
-                                    getDataInFireBase(yourLocation.getTinhtp(),yourLocation.getQuanhuyen());
+                                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
                                 break;
                             case R.id.popup_viewquan_vs:
                                 if (card_filterlabel.getTranslationX() != 0) {
                                     AnimationUtils.animatShowTagMap2(card_filterlabel);
                                 }
                                 txt_filterLabel.setText(item.getTitle());
-                                option=4;
-                                if(tinh!=null&&huyen!=null)
-                                    getDataInFireBase(tinh,huyen);
+                                option = 4;
+                                if (tinh != null && huyen != null)
+                                    getDataInFireBase(tinh, huyen);
                                 else
-                                    getDataInFireBase(yourLocation.getTinhtp(),yourLocation.getQuanhuyen());
+                                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
                                 break;
 
                         }
@@ -286,18 +305,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
                 }
                 break;
             case R.id.frg_map_btnsearch:
-                if (isNearest)
-                    isNearest = false;
-                Log.i(LOG + ".onClick ", edt_content.getText().toString());
-                if (edt_content.getText().toString() == "") {
-                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
+                if (edt_content.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), getString(R.string.txt_noaddress),
+                            Toast.LENGTH_LONG).show();
                 } else {
-                    Log.i(LOG + ".onClick ", "loadListPlace" + pos);
-                    if (pos != -1) {
-                        placeAPI = new PlaceAPI(placeAttributes.get(pos).getFullname(), this);
-                    } else {
-                        placeAPI = new PlaceAPI(edt_content.getText().toString(), this);
-                    }
                     edt_content.setText("");
                     edt_content.clearFocus();
                     btn_search.setImageResource(R.drawable.ic_search_grey_600_24dp);
@@ -360,7 +371,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.i(LOG, "onViewCreated");
-        progressDialog=new ProgressDialog(getContext());
+        progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
         progressDialog.show();
         supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
@@ -397,7 +408,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
                                     Log.i(LOG + ".infoWindow", "your location");
                                     return view1;
                                 } else if (myLocationSearch != null) {
-                                    Log.i(LOG + ".infoWindow", "location choose:"+myLocationSearch.getFullname() );
+                                    Log.i(LOG + ".infoWindow", "location choose:" + myLocationSearch.getFullname());
                                     if (
                                             marker.getPosition().latitude == myLocationSearch.getPlaceLatLng().latitude
                                                     && marker.getPosition().longitude == myLocationSearch.getPlaceLatLng().longitude) {
@@ -406,39 +417,39 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
                                         txt_DiaChi.setText(" Vị trí bạn chọn");
                                         return view1;
                                     } else {
-                                            View view1 = getLayoutInflater(savedInstanceState).inflate(R.layout.infowindowlayout, null);
-                                            txt_TenQuan = (TextView) view1.findViewById(R.id.txt_TenQuan);
-                                            txt_DiaChi = (TextView) view1.findViewById(R.id.txt_DiaChi);
-                                            txt_GioMo = (TextView) view1.findViewById(R.id.txt_GioMo);
-                                            txt_DiemGia = (TextView) view1.findViewById(R.id.txt_DiemGia);
-                                            txt_DiemPhucVu = (TextView) view1.findViewById(R.id.txt_DiemPhucVu);
-                                            txt_DiemVeSinh = (TextView) view1.findViewById(R.id.txt_DiemVeSinh);
-                                            txt_KhoangCach = (TextView) view1.findViewById(R.id.txt_KhoangCach);
-                                            MyLocation a = returnLocation(marker);
-                                            if (a != null) {
-                                                txt_TenQuan.setText(a.getName());
-                                                txt_DiaChi.setText(a.getDiachi());
-                                                txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
-                                                float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(a.getLat(), a.getLng()));
-                                                int c = Math.round(kc);
-                                                int d = c / 1000;
-                                                int e = c % 1000;
-                                                int f = e / 100;
-                                                txt_KhoangCach.setText(d + "," + f + " km");
-                                                if (a.getSize() == 0) {
-                                                    txt_DiemVeSinh.setText("0");
-                                                    txt_DiemGia.setText("0");
-                                                    txt_DiemPhucVu.setText("0");
-                                                } else {
-                                                    txt_DiemVeSinh.setText(a.getVsTong() / a.getSize() + "");
-                                                    txt_DiemGia.setText(a.getGiaTong() / a.getSize() + "");
-                                                    txt_DiemPhucVu.setText(a.getPvTong() / a.getSize() + "");
-                                                }
-                                            }else
+                                        View view1 = getLayoutInflater(savedInstanceState).inflate(R.layout.infowindowlayout, null);
+                                        txt_TenQuan = (TextView) view1.findViewById(R.id.txt_TenQuan);
+                                        txt_DiaChi = (TextView) view1.findViewById(R.id.txt_DiaChi);
+                                        txt_GioMo = (TextView) view1.findViewById(R.id.txt_GioMo);
+                                        txt_DiemGia = (TextView) view1.findViewById(R.id.txt_DiemGia);
+                                        txt_DiemPhucVu = (TextView) view1.findViewById(R.id.txt_DiemPhucVu);
+                                        txt_DiemVeSinh = (TextView) view1.findViewById(R.id.txt_DiemVeSinh);
+                                        txt_KhoangCach = (TextView) view1.findViewById(R.id.txt_KhoangCach);
+                                        MyLocation a = returnLocation(marker);
+                                        if (a != null) {
+                                            txt_TenQuan.setText(a.getName());
+                                            txt_DiaChi.setText(a.getDiachi());
+                                            txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
+                                            float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(a.getLat(), a.getLng()));
+                                            int c = Math.round(kc);
+                                            int d = c / 1000;
+                                            int e = c % 1000;
+                                            int f = e / 100;
+                                            txt_KhoangCach.setText(d + "," + f + " km");
+                                            if (a.getSize() == 0) {
+                                                txt_DiemVeSinh.setText("0");
+                                                txt_DiemGia.setText("0");
+                                                txt_DiemPhucVu.setText("0");
+                                            } else {
+                                                txt_DiemVeSinh.setText(a.getVsTong() / a.getSize() + "");
+                                                txt_DiemGia.setText(a.getGiaTong() / a.getSize() + "");
+                                                txt_DiemPhucVu.setText(a.getPvTong() / a.getSize() + "");
+                                            }
+                                        } else
 
-                                                 Log.i(LOG + ".infoWindow", "a=null");
-                                            return view1;
-                                        }
+                                            Log.i(LOG + ".infoWindow", "a=null");
+                                        return view1;
+                                    }
                                 } else {
                                     return getInfoWindowOfMarker(marker, savedInstanceState);
                                 }
@@ -501,14 +512,14 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
 //                    }
                     Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" + list.size());
                     if (list.size() == 0) {
-                        option=1;
+                        option = 1;
                         getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
                     }
                 }
                 if (intent.getIntExtra("STT", 0) == 3 && intent.getBooleanExtra("LocationChange", false)) {
                     Log.i(LOG + ".MainActivity", "Nhan su thay doi vi tri cua ban:");
                     yourLocation = myTool.getYourLocation();
-                    getDataInFireBase(yourLocation.getTinhtp(),yourLocation.getQuanhuyen());
+                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
                     //  myTool.stopGoogleApi();
                 }
             }
@@ -517,12 +528,16 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
     };
 
     public void reloadMap() {
-        option= 1;
-        isNearest=false;
-        myLocationSearch=null;
-        tinh=yourLocation.getTinhtp();
-        huyen=yourLocation.getQuanhuyen();
-        getDataInFireBase(tinh,huyen);
+        whatProvince = -1;
+        txt_filterLabel.setText("");
+        txt_tinh.setText("Tỉnh");
+        txt_huyen.setText("Huyện");
+        option = 1;
+        isNearest = false;
+        myLocationSearch = null;
+        tinh = yourLocation.getTinhtp();
+        huyen = yourLocation.getQuanhuyen();
+        getDataInFireBase(tinh, huyen);
     }
 
     public void addMarkerCustomSearch() {
@@ -578,11 +593,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
         if (placeAttribute != null) {
             placeAttribute.setPlaceLatLng(myTool.returnLatLngByName(placeAttribute.getFullname()));
             myLocationSearch = placeAttribute;
-            tinh=placeAttribute.getState();
-            huyen=placeAttribute.getDistrict();
+            tinh = placeAttribute.getState();
+            huyen = placeAttribute.getDistrict();
             Log.i(LOG + ".onLocationFinder", "place:" + placeAttribute.getFullname());
             isNearest = true;
-         //   if (myLocationSearch.getDistrict().equals(yourLocation.getQuanhuyen()) && myLocationSearch.getState().equals(yourLocation.getTinhtp())) {
+            //   if (myLocationSearch.getDistrict().equals(yourLocation.getQuanhuyen()) && myLocationSearch.getState().equals(yourLocation.getTinhtp())) {
 //                if (list.size() > 0) {
 //                    myGoogleMap.clear();
 //                    addMarkerCustomSearch();
@@ -593,9 +608,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
 //                            addMarker(location);
 //                    }
 //                }
-           // } else {
-                Log.i(LOG + ".onClick ", "!=current quan huyen");
-                getDataInFireBase(myLocationSearch.getState(), myLocationSearch.getDistrict());
+            // } else {
+            Log.i(LOG + ".onClick ", "!=current quan huyen");
+            getDataInFireBase(myLocationSearch.getState(), myLocationSearch.getDistrict());
             //}
             edt_content.setText(placeAttribute.getFullname());
             pos = -1;
@@ -721,7 +736,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
             myGoogleMap.clear();
             if (isNearest && myLocationSearch != null) {
                 addMarkerCustomSearch();
-            }else{
+            } else {
                 addMarkerYourLocation();
             }
             dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
@@ -774,31 +789,31 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
                 }
 
             };
-            if(option==2) {
+            if (option == 2) {
                 dbRef.child(tinh + "/" + huyen + "/"
                         + getString(R.string.locations_CODE))
                         .orderByChild("giaAVG")
                         .startAt(6)
                         .addChildEventListener(childEventListener);
             }
-            if(option==1) {
-            dbRef.child(//LoginSession.getInstance().getTinh()
-                    tinh + "/"
-                            +
-                            //LoginSession.getInstance().getHuyen()
-                            huyen + "/"
-                            + getString(R.string.locations_CODE))
-                    .addChildEventListener(childEventListener);
+            if (option == 1) {
+                dbRef.child(//LoginSession.getInstance().getTinh()
+                        tinh + "/"
+                                +
+                                //LoginSession.getInstance().getHuyen()
+                                huyen + "/"
+                                + getString(R.string.locations_CODE))
+                        .addChildEventListener(childEventListener);
 
             }
-            if(option==3){
+            if (option == 3) {
                 dbRef.child(tinh + "/" + huyen + "/"
                         + getString(R.string.locations_CODE))
                         .orderByChild("pvAVG")
                         .startAt(6)
                         .addChildEventListener(childEventListener);
             }
-            if(option==4){
+            if (option == 4) {
                 dbRef.child(tinh + "/" + huyen + "/"
                         + getString(R.string.locations_CODE))
                         .orderByChild("vsAVG")
