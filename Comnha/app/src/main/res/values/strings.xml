@@ -97,6 +97,7 @@
     <string name="txt_noChoseProvince">Warning: Chưa chọn Tỉnh/Thành phố</string>
     <string name="txt_noChoseDistrict">Warning: Chưa chọn Quận/Huyện</string>
     <string name="txt_noChoseFood">Warning: Chưa chọn món ăn</string>
+    <string name="txt_noChoseFoodCate">Warning: Chưa chọn loại món ăn</string>
     <string name="txt_noFoodCateName">Warning: Chưa nhập tên loại món ăn</string>
     <string name="txt_noaddress">Warning: Chưa nhập địa điểm</string>
     <string name="txt_choseLoca">Bạn đã chọn địa điểm</string>
@@ -204,7 +205,7 @@
 
     <string name="action_addpost">Đăng review</string>
     <string name="action_addloca">Thêm địa điểm</string>
-    <string name="action_uploadphoto">Đăng ảnh</string>
+    <string name="action_changeloca">Vị trí</string>
     <string name="menu_locadetail_themmon">Thêm món ăn</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

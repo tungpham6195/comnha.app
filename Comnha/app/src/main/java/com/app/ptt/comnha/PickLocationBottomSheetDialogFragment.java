@@ -3,7 +3,6 @@ package com.app.ptt.comnha;
 
 import android.app.Dialog;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,7 +20,6 @@ import android.widget.ListView;
  */
 public class PickLocationBottomSheetDialogFragment extends BottomSheetDialogFragment {
     Toolbar mToolbar;
-    AppBarLayout mAppBarLayout;
     ListView listView;
     ArrayAdapter<CharSequence> mAdapter;
     int whatProvince;
@@ -49,22 +47,15 @@ public class PickLocationBottomSheetDialogFragment extends BottomSheetDialogFrag
         mToolbar = (Toolbar) view.findViewById(R.id.frg_pickLoca_bottomsheet_toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mToolbar);
-        mToolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
+        mToolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
             }
         });
-        mToolbar.setTitleTextColor(getResources().getColor(android.R.color.black));
+        mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
-//        ActionBar actionBar = activity.getSupportActionBar();
-//        actionBar.setDisplayShowTitleEnabled(false);
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setShowHideAnimationEnabled(true);
-//        actionBar.setHomeButtonEnabled(true);
-//        actionBar.setHomeAsUpIndicator(R.drawable.ic_close_black_18dp);
         listView = (ListView) view.findViewById(R.id.frg_pickLocaBtmSheetDialog_listV);
         if (getTag().equals("pickProvinceDialog")) {
             mToolbar.setTitle(getString(R.string.text_pickProvince));
@@ -95,7 +86,6 @@ public class PickLocationBottomSheetDialogFragment extends BottomSheetDialogFrag
     @Override
     public void setupDialog(Dialog dialog, int style) {
         super.setupDialog(dialog, style);
-        setHasOptionsMenu(true);
         View contentView = View.inflate(getContext(), R.layout.fragment_pick_location_bottom_sheet_dialog, null);
         dialog.setContentView(contentView);
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
@@ -109,10 +99,9 @@ public class PickLocationBottomSheetDialogFragment extends BottomSheetDialogFrag
                     if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                         ((BottomSheetBehavior) behavior).setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
-                    if (newState == BottomSheetBehavior.STATE_SETTLING)
-                        if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                            dismiss();
-                        }
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        dismiss();
+                    }
 
                 }
 

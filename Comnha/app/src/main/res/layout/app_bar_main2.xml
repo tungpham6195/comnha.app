@@ -109,11 +109,10 @@
             android:id="@+id/main_fabitem1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_a_photo_white_18dp"
-            android:visibility="gone"
+            android:src="@drawable/ic_my_location_white_18dp"
             fab:fab_colorNormal="@color/colorgia"
             fab:fab_colorPressed="@color/colorgia"
-            fab:fab_label="@string/action_uploadphoto"
+            fab:fab_label="@string/action_changeloca"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>
