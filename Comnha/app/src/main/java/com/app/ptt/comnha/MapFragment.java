@@ -17,12 +17,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -59,7 +64,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 
-public class MapFragment extends Fragment implements View.OnClickListener, LocationFinderListener, PickLocationBottomSheetDialogFragment.onPickListener {
+public class MapFragment extends Fragment implements View.OnClickListener, LocationFinderListener, PickLocationBottomSheetDialogFragment.onPickListener, TextView.OnEditorActionListener {
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     public static final String mBroadcastChangeLocation = "mBroadcastChangeLocation";
     private IntentFilter mIntentFilter;
@@ -139,6 +144,40 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
         card_pickProvince.setOnClickListener(this);
         pickLocationDialog.setOnPickListener(this);
         pickLocationDialog.setOnPickListener(this);
+        edt_content.setOnEditorActionListener(this);
+        edt_content.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                btn_search.setImageResource(R.drawable.ic_close_grey_600_18dp);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    btn_search.setImageResource(R.drawable.ic_search_grey_600_24dp);
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_NULL
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
+            search();
+            View view = getActivity().getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+        return false;
     }
 
     @Override
@@ -259,8 +298,33 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
                     } else {
                         placeAPI = new PlaceAPI(edt_content.getText().toString(), this);
                     }
+                    edt_content.setText("");
+                    edt_content.clearFocus();
+                    btn_search.setImageResource(R.drawable.ic_search_grey_600_24dp);
                 }
                 break;
+        }
+    }
+
+    private void search() {
+        if (edt_content.getText().toString().trim().equals("")) {
+            Toast.makeText(getActivity(),
+                    getString(R.string.txt_noaddress),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            if (isNearest)
+                isNearest = false;
+            Log.i(LOG + ".onClick ", edt_content.getText().toString());
+            if (edt_content.getText().toString() == "") {
+                Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
+            } else {
+                Log.i(LOG + ".onClick ", "loadListPlace" + pos);
+                if (pos != -1) {
+                    placeAPI = new PlaceAPI(placeAttributes.get(pos).getFullname(), this);
+                } else {
+                    placeAPI = new PlaceAPI(edt_content.getText().toString(), this);
+                }
+            }
         }
     }
 
@@ -539,6 +603,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, Locat
             Snackbar.make(getView(), "Khong tim duoc", Snackbar.LENGTH_LONG).show();
         }
     }
+
 
     class PlaceAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
         ArrayList<String> resultList;
