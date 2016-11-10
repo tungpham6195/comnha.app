@@ -47,6 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:maxLength="25"
+                        android:maxLines="1"
                         android:text="@string/text_chooseLocation"
                         android:textStyle="bold" />
 
@@ -54,6 +55,7 @@
                         android:id="@+id/frg_post_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="1"
                         android:text="@string/text_chooseLocation"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -134,6 +136,7 @@
         app:menu_shadowXOffset="0.5dp"
         app:menu_shadowYOffset="0.5dp"
         app:menu_showShadow="true">
+
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/frg_post_fabchoseloca"
             android:layout_width="wrap_content"

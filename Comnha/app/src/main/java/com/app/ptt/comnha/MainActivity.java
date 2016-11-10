@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -73,13 +72,14 @@ public class MainActivity extends AppCompatActivity
     private BottomBar bottomBar;
     private PopupMenu popupMenu;
     private MyTool myTool;
+    private ChangeLocationBottomSheetDialogFragment changeLccaBtmSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.i(LOG, "onCreate");
-        progressDialog=new ProgressDialog(this);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading");
         progressDialog.show();
         setContentView(R.layout.activity_main2);
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity
 
 
     void anhXa() {
-        if(myLocation!=null) {
+        if (myLocation != null) {
             progressDialog.dismiss();
             Log.i(LOG + ",anhxa", "quan:" + myLocation.getQuanhuyen() + ". tp:" + myLocation.getTinhtp());
 //        myLocation.getQuanhuyen()
@@ -171,159 +171,159 @@ public class MainActivity extends AppCompatActivity
             LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
             LoginSession.getInstance().setTinh(myLocation.getTinhtp());
         }
-            bottomBar = (BottomBar) findViewById(R.id.bottomBar);
-            fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
-            fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
-            fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
-            fab_uploadpho = (FloatingActionButton) findViewById(R.id.main_fabitem1);
-            fab_review.setOnClickListener(this);
-            fab_addloca.setOnClickListener(this);
-            fab_uploadpho.setOnClickListener(this);
-            fabmenu.setClosedOnTouchOutside(true);
-            bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-                @Override
-                public void onTabSelected(@IdRes int tabId) {
-                    FragmentTransaction transaction;
-                    switch (tabId) {
-                        case R.id.tab_reviews:
-                            fabmenu.close(true);
-                            ReviewFragment reviewFragment = new ReviewFragment();
-                            reviewFragment.setTinh(LoginSession.getInstance().getTinh());
-                            reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                            reviewFragment.setSortType(1);
-                            transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.frame, reviewFragment);
-                            transaction.commit();
-                            AnimationUtils.animatfabMenuIn(fabmenu);
-                            break;
-                        case R.id.tab_stores:
-                            fabmenu.close(true);
-                            StoreFragment storeFragment = new StoreFragment();
-                            storeFragment.setFilter(1);
-                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                            storeFragment.setYourLocation(myLocation);
-                            transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.frame, storeFragment);
-                            transaction.commit();
-                            AnimationUtils.animatfabMenuIn(fabmenu);
-                            break;
-                        case R.id.tab_locations:
-                            FilterFragment filterFragment = new FilterFragment();
-                            transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.frame, filterFragment);
-                            transaction.commit();
-                            AnimationUtils.animatfabMenuOut(fabmenu);
-                            fabmenu.close(true);
-                            break;
-                    }
+        bottomBar = (BottomBar) findViewById(R.id.bottomBar);
+        fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
+        fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
+        fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
+        fab_uploadpho = (FloatingActionButton) findViewById(R.id.main_fabitem1);
+        fab_review.setOnClickListener(this);
+        fab_addloca.setOnClickListener(this);
+        fab_uploadpho.setOnClickListener(this);
+        fabmenu.setClosedOnTouchOutside(true);
+        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelected(@IdRes int tabId) {
+                FragmentTransaction transaction;
+                switch (tabId) {
+                    case R.id.tab_reviews:
+                        fabmenu.close(true);
+                        ReviewFragment reviewFragment = new ReviewFragment();
+                        reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                        reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                        reviewFragment.setSortType(1);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, reviewFragment);
+                        transaction.commit();
+                        AnimationUtils.animatfabMenuIn(fabmenu);
+                        break;
+                    case R.id.tab_stores:
+                        fabmenu.close(true);
+                        StoreFragment storeFragment = new StoreFragment();
+                        storeFragment.setFilter(1);
+                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                        storeFragment.setYourLocation(myLocation);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, storeFragment);
+                        transaction.commit();
+                        AnimationUtils.animatfabMenuIn(fabmenu);
+                        break;
+                    case R.id.tab_locations:
+                        FilterFragment filterFragment = new FilterFragment();
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, filterFragment);
+                        transaction.commit();
+                        AnimationUtils.animatfabMenuOut(fabmenu);
+                        fabmenu.close(true);
+                        break;
                 }
-            });
+            }
+        });
 
-            bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
-                @Override
-                public void onTabReSelected(@IdRes int tabId) {
-                    switch (tabId) {
-                        case R.id.tab_reviews:
-                            popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_reviews), Gravity.END);
-                            popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewpost, popupMenu.getMenu());
-                            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                @Override
-                                public boolean onMenuItemClick(MenuItem item) {
-                                    switch (item.getItemId()) {
-                                        case R.id.popup_viewpost_lastnews:
-                                            ReviewFragment reviewFragment = new ReviewFragment();
-                                            reviewFragment.setSortType(1);
-                                            reviewFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                                            transaction.replace(R.id.frame, reviewFragment);
-                                            transaction.commit();
-                                            break;
-                                        case R.id.popup_viewpost_mostcomment:
-                                            ReviewFragment reviewFragment1 = new ReviewFragment();
-                                            reviewFragment1.setSortType(2);
-                                            reviewFragment1.setTinh(LoginSession.getInstance().getTinh());
-                                            reviewFragment1.setHuyen(LoginSession.getInstance().getHuyen());
-                                            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
-                                            transaction1.replace(R.id.frame, reviewFragment1);
-                                            transaction1.commit();
-                                            break;
-                                        case R.id.popup_viewpost_mostlike:
-                                            ReviewFragment reviewFragment2 = new ReviewFragment();
-                                            reviewFragment2.setSortType(3);
-                                            reviewFragment2.setTinh(LoginSession.getInstance().getTinh());
-                                            reviewFragment2.setHuyen(LoginSession.getInstance().getHuyen());
-                                            FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
-                                            transaction2.replace(R.id.frame, reviewFragment2);
-                                            transaction2.commit();
-                                            break;
-                                    }
-                                    return true;
+        bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
+            @Override
+            public void onTabReSelected(@IdRes int tabId) {
+                switch (tabId) {
+                    case R.id.tab_reviews:
+                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_reviews), Gravity.END);
+                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewpost, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_viewpost_lastnews:
+                                        ReviewFragment reviewFragment = new ReviewFragment();
+                                        reviewFragment.setSortType(1);
+                                        reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                        transaction.replace(R.id.frame, reviewFragment);
+                                        transaction.commit();
+                                        break;
+                                    case R.id.popup_viewpost_mostcomment:
+                                        ReviewFragment reviewFragment1 = new ReviewFragment();
+                                        reviewFragment1.setSortType(2);
+                                        reviewFragment1.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment1.setHuyen(LoginSession.getInstance().getHuyen());
+                                        FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                                        transaction1.replace(R.id.frame, reviewFragment1);
+                                        transaction1.commit();
+                                        break;
+                                    case R.id.popup_viewpost_mostlike:
+                                        ReviewFragment reviewFragment2 = new ReviewFragment();
+                                        reviewFragment2.setSortType(3);
+                                        reviewFragment2.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment2.setHuyen(LoginSession.getInstance().getHuyen());
+                                        FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                                        transaction2.replace(R.id.frame, reviewFragment2);
+                                        transaction2.commit();
+                                        break;
                                 }
-                            });
-                            popupMenu.show();
+                                return true;
+                            }
+                        });
+                        popupMenu.show();
 
-                            break;
-                        case R.id.tab_stores:
-                            popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_stores), Gravity.CENTER);
-                            popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
-                            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                @Override
-                                public boolean onMenuItemClick(MenuItem item) {
-                                    FragmentTransaction transaction;
-                                    StoreFragment storeFragment;
-                                    switch (item.getItemId()) {
-                                        case R.id.popup_viewquan_none:
-                                            storeFragment = new StoreFragment();
-                                            storeFragment.setFilter(1);
-                                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            storeFragment.setYourLocation(myLocation);
-                                            transaction = getSupportFragmentManager().beginTransaction();
-                                            transaction.replace(R.id.frame, storeFragment);
-                                            transaction.commit();
-                                            break;
-                                        case R.id.popup_viewquan_gia:
-                                            storeFragment = new StoreFragment();
-                                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            storeFragment.setYourLocation(myLocation);
-                                            storeFragment.setFilter(2);
-                                            transaction = getSupportFragmentManager()
-                                                    .beginTransaction()
-                                                    .replace(R.id.frame, storeFragment);
-                                            transaction.commit();
-                                            break;
-                                        case R.id.popup_viewquan_pv:
-                                            storeFragment = new StoreFragment();
-                                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            storeFragment.setYourLocation(myLocation);
-                                            storeFragment.setFilter(3);
-                                            transaction = getSupportFragmentManager()
-                                                    .beginTransaction()
-                                                    .replace(R.id.frame, storeFragment);
-                                            transaction.commit();
-                                            break;
-                                        case R.id.popup_viewquan_vs:
-                                            storeFragment = new StoreFragment();
-                                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            storeFragment.setYourLocation(myLocation);
-                                            storeFragment.setFilter(4);
-                                            transaction = getSupportFragmentManager()
-                                                    .beginTransaction()
-                                                    .replace(R.id.frame, storeFragment);
-                                            transaction.commit();
-                                            break;
-                                    }
-                                    return true;
+                        break;
+                    case R.id.tab_stores:
+                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_stores), Gravity.CENTER);
+                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                FragmentTransaction transaction;
+                                StoreFragment storeFragment;
+                                switch (item.getItemId()) {
+                                    case R.id.popup_viewquan_none:
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setFilter(1);
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
+                                        transaction = getSupportFragmentManager().beginTransaction();
+                                        transaction.replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        break;
+                                    case R.id.popup_viewquan_gia:
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
+                                        storeFragment.setFilter(2);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        break;
+                                    case R.id.popup_viewquan_pv:
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
+                                        storeFragment.setFilter(3);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        break;
+                                    case R.id.popup_viewquan_vs:
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
+                                        storeFragment.setFilter(4);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        break;
                                 }
-                            });
-                            popupMenu.show();
-                            break;
-                        case R.id.tab_locations:
+                                return true;
+                            }
+                        });
+                        popupMenu.show();
+                        break;
+                    case R.id.tab_locations:
 //                        popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.tab_locations), Gravity.START);
 //                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_locafilter, popupMenu.getMenu());
 //                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -339,10 +339,10 @@ public class MainActivity extends AppCompatActivity
 //                            }
 //                        });
 //                        popupMenu.show();
-                            break;
-                    }
+                        break;
                 }
-            });
+            }
+        });
 
     }
 
@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         Log.i(LOG, "onStart");
         if (myLocation == null) {
-            Log.i(LOG+".onStart","my Location==null");
+            Log.i(LOG + ".onStart", "my Location==null");
             myTool = new MyTool(getApplicationContext(), MainActivity.class.getSimpleName());
             myTool.startGoogleApi();
         }
@@ -520,6 +520,75 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.main_fabitem1:
+                changeLccaBtmSheet = new ChangeLocationBottomSheetDialogFragment();
+                changeLccaBtmSheet.show(getSupportFragmentManager(), "fragment_changeLocal");
+                changeLccaBtmSheet.setOnChangeLocationListenner(new ChangeLocationBottomSheetDialogFragment.OnChangeLocationListenner() {
+                    @Override
+                    public void onChangeLocation(String Province, String District) {
+                        LoginSession.getInstance().setTinh(Province);
+                        fab_uploadpho.setLabelText(Province + ", " + District);
+                        LoginSession.getInstance().setHuyen(District);
+                        fabmenu.close(true);
+                        FragmentTransaction transaction;
+                        switch (bottomBar.getCurrentTabPosition()) {
+                            case 0:
+                                ReviewFragment reviewFragment = new ReviewFragment();
+                                reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                                reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                reviewFragment.setSortType(1);
+                                transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.frame, reviewFragment);
+                                transaction.commit();
+                                break;
+                            case 1:
+                                StoreFragment storeFragment = new StoreFragment();
+                                storeFragment.setFilter(1);
+                                storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                storeFragment.setYourLocation(myLocation);
+                                transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.frame, storeFragment);
+                                transaction.commit();
+                                break;
+                            case 2:
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onChangetoMylocation(boolean isMylocation) {
+                        if (isMylocation) {
+                            LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
+                            LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+                            fab_uploadpho.setLabelText(getString(R.string.action_changeloca));
+                            fabmenu.close(true);
+                            FragmentTransaction transaction;
+                            switch (bottomBar.getCurrentTabPosition()) {
+                                case 0:
+                                    ReviewFragment reviewFragment = new ReviewFragment();
+                                    reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                                    reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                    reviewFragment.setSortType(1);
+                                    transaction = getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.frame, reviewFragment);
+                                    transaction.commit();
+                                    break;
+                                case 1:
+                                    StoreFragment storeFragment = new StoreFragment();
+                                    storeFragment.setFilter(1);
+                                    storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                    storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                    storeFragment.setYourLocation(myLocation);
+                                    transaction = getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.frame, storeFragment);
+                                    transaction.commit();
+                                    break;
+                                case 2:
+                                    break;
+                            }
+                        }
+                    }
+                });
                 break;
             case R.id.main_fabitem2:
                 Intent intent = new Intent(MainActivity.this, Adapter2Activity.class);
@@ -545,14 +614,14 @@ public class MainActivity extends AppCompatActivity
                 try {
                     myLocation = myTool.getYourLocation();
 
-                }catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"NULL TU DAY R: BroadcastReceiver ",Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "NULL TU DAY R: BroadcastReceiver ", Toast.LENGTH_LONG).show();
                 }
-                if(myLocation==null){
-                    Toast.makeText(getApplicationContext(),"NHU CC",Toast.LENGTH_LONG).show();
+                if (myLocation == null) {
+                    Toast.makeText(getApplicationContext(), "NHU CC", Toast.LENGTH_LONG).show();
                     anhXa();
-                }else {
-                    Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_LONG).show();
                     anhXa();
                 }
                 //  myTool.stopGoogleApi();
@@ -562,14 +631,14 @@ public class MainActivity extends AppCompatActivity
                 try {
                     myLocation = myTool.getYourLocation();
 
-                }catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"NULL TU DAY R: BroadcastReceiver ",Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "NULL TU DAY R: BroadcastReceiver ", Toast.LENGTH_LONG).show();
                 }
-                if(myLocation==null){
-                    Toast.makeText(getApplicationContext(),"NHU CC",Toast.LENGTH_LONG).show();
+                if (myLocation == null) {
+                    Toast.makeText(getApplicationContext(), "NHU CC", Toast.LENGTH_LONG).show();
                     anhXa();
-                }else {
-                    Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_LONG).show();
                     LoginSession.getInstance().setTinh(myLocation.getTinhtp());
                     LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
                     anhXa();

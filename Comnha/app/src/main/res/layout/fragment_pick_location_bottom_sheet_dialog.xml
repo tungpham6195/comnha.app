@@ -16,7 +16,6 @@
             android:id="@+id/frg_pickLoca_bottomsheet_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white"
             android:theme="@style/AppTheme.AppBarOverlay" />
 
     </android.support.design.widget.AppBarLayout>

@@ -5,9 +5,6 @@ import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 /**
  * Created by PTT on 11/1/2016.
  */
@@ -113,15 +110,33 @@ public class AnimationUtils {
     }
 
     public static void animatShowTagMap2(View view1) {
-        final ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view1, "translationX", -1050, 0);
+        ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view1, "translationX", -1050, 0);
         animatorTranslateX.setDuration(500);
         animatorTranslateX.start();
     }
 
     public static void animatHideTagMap2(View view1) {
-        final ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view1, "translationX", 0, -1050);
+        ObjectAnimator animatorTranslateX = ObjectAnimator.ofFloat(view1, "translationX", 0, -1050);
         animatorTranslateX.setDuration(500);
         animatorTranslateX.start();
+    }
+
+    public static void animatMoveListForward(View proView, View disView) {
+        ObjectAnimator animatorTranslateXDisList = ObjectAnimator.ofFloat(disView, "translationX", 1200, 0);
+        ObjectAnimator animatorTranslateXProList = ObjectAnimator.ofFloat(proView, "translationX", 0, -1200);
+        animatorTranslateXDisList.setDuration(400);
+        animatorTranslateXProList.setDuration(400);
+        animatorTranslateXProList.start();
+        animatorTranslateXDisList.start();
+    }
+
+    public static void animatMoveListForback(View proView, View disView) {
+        ObjectAnimator animatorTranslateXDisList = ObjectAnimator.ofFloat(disView, "translationX", 0, 1200);
+        ObjectAnimator animatorTranslateXProList = ObjectAnimator.ofFloat(proView, "translationX", -1200, 0);
+        animatorTranslateXDisList.setDuration(400);
+        animatorTranslateXProList.setDuration(400);
+        animatorTranslateXProList.start();
+        animatorTranslateXDisList.start();
     }
 
 }

@@ -38,7 +38,7 @@ public class AddFoodFragment extends Fragment implements View.OnClickListener, P
     private ProgressDialog mProgressDialog;
     TextView txt_tenquan, txt_diachi;
     Button btn_chooseCatego;
-    private String foodCategoID, locaID, tinh, huyen;
+    private String foodCategoID = null, locaID, tinh, huyen;
     PickFoodCategoDialogFragment pickFoodDialog;
     FragmentManager dialogFm;
 
@@ -86,6 +86,8 @@ public class AddFoodFragment extends Fragment implements View.OnClickListener, P
 
                 } else if (edt_giamon.getText().toString().trim().equals("")) {
                     Snackbar.make(v, getResources().getString(R.string.txt_nogiaMon), Snackbar.LENGTH_SHORT).show();
+                } else if (foodCategoID == null) {
+                    Snackbar.make(v, getResources().getString(R.string.txt_noChoseFoodCate), Snackbar.LENGTH_SHORT).show();
                 } else {
                     DoSave();
                 }

@@ -3,7 +3,6 @@ package com.app.ptt.comnha;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,7 +40,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     RecyclerView.Adapter mAdapter;
     ArrayList<MyLocation> locaList;
     int whatProvince;
-    Food mon;
+    Food mon = null;
     DatabaseReference dbRef;
     ChildEventListener locaMenuChildEventListener;
     String tinh = "", quan = "";
@@ -130,14 +129,13 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
         FragmentManager fm = getActivity().getSupportFragmentManager();
         switch (v.getId()) {
             case R.id.frg_filter_txttinh:
-
                 PickProvinceDialogFragment pickProvinceFrg = new PickProvinceDialogFragment();
                 pickProvinceFrg.show(fm, "fragment_pickProvince");
                 pickProvinceFrg.setOnPickProvinceListener(this);
                 break;
             case R.id.frg_filter_txtquan:
-                if (tinh.trim().equals("")) {
-                    Snackbar.make(v, getString(R.string.txt_noChoseProvince), Snackbar.LENGTH_SHORT).show();
+                if (tinh.equals("")) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
                 } else {
                     PickDistrictDialogFragment pickDistrictFrg = new PickDistrictDialogFragment();
                     pickDistrictFrg.setWhatprovince(whatProvince);
@@ -204,25 +202,18 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     private void querySomething() {
         locaList.clear();
         mAdapter.notifyDataSetChanged();
-        if (quan == null && mon != null) {//tìm món ở tất cả các quán
+        if (mon == null) {
             dbRef.child(tinh + "/" + quan + "/" +
-                    getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
+                    getString(R.string.locations_CODE))
                     .addChildEventListener(locaMenuChildEventListener);
-        } else if (tinh != null && mon == null) {//tìm tất cả các quán theo tỉnh
-            if (quan != null) {
-                dbRef.child(tinh + "/" + quan + "/" +
-                        getString(R.string.locations_CODE))
-                        .addChildEventListener(locaMenuChildEventListener);
-            } else {
-                dbRef.child(tinh + "/" + quan + "/" +
-                        getString(R.string.locations_CODE))
-                        .addChildEventListener(locaMenuChildEventListener);
-            }
-
-        } else if (quan != null && mon != null) {
-            dbRef.child(tinh + "/" + quan + "/" + getResources().getString(R.string.menulocation_CODE) + mon.getMonID())
+        } else {
+            dbRef.child(tinh + "/" + quan + "/"
+                    + getString(R.string.locations_CODE)).orderByKey()
+                    .equalTo(mon.getLocaID())
                     .addChildEventListener(locaMenuChildEventListener);
         }
+
+
     }
 
     @Override
