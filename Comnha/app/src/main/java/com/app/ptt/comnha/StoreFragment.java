@@ -13,11 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.Service.MyTool;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
@@ -27,6 +29,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 
@@ -104,10 +108,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
-                //newLocation.setLocationLatLng(myTool.returnLatLngByName(newLocation.getDiachi()));
                 float kc = (float) myTool.getDistance(new LatLng(myLocation.getLat(),myLocation.getLng()),new LatLng(newLocation.getLat(), newLocation.getLng()));
-//                Log.i("dia chi cua ban:"+myTool.returnLocationByLatLng(myLocation.getLat(),myLocation.getLng()).getDiachi(),
-//                        "dia chi:"+myTool.returnLocationByLatLng(newLocation.getLat(),newLocation.getLng()).getDiachi());
                 int c = Math.round(kc);
                 Log.i(LOG+".tinh khoang cach",c+"");
                 int d = c / 1000;
@@ -185,7 +186,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
 
     private void anhxa(View view) {
         Log.i(LOG, "anhxa");
-        //list_item=new ArrayList<>();
         listLocation = new ArrayList<>();
         btn_refresh = (Button) view.findViewById(R.id.frg_store_btn_refresh);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_store_recyclerView_localist);
@@ -220,8 +220,17 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.frg_store_btn_refresh:
-                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                //mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
                 btn_refresh.setVisibility(View.GONE);
+                StringWriter out =new StringWriter();
+                try {
+                    Storage.parseToJson(out,listLocation);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String a=out.toString();
+                Toast.makeText(getContext(),a,Toast.LENGTH_LONG).show();
+                Storage.writeFile(getContext(),a);
                 break;
         }
     }

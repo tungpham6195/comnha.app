@@ -54,6 +54,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
+import org.json.JSONException;
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -97,6 +100,11 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
         Log.i(LOG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.frg_map_fablocation);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
         anhxa(view);
         return view;
     }
@@ -364,11 +372,14 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
     }
 
     public MyLocation returnLocation(Marker marker) {
-        Log.i(LOG + ".returnRoute", "Tra ve route ung voi marker");
-        for (MyLocation location : list) {
-            if (marker.getPosition().latitude == location.getLat()
-                    && marker.getPosition().longitude == location.getLng()) {
-                return location;
+
+        if(list.size()>0) {
+            Log.i(LOG + ".returnRoute", "Tra ve route ung voi marker");
+            for (MyLocation location : list) {
+                if (marker.getPosition().latitude == location.getLat()
+                        && marker.getPosition().longitude == location.getLng()) {
+                    return location;
+                }
             }
         }
         return null;
@@ -452,13 +463,14 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                             for (PlaceAttribute placeAttribute : placeAttributes) {
                                 resultList.add(placeAttribute.getFullname());
                             }
+                            if(resultList.size()==0)
+                                return null;
+                            filterResults.values = resultList;
+                            filterResults.count = resultList.size();
                         } else {
                             return null;
                         }
-                        if(resultList.size()==0)
-                            return null;
-                        filterResults.values = resultList;
-                        filterResults.count = resultList.size();
+
                     }
                     return filterResults;
                 }

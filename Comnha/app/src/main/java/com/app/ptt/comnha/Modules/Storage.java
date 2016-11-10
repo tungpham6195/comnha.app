@@ -10,6 +10,9 @@ import com.app.ptt.comnha.FireBase.MyLocation;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.JSONAware;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,31 +32,18 @@ import java.util.List;
 public class Storage {
     Context mContext;
     String filename = "myfile.json";
-    String string = "{\n" +
-            "  \"id\": 111 ,\n" +
-            "  \"name\":\"Microsoft\",\n" +
-            "  \"websites\": [\n" +
-            "     \"http://microsoft.com\",\n" +
-            "     \"http://msn.com\",\n" +
-            "     \"http://hotmail.com\"\n" +
-            "  ],\n" +
-            "  \"address\":{\n" +
-            "     \"street\":\"1 Microsoft Way\",\n" +
-            "     \"city\":\"Redmond\"\n" +
-            "  }\n" +
-            "}";
-    FileOutputStream outputStream;
+
+
 
     //public Storage(Context context){
        // this.mContext=context;
    // }
-    public void writeFile(Context mContext){
+    public static void writeFile(Context mContext,String input){
+        FileOutputStream outputStream;
         try {
-            File file = new File(mContext.getCacheDir(), filename);
-           // File file = new File(mContext.getCacheDir(), filename);
+            File file = new File(mContext.getCacheDir(), "myfile.json");
             outputStream=new FileOutputStream(file);
-            //outputStream=mContext.openFileOutput(filename,Context.MODE_PRIVATE);
-            outputStream.write(string.getBytes());
+            outputStream.write(input.getBytes());
             outputStream.close();
             Toast.makeText(mContext,"save ok",Toast.LENGTH_LONG).show();
         } catch (FileNotFoundException e) {
@@ -61,12 +52,13 @@ public class Storage {
             e.printStackTrace();
         }
     }
-    public String readFile(){
+
+    public static String readFile(Context mContext){
+
         try {
-            File file = new File(mContext.getCacheDir(), filename);
+            File file = new File(mContext.getCacheDir(), "myfile.json");
             //file.delete();
             FileInputStream inputStream=new FileInputStream(file);
-                    //mContext.openFileInput(filename);
             BufferedReader br=new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder sb=new StringBuilder();
             String s=null;
@@ -74,43 +66,63 @@ public class Storage {
                 sb.append(s);
                 sb.append("\n");
             }
+            Toast.makeText(mContext,sb.toString(),Toast.LENGTH_LONG).show();
             return sb.toString();
+
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+
         } catch (IOException e) {
             e.printStackTrace();
+
+
         }
         return null;
+
     }
-    public void readJSONFile() throws IOException,JSONException {
-
-        // Đọc nội dung text của file company.json
-        String jsonText = readFile();
-
-        // Đối tượng JSONObject gốc mô tả toàn bộ tài liệu JSON.
-        JSONObject jsonRoot = new JSONObject(jsonText);
-
-
-        int id= jsonRoot.getInt("id");
-        String name = jsonRoot.getString("name");
-
-        JSONArray jsonArray = jsonRoot.getJSONArray("websites");
-        String[] websites = new String[jsonArray.length()];
-
-        for(int i=0;i < jsonArray.length();i++) {
-            websites[i] = jsonArray.getString(i);
+    public static ArrayList< MyLocation > readJSONFile(String json) throws JSONException, ParseException {
+        ArrayList< MyLocation > locations=new ArrayList<>();
+        MyLocation myLocation;
+        JSONArray jsonArray = new JSONArray(json);
+        for(int i=0;i<jsonArray.length();i++){
+            myLocation=new MyLocation();
+            JSONObject jsonObject=jsonArray.getJSONObject(i);
+            myLocation.setLocaID(jsonObject.getString("locaID"));
+            myLocation.setKhoangcach(jsonObject.getString("khoangcach"));
+            myLocation.setName(jsonObject.getString("name"));
+            myLocation.setDiachi(jsonObject.getString("diachi"));
+            myLocation.setSdt(jsonObject.getString("sdt"));
+            myLocation.setTimestart(jsonObject.getString("timestart"));
+            myLocation.setTimeend(jsonObject.getString("timeend"));
+            myLocation.setTinhtp(jsonObject.getString("tinhtp"));
+            myLocation.setQuanhuyen(jsonObject.getString("quanhuyen"));
+            myLocation.setLat(jsonObject.getDouble("lat"));
+            myLocation.setLng(jsonObject.getDouble("lng"));
+            myLocation.setGiamax(jsonObject.getLong("giamax"));
+            myLocation.setGiamin(jsonObject.getLong("giamin"));
+            myLocation.setGiaTong(jsonObject.getLong("giaTong"));
+            myLocation.setVsTong(jsonObject.getLong("vsTong"));
+            myLocation.setPvTong(jsonObject.getLong("pvTong"));
+            myLocation.setSize(jsonObject.getLong("size"));
+            myLocation.setGiaAVG(jsonObject.getLong("giaAVG"));
+            myLocation.setPvAVG(jsonObject.getLong("pvAVG"));
+            myLocation.setVsAVG(jsonObject.getLong("vsAVG"));
+            myLocation.setTongAVG(jsonObject.getLong("tongAVG"));
+            locations.add(myLocation);
         }
+        if(locations.size()>0)
+            return locations;
+        return null;
 
-        JSONObject jsonAddress = jsonRoot.getJSONObject("address");
-        String street = jsonAddress.getString("street");
-        String city = jsonAddress.getString("city");
-        Toast.makeText(mContext,"Id:"+id+". Name:"+name+". Street"+street+". City:"+city+". Website"+websites[0].toString(),Toast.LENGTH_LONG).show();
+
+
 
     }
-    public static void  parseToJson(Writer out, MyLocation location) throws IOException {
+    public static void  parseToJson(Writer out,ArrayList< MyLocation >locations) throws IOException {
         JsonWriter jsonWriter = new JsonWriter(out);
-       // jsonWriter.name("locations").beginArray();
+        jsonWriter.beginArray();
+            for (MyLocation location:locations){
             jsonWriter.beginObject();
             jsonWriter.name("locaID").value(location.getLocaID());
             jsonWriter.name("name").value(location.getName());
@@ -134,6 +146,8 @@ public class Storage {
             jsonWriter.name("pvAVG").value(location.getPvAVG());
             jsonWriter.name("tongAVG").value(location.getTongAVG());
             jsonWriter.endObject();
+            }
+        jsonWriter.endArray();
     }
 
 }

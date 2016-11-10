@@ -90,8 +90,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 pos = position;
-                Log.i(LOG + ".onCreateView", "pos= " + pos+"- dia chi:"+mPlaceAttribute.get(pos).getFullname());
-
             }
         });
         return view;
@@ -249,10 +247,11 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             tinh = placeAttribute.getState()+"/";
             huyen = placeAttribute.getDistrict()+"/";
             newLocation.setDiachi(placeAttribute.getFullname());
+            Log.i(LOG+".onLocationFinder",placeAttribute.getState()+"-"+placeAttribute.getDistrict());
             newLocation.setLat(newLatLng.latitude);
             newLocation.setLng(newLatLng.longitude);
-            newLocation.setTinhtp(tinh);
-            newLocation.setQuanhuyen(huyen);
+            newLocation.setTinhtp(placeAttribute.getState());
+            newLocation.setQuanhuyen(placeAttribute.getDistrict());
             Log.i(LOG+".onLocation",tinh+" va "+huyen);
             String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
             Map<String, Object> newLocaValue = newLocation.toMap();

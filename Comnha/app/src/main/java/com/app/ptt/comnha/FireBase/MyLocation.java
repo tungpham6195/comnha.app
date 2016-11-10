@@ -1,5 +1,7 @@
 package com.app.ptt.comnha.FireBase;
 
+import org.json.simple.JSONAware;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +9,7 @@ import java.util.Map;
  * Created by PTT on 9/26/2016.
  */
 
-public class MyLocation {
+public class MyLocation implements JSONAware {
     String name, diachi, sdt, timestart, timeend, tinhtp, quanhuyen;
     String khoangcach;
 
@@ -210,5 +212,14 @@ public class MyLocation {
         result.put("lat", lat);
         result.put("lng", lng);
         return result;
+    }
+
+    @Override
+    public String toJSONString() {
+        StringBuffer sb=new StringBuffer();
+        sb.append("{");//Bat dau doi tuong json
+        sb.append("\"id\":\""+getLocaID()+"\"");
+        sb.append("\"id\":\""+getLocaID()+"\"");
+        return null;
     }
 }
