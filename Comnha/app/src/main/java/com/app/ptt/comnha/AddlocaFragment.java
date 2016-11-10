@@ -1,6 +1,7 @@
 package com.app.ptt.comnha;
 
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -242,38 +243,57 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
 
         if (placeAttribute != null) {
-            LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
+            final LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
+            final PlaceAttribute myPlaceAttribute=placeAttribute;
+            mProgressDialog.dismiss();
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState() + "/";
             huyen = placeAttribute.getDistrict() + "/";
             newLocation.setDiachi(placeAttribute.getFullname());
             Log.i(LOG + ".onLocationFinder", placeAttribute.getState() + "-" + placeAttribute.getDistrict());
-            newLocation.setLat(newLatLng.latitude);
-            newLocation.setLng(newLatLng.longitude);
-            newLocation.setTinhtp(placeAttribute.getState());
-            newLocation.setQuanhuyen(placeAttribute.getDistrict());
-            Log.i(LOG + ".onLocation", tinh + " va " + huyen);
-            String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
-            Map<String, Object> newLocaValue = newLocation.toMap();
-            Map<String, Object> childUpdates = new HashMap<>();
-            childUpdates.put(tinh + huyen + getResources().getString(R.string.locations_CODE)
-                    + key, newLocaValue);
-            dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    if (databaseError != null) {
-                        mProgressDialog.dismiss();
-                        Toast.makeText(getActivity(), "Lỗi: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
-                    } else {
-                        mProgressDialog.dismiss();
-                        Toast.makeText(getActivity(),
-                                getResources().getString(R.string.text_noti_addloca_succes)
-                                , Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
-                    }
-                }
+            final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+            builder.setMessage("Địa chỉ: "+placeAttribute.getFullname()).setTitle("Xác nhận")
+                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            newLocation.setLat(newLatLng.latitude);
+                            newLocation.setLng(newLatLng.longitude);
+                            newLocation.setTinhtp(myPlaceAttribute.getState());
+                            newLocation.setQuanhuyen(myPlaceAttribute.getDistrict());
+                            Log.i(LOG + ".onLocation", tinh + " va " + huyen);
+                            String key = dbRef.child(getResources().getString(R.string.locations_CODE)).push().getKey();
+                            Map<String, Object> newLocaValue = newLocation.toMap();
+                            Map<String, Object> childUpdates = new HashMap<>();
+                            childUpdates.put(tinh + huyen + getResources().getString(R.string.locations_CODE)
+                                    + key, newLocaValue);
+                            dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null) {
 
-            });
+                                        Toast.makeText(getActivity(), "Lỗi: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                    } else {
+                                       // mProgressDialog.dismiss();
+                                        Toast.makeText(getActivity(),
+                                                getResources().getString(R.string.text_noti_addloca_succes)
+                                                , Toast.LENGTH_SHORT).show();
+                                        getActivity().finish();
+                                    }
+                                }
+
+                            });
+                        }
+                    })
+                    .setNegativeButton("Thử lại", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                           dialog.dismiss();
+                        }
+                    });
+            AlertDialog dialog=builder.create();
+            dialog.show();
+            //builder.create();
         } else {
             mProgressDialog.dismiss();
             Toast.makeText(getActivity(), "Lỗi! Kiểm tra dữ liệu nhập vàp ", Toast.LENGTH_LONG).show();

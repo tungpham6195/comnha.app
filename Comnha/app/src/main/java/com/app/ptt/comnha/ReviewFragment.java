@@ -44,7 +44,6 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     int sortType;
     Button btn_refresh;
     String tinh, huyen;
-
     @Override
     public void onStart() {
         super.onStart();

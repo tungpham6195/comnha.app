@@ -166,8 +166,6 @@ public class MainActivity extends AppCompatActivity
         if(myLocation!=null) {
             progressDialog.dismiss();
             Log.i(LOG + ",anhxa", "quan:" + myLocation.getQuanhuyen() + ". tp:" + myLocation.getTinhtp());
-//        myLocation.getQuanhuyen()
-//                myLocation.getTinhtp()
             LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
             LoginSession.getInstance().setTinh(myLocation.getTinhtp());
         }
@@ -546,13 +544,13 @@ public class MainActivity extends AppCompatActivity
                     myLocation = myTool.getYourLocation();
 
                 }catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"NULL TU DAY R: BroadcastReceiver ",Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getApplicationContext(),"NULL TU DAY R: BroadcastReceiver ",Toast.LENGTH_LONG).show();
                 }
                 if(myLocation==null){
-                    Toast.makeText(getApplicationContext(),"NHU CC",Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(getApplicationContext(),"NHU CC",Toast.LENGTH_LONG).show();
                     anhXa();
                 }else {
-                    Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
                     anhXa();
                 }
                 //  myTool.stopGoogleApi();
@@ -563,10 +561,10 @@ public class MainActivity extends AppCompatActivity
                     myLocation = myTool.getYourLocation();
 
                 }catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"NULL TU DAY R: BroadcastReceiver ",Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getApplicationContext(),"NULL TU DAY R: BroadcastReceiver ",Toast.LENGTH_LONG).show();
                 }
                 if(myLocation==null){
-                    Toast.makeText(getApplicationContext(),"NHU CC",Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getApplicationContext(),"NHU CC",Toast.LENGTH_LONG).show();
                     anhXa();
                 }else {
                     Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();

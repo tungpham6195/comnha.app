@@ -83,166 +83,168 @@ public class LocadetailFragment extends Fragment {
         tinh = ChooseLoca.getInstance().getTinh();
         huyen = ChooseLoca.getInstance().getHuyen();
         Log.d("localID", locaID);
+        if (tinh != null && huyen != null && locaID != null) {
+            andxa(view);
+            dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
+            storageRef = FirebaseStorage.getInstance()
+                    .getReferenceFromUrl(getResources().getString(R.string.firebaseStorage_path));
+            locationValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                    location = dataSnapshot.getValue(MyLocation.class);
+                    location.setLocaID(dataSnapshot.getKey());
+                    location.setQuanhuyen(LoginSession.getInstance().getHuyen());
+                    location.setTinhtp(LoginSession.getInstance().getTinh());
+                    String gio = location.getTimestart() + " - " + location.getTimeend();
+                    String tenquan = location.getName();
+                    String diachi = location.getDiachi();
+                    String sdt = location.getSdt();
+                    txt_sdt.setText(sdt);
+                    txt_diachi.setText(diachi);
+                    txt_tien.setText(String.valueOf(location.getGiamin()) +
+                            " - " + String.valueOf(location.getGiamax()));
+                    txt_gio.setText(gio);
+                    txt_name.setText(tenquan);
+                    try {
+                        txt_gia.setText(String.valueOf(location.getGiaAVG() + ""));
+                        txt_vesinh.setText(String.valueOf(location.getVsAVG() + ""));
+                        txt_phucvu.setText(String.valueOf(location.getPvAVG() + ""));
+                    } catch (ArithmeticException mess) {
+                        txt_gia.setText(String.valueOf(0));
+                        txt_vesinh.setText(String.valueOf(0));
+                        txt_phucvu.setText(String.valueOf(0));
+                    }
 
-        andxa(view);
-        dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
-        storageRef = FirebaseStorage.getInstance()
-                .getReferenceFromUrl(getResources().getString(R.string.firebaseStorage_path));
-        locationValueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                location = dataSnapshot.getValue(MyLocation.class);
-                location.setLocaID(dataSnapshot.getKey());
-                location.setQuanhuyen(LoginSession.getInstance().getHuyen());
-                location.setTinhtp(LoginSession.getInstance().getTinh());
-                String gio = location.getTimestart() + " - " + location.getTimeend();
-                String tenquan = location.getName();
-                String diachi = location.getDiachi();
-                String sdt = location.getSdt();
-                txt_sdt.setText(sdt);
-                txt_diachi.setText(diachi);
-                txt_tien.setText(String.valueOf(location.getGiamin()) +
-                        " - " + String.valueOf(location.getGiamax()));
-                txt_gio.setText(gio);
-                txt_name.setText(tenquan);
-                try {
-                    txt_gia.setText(String.valueOf(location.getGiaAVG() + ""));
-                    txt_vesinh.setText(String.valueOf(location.getVsAVG() + ""));
-                    txt_phucvu.setText(String.valueOf(location.getPvAVG() + ""));
-                } catch (ArithmeticException mess) {
-                    txt_gia.setText(String.valueOf(0));
-                    txt_vesinh.setText(String.valueOf(0));
-                    txt_phucvu.setText(String.valueOf(0));
                 }
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            postChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+                    Post post = dataSnapshot.getValue(Post.class);
+                    post.setPostID(dataSnapshot.getKey());
+                    postlist.add(post);
+                    CalcuAVGRate newcalcu = new CalcuAVGRate(postlist);
 
-            }
-        };
-        postChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
-                Post post = dataSnapshot.getValue(Post.class);
-                post.setPostID(dataSnapshot.getKey());
-                postlist.add(post);
-                CalcuAVGRate newcalcu = new CalcuAVGRate(postlist);
+                    mAdapter.notifyDataSetChanged();
+                }
 
-                mAdapter.notifyDataSetChanged();
-            }
+                @Override
+                public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+                }
 
-            }
+                @Override
+                public void onChildRemoved(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
-            @Override
-            public void onChildRemoved(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                }
 
-            }
+                @Override
+                public void onChildMoved(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onChildMoved(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+                }
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            locaMenuChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Food food = dataSnapshot.getValue(Food.class);
+                    food.setMonID(dataSnapshot.getKey());
+                    foodList.add(food);
+                    menuAdapter.notifyDataSetChanged();
+                }
 
-            }
-        };
-        locaMenuChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Food food = dataSnapshot.getValue(Food.class);
-                food.setMonID(dataSnapshot.getKey());
-                foodList.add(food);
-                menuAdapter.notifyDataSetChanged();
-            }
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
 
-            }
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
 
-            }
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        imageChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                try {
+                }
+            };
+            imageChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    try {
 //                    Toast.makeText(getActivity(), dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
-                    Log.d("checkListenerFromImages", "have changed");
-                    final Image image = dataSnapshot.getValue(Image.class);
-                    image.setImageID(dataSnapshot.getKey());
-                    storageRef.child(getString(R.string.images_CODE) + "/"
-                            + image.getName())
-                            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            image.setPath(uri);
-                            files.add(image);
-                            albumAdapter.notifyDataSetChanged();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } catch (NullPointerException | IllegalStateException mess) {
+                        Log.d("checkListenerFromImages", "have changed");
+                        final Image image = dataSnapshot.getValue(Image.class);
+                        image.setImageID(dataSnapshot.getKey());
+                        storageRef.child(getString(R.string.images_CODE) + "/"
+                                + image.getName())
+                                .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                image.setPath(uri);
+                                files.add(image);
+                                albumAdapter.notifyDataSetChanged();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (NullPointerException | IllegalStateException mess) {
+
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
                 }
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        Log.d(getResources().getString(R.string.key_CODE), locaID);
-        dbRef.child(tinh + "/" + huyen + "" + "/"
-                + getString(R.string.locations_CODE) + locaID).addValueEventListener(locationValueEventListener);
-        dbRef.child(tinh + "/" + huyen + "" + "/" +
-                getResources().getString(R.string.posts_CODE)).orderByChild("locaID").equalTo(locaID)
-                .addChildEventListener(postChildEventListener);
-        dbRef.child(tinh + "/" + huyen + "" + "/" +
-                getResources().getString(R.string.thucdon_CODE)).orderByChild("locaID")
-                .equalTo(locaID).addChildEventListener(locaMenuChildEventListener);
-        dbRef.child(getResources().getString(R.string.images_CODE))
-                .orderByChild("locaID").equalTo(locaID).limitToFirst(3)
-                .addChildEventListener(imageChildEventListener);
-        return view;
+                }
+            };
+            Log.d(getResources().getString(R.string.key_CODE), locaID);
+            dbRef.child(tinh + "/" + huyen + "" + "/"
+                    + getString(R.string.locations_CODE) + locaID).addValueEventListener(locationValueEventListener);
+            dbRef.child(tinh + "/" + huyen + "" + "/" +
+                    getResources().getString(R.string.posts_CODE)).orderByChild("locaID").equalTo(locaID)
+                    .addChildEventListener(postChildEventListener);
+            dbRef.child(tinh + "/" + huyen + "" + "/" +
+                    getResources().getString(R.string.thucdon_CODE)).orderByChild("locaID")
+                    .equalTo(locaID).addChildEventListener(locaMenuChildEventListener);
+            dbRef.child(getResources().getString(R.string.images_CODE))
+                    .orderByChild("locaID").equalTo(locaID).limitToFirst(3)
+                    .addChildEventListener(imageChildEventListener);
+            return view;
+        }
+        return null;
     }
 
     private void andxa(View view) {
