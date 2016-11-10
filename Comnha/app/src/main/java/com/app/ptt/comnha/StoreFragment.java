@@ -78,7 +78,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     }
     public StoreFragment() {
     }
-
     @Override
     public void onStart() {
         Log.i(LOG, "onStart");
@@ -108,6 +107,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
+                if(myLocation!=null){
                 float kc = (float) myTool.getDistance(new LatLng(myLocation.getLat(),myLocation.getLng()),new LatLng(newLocation.getLat(), newLocation.getLng()));
                 int c = Math.round(kc);
                 Log.i(LOG+".tinh khoang cach",c+"");
@@ -115,7 +115,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 int e = c % 1000;
                 int f = e / 100;
                 newLocation.setKhoangcach(d + "," + f + " km");
-                Log.i("Dia chi", "CC:" + newLocation.getKhoangcach());
+                    Log.i("Dia chi", "CC:" + newLocation.getKhoangcach());
+                }else
+                    Log.i(LOG+".getDataInFireBase","my Location==null");
                 listLocation.add(newLocation);
                 if (STATUS_START > 0) {
                     btn_refresh.setVisibility(View.VISIBLE);

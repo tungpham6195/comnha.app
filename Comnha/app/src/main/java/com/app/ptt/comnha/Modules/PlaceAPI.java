@@ -45,7 +45,8 @@ public class PlaceAPI {
             mPlaceAttributes=new PlaceAttribute();
             location.onLocationFinderStart();
             new LongProgress().execute(input);
-
+        }else{
+            location.onLocationFinderSuccess(null);
         }
     }
     private class LongProgress extends AsyncTask<String,Void,String>{

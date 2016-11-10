@@ -1,6 +1,7 @@
 package com.app.ptt.comnha.Service;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -50,6 +51,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     private Double latitude = null, longtitude = null;
     private String fileName = "note.json";
     Geocoder geocoder;
+    ProgressDialog progressDialog;
     Firebase ref;
     ArrayList<MyLocation> listLocation;
     PlaceAPI placeAPI;
@@ -159,7 +161,17 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         if (l != null) {
             this.latitude = l.getLatitude();
             this.longtitude = l.getLongitude();
-            placeAPI=new PlaceAPI(returnLocationByLatLng(l.getLatitude(), l.getLongitude()).getDiachi(),this);
+            flag = 2;
+            MyLocation location = new MyLocation();
+            try{
+            location = returnLocationByLatLng(l.getLatitude(), l.getLongitude());}
+            catch (Exception e){
+                 Log.i(LOG + ".onConnected", "Exception");
+            }
+            //if(returnLocationByLatLng(l.getLatitude(), l.getLongitude()).getDiachi()!=null)
+            if (location != null)
+                placeAPI = new PlaceAPI(location.getDiachi(), this);
+            else Log.i(LOG + ".onConnected", "LOI BI NULL");
         }
         startLocationUpdate();
     }
@@ -172,8 +184,9 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 Log.i(LOG + ".onLocationChanged", "Vi tri cua ban bi thay doi: " + getDistance(new LatLng(location.getLatitude(), location.getLongitude()), new LatLng(this.latitude, this.longtitude)) + "m");
                 this.latitude = location.getLatitude();
                 this.longtitude = location.getLongitude();
-                yourLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
-                Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLocation.getLat() + "va lng= " + yourLocation.getLng());
+                flag=3;
+                placeAPI=new PlaceAPI(returnLocationByLatLng(location.getLatitude(), location.getLongitude()).getDiachi(),this);
+               // Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLocation.getLat() + "va lng= " + yourLocation.getLng());
             }
         }
     }
@@ -181,13 +194,13 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     public void sendBroadcast(String a) {
         Log.i(LOG + ".sendBroadcast", "Gui broadcast toi "+classSend);
         temp=0;
-        if (flag == 1) {
-                Log.i(LOG + ".sendBroadcast", "gui place id: " + temp++);
-                broadcastIntent.setAction(classSend+".mBroadcastSendAddress");
-                broadcastIntent.putExtra("PlaceID", a);
-                broadcastIntent.putExtra("STT", 1);
-                mContext.sendBroadcast(broadcastIntent);
-        }
+//        if (flag == 1) {
+//                Log.i(LOG + ".sendBroadcast", "gui place id: " + temp++);
+//                broadcastIntent.setAction(classSend+".mBroadcastSendAddress");
+//                broadcastIntent.putExtra("PlaceID", a);
+//                broadcastIntent.putExtra("STT", 1);
+//                mContext.sendBroadcast(broadcastIntent);
+//        }
         if(flag==2){
             if(classSend.equals("MainActivity")) {
                 Log.i(LOG + ".sendBroadcast", "Gui vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
@@ -201,6 +214,22 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
                 broadcastIntent.putExtra("Location", true);
                 broadcastIntent.putExtra("STT", 2);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+        }
+        if (flag == 3) {
+            if(classSend.equals("MainActivity")) {
+                Log.i(LOG + ".sendBroadcast", "Gui su thay doi vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
+                broadcastIntent.putExtra("LocationChange", true);
+                broadcastIntent.putExtra("STT", 3);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+            if(classSend.equals("MapFragment")) {
+                Log.i(LOG + ".sendBroadcast", "Gui su thay doi vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
+                broadcastIntent.putExtra("LocationChange", true);
+                broadcastIntent.putExtra("STT", 3);
                 mContext.sendBroadcast(broadcastIntent);
             }
         }
@@ -318,11 +347,14 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     }
     public MyLocation getYourLocation() {
         Log.i(LOG + ".returnLocation", "Lay vi tri cua ban");
-        return yourLocation;
+        if(yourLocation!=null)
+            return yourLocation;
+        else
+            return null;
     }
     public MyLocation returnLocationByLatLng(Double latitude, Double longitude) {
         MyLocation myLocation=new MyLocation();
-        Log.i(LOG + ".returnLocationByLatLng", "ReturnLocationByLatLng");
+
         List<Address> addresses;
         Double lat = latitude;
         Double lon = longitude;
@@ -376,6 +408,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                     myLocation.setDiachi(e);
                     myLocation.setLat(lat);
                     myLocation.setLng(lon);
+                    Log.i(LOG + ".returnLocationByLatLng", "Location can tim"+myLocation.getDiachi());
                     return myLocation;
                 }
                 return null;
@@ -476,9 +509,11 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             yourLocation.setTinhtp(placeAttribute.getState());
             yourLocation.setLat(returnLatLngByName(placeAttribute.getFullname()).latitude);
             yourLocation.setLng(returnLatLngByName(placeAttribute.getFullname()).longitude);
-            flag = 2;
-            sendBroadcast("Location");
-
+            if(flag==2)
+                sendBroadcast("Location");
+            if(flag==3)
+                sendBroadcast("LocationChange");
+                sendBroadcast("LocationChange");
         }else{
             Log.i(LOG+".onLocationFinder","State: null");
         }
