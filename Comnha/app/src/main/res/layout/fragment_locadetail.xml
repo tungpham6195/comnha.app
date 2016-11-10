@@ -233,6 +233,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
+                            android:maxLines="1"
                             android:text="Quán cơm Ngô Quyền 2"
                             android:textColor="@android:color/black"
                             android:textStyle="bold" />
@@ -254,6 +255,7 @@
                             android:layout_marginBottom="2dp"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="2dp"
+                            android:maxLines="1"
                             android:text="89 ngô quyền thủ đức hồ chí minh"
                             android:textColor="@android:color/black" />
                     </LinearLayout>
@@ -274,6 +276,7 @@
                             android:layout_marginBottom="2dp"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="2dp"
+                            android:maxLines="1"
                             android:text="15000 - 20000đ"
                             android:textColor="@android:color/black" />
                     </LinearLayout>
@@ -320,6 +323,7 @@
                             android:layout_marginBottom="2dp"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="2dp"
+                            android:maxLines="1"
                             android:text="0123456789"
                             android:textColor="@android:color/black" />
                     </LinearLayout>

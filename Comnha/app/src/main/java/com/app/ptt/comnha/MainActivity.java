@@ -346,6 +346,7 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         Log.i(LOG, "onStart");
         if (myLocation == null) {
+            myLocation = new MyLocation();
             myTool = new MyTool(getApplicationContext(), MainActivity.class.getSimpleName());
             myTool.startGoogleApi();
         }
@@ -536,7 +537,8 @@ public class MainActivity extends AppCompatActivity
             if (intent.getIntExtra("STT", 0) == 2 && intent.getBooleanExtra("Location", false)) {
                 Log.i(LOG + ".MainActivity", "Nhan vi tri cua ban:");
                 myLocation = myTool.getYourLocation();
-                anhXa();
+                if (myLocation != null)
+                    anhXa();
                 //  myTool.stopGoogleApi();
             }
         }

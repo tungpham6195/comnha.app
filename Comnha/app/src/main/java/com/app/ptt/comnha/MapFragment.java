@@ -57,7 +57,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 
-public class MapFragment extends Fragment implements View.OnClickListener,LocationFinderListener, PickLocationBottomSheetDialogFragment.onPickListener {
+public class MapFragment extends Fragment implements View.OnClickListener, LocationFinderListener, PickLocationBottomSheetDialogFragment.onPickListener {
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     public static final String mBroadcastChangeLocation = "mBroadcastChangeLocation";
     private IntentFilter mIntentFilter;
@@ -75,9 +75,9 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
     MyLocation yourLocation;
     MyTool myTool;
     Storage storage;
-    int pos=-1;
-//    int pos;
-    boolean isNearest=false;
+    int pos = -1;
+    //    int pos;
+    boolean isNearest = false;
     int temp = 1;
     MarkerOptions yourMarker = null;
     ImageButton btn_search;
@@ -153,11 +153,12 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
         getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
         myTool = new MyTool(getContext(), MapFragment.class.getSimpleName());
         myTool.startGoogleApi();
-       // storage = new Storage(getContext());
+        // storage = new Storage(getContext());
 
         //storage.writeFile();
 
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -221,17 +222,23 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                 }
                 break;
             case R.id.frg_map_btnsearch:
-                if (isNearest)
-                    isNearest = false;
-                Log.i(LOG + ".onClick ", edt_content.getText().toString());
-                if (edt_content.getText().toString() == "") {
-                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
+                if (edt_content.getText().toString().trim().equals("")) {
+                    Toast.makeText(getActivity(),
+                            getString(R.string.txt_noaddress),
+                            Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.i(LOG + ".onClick ", "loadListPlace" + pos);
-                    if (pos != -1) {
-                        placeAPI = new PlaceAPI(placeAttributes.get(pos).getFullname(), this);
+                    if (isNearest)
+                        isNearest = false;
+                    Log.i(LOG + ".onClick ", edt_content.getText().toString());
+                    if (edt_content.getText().toString() == "") {
+                        Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
                     } else {
-                        placeAPI=new PlaceAPI(edt_content.getText().toString(),this);
+                        Log.i(LOG + ".onClick ", "loadListPlace" + pos);
+                        if (pos != -1) {
+                            placeAPI = new PlaceAPI(placeAttributes.get(pos).getFullname(), this);
+                        } else {
+                            placeAPI = new PlaceAPI(edt_content.getText().toString(), this);
+                        }
                     }
                 }
                 break;
@@ -322,7 +329,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                                                 int d = c / 1000;
                                                 int e = c % 1000;
                                                 int f = e / 100;
-                                                txt_KhoangCach.setText(d + "," + f+" km");
+                                                txt_KhoangCach.setText(d + "," + f + " km");
                                                 if (a.getSize() == 0) {
                                                     txt_DiemVeSinh.setText("0");
                                                     txt_DiemGia.setText("0");
@@ -381,7 +388,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
             txt_TenQuan.setText(a.getName());
             txt_DiaChi.setText(a.getDiachi());
             txt_GioMo.setText(a.getTimestart() + "-" + a.getTimeend());
-            txt_KhoangCach.setText(a.getKhoangcach()+" km");
+            txt_KhoangCach.setText(a.getKhoangcach() + " km");
             if (a.getSize() == 0) {
                 txt_DiemVeSinh.setText("0");
                 txt_DiemGia.setText("0");
@@ -391,8 +398,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                 txt_DiemGia.setText(a.getGiaTong() / a.getSize() + "");
                 txt_DiemPhucVu.setText(a.getPvTong() / a.getSize() + "");
             }
-        }
-        else
+        } else
             Log.i(LOG + ".infoWindow", "a=null");
         return view1;
     }
@@ -431,7 +437,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
         Drawable circleDrawable = getResources().getDrawable(R.drawable.icon);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
         myGoogleMap.clear();
-        Log.i(LOG+".changeLocation",myLocationSearch.getFullname());
+        Log.i(LOG + ".changeLocation", myLocationSearch.getFullname());
         yourMarker = new MarkerOptions()
                 .position(myLocationSearch.getPlaceLatLng())
                 .title(myLocationSearch.getFullname())
@@ -461,13 +467,13 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
 
     public MyLocation returnLocation(Marker marker) {
         Log.i(LOG + ".returnRoute", "Tra ve route ung voi marker");
-        if(list.size()>0)
-        for (MyLocation location : list) {
-            if (marker.getPosition().latitude == location.getLat()
-                    && marker.getPosition().longitude == location.getLng()) {
-                return location;
+        if (list.size() > 0)
+            for (MyLocation location : list) {
+                if (marker.getPosition().latitude == location.getLat()
+                        && marker.getPosition().longitude == location.getLng()) {
+                    return location;
+                }
             }
-        }
         return null;
     }
 
@@ -520,7 +526,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
 
         @Override
         public int getCount() {
-            if (resultList != null&&resultList.size()>0) {
+            if (resultList != null && resultList.size() > 0) {
                 return resultList.size();
             } else return 0;
         }
@@ -528,7 +534,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
         @Nullable
         @Override
         public String getItem(int position) {
-            if(resultList.size()>0)
+            if (resultList.size() > 0)
                 return resultList.get(position);
             else
                 return null;
@@ -545,7 +551,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
                     if (constraint != null) {
                         placeAttributes = new ArrayList<>();
                         placeAttributes = myTool.returnPlaceAttributeByName(constraint.toString());
-                        if (placeAttributes.size()>0) {
+                        if (placeAttributes.size() > 0) {
                             for (PlaceAttribute placeAttribute : placeAttributes) {
                                 resultList.add(placeAttribute.getFullname());
                             }
@@ -614,8 +620,8 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
 //    }
 
     public void getDataInFireBase(String tinh, String huyen) {
-        Log.i(LOG+".getDataInFireBase","tinh:"+tinh+"- huyen:"+huyen);
-        if(tinh!=null &&huyen!=null) {
+        Log.i(LOG + ".getDataInFireBase", "tinh:" + tinh + "- huyen:" + huyen);
+        if (tinh != null && huyen != null) {
             list = new ArrayList<>();
             dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
             dbRef.child(//LoginSession.getInstance().getTinh()
@@ -670,8 +676,8 @@ public class MapFragment extends Fragment implements View.OnClickListener,Locati
 
                     });
 
-        }else{
-            Toast.makeText(getContext(),"Khong tim thay tinh va huyen",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getContext(), "Khong tim thay tinh va huyen", Toast.LENGTH_LONG).show();
         }
     }
 

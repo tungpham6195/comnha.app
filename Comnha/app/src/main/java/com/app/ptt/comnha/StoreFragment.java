@@ -13,13 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.Service.MyTool;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
@@ -29,8 +27,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 
 

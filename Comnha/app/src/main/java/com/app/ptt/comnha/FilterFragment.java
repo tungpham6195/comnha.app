@@ -15,11 +15,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
+import com.app.ptt.comnha.Adapters.LocatlistFilter_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
+import com.app.ptt.comnha.FireBase.Food;
 import com.app.ptt.comnha.FireBase.FoodCategory;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.FireBase.Food;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -102,7 +102,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
         mRecyclerView = (RecyclerView) view.findViewById(R.id.frg_filter_recyler);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new Locatlist_rcyler_adapter(locaList);
+        mAdapter = new LocatlistFilter_rcyler_adapter(locaList);
         mRecyclerView.setAdapter(mAdapter);
         txt_tinh.setOnClickListener(this);
         txt_quan.setOnClickListener(this);

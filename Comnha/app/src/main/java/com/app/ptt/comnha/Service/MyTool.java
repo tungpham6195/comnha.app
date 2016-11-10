@@ -23,7 +23,6 @@ import com.app.ptt.comnha.R;
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
@@ -159,6 +158,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         if (l != null) {
             this.latitude = l.getLatitude();
             this.longtitude = l.getLongitude();
+           // Log.i("LOGSDSD",returnLocationByLatLng(l.getLatitude(), l.getLongitude()).getDiachi());
             placeAPI=new PlaceAPI(returnLocationByLatLng(l.getLatitude(), l.getLongitude()).getDiachi(),this);
         }
         startLocationUpdate();
@@ -172,7 +172,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                 Log.i(LOG + ".onLocationChanged", "Vi tri cua ban bi thay doi: " + getDistance(new LatLng(location.getLatitude(), location.getLongitude()), new LatLng(this.latitude, this.longtitude)) + "m");
                 this.latitude = location.getLatitude();
                 this.longtitude = location.getLongitude();
-                yourLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
+                //yourLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
                 Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLocation.getLat() + "va lng= " + yourLocation.getLng());
             }
         }
