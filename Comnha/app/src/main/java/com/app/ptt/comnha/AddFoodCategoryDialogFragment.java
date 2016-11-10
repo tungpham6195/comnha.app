@@ -1,6 +1,7 @@
 package com.app.ptt.comnha;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,6 +32,7 @@ public class AddFoodCategoryDialogFragment extends DialogFragment implements Vie
     EditText edt_cateName;
     DatabaseReference dbRef;
     OnDismissListener onDismissListener;
+    ProgressDialog progressDialog;
 
     public interface OnDismissListener {
         void onAddComplete(boolean isComplete);
@@ -55,6 +57,7 @@ public class AddFoodCategoryDialogFragment extends DialogFragment implements Vie
     }
 
     private void anhxa(View view) {
+
         btn_addnew = (Button) view.findViewById(R.id.frg_addfcategory_btnaddnew);
         btn_cancel = (Button) view.findViewById(R.id.frg_addfcategory_btncancel);
         edt_cateName = (EditText) view.findViewById(R.id.frg_addfcategory_edtname);
@@ -72,23 +75,36 @@ public class AddFoodCategoryDialogFragment extends DialogFragment implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.frg_addfcategory_btnaddnew:
+
                 if (edt_cateName.getText().toString().trim().equals("")) {
                     Toast.makeText(getActivity(),
                             getString(R.string.txt_noFoodCateName), Toast.LENGTH_SHORT).show();
                 } else {
+
                     String key = dbRef.child(getString(R.string.foodcategory_CODE)).push().getKey();
                     FoodCategory newFoodCategory = new FoodCategory();
                     newFoodCategory.setName(edt_cateName.getText().toString());
                     Map<String, Object> foodCateValue = newFoodCategory.topMap();
                     Map<String, Object> updateChild = new HashMap<>();
                     updateChild.put(getString(R.string.foodcategory_CODE) + key, foodCateValue);
+                    progressDialog = ProgressDialog.show(getContext(), getString(R.string.txt_plzwait)
+                            , getString(R.string.txt_addinfoodcate), true, false);
                     dbRef.updateChildren(updateChild).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(getContext(),
-                                    getResources().getString(R.string.text_addnewFoodCate_successful), Toast.LENGTH_SHORT).show();
-                            onDismissListener.onAddComplete(true);
-                            getDialog().dismiss();
+                            if (task.isComplete()) {
+                                Toast.makeText(getContext(),
+                                        getResources().getString(R.string.text_addnewFoodCate_successful), Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                                onDismissListener.onAddComplete(true);
+                                getDialog().dismiss();
+                            } else {
+                                progressDialog.dismiss();
+                                Toast.makeText(getContext(),
+                                        getString(R.string.txt_failaddfoodcate),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     });
                 }

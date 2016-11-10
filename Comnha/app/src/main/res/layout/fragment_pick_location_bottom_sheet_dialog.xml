@@ -1,9 +1,25 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom|center"
     tools:context="com.app.ptt.comnha.PickLocationBottomSheetDialogFragment">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/frg_pickLoca_bottomsheet_appbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/frg_pickLoca_bottomsheet_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
+            android:theme="@style/AppTheme.AppBarOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
 
     <ListView
         android:id="@+id/frg_pickLocaBtmSheetDialog_listV"
@@ -13,5 +29,6 @@
         android:divider="@null"
         android:dividerHeight="0dp"
         android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </android.support.design.widget.CoordinatorLayout>

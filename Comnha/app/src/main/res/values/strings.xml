@@ -98,15 +98,18 @@
     <string name="txt_noChoseDistrict">Warning: Chưa chọn Quận/Huyện</string>
     <string name="txt_noChoseFood">Warning: Chưa chọn món ăn</string>
     <string name="txt_noFoodCateName">Warning: Chưa nhập tên loại món ăn</string>
+    <string name="txt_noaddress">Warning: Chưa nhập địa điểm</string>
     <string name="txt_choseLoca">Bạn đã chọn địa điểm</string>
-
+    <string name="txt_failaddfoodcate">Error: Không thể thêm loại món mới</string>
     <!--ERROR-->
+
     <string name="txt_plzwait">Please wait &#8230;</string>
     <string name="txt_logging">Đang đăng nhập &#8230;</string>
     <string name="txt_addinloca">Đang thêm địa điểm mới &#8230;</string>
     <string name="txt_addinmon">Đang thêm món mới &#8230;</string>
     <string name="txt_addinpost">Đang đăng review mới &#8230;</string>
     <string name="txt_logginout">Đang đăng xuất &#8230;</string>
+    <string name="txt_addinfoodcate">Đang thêm loại món ăn mới &#8230;</string>
     <string name="txt_choose">Chọn</string>
     <string name="txt_chosefromloca">Bộ nhớ</string>
     <string name="txt_chosefromuploaded">Ảnh đã đăng</string>
