@@ -234,9 +234,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
     @Override
     public void onLocationFinderStart() {
-        mProgressDialog = ProgressDialog.show(getActivity(),
-                getResources().getString(R.string.txt_plzwait),
-                getResources().getString(R.string.txt_addinloca), true, true);
+
     }
 
     @Override
@@ -245,7 +243,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         if (placeAttribute != null) {
             final LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
             final PlaceAttribute myPlaceAttribute=placeAttribute;
-            mProgressDialog.dismiss();
+
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState() + "/";
             huyen = placeAttribute.getDistrict() + "/";
@@ -257,6 +255,9 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
+                            mProgressDialog = ProgressDialog.show(getActivity(),
+                                    getResources().getString(R.string.txt_plzwait),
+                                    getResources().getString(R.string.txt_addinloca), true, true);
                             newLocation.setLat(newLatLng.latitude);
                             newLocation.setLng(newLatLng.longitude);
                             newLocation.setTinhtp(myPlaceAttribute.getState());
@@ -271,7 +272,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                     if (databaseError != null) {
-
+                                        mProgressDialog.dismiss();
                                         Toast.makeText(getActivity(), "Lỗi: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
                                     } else {
                                        // mProgressDialog.dismiss();
@@ -295,7 +296,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             dialog.show();
             //builder.create();
         } else {
-            mProgressDialog.dismiss();
+            //mProgressDialog.dismiss();
             Toast.makeText(getActivity(), "Lỗi! Kiểm tra dữ liệu nhập vàp ", Toast.LENGTH_LONG).show();
         }
     }
