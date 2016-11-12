@@ -234,9 +234,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
     @Override
     public void onLocationFinderStart() {
-        mProgressDialog = ProgressDialog.show(getActivity(),
-                getResources().getString(R.string.txt_plzwait),
-                getResources().getString(R.string.txt_addinloca), true, true);
+
     }
 
     @Override
@@ -244,19 +242,22 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
         if (placeAttribute != null) {
             final LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
-            final PlaceAttribute myPlaceAttribute=placeAttribute;
-            mProgressDialog.dismiss();
+            final PlaceAttribute myPlaceAttribute = placeAttribute;
+//            mProgressDialog.dismiss();
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState() + "/";
             huyen = placeAttribute.getDistrict() + "/";
             newLocation.setDiachi(placeAttribute.getFullname());
             Log.i(LOG + ".onLocationFinder", placeAttribute.getState() + "-" + placeAttribute.getDistrict());
-            final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
-            builder.setMessage("Địa chỉ: "+placeAttribute.getFullname()).setTitle("Xác nhận")
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Địa chỉ: " + placeAttribute.getFullname()).setTitle("Xác nhận")
                     .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
+                            mProgressDialog = ProgressDialog.show(getActivity(),
+                                    getResources().getString(R.string.txt_plzwait),
+                                    getResources().getString(R.string.txt_addinloca), true, true);
                             newLocation.setLat(newLatLng.latitude);
                             newLocation.setLng(newLatLng.longitude);
                             newLocation.setTinhtp(myPlaceAttribute.getState());
@@ -274,7 +275,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
                                         Toast.makeText(getActivity(), "Lỗi: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
                                     } else {
-                                       // mProgressDialog.dismiss();
+                                         mProgressDialog.dismiss();
                                         Toast.makeText(getActivity(),
                                                 getResources().getString(R.string.text_noti_addloca_succes)
                                                 , Toast.LENGTH_SHORT).show();
@@ -288,10 +289,10 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     .setNegativeButton("Thử lại", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                           dialog.dismiss();
+                            dialog.dismiss();
                         }
                     });
-            AlertDialog dialog=builder.create();
+            AlertDialog dialog = builder.create();
             dialog.show();
             //builder.create();
         } else {

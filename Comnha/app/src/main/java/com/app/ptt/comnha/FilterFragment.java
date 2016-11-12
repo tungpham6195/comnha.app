@@ -50,7 +50,6 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
