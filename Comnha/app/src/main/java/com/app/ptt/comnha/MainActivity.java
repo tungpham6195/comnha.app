@@ -615,13 +615,13 @@ public class MainActivity extends AppCompatActivity
                     myLocation = myTool.getYourLocation();
 
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), "NULL TU DAY R: BroadcastReceiver ", Toast.LENGTH_LONG).show();
+
                 }
                 if (myLocation == null) {
-                    Toast.makeText(getApplicationContext(), "NHU CC", Toast.LENGTH_LONG).show();
+
                     anhXa();
                 } else {
-                    Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_LONG).show();
+
                     anhXa();
                 }
                 //  myTool.stopGoogleApi();
@@ -632,10 +632,9 @@ public class MainActivity extends AppCompatActivity
                     myLocation = myTool.getYourLocation();
 
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), "NULL TU DAY R: BroadcastReceiver ", Toast.LENGTH_LONG).show();
                 }
                 if (myLocation == null) {
-                    Toast.makeText(getApplicationContext(), "NHU CC", Toast.LENGTH_LONG).show();
+
                     anhXa();
                 } else {
                     Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_LONG).show();

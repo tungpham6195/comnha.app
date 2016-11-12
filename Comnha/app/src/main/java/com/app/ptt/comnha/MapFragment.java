@@ -809,6 +809,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                 addMarkerCustomSearch();
             } else {
                 addMarkerYourLocation();
+                myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myTool.returnLatLngByName(huyen+", "+ tinh), 13));
             }
             dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
             ChildEventListener childEventListener = new ChildEventListener() {

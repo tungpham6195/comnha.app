@@ -242,8 +242,13 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
         if (placeAttribute != null) {
             final LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
+<<<<<<< HEAD
             final PlaceAttribute myPlaceAttribute = placeAttribute;
 //            mProgressDialog.dismiss();
+=======
+            final PlaceAttribute myPlaceAttribute=placeAttribute;
+
+>>>>>>> origin/master
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState() + "/";
             huyen = placeAttribute.getDistrict() + "/";
@@ -272,7 +277,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                                 @Override
                                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                     if (databaseError != null) {
-
+                                        mProgressDialog.dismiss();
                                         Toast.makeText(getActivity(), "Lỗi: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
                                     } else {
                                          mProgressDialog.dismiss();
@@ -296,7 +301,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             dialog.show();
             //builder.create();
         } else {
-            mProgressDialog.dismiss();
+            //mProgressDialog.dismiss();
             Toast.makeText(getActivity(), "Lỗi! Kiểm tra dữ liệu nhập vàp ", Toast.LENGTH_LONG).show();
         }
     }
