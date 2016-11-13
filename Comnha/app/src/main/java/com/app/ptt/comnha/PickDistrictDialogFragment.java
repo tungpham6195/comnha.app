@@ -75,4 +75,6 @@ public class PickDistrictDialogFragment extends DialogFragment {
     public void setOnPickDistricListener(OnPickDistricListener listener) {
         onPickDistricListener = listener;
     }
+
+
 }

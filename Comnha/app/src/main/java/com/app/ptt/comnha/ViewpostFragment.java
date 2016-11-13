@@ -235,6 +235,11 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         btn_sendcomment.setOnClickListener(this);
         btn_like.setOnClickListener(this);
         btn_comment.setOnClickListener(this);
+        if (LoginSession.getInstance().getUserID() == null) {
+            edt_comment.setEnabled(false);
+        } else {
+            edt_comment.setEnabled(true);
+        }
     }
 
     @Override

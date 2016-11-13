@@ -299,23 +299,29 @@ public class LocadetailFragment extends Fragment {
         btn_dangreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DoPost.getInstance().setMyLocation(location);
-                Intent intent = new Intent(getActivity(), Adapter2Activity.class);
-                intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frag_addpost_CODE));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                if (LoginSession.getInstance().getUserID() == null) {
+                } else {
+                    DoPost.getInstance().setMyLocation(location);
+                    Intent intent = new Intent(getActivity(), Adapter2Activity.class);
+                    intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frag_addpost_CODE));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
             }
         });
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity().getApplicationContext()
                 , new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), Adapter2Activity.class);
-                intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frg_viewpost_CODE));
-                ChoosePost.getInstance().setPostID(postlist.get(position).getPostID());
-                ChoosePost.getInstance().setTinh(tinh);
-                ChoosePost.getInstance().setHuyen(huyen);
-                startActivity(intent);
+                if (LoginSession.getInstance().getUserID() == null) {
+                } else {
+                    Intent intent = new Intent(getActivity(), Adapter2Activity.class);
+                    intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frg_viewpost_CODE));
+                    ChoosePost.getInstance().setPostID(postlist.get(position).getPostID());
+                    ChoosePost.getInstance().setTinh(tinh);
+                    ChoosePost.getInstance().setHuyen(huyen);
+                    startActivity(intent);
+                }
             }
         }));
     }
@@ -333,16 +339,19 @@ public class LocadetailFragment extends Fragment {
                 getActivity().finish();
                 return true;
             case R.id.menu_locadetail_themmon:
-                Intent intent = new Intent(getActivity(), Adapter2Activity.class);
-                intent.putExtra(getResources().getString(R.string.fragment_CODE),
-                        getResources().getString(R.string.frg_themmon_CODE));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ChooseLoca.getInstance().setLocaID(location.getLocaID());
-                ChooseLoca.getInstance().setName(location.getName());
-                ChooseLoca.getInstance().setAddress(location.getDiachi());
-                ChooseLoca.getInstance().setTinh(tinh);
-                ChooseLoca.getInstance().setHuyen(huyen);
-                startActivity(intent);
+                if (LoginSession.getInstance().getUserID() == null) {
+                } else {
+                    Intent intent = new Intent(getActivity(), Adapter2Activity.class);
+                    intent.putExtra(getResources().getString(R.string.fragment_CODE),
+                            getResources().getString(R.string.frg_themmon_CODE));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    ChooseLoca.getInstance().setLocaID(location.getLocaID());
+                    ChooseLoca.getInstance().setName(location.getName());
+                    ChooseLoca.getInstance().setAddress(location.getDiachi());
+                    ChooseLoca.getInstance().setTinh(tinh);
+                    ChooseLoca.getInstance().setHuyen(huyen);
+                    startActivity(intent);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -591,16 +591,22 @@ public class MainActivity extends AppCompatActivity
                 });
                 break;
             case R.id.main_fabitem2:
-                Intent intent = new Intent(MainActivity.this, Adapter2Activity.class);
-                intent.putExtra(getString(R.string.fragment_CODE),
-                        getString(R.string.frag_addloca_CODE));
-                startActivity(intent);
+                if (LoginSession.getInstance().getUserID() == null) {
+                } else {
+                    Intent intent = new Intent(MainActivity.this, Adapter2Activity.class);
+                    intent.putExtra(getString(R.string.fragment_CODE),
+                            getString(R.string.frag_addloca_CODE));
+                    startActivity(intent);
+                }
                 break;
             case R.id.main_fabitem3:
-                Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
-                intent1.putExtra(getString(R.string.fragment_CODE),
-                        getString(R.string.frag_addpost_CODE));
-                startActivity(intent1);
+                if (LoginSession.getInstance().getUserID() == null) {
+                } else {
+                    Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
+                    intent1.putExtra(getString(R.string.fragment_CODE),
+                            getString(R.string.frag_addpost_CODE));
+                    startActivity(intent1);
+                }
                 break;
 
         }

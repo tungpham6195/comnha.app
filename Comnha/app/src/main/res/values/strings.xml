@@ -2,7 +2,6 @@
     <string name="app_name">Cơm nhà</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="text_tenquan">Tên quán</string>
     <string name="text_tenMon">Tên món ăn</string>
     <string name="text_themMon">Thêm món ăn</string>
@@ -67,7 +66,6 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="txt_writecomment">Viết bình luận......</string>
-
     <!--ERROR-->
     <string name="txt_noemail">Warning: Chưa nhập email</string>
     <string name="txt_notemail">Error: Email không hợp lệ</string>
@@ -340,5 +338,47 @@
         <item>Hóc Môn</item>
         <item>Nhà Bè</item>
         <item>Cần Giờ</item>
+    </string-array>
+    <string-array name="haiphong">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Hồng Bàng</item>
+        <item>Lê Chân</item>
+        <item>Ngô Quyền</item>
+        <item>Kiến An</item>
+        <item>Hải An</item>
+        <item>Đồ Sơn</item>
+        <item>An Lão</item>
+        <item>Kiến Thụy</item>
+        <item>Thủy Nguyên</item>
+        <item>An Dương</item>
+        <item>Tiên Lãng</item>
+        <item>Vĩnh Bảo</item>
+        <item>Cát Hải</item>
+        <item>Bạch Long Vĩ</item>
+        <item>Dương Kinh</item>
+    </string-array>
+    <string-array name="danang">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Hải Châu</item>
+        <item>Thanh Khê</item>
+        <item>Sơn Trà</item>
+        <item>Ngũ Hành Sơn</item>
+        <item>Liên Chiểu</item>
+        <item>Hoà Vang</item>
+        <item>Cẩm Lệ</item>
+    </string-array>
+    <string-array name="hagiang">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Hà Giang</item>
+        <item>Đồng Văn</item>
+        <item>Mèo Vạc</item>
+        <item>Yên Minh</item>
+        <item>Quản Bạ</item>
+        <item>Vị Xuyên</item>
+        <item>Bắc Mê</item>
+        <item>Hoàng Su Phì</item>
+        <item>Xín Mần</item>
+        <item>Bắc Quang</item>
+        <item>Quang Bình</item>
     </string-array>
 </resources>

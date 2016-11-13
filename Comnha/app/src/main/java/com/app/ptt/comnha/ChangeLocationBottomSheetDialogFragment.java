@@ -115,6 +115,15 @@ public class ChangeLocationBottomSheetDialogFragment extends BottomSheetDialogFr
                     case 1:
                         mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.hochiminh, android.R.layout.simple_list_item_1);
                         listVDis.setAdapter(mAdapterDis);
+                    case 2:
+                        mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.haiphong, android.R.layout.simple_list_item_1);
+                        listVDis.setAdapter(mAdapterDis);
+                    case 3:
+                        mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.danang, android.R.layout.simple_list_item_1);
+                        listVDis.setAdapter(mAdapterDis);
+                    case 4:
+                        mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.hagiang, android.R.layout.simple_list_item_1);
+                        listVDis.setAdapter(mAdapterDis);
                 }
                 AnimationUtils.animatMoveListForward(listVPro, listVDis);
                 mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);

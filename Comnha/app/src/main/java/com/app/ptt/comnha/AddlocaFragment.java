@@ -242,13 +242,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
         if (placeAttribute != null) {
             final LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
-<<<<<<< HEAD
             final PlaceAttribute myPlaceAttribute = placeAttribute;
 //            mProgressDialog.dismiss();
-=======
-            final PlaceAttribute myPlaceAttribute=placeAttribute;
-
->>>>>>> origin/master
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState() + "/";
             huyen = placeAttribute.getDistrict() + "/";
