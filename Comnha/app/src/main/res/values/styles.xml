@@ -9,11 +9,27 @@
         <item name="editTextColor">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="android:alertDialogTheme">@style/AppThem.LoadingDialog</item>-->
+        <!--<item name="android:alertDialogStyle">@style/AppThem.LoadingDialog</item>-->
+    </style>
+    <!--<style name="AppTheme.ProgressBar" parent="Widget.AppCompat.Spinner">-->
+    <!--<item name="android:colorAccent">@color/black</item>-->
+    <!--</style>-->
+    <style name="AppThem.LoadingDialog" parent="Base.Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:height">40dp</item>
+        <item name="android:width">400dp</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="AppTheme.LocationDetial" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:statusBarColor">@android:color/black</item>
+    </style>
+
+    <style name="AppTheme.SplashActivity" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu">

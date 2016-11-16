@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
     private TextView txt_email, txt_un;
     private FloatingActionMenu fabmenu;
     //private boolean checkConnection = true;
-    private FloatingActionButton fab_review, fab_addloca, fab_uploadpho;
+    private FloatingActionButton fab_review, fab_addloca, fab_changloca;
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     private Firebase ref;
     private BottomBar bottomBar;
@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity
 
         Log.i(LOG, "onCreate");
         progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(getString(R.string.txt_plzwait));
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Loading");
         progressDialog.show();
         setContentView(R.layout.activity_main2);
@@ -170,15 +173,17 @@ public class MainActivity extends AppCompatActivity
 //                myLocation.getTinhtp()
             LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
             LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+            fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
+                    + LoginSession.getInstance().getTinh());
         }
         bottomBar = (BottomBar) findViewById(R.id.bottomBar);
         fabmenu = (FloatingActionMenu) findViewById(R.id.main_fabMenu);
         fab_review = (FloatingActionButton) findViewById(R.id.main_fabitem3);
         fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
-        fab_uploadpho = (FloatingActionButton) findViewById(R.id.main_fabitem1);
+        fab_changloca = (FloatingActionButton) findViewById(R.id.main_fabitem1);
         fab_review.setOnClickListener(this);
         fab_addloca.setOnClickListener(this);
-        fab_uploadpho.setOnClickListener(this);
+        fab_changloca.setOnClickListener(this);
         fabmenu.setClosedOnTouchOutside(true);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -526,7 +531,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onChangeLocation(String Province, String District) {
                         LoginSession.getInstance().setTinh(Province);
-                        fab_uploadpho.setLabelText(Province + ", " + District);
+                        fab_changloca.setLabelText(Province + ", " + District);
                         LoginSession.getInstance().setHuyen(District);
                         fabmenu.close(true);
                         FragmentTransaction transaction;
@@ -560,7 +565,8 @@ public class MainActivity extends AppCompatActivity
                         if (isMylocation) {
                             LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
                             LoginSession.getInstance().setTinh(myLocation.getTinhtp());
-                            fab_uploadpho.setLabelText(getString(R.string.action_changeloca));
+                            fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", " +
+                                    LoginSession.getInstance().getTinh());
                             fabmenu.close(true);
                             FragmentTransaction transaction;
                             switch (bottomBar.getCurrentTabPosition()) {
@@ -592,6 +598,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.main_fabitem2:
                 if (LoginSession.getInstance().getUserID() == null) {
+                    Toast.makeText(this, getString(R.string.txt_needlogin),
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(MainActivity.this, Adapter2Activity.class);
                     intent.putExtra(getString(R.string.fragment_CODE),
@@ -601,6 +609,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.main_fabitem3:
                 if (LoginSession.getInstance().getUserID() == null) {
+                    Toast.makeText(this, getString(R.string.txt_needlogin),
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
                     intent1.putExtra(getString(R.string.fragment_CODE),

@@ -62,11 +62,36 @@ public class PickLocationBottomSheetDialogFragment extends BottomSheetDialogFrag
             mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.tinhtp, android.R.layout.simple_list_item_1);
         } else if (getTag().equals("pickDistrictDialog")) {
             mToolbar.setTitle(getString(R.string.text_pickDistrict));
-            if (whatProvince == 0) {
-                mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.hanoi, android.R.layout.simple_list_item_1);
-            }
-            if (whatProvince == 1) {
-                mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.hochiminh, android.R.layout.simple_list_item_1);
+            switch (whatProvince) {
+                case 0:
+                    mAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.hanoi, android.R.layout.simple_list_item_1);
+                    break;
+                case 1:
+                    mAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.hochiminh, android.R.layout.simple_list_item_1);
+                    break;
+                case 2:
+                    mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.haiphong, android.R.layout.simple_list_item_1);
+                    break;
+                case 3:
+                    mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.danang, android.R.layout.simple_list_item_1);
+                    break;
+                case 4:
+                    mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.hagiang, android.R.layout.simple_list_item_1);
+                    break;
+                case 38:
+                    mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.daklak, android.R.layout.simple_list_item_1);
+                    break;
+                case 40:
+                    mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.lamdong, android.R.layout.simple_list_item_1);
+                    break;
+                case 61:
+                    mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.daknong, android.R.layout.simple_list_item_1);
+                    break;
+                case 36:
+                    mAdapter = ArrayAdapter.createFromResource(getContext(), R.array.gialai, android.R.layout.simple_list_item_1);
+                    break;
+                default:
+                    mAdapter = null;
             }
         }
         listView.setAdapter(mAdapter);

@@ -286,7 +286,9 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                 getResources().getString(R.string.locations_CODE)
                 + locaID, updateLoca);
         MyLocation usertrackLoca = updateLoca;
-        childUpdates.put(tinh + huyen + getString(R.string.usertrackloca_CODE) + locaID, usertrackLoca);
+        childUpdates.put(tinh + huyen + getString(R.string.usertrackloca_CODE)
+                + LoginSession.getInstance().getUserID() + "/"
+                + locaID, usertrackLoca);
         try {
             for (File f : DoPost.getInstance().getFiles()) {
                 Uri uri = Uri.fromFile(f);

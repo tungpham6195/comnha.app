@@ -132,7 +132,8 @@ public class ActListFragment extends Fragment {
             case 1:
                 switch (filter) {
                     case 1:
-                        dbRef.child(tinh + "/" + huyen + "/" + getString(R.string.usertrackloca_CODE))
+                        dbRef.child(tinh + "/" + huyen + "/" + getString(R.string.usertrackloca_CODE)
+                        +LoginSession.getInstance().getUserID())
                                 .addChildEventListener(locationChildEventListener);
                         break;
                 }

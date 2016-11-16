@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -150,7 +149,6 @@ public class MapFragment extends Fragment implements View.OnClickListener,
         card_pickDistrict.setOnClickListener(this);
         card_pickProvince.setOnClickListener(this);
         card_mylocation.setOnClickListener(this);
-        pickLocationDialog.setOnPickListener(this);
         pickLocationDialog.setOnPickListener(this);
         edt_content.setOnKeyListener(this);
         edt_content.addTextChangedListener(new TextWatcher() {
@@ -442,13 +440,13 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                             myGoogleMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
                                 @Override
                                 public void onInfoWindowLongClick(Marker marker) {
-                                    if((marker.getPosition().latitude != yourLocation.getLat())
-                                            && (marker.getPosition().longitude != yourLocation.getLng()) ) {
+                                    if ((marker.getPosition().latitude != yourLocation.getLat())
+                                            && (marker.getPosition().longitude != yourLocation.getLng())) {
                                         if (myLocationSearch == null || (myLocationSearch != null
                                                 && (marker.getPosition().latitude != myLocationSearch.getPlaceLatLng().latitude
                                                 && (marker.getPosition().longitude != myLocationSearch.getPlaceLatLng().longitude)))) {
                                             MyLocation a = returnLocation(marker);
-                                            if(a!=null&& a.getQuanhuyen()!=null &&a.getLocaID()!=null&&a.getTinhtp()!=null) {
+                                            if (a != null && a.getQuanhuyen() != null && a.getLocaID() != null && a.getTinhtp() != null) {
                                                 Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                                                 intent.putExtra(getResources().getString(R.string.fragment_CODE),
                                                         getResources().getString(R.string.frag_locadetail_CODE));
@@ -458,8 +456,8 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                                                 ChooseLoca.getInstance().setTinh(a.getTinhtp());
                                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                                 startActivity(intent);
-                                            }else{
-                                                Toast.makeText(getContext(),a.getDiachi()+"-"+a.getTinhtp()+"-"+a.getQuanhuyen(),Toast.LENGTH_LONG).show();
+                                            } else {
+                                                Toast.makeText(getContext(), a.getDiachi() + "-" + a.getTinhtp() + "-" + a.getQuanhuyen(), Toast.LENGTH_LONG).show();
                                             }
 
                                         }
@@ -544,7 +542,6 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                             });
                         }
                     });
-
 
 
                 }
@@ -809,7 +806,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                 addMarkerCustomSearch();
             } else {
                 addMarkerYourLocation();
-                myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myTool.returnLatLngByName(huyen+", "+ tinh), 13));
+                myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myTool.returnLatLngByName(huyen + ", " + tinh), 13));
             }
             dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
             ChildEventListener childEventListener = new ChildEventListener() {

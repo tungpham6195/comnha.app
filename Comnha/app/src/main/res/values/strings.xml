@@ -67,6 +67,7 @@
     <string name="title_section3">Section 3</string>
     <string name="txt_writecomment">Viết bình luận......</string>
     <!--ERROR-->
+    <string name="txt_needlogin">Bạn cần đăng nhập</string>
     <string name="txt_noemail">Warning: Chưa nhập email</string>
     <string name="txt_notemail">Error: Email không hợp lệ</string>
     <string name="txt_nopass">Warning: Chưa nhập password</string>
@@ -218,69 +219,69 @@
         completions."
     </string>
     <string-array name="tinhtp">
-        <item>Hà Nội</item>
-        <item>Hồ Chí Minh</item>
-        <item>Hải Phòng</item>
-        <item>Đà Nẵng</item>
-        <item>Hà Giang</item>
-        <item>Cao Bằng</item>
-        <item>Lai Châu</item>
-        <item>Lào Cai</item>
-        <item>Tuyên Quang</item>
-        <item>Lạng Sơn</item>
-        <item>Bắc Kạn</item>
-        <item>Thái Nguyên</item>
-        <item>Yên Bái</item>
-        <item>Sơn La</item>
-        <item>Phú Thọ</item>
-        <item>Vĩnh Phúc</item>
-        <item>Quảng Ninh</item>
-        <item>Bắc Giang</item>
-        <item>Bắc Ninh</item>
-        <item>Hải Dương</item>
-        <item>Hưng Yên</item>
-        <item>Hòa Bình</item>
-        <item>Hà Nam</item>
-        <item>Nam Định</item>
-        <item>Thái Bình</item>
-        <item>Ninh Bình</item>
-        <item>Thanh Hóa</item>
-        <item>Nghệ An</item>
-        <item>Hà Tĩnh</item>
-        <item>Quảng Bình</item>
-        <item>Quảng Trị</item>
-        <item>Thừa Thiên Huế</item>
-        <item>Quảng Nam</item>
-        <item>Quảng Ngãi</item>
-        <item>Kon Tum</item>
-        <item>Bình Định</item>
-        <item>Gia Lai</item>
-        <item>Phú Yên</item>
-        <item>Đăk Lăk</item>
-        <item>Khánh Hòa</item>
-        <item>Lâm Đồng</item>
-        <item>Bình Phước</item>
-        <item>Bình Dương</item>
-        <item>Ninh Thuận</item>
-        <item>Tây Ninh</item>
-        <item>Bình Thuận</item>
-        <item>Đồng Nai</item>
-        <item>Long An</item>
-        <item>Đồng Tháp</item>
-        <item>An Giang</item>
-        <item>Bà Rịa Vũng Tàu</item>
-        <item>Tiền Giang</item>
-        <item>Kiên Giang</item>
-        <item>Trà Vinh</item>
-        <item>Bến Tre</item>
-        <item>Vĩnh Long</item>
-        <item>Trà Vinh</item>
-        <item>Sóc Trăng</item>
-        <item>Bạc Liêu</item>
-        <item>Cà Mau</item>
-        <item>Điện Biên</item>
-        <item>Đắk Nông</item>
-        <item>Hậu Giang</item>
+        <item>Hà Nội</item>//0
+        <item>Hồ Chí Minh</item>//1
+        <item>Hải Phòng</item>//2
+        <item>Đà Nẵng</item>//3
+        <item>Hà Giang</item>//4
+        <item>Cao Bằng</item>//5
+        <item>Lai Châu</item>//6
+        <item>Lào Cai</item>//7
+        <item>Tuyên Quang</item>//8
+        <item>Lạng Sơn</item>//9
+        <item>Bắc Kạn</item>//10
+        <item>Thái Nguyên</item>//11
+        <item>Yên Bái</item>//12
+        <item>Sơn La</item>//13
+        <item>Phú Thọ</item>//14
+        <item>Vĩnh Phúc</item>//15
+        <item>Quảng Ninh</item>//16
+        <item>Bắc Giang</item>//17
+        <item>Bắc Ninh</item>//18
+        <item>Hải Dương</item>//19
+        <item>Hưng Yên</item>//20
+        <item>Hòa Bình</item>//21
+        <item>Hà Nam</item>//22
+        <item>Nam Định</item>//23
+        <item>Thái Bình</item>//24
+        <item>Ninh Bình</item>//25
+        <item>Thanh Hóa</item>//26
+        <item>Nghệ An</item>//27
+        <item>Hà Tĩnh</item>//28
+        <item>Quảng Bình</item>//29
+        <item>Quảng Trị</item>//30
+        <item>Thừa Thiên Huế</item>//31
+        <item>Quảng Nam</item>//32
+        <item>Quảng Ngãi</item>//33
+        <item>Kon Tum</item>//34
+        <item>Bình Định</item>//35
+        <item>Gia Lai</item>//36
+        <item>Phú Yên</item>//37
+        <item>Đăk Lăk</item>//38
+        <item>Khánh Hòa</item>//39
+        <item>Lâm Đồng</item>//40
+        <item>Bình Phước</item>//41
+        <item>Bình Dương</item>//42
+        <item>Ninh Thuận</item>//43
+        <item>Tây Ninh</item>//44
+        <item>Bình Thuận</item>//45
+        <item>Đồng Nai</item>//46
+        <item>Long An</item>//47
+        <item>Đồng Tháp</item>//48
+        <item>An Giang</item>//49
+        <item>Bà Rịa Vũng Tàu</item>//50
+        <item>Tiền Giang</item>//51
+        <item>Kiên Giang</item>//52
+        <item>Trà Vinh</item>//53
+        <item>Bến Tre</item>//54
+        <item>Vĩnh Long</item>//55
+        <item>Trà Vinh</item>//56
+        <item>Sóc Trăng</item>//57
+        <item>Bạc Liêu</item>//58
+        <item>Cà Mau</item>//59
+        <item>Điện Biên</item>//60
+        <item>Đắk Nông</item>//61
+        <item>Hậu Giang</item>//62
     </string-array>
     <string-array name="hanoi">
         <item>Ba Đình</item>
@@ -380,5 +381,163 @@
         <item>Xín Mần</item>
         <item>Bắc Quang</item>
         <item>Quang Bình</item>
+    </string-array>
+    <string-array name="caobang">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Cao Bằng</item>
+        <item>Bảo Lạc</item>
+        <item>Thông Nông</item>
+        <item>Hà Quảng</item>
+        <item>Trà Lĩnh</item>
+        <item>Trùng Khánh</item>
+        <item>Nguyên Bình</item>
+        <item>Hoà An</item>
+        <item>Quảng Uyên</item>
+        <item>Thạch An</item>
+        <item>Hạ Lang</item>
+        <item>Bảo Lâm</item>
+        <item>Phục Hoà</item>
+    </string-array>
+    <string-array name="laichau">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Lai Châu</item>
+        <item>Tam Đường</item>
+        <item>Phong Thổ</item>
+        <item>Sìn Hồ</item>
+        <item>Mường Tè</item>
+        <item>Than Uyên</item>
+        <item>Tân Uyên</item>
+        <item>Nậm Nhùm</item>
+    </string-array>
+    <string-array name="laocai">
+        <item>0800 Sở Giáo dục và Đào tạo</item>
+        <item>Lào Cai</item>
+        <item>Xi Ma Cai</item>
+        <item>Bát Xát</item>
+        <item>Bảo Thắng</item>
+        <item>Sa Pa</item>
+        <item>Văn Bàn</item>
+        <item>Bảo Yên</item>
+        <item>Bắc Hà</item>
+        <item>Mường Khương</item>
+    </string-array>
+    <string-array name="thanhhoa">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Thanh Hoá</item>
+        <item>Bỉm Sơn</item>
+        <item>Sầm Sơn</item>
+        <item>Quan Hoá</item>
+        <item>Quan Sơn</item>
+        <item>Mường Lát</item>
+        <item>Bá Thước</item>
+        <item>Thường Xuân</item>
+        <item>Như Xuân</item>
+        <item>Như Thanh</item>
+        <item>Lang Chánh</item>
+        <item>Ngọc Lặc</item>
+        <item>Thạch Thành</item>
+        <item>Cẩm Thủy</item>
+        <item>Thọ Xuân</item>
+        <item>Vĩnh Lộc</item>
+        <item>Thiệu Hoá</item>
+        <item>Triệu Sơn</item>
+        <item>Nông Cống</item>
+        <item>Đông Sơn</item>
+        <item>Hà Trung</item>
+        <item>Hoằng Hoá</item>
+        <item>Nga Sơn</item>
+        <item>Hậu Lộc</item>
+        <item>Quảng Xương</item>
+        <item>Tĩnh Gia</item>
+        <item>Yên Định</item>
+    </string-array>
+    <string-array name="binhdinh">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Quy Nhơn</item>
+        <item>An Lão</item>
+        <item>Hoài Ân</item>
+        <item>Hoài Nhơn</item>
+        <item>Phù Mỹ</item>
+        <item>Phù Cát</item>
+        <item>Vĩnh Thạnh</item>
+        <item>Tây Sơn</item>
+        <item>Vân Canh</item>
+        <item>An Nhơn</item>
+        <item>Tuy Phước</item>
+    </string-array>
+    <string-array name="khanhhoa">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Nha Trang</item>
+        <item>Vạn Ninh</item>
+        <item>Ninh Hoà</item>
+        <item>Diên Khánh</item>
+        <item>Khánh Vĩnh</item>
+        <item>Cam Ranh</item>
+        <item>Khánh Sơn</item>
+        <item>Trường Sa</item>
+        <item>Cam Lâm</item>
+    </string-array>
+    <string-array name="daklak">
+        <item>Buôn Ma Thuột</item>
+        <item>Ea H Leo</item>
+        <item>Krông Buk</item>
+        <item>Krông Năng</item>
+        <item>Ea Súp</item>
+        <item>Cư Mgar</item>
+        <item>Krông Pắc</item>
+        <item>Ea Kar</item>
+        <item>M\'Đrăk</item>
+        <item>Krông Ana</item>
+        <item>Krông Bông</item>
+        <item>Lăk</item>
+        <item>Buôn Đôn</item>
+        <item>Cư Kuin</item>
+        <item>Buôn Hồ</item>
+    </string-array>
+    <string-array name="lamdong">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Đà Lạt</item>
+        <item>Bảo Lộc</item>
+        <item>Đức Trọng</item>
+        <item>Di Linh</item>
+        <item>Đơn Dương</item>
+        <item>Lạc Dương</item>
+        <item>Đạ Huoai</item>
+        <item>Đạ Tẻh</item>
+        <item>Cát Tiên</item>
+        <item>Lâm Hà</item>
+        <item>Bảo Lâm</item>
+        <item>Đam Rông</item>
+    </string-array>
+    <string-array name="daknong">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Gia Nghĩa</item>
+        <item>Đăk RLấp</item>
+        <item>Đăk Mil</item>
+        <item>Cư Jút</item>
+        <item>Đăk Song</item>
+        <item>Krông Nô</item>
+        <item>Đăk GLong</item>
+        <item>Tuy Đức</item>
+    </string-array>
+    <string-array name="gialai">
+        <item>Sở Giáo dục và Đào tạo</item>
+        <item>Pleiku</item>
+        <item>Chư Păh</item>
+        <item>Mang Yang</item>
+        <item>Kbang</item>
+        <item>An Khê</item>
+        <item>Kông Chro</item>
+        <item>Đức Cơ</item>
+        <item>Chư Prông</item>
+        <item>Chư Sê</item>
+        <item>Ayun Pa</item>
+        <item>Krông Pa</item>
+        <item>Ia Grai</item>
+        <item>Đak Đoa</item>
+        <item>Ia Pa</item>
+        <item>Đak Pơ</item>
+        <item>Phú Thiện</item>
+        <item>Chư Pưh</item>
     </string-array>
 </resources>

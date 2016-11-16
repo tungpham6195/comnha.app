@@ -158,7 +158,7 @@ public class ActivityFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onPickProvince(String province, int position) {
-        whatProvince = position + 1;
+        whatProvince = position;
         txt_tinh.setText(province);
         tinh = province;
     }

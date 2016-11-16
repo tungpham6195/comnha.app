@@ -2,6 +2,7 @@ package com.app.ptt.comnha.Classes;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -137,6 +138,55 @@ public class AnimationUtils {
         animatorTranslateXProList.setDuration(400);
         animatorTranslateXProList.start();
         animatorTranslateXDisList.start();
+    }
+
+    public static void animateTransAlpha(View view1) {
+        ObjectAnimator animTransY = ObjectAnimator.ofFloat(view1, "translationY", 1800, 0);
+        ObjectAnimator animAlpha = ObjectAnimator.ofFloat(view1, "alpha", 0f, 1f);
+        animAlpha.setDuration(2500);
+        animTransY.setDuration(2500).setStartDelay(500);
+        animAlpha.start();
+        animTransY.start();
+
+    }
+
+    public static void animateTransTrip(View view1, View view2, View view3, View view4, View view5, View view6) {
+        ObjectAnimator traslateX1 = ObjectAnimator.ofFloat(view1, "translationX", -630, 400, 1260);
+        ObjectAnimator traslateX2 = ObjectAnimator.ofFloat(view2, "translationX", -630, 370, 1260);
+        ObjectAnimator traslateX3 = ObjectAnimator.ofFloat(view3, "translationX", -630, 330, 1260);
+        ObjectAnimator traslateX4 = ObjectAnimator.ofFloat(view4, "translationX", -630, 280, 1260);
+        ObjectAnimator traslateX5 = ObjectAnimator.ofFloat(view5, "translationX", -630, 220, 1260);
+        ObjectAnimator traslateX6 = ObjectAnimator.ofFloat(view6, "translationX", -630, 150, 1260);
+        traslateX1.setDuration(2500);
+        traslateX1.setStartDelay(100);
+
+        traslateX2.setDuration(2500);
+        traslateX2.setStartDelay(200);
+
+        traslateX3.setDuration(2500);
+        traslateX3.setStartDelay(300);
+
+        traslateX4.setDuration(2500);
+        traslateX4.setStartDelay(400);
+
+        traslateX5.setDuration(2500);
+        traslateX5.setStartDelay(500);
+
+        traslateX6.setDuration(2500);
+        traslateX6.setStartDelay(600);
+
+        traslateX1.setRepeatCount(ValueAnimator.INFINITE);
+        traslateX2.setRepeatCount(ValueAnimator.INFINITE);
+        traslateX3.setRepeatCount(ValueAnimator.INFINITE);
+        traslateX4.setRepeatCount(ValueAnimator.INFINITE);
+        traslateX5.setRepeatCount(ValueAnimator.INFINITE);
+        traslateX6.setRepeatCount(ValueAnimator.INFINITE);
+        traslateX1.start();
+        traslateX2.start();
+        traslateX3.start();
+        traslateX4.start();
+        traslateX5.start();
+        traslateX6.start();
     }
 
 }

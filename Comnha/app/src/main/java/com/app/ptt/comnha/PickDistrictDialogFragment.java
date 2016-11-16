@@ -49,12 +49,35 @@ public class PickDistrictDialogFragment extends DialogFragment {
     private void anhxa(View view) {
         mListView = (ListView) view.findViewById(R.id.frg_pickDistrict_listV);
         switch (whatprovince) {
-            case 1:
+            case 0:
                 adapter = ArrayAdapter.createFromResource(getActivity(), R.array.hanoi, android.R.layout.simple_list_item_1);
                 break;
-            case 2:
+            case 1:
                 adapter = ArrayAdapter.createFromResource(getActivity(), R.array.hochiminh, android.R.layout.simple_list_item_1);
                 break;
+            case 2:
+                adapter = ArrayAdapter.createFromResource(getContext(), R.array.haiphong, android.R.layout.simple_list_item_1);
+                break;
+            case 3:
+                adapter = ArrayAdapter.createFromResource(getContext(), R.array.danang, android.R.layout.simple_list_item_1);
+                break;
+            case 4:
+                adapter = ArrayAdapter.createFromResource(getContext(), R.array.hagiang, android.R.layout.simple_list_item_1);
+                break;
+            case 38:
+                adapter = ArrayAdapter.createFromResource(getContext(), R.array.daklak, android.R.layout.simple_list_item_1);
+                break;
+            case 40:
+                adapter = ArrayAdapter.createFromResource(getContext(), R.array.lamdong, android.R.layout.simple_list_item_1);
+                break;
+            case 61:
+                adapter = ArrayAdapter.createFromResource(getContext(), R.array.daknong, android.R.layout.simple_list_item_1);
+                break;
+            case 36:
+                adapter = ArrayAdapter.createFromResource(getContext(), R.array.gialai, android.R.layout.simple_list_item_1);
+                break;
+            default:
+                adapter = null;
         }
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

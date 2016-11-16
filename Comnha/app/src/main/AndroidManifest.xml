@@ -20,7 +20,6 @@
 
         <activity android:name=".Adapter2Activity" />
         <activity android:name=".AdapterActivity" />
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,6 +32,15 @@
             android:name=".Service.MyService"
             android:enabled="true"
             android:exported="true" />
+
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/AppTheme.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

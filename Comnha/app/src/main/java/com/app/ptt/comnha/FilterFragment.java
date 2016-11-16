@@ -188,7 +188,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     @Override
     public void onPickProvince(String province, int position) {
         txt_tinh.setText(province);
-        whatProvince = position + 1;
+        whatProvince = position ;
         tinh = province;
     }
 

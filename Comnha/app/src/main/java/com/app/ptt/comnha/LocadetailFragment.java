@@ -27,10 +27,10 @@ import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
 import com.app.ptt.comnha.Adapters.Thucdon_rcyler_adapter;
 import com.app.ptt.comnha.Classes.CalcuAVGRate;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
+import com.app.ptt.comnha.FireBase.Food;
 import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
-import com.app.ptt.comnha.FireBase.Food;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
@@ -300,6 +300,8 @@ public class LocadetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (LoginSession.getInstance().getUserID() == null) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_needlogin),
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     DoPost.getInstance().setMyLocation(location);
                     Intent intent = new Intent(getActivity(), Adapter2Activity.class);
@@ -314,6 +316,8 @@ public class LocadetailFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 if (LoginSession.getInstance().getUserID() == null) {
+                    Toast.makeText(getActivity(), getString(R.string.txt_needlogin),
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(getActivity(), Adapter2Activity.class);
                     intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frg_viewpost_CODE));

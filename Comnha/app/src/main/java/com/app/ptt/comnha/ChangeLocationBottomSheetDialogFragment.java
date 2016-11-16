@@ -72,7 +72,6 @@ public class ChangeLocationBottomSheetDialogFragment extends BottomSheetDialogFr
 
                 @Override
                 public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
                     if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                         ((BottomSheetBehavior) behavior).setState(BottomSheetBehavior.STATE_COLLAPSED);
                     }
@@ -115,14 +114,37 @@ public class ChangeLocationBottomSheetDialogFragment extends BottomSheetDialogFr
                     case 1:
                         mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.hochiminh, android.R.layout.simple_list_item_1);
                         listVDis.setAdapter(mAdapterDis);
+                        break;
                     case 2:
                         mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.haiphong, android.R.layout.simple_list_item_1);
                         listVDis.setAdapter(mAdapterDis);
+                        break;
                     case 3:
                         mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.danang, android.R.layout.simple_list_item_1);
                         listVDis.setAdapter(mAdapterDis);
+                        break;
                     case 4:
                         mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.hagiang, android.R.layout.simple_list_item_1);
+                        listVDis.setAdapter(mAdapterDis);
+                        break;
+                    case 38:
+                        mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.daklak, android.R.layout.simple_list_item_1);
+                        listVDis.setAdapter(mAdapterDis);
+                        break;
+                    case 40:
+                        mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.lamdong, android.R.layout.simple_list_item_1);
+                        listVDis.setAdapter(mAdapterDis);
+                        break;
+                    case 61:
+                        mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.daknong, android.R.layout.simple_list_item_1);
+                        listVDis.setAdapter(mAdapterDis);
+                        break;
+                    case 36:
+                        mAdapterDis = ArrayAdapter.createFromResource(getContext(), R.array.gialai, android.R.layout.simple_list_item_1);
+                        listVDis.setAdapter(mAdapterDis);
+                        break;
+                    default:
+                        mAdapterDis = null;
                         listVDis.setAdapter(mAdapterDis);
                 }
                 AnimationUtils.animatMoveListForward(listVPro, listVDis);
