@@ -31,7 +31,9 @@ import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.Times;
 import com.app.ptt.comnha.FireBase.Comment;
 import com.app.ptt.comnha.FireBase.Image;
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
+import com.app.ptt.comnha.FireBase.TrackLocation;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -70,9 +72,12 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     DatabaseReference dbRef;
     StorageReference storageRef;
     ChildEventListener commentChildEventListener, albumChildEventListener;
-    ValueEventListener postValueEventListener, locaValueEventListener;
+    ValueEventListener postValueEventListener, locaValueEventListener, tracklocaValueEventListener;
     LinearLayout linearAlbum;
     ProgressDialog mProgressDialog;
+    MyLocation myLocation;
+    boolean hastrack = false;
+    TrackLocation trackLocation;
 
     public ViewpostFragment() {
         // Required empty public constructor
@@ -95,10 +100,28 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         huyen = ChoosePost.getInstance().getHuyen();
         postID = ChoosePost.getInstance().getPostID();
         anhxa(view);
-        locaValueEventListener=new ValueEventListener() {
+        mProgressDialog.show();
+        tracklocaValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                trackLocation = dataSnapshot.getValue(TrackLocation.class);
+                trackLocation.setLocaID(dataSnapshot.getKey());
+                hastrack = true;
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        locaValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                myLocation = dataSnapshot.getValue(MyLocation.class);
+                myLocation.setLocaID(dataSnapshot.getKey());
+                dbRef.child(tinh + "/" + huyen + "/" + getString(R.string.usertrackloca_CODE)
+                        + post.getUid() + "/" + myLocation.getLocaID())
+                        .addListenerForSingleValueEvent(tracklocaValueEventListener);
             }
 
             @Override
@@ -168,6 +191,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                 txt_gia.setText(post.getGia() + "");
                 txt_pv.setText(post.getPhucvu() + "");
                 txt_vs.setText(post.getVesinh() + "");
+                mProgressDialog.dismiss();
             }
 
             @Override
@@ -206,15 +230,30 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         Log.d("postID", postID);
         dbRef.child(tinh + "/" + huyen + "/" +
                 getString(R.string.posts_CODE) + postID)
-                .addValueEventListener(postValueEventListener);
+                .addListenerForSingleValueEvent(postValueEventListener);
         dbRef.child(tinh + "/" + huyen + "/" +
-                getString(R.string.postcomment_CODE)).orderByChild("postID").equalTo(postID)
+                getString(R.string.postcomment_CODE) + postID)
                 .addChildEventListener(commentChildEventListener);
         dbRef.child(getResources().getString(R.string.images_CODE))
                 .orderByChild("postID")
                 .equalTo(postID)
                 .addChildEventListener(albumChildEventListener);
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mProgressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                dbRef.child(tinh + "/" + huyen + "/"
+                        + getString(R.string.locations_CODE) + post.getLocaID())
+                        .addListenerForSingleValueEvent(locaValueEventListener);
+
+            }
+        });
+
     }
 
     @Override
@@ -272,10 +311,15 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        dbRef.removeEventListener(tracklocaValueEventListener);
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.frg_viewrev_txtv_like:
-
                 break;
             case R.id.frg_viewrev_btn_sendcomment:
                 if (!edt_comment.getText().toString().equals("")) {
@@ -291,7 +335,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                     Map<String, Object> commentValues = newComment.toMap();
                     Map<String, Object> childUpdates = new HashMap<String, Object>();
                     childUpdates.put(tinh + "/" + huyen + "/" +
-                            getResources().getString(R.string.postcomment_CODE)
+                            getResources().getString(R.string.postcomment_CODE) + postID + "/"
                             + key, commentValues);
                     childUpdates.put(tinh + "/" + huyen + "/" +
                             getResources().getString(R.string.posts_CODE)
@@ -339,22 +383,28 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.popup_reviewdetail_delete:
-                                new AlertDialog.Builder(getActivity())
-                                        .setMessage("Bạn muốn xóa bài viết này?")
-                                        .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                mProgressDialog.show();
-
-                                            }
-                                        })
-                                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        }).show();
-
+                                if (!post.getUid().equals(LoginSession.getInstance()
+                                        .getUserID())) {
+                                    Toast.makeText(getContext(), "Bạn không thể xóa, bài này thuộc sở hữa của người khác",
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    new AlertDialog.Builder(getActivity())
+                                            .setMessage("Bạn muốn xóa bài viết này?")
+                                            .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dbRef.removeEventListener(postValueEventListener);
+                                                    mProgressDialog.show();
+                                                    delete();
+                                                }
+                                            })
+                                            .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            }).show();
+                                }
                                 return true;
                             case R.id.popup_reviewdetail_report:
                                 return true;
@@ -368,38 +418,113 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     }
 
     private void deletepost() {
-        dbRef.removeEventListener(postValueEventListener);
-        dbRef.child(tinh + "/" + huyen + "/"
-                + getString(R.string.posts_CODE) + postID).removeValue()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (!task.isComplete()) {
-                            mProgressDialog.dismiss();
-                            Toast.makeText(getContext(),
-                                    task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            dbRef.child(tinh + "/" + huyen + "/" +
-                                    getString(R.string.userpost_CODE)
-                                    + post.getUid() + "/" + postID).removeValue()
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (!task.isComplete()) {
-                                                Toast.makeText(getContext(),
-                                                        task.getException().getMessage(),
-                                                        Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                mProgressDialog.dismiss();
-                                                Toast.makeText(getContext(), "Xóa thành công",
-                                                        Toast.LENGTH_SHORT).show();
-                                                getActivity().finish();
-                                            }
-                                        }
-                                    });
-                        }
-                    }
-                });
+        if (hastrack) {
+            int trackcount = trackLocation.getCountTrack() - 1;
+            if (trackLocation.getCountTrack() == 0) {
+                dbRef.child(tinh + "/" + huyen + "/"
+                        + getString(R.string.usertrackloca_CODE) +
+                        post.getUid()
+                        + "/" + myLocation.getLocaID()).removeValue()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                delete();
+                            }
+                        });
+            } else if (trackLocation.getCountTrack() > 0) {
+                trackLocation.setCountTrack(trackcount);
+                Map<String, Object> updatechild = new HashMap<>();
+                updatechild.put(tinh + "/" + huyen + "/"
+                        + getString(R.string.usertrackloca_CODE) +
+                        post.getUid()
+                        + "/" + myLocation.getLocaID(), trackLocation);
+                dbRef.updateChildren(updatechild)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                delete();
+                            }
+                        });
+            }
+        } else {
+//            Toast.makeText(getContext(),"false",Toast.LENGTH_SHORT).show();
+            delete();
+        }
+    }
+
+    private void delete() {
+        long size = myLocation.getSize() - 1;
+        myLocation.setSize(size);
+        if (size != 0) {
+            myLocation.setGiaTong(myLocation.getGiaTong() - post.getGia());
+            myLocation.setVsTong(myLocation.getVsTong() - post.getVesinh());
+            myLocation.setPvTong(myLocation.getPvTong() - post.getPhucvu());
+            myLocation.setGiaAVG(myLocation.getGiaTong() / size);
+            myLocation.setVsAVG(myLocation.getVsTong() / size);
+            myLocation.setPvAVG(myLocation.getPvTong() / size);
+        } else {
+            myLocation.setGiaTong(0);
+            myLocation.setVsTong(0);
+            myLocation.setPvTong(0);
+            myLocation.setGiaAVG(0);
+            myLocation.setVsAVG(0);
+            myLocation.setPvAVG(0);
+        }
+
+        myLocation.setTongAVG((myLocation.getGiaAVG() + myLocation.getVsAVG() +
+                myLocation.getPvAVG()) / 3);
+        Map<String, Object> updateChild = new HashMap<>();
+        updateChild.put(tinh + "/" + huyen + "/" +
+                getString(R.string.locations_CODE) + myLocation.getLocaID(), myLocation);
+        dbRef.updateChildren(updateChild).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                dbRef.child(tinh + "/" + huyen + "/"
+                        + getString(R.string.posts_CODE) + postID).removeValue()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (!task.isComplete()) {
+                                    mProgressDialog.dismiss();
+                                    Toast.makeText(getContext(),
+                                            task.getException().getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    dbRef.child(tinh + "/" + huyen + "/" +
+                                            getString(R.string.userpost_CODE)
+                                            + post.getUid() + "/" + postID).removeValue()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (!task.isComplete()) {
+                                                        Toast.makeText(getContext(),
+                                                                task.getException().getMessage(),
+                                                                Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        dbRef.child(tinh + "/" + huyen + "/" +
+                                                                getString(R.string.postcomment_CODE) +
+                                                                postID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (!task.isComplete()) {
+                                                                    Toast.makeText(getContext(),
+                                                                            task.getException().getMessage(),
+                                                                            Toast.LENGTH_SHORT).show();
+                                                                } else {
+                                                                    mProgressDialog.dismiss();
+                                                                    Toast.makeText(getContext(), "Xóa thành công",
+                                                                            Toast.LENGTH_SHORT).show();
+                                                                    getActivity().finish();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                }
+                            }
+                        });
+            }
+        });
     }
 }

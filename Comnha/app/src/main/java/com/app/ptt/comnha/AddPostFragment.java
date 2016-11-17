@@ -287,7 +287,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                 + locaID, updateLoca);
         TrackLocation trackLocation = new TrackLocation();
         trackLocation.setName(updateLoca.getName());
-        trackLocation.setDiachi(updateLoca.getName());
+        trackLocation.setDiachi(updateLoca.getDiachi());
         childUpdates.put(tinh + huyen + getString(R.string.usertrackloca_CODE)
                 + LoginSession.getInstance().getUserID() + "/"
                 + locaID, trackLocation);

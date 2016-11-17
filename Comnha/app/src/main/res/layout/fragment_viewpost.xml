@@ -79,7 +79,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_gravity="top|end"
-                            android:background="?attr/selectableItemBackground"
+                            android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
                             android:padding="10dp"
                             android:src="@drawable/ic_keyboard_arrow_down_grey_700_18dp" />
