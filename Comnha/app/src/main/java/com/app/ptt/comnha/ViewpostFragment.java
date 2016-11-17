@@ -70,7 +70,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     DatabaseReference dbRef;
     StorageReference storageRef;
     ChildEventListener commentChildEventListener, albumChildEventListener;
-    ValueEventListener postValueEventListener;
+    ValueEventListener postValueEventListener, locaValueEventListener;
     LinearLayout linearAlbum;
     ProgressDialog mProgressDialog;
 
@@ -95,6 +95,17 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         huyen = ChoosePost.getInstance().getHuyen();
         postID = ChoosePost.getInstance().getPostID();
         anhxa(view);
+        locaValueEventListener=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
         albumChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -148,6 +159,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                 post = dataSnapshot.getValue(Post.class);
+                post.setPostID(dataSnapshot.getKey());
                 txt_title.setText(post.getTitle());
                 txt_date.setText(post.getDate());
                 txt_content.setText(post.getContent());
@@ -194,7 +206,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         Log.d("postID", postID);
         dbRef.child(tinh + "/" + huyen + "/" +
                 getString(R.string.posts_CODE) + postID)
-                .addListenerForSingleValueEvent(postValueEventListener);
+                .addValueEventListener(postValueEventListener);
         dbRef.child(tinh + "/" + huyen + "/" +
                 getString(R.string.postcomment_CODE)).orderByChild("postID").equalTo(postID)
                 .addChildEventListener(commentChildEventListener);
@@ -354,7 +366,9 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
-    private void deletepost(){
+
+    private void deletepost() {
+        dbRef.removeEventListener(postValueEventListener);
         dbRef.child(tinh + "/" + huyen + "/"
                 + getString(R.string.posts_CODE) + postID).removeValue()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
