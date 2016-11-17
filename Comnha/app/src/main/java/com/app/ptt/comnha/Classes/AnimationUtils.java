@@ -189,4 +189,14 @@ public class AnimationUtils {
         traslateX6.start();
     }
 
+    public static void rotate90postoption(View view) {
+        ObjectAnimator rotate = ObjectAnimator.ofFloat(view, "rotation", 0, 180);
+        rotate.setDuration(300);
+        rotate.start();
+    }
+    public static void rotate90postoptionBack(View view) {
+        ObjectAnimator rotate = ObjectAnimator.ofFloat(view, "rotation", 180, 0);
+        rotate.setDuration(300);
+        rotate.start();
+    }
 }

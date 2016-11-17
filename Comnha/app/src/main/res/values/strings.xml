@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Cơm nhà</string>
-
+    <string name="facebook_app_id">160568224411760</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="text_tenquan">Tên quán</string>
+    <string name="text_btnsendreport">Gửi</string>
     <string name="text_tenMon">Tên món ăn</string>
     <string name="text_themMon">Thêm món ăn</string>
     <string name="text_tinhTP">Tỉnh/Thành phố</string>
@@ -129,6 +130,7 @@
     <string name="txt_local">Vị trí:</string>
     <string name="txt_localview">Xem theo Quán ăn\t</string>
     <string name="txt_reviewview">Xem theo Review\t</string>
+    <string name="txt_reportStore">Report</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <string name="firebaseStorage_path">gs://com-nha.appspot.com/</string>
@@ -540,4 +542,7 @@
         <item>Phú Thiện</item>
         <item>Chư Pưh</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

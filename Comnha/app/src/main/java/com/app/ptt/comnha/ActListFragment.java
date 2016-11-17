@@ -10,11 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.Adapters.Reviewlist_rcyler_adapter;
+import com.app.ptt.comnha.Adapters.TrackLocatlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
-import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
+import com.app.ptt.comnha.FireBase.TrackLocation;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
@@ -35,7 +35,7 @@ public class ActListFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     RecyclerView.Adapter mAdapter;
     ArrayList<Post> postArrayList;
-    ArrayList<MyLocation> locationArrayList;
+    ArrayList<TrackLocation> locationArrayList;
     DatabaseReference dbRef;
     ChildEventListener postChildEventListener, locationChildEventListener;
     int filter, whatlist;
@@ -101,7 +101,7 @@ public class ActListFragment extends Fragment {
         locationChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                MyLocation myLocation = dataSnapshot.getValue(MyLocation.class);
+                TrackLocation myLocation = dataSnapshot.getValue(TrackLocation.class);
                 myLocation.setLocaID(dataSnapshot.getKey());
                 locationArrayList.add(myLocation);
                 mAdapter.notifyDataSetChanged();
@@ -133,7 +133,7 @@ public class ActListFragment extends Fragment {
                 switch (filter) {
                     case 1:
                         dbRef.child(tinh + "/" + huyen + "/" + getString(R.string.usertrackloca_CODE)
-                        +LoginSession.getInstance().getUserID())
+                                + LoginSession.getInstance().getUserID())
                                 .addChildEventListener(locationChildEventListener);
                         break;
                 }
@@ -179,7 +179,7 @@ public class ActListFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         switch (whatlist) {
             case 1:
-                mAdapter = new Locatlist_rcyler_adapter(locationArrayList);
+                mAdapter = new TrackLocatlist_rcyler_adapter(locationArrayList);
                 break;
             case 2:
                 mAdapter = new Reviewlist_rcyler_adapter(postArrayList, getActivity());

@@ -1,33 +1,43 @@
 package com.app.ptt.comnha;
 
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Comment_rcyler_adapter;
 import com.app.ptt.comnha.Adapters.Photos_rcyler_adapter;
+import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.Times;
 import com.app.ptt.comnha.FireBase.Comment;
 import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,6 +56,7 @@ import java.util.Map;
  */
 public class ViewpostFragment extends Fragment implements View.OnClickListener {
     private String postID, tinh, huyen;
+    ImageView img_option;
     TextView txt_un, txt_date, txt_title,
             txt_content, txt_likenumb, btn_like, btn_comment,
             txt_gia, txt_vs, txt_pv;
@@ -61,6 +72,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     ChildEventListener commentChildEventListener, albumChildEventListener;
     ValueEventListener postValueEventListener;
     LinearLayout linearAlbum;
+    ProgressDialog mProgressDialog;
 
     public ViewpostFragment() {
         // Required empty public constructor
@@ -90,6 +102,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
 //                    Toast.makeText(getActivity(), dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
                     Log.d("checkListenerFromImages", "have changed");
                     final Image image = dataSnapshot.getValue(Image.class);
+                    image.setImageID(dataSnapshot.getKey());
                     image.setImageID(dataSnapshot.getKey());
                     storageRef.child(getResources().getString(R.string.images_CODE)
                             + image.getName())
@@ -135,7 +148,6 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                 post = dataSnapshot.getValue(Post.class);
-                post.setPostID(dataSnapshot.getKey());
                 txt_title.setText(post.getTitle());
                 txt_date.setText(post.getDate());
                 txt_content.setText(post.getContent());
@@ -182,14 +194,13 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         Log.d("postID", postID);
         dbRef.child(tinh + "/" + huyen + "/" +
                 getString(R.string.posts_CODE) + postID)
-                .addValueEventListener(postValueEventListener);
+                .addListenerForSingleValueEvent(postValueEventListener);
         dbRef.child(tinh + "/" + huyen + "/" +
                 getString(R.string.postcomment_CODE)).orderByChild("postID").equalTo(postID)
                 .addChildEventListener(commentChildEventListener);
         dbRef.child(getResources().getString(R.string.images_CODE))
                 .orderByChild("postID")
                 .equalTo(postID)
-                .limitToFirst(3)
                 .addChildEventListener(albumChildEventListener);
         return view;
     }
@@ -203,6 +214,11 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     }
 
     private void anhxa(View view) {
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage(getString(R.string.txt_plzwait));
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setIndeterminate(true);
+        img_option = (ImageView) view.findViewById(R.id.frg_viewreview_imgoption);
         linearAlbum = (LinearLayout) view.findViewById(R.id.frg_viewrev_lnearAlbum);
         txt_gia = (TextView) view.findViewById(R.id.frg_frg_viewpost_txt_gia);
         txt_vs = (TextView) view.findViewById(R.id.frg_frg_viewpost_txt_vesinh);
@@ -240,6 +256,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         } else {
             edt_comment.setEnabled(true);
         }
+        img_option.setOnClickListener(this);
     }
 
     @Override
@@ -294,6 +311,81 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.frg_viewrev_lnearAlbum:
                 break;
+            case R.id.frg_viewreview_imgoption:
+                AnimationUtils.rotate90postoption(img_option);
+                PopupMenu popupMenu = new PopupMenu(getActivity(), img_option, Gravity.START);
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_reviewdetial, popupMenu.getMenu());
+                popupMenu.show();
+                popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+                    @Override
+                    public void onDismiss(PopupMenu menu) {
+                        AnimationUtils.rotate90postoptionBack(img_option);
+                    }
+                });
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.popup_reviewdetail_delete:
+                                new AlertDialog.Builder(getActivity())
+                                        .setMessage("Bạn muốn xóa bài viết này?")
+                                        .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mProgressDialog.show();
+
+                                            }
+                                        })
+                                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+
+                                return true;
+                            case R.id.popup_reviewdetail_report:
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                break;
         }
+    }
+    private void deletepost(){
+        dbRef.child(tinh + "/" + huyen + "/"
+                + getString(R.string.posts_CODE) + postID).removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (!task.isComplete()) {
+                            mProgressDialog.dismiss();
+                            Toast.makeText(getContext(),
+                                    task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            dbRef.child(tinh + "/" + huyen + "/" +
+                                    getString(R.string.userpost_CODE)
+                                    + post.getUid() + "/" + postID).removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (!task.isComplete()) {
+                                                Toast.makeText(getContext(),
+                                                        task.getException().getMessage(),
+                                                        Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                mProgressDialog.dismiss();
+                                                Toast.makeText(getContext(), "Xóa thành công",
+                                                        Toast.LENGTH_SHORT).show();
+                                                getActivity().finish();
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                });
     }
 }

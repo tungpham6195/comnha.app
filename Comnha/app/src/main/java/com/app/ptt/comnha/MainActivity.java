@@ -505,6 +505,12 @@ public class MainActivity extends AppCompatActivity
                             Log.w("signInAnonymouslyError", "signInAnonymously", task.getException());
 //                            Toast.makeText(MainActivity.this, "Authentication failed.",
 //                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            LoginSession.getInstance().setTen(null);
+                            LoginSession.getInstance().setHo(null);
+                            LoginSession.getInstance().setTenlot(null);
+                            LoginSession.getInstance().setNgaysinh(null);
+                            LoginSession.getInstance().setPassword(null);
                         }
                     }
                 });

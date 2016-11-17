@@ -5,7 +5,7 @@ package com.app.ptt.comnha.SingletonClasses;
  */
 public class LoginSession {
     private static LoginSession ourInstance;
-    private String userID, username, email, tinh, huyen;
+    private String userID, username, email, tinh, huyen, ten, ho, tenlot, ngaysinh, password;
 
     public static LoginSession getInstance() {
         if (ourInstance == null) {
@@ -14,7 +14,48 @@ public class LoginSession {
         return ourInstance;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setNgaysinh(String ngaysinh) {
+        this.ngaysinh = ngaysinh;
+    }
+
+    public String getNgaysinh() {
+        return ngaysinh;
+    }
+
     private LoginSession() {
+    }
+
+    public void setTen(String ten) {
+        this.ten = ten;
+    }
+
+    public void setHo(String ho) {
+        this.ho = ho;
+    }
+
+    public void setTenlot(String tenlot) {
+        this.tenlot = tenlot;
+    }
+
+    public String getTen() {
+
+        return ten;
+    }
+
+    public String getHo() {
+        return ho;
+    }
+
+    public String getTenlot() {
+        return tenlot;
     }
 
     public void setEmail(String email) {

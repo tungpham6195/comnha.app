@@ -5,4 +5,8 @@
         android:id="@+id/menu_locadetail_themmon"
         android:title="@string/menu_locadetail_themmon"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_locadetail_report"
+        android:title="@string/txt_reportStore"
+        app:showAsAction="never" />
 </menu>

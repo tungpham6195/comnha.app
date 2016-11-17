@@ -137,7 +137,7 @@ public class ChooselocaFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onPickProvince(String province, int position) {
-        whatProcince = position + 1;
+        whatProcince = position;
         txt_tinh.setText(province);
     }
 

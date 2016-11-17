@@ -35,6 +35,7 @@ import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.app.ptt.comnha.SingletonClasses.ReportLocal;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -356,6 +357,11 @@ public class LocadetailFragment extends Fragment {
                     ChooseLoca.getInstance().setHuyen(huyen);
                     startActivity(intent);
                 }
+                return true;
+            case R.id.menu_locadetail_report:
+                ReportLocal.getInstance().setMyLocation(location);
+                ReportStoreDialogFragment reportStoreDialog = new ReportStoreDialogFragment();
+                reportStoreDialog.show(getActivity().getSupportFragmentManager(), "fragment_reportStore");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -313,8 +313,8 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                     Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
                 } else if (edt_giamax.getText().toString().trim().equals("")) {
                     Snackbar.make(view, getResources().getText(R.string.txt_nogia), Snackbar.LENGTH_SHORT).show();
-                } else if (edt_sdt.getText().toString().trim().equals("")) {
-                    Snackbar.make(view, getResources().getText(R.string.txt_nosdt), Snackbar.LENGTH_SHORT).show();
+//                } else if (edt_sdt.getText().toString().trim().equals("")) {
+//                    Snackbar.make(view, getResources().getText(R.string.txt_nosdt), Snackbar.LENGTH_SHORT).show();
 //                } else if (edt_timestart.getText().toString().trim().equals("")) {
 //                    Snackbar.make(view, getResources().getText(R.string.txt_noopentime), Snackbar.LENGTH_SHORT).show();
 //                } else if (edt_timeend.getText().toString().trim().equals("")) {

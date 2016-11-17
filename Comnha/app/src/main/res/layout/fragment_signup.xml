@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="650dp"
     android:layout_gravity="center"
+    android:background="@drawable/bg_login_regis"
     android:fitsSystemWindows="true"
     tools:context=".SignupFragment">
 
@@ -11,6 +12,7 @@
         android:layout_width="@dimen/cardv_sign_width"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:alpha="0.9"
         android:focusableInTouchMode="true"
         android:padding="10dp"
         card_view:cardCornerRadius="@dimen/cardv_cornerRadius"

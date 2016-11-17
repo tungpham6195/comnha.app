@@ -25,6 +25,7 @@ import com.app.ptt.comnha.Classes.Times;
 import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
+import com.app.ptt.comnha.FireBase.TrackLocation;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
@@ -56,12 +57,13 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     EditText edt_title, edt_content;
     Posts posts;
     static final int PICK_LOCATION_REQUEST = 1;
-    ProgressDialog mProgressDialog;
     FloatingActionButton fab_choseloca, fab_addphoto, fab_rate;
     FloatingActionMenu fab_menu;
-
+    ProgressDialog mProgressDialog;
     ArrayList<Post> postlist;
     CalcuAVGRate newcalcu;
+    int countTrack = -1;
+    UploadTask uploadTask = null;
 
     public AddpostFragment() {
         // Required empty public constructor
@@ -193,11 +195,6 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         } else if (checkrate) {
             Snackbar.make(view, getResources().getString(R.string.txt_norate), Snackbar.LENGTH_SHORT).show();
         } else {
-            mProgressDialog = ProgressDialog.show(getActivity(),
-                    getResources().getString(R.string.txt_plzwait),
-                    getResources().getString(R.string.txt_addinpost),
-                    true, false);
-            UploadTask uploadTask = null;
             final String key = dbRef.child(getString(R.string.posts_CODE)).push().getKey();
             final MyLocation updateLoca = DoPost.getInstance().getMyLocation();
             final String locaID = DoPost.getInstance().getMyLocation().getLocaID(),
@@ -206,9 +203,14 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             updateLoca.setLocaID(null);
             updateLoca.setTinhtp(null);
             updateLoca.setQuanhuyen(null);
+
+            mProgressDialog = ProgressDialog.show(getActivity(),
+                    getResources().getString(R.string.txt_plzwait),
+                    getResources().getString(R.string.txt_addinpost),
+                    true, false);
             try {
                 if (DoPost.getInstance().getFiles().size() > 0) {
-                    Log.i("size", DoPost.getInstance().getFiles().size() + "");
+//                    Log.i("size", DoPost.getInstance().getFiles().size() + "");
 //                    for (File f : DoPost.getInstance().getFiles()) {
 //                        Uri uri = Uri.fromFile(f);
 //                        StorageReference childRef = storeRef.child(
@@ -244,6 +246,7 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
     private void addpost(String key, String locaID, String tinh, String huyen, MyLocation updateLoca) {
         Post newPost = new Post();
         newPost.setTitle(edt_title.getText().toString());
@@ -269,7 +272,6 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
 //        childUpdates.put(tinh + huyen + getResources().getString(R.string.locauserpost_CODE)
 //                + DoPost.getInstance().getMyLocation().getLocaID() + "/"
 //                + LoginSession.getInstance().getUserID() + "/" + key, postValue);
-
         long giaTong = updateLoca.getGiaTong() + DoPost.getInstance().getGia(),
                 vsTong = updateLoca.getVsTong() + DoPost.getInstance().getVesinh(),
                 pvTong = updateLoca.getPvTong() + DoPost.getInstance().getPhucvu(),
@@ -285,10 +287,13 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         childUpdates.put(tinh + huyen +
                 getResources().getString(R.string.locations_CODE)
                 + locaID, updateLoca);
-        MyLocation usertrackLoca = updateLoca;
+        TrackLocation trackLocation = new TrackLocation();
+        trackLocation.setName(updateLoca.getName());
+        trackLocation.setDiachi(updateLoca.getName());
+        trackLocation.setTongAVG(updateLoca.getTongAVG());
         childUpdates.put(tinh + huyen + getString(R.string.usertrackloca_CODE)
                 + LoginSession.getInstance().getUserID() + "/"
-                + locaID, usertrackLoca);
+                + locaID, trackLocation);
         try {
             for (File f : DoPost.getInstance().getFiles()) {
                 Uri uri = Uri.fromFile(f);
