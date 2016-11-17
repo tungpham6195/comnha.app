@@ -201,8 +201,6 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                     tinh = DoPost.getInstance().getMyLocation().getTinhtp() + "/",
                     huyen = DoPost.getInstance().getMyLocation().getQuanhuyen() + "/";
             updateLoca.setLocaID(null);
-            updateLoca.setTinhtp(null);
-            updateLoca.setQuanhuyen(null);
 
             mProgressDialog = ProgressDialog.show(getActivity(),
                     getResources().getString(R.string.txt_plzwait),
@@ -290,7 +288,6 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         TrackLocation trackLocation = new TrackLocation();
         trackLocation.setName(updateLoca.getName());
         trackLocation.setDiachi(updateLoca.getName());
-        trackLocation.setTongAVG(updateLoca.getTongAVG());
         childUpdates.put(tinh + huyen + getString(R.string.usertrackloca_CODE)
                 + LoginSession.getInstance().getUserID() + "/"
                 + locaID, trackLocation);
