@@ -903,9 +903,11 @@ public class MainActivity extends AppCompatActivity
             ConnectivityManager connectivity = (ConnectivityManager)
                     context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivity != null) {
-                NetworkInfo[] info = connectivity.getAllNetworkInfo();
+                NetworkInfo[] info =connectivity.getAllNetworkInfo();
+
                 if (info != null) {
                     for (int i = 0; i < info.length; i++) {
+                       Toast.makeText(getApplicationContext(),"Ten:"+info[i].getTypeName()+"--TrangThai:"+info[i].getExtraInfo(),Toast.LENGTH_LONG).show();
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
                             if (!isConnected &&canGetLocation(getApplicationContext())) {
                                 Log.v(LOG, "Now you are connected to Internet!");
@@ -924,6 +926,16 @@ public class MainActivity extends AppCompatActivity
            // Toast.makeText(getApplicationContext(), "You are offline", Toast.LENGTH_SHORT).show();
             ;
             //networkStatus.setText("You are not connected to Internet!");
+            isConnected = false;
+            return false;
+        }
+        public  boolean isMobileNetworkAvailable(Context mContext) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (mNetworkInfo.isConnected()) {
+                isConnected = true;
+                return true;
+            }
             isConnected = false;
             return false;
         }
