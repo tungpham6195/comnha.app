@@ -320,5 +320,4 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
             }
         });
     }
-
 }

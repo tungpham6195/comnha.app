@@ -483,6 +483,15 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_send:
                 break;
+            case R.id.nav_about:
+                AboutBottomSheetDialogFragment aboutBottomSheetDialogFragment
+                        = new AboutBottomSheetDialogFragment();
+                aboutBottomSheetDialogFragment.show(getSupportFragmentManager(),
+                        getString(R.string.frag_about_CODE));
+                break;
+            case R.id.nav_admin:
+
+                break;
             case R.id.nav_signin:
                 Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
                 intent1.putExtra(getString(R.string.fragment_CODE),

@@ -130,7 +130,7 @@
     <string name="txt_local">Vị trí:</string>
     <string name="txt_localview">Xem theo Quán ăn\t</string>
     <string name="txt_reviewview">Xem theo Review\t</string>
-    <string name="txt_reportStore">Report</string>
+    <string name="txt_reportStore">Reports</string>
     <!--PATH-->
     <string name="firebase_path">https://com-nha.firebaseio.com</string>
     <string name="firebaseStorage_path">gs://com-nha.appspot.com/</string>
@@ -149,6 +149,7 @@
     <!--CODE-->
     <string name="DATA_FROM_FRAG">datafromfrag</string>
     <string name="frag_localist_CODE">localist</string>
+    <string name="frag_about_CODE">about</string>
     <string name="frag_chooseimg_CODE">chooseimg</string>
     <string name="frag_chooseloca_CODE">chooseloca</string>
     <string name="frag_addloca_CODE">addloca</string>

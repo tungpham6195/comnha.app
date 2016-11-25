@@ -52,7 +52,7 @@ public class Photolist_rcyler_adapter extends RecyclerView.Adapter<Photolist_rcy
             try {
                 if (paths.size() > 0) {
                     Log.i("size", "lon hon 0");
-                    if (paths.get(paths.indexOf(path))==null) {
+                    if (paths.get(paths.indexOf(path)) == null) {
                         holder.checkBox.setChecked(false);
                         Log.i("checkbox " + position, "false");
                     } else {

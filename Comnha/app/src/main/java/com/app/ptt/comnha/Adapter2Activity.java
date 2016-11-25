@@ -1,20 +1,23 @@
 package com.app.ptt.comnha;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 public class Adapter2Activity extends AppCompatActivity {
     static final String STATE_ADDPOST_FRAGMENT = "addpostFragment";
     static final int CHECK_ADDPOST_FRAGMENT = 1;
+    String FRAGMENT_CODE = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adapter2);
         Intent intent = getIntent();
-        String FRAGMENT_CODE = intent.getExtras().getString(getResources().getString(R.string.fragment_CODE));
+        FRAGMENT_CODE = intent.getExtras().getString(getResources().getString(R.string.fragment_CODE));
         if (FRAGMENT_CODE.equals(getString(R.string.frag_addpost_CODE))) {
             if (findViewById(R.id.frame_adapter2) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
@@ -127,5 +130,39 @@ public class Adapter2Activity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_ADDPOST_FRAGMENT, CHECK_ADDPOST_FRAGMENT);
         Log.i("saveState", "saved");
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_localist_CODE))) {
+            finish();
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_locadetail_CODE))) {
+            finish();
+        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frag_chooseloca_CODE))) {
+            finish();
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_chooseimg_CODE))) {
+            finish();
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewpost_CODE))) {
+            finish();
+        }else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
+            finish();
+        }else if (FRAGMENT_CODE.equals(getString(R.string.frg_prodetail_CODE))) {
+            finish();
+        } else {
+            new AlertDialog.Builder(this).setMessage("Bạn muốn thoát??")
+                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Trở lại", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }
     }
 }

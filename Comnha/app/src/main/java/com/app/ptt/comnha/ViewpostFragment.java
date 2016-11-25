@@ -236,7 +236,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                 .addChildEventListener(commentChildEventListener);
         dbRef.child(getResources().getString(R.string.images_CODE))
                 .orderByChild("postID")
-                .equalTo(postID)
+                .equalTo(postID).limitToFirst(3)
                 .addChildEventListener(albumChildEventListener);
         return view;
     }
@@ -314,6 +314,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     public void onStop() {
         super.onStop();
         dbRef.removeEventListener(tracklocaValueEventListener);
+        dbRef.removeEventListener(locaValueEventListener);
     }
 
     @Override
