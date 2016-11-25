@@ -1,6 +1,7 @@
 package com.app.ptt.comnha;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -13,11 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Adapters.Locatlist_rcyler_adapter;
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.Service.MyTool;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
@@ -27,6 +30,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONException;
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 
@@ -51,6 +59,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     MyTool myTool;
     View mView;
     int filter;
+    boolean first=false;
     Button btn_refresh;
     private static int STATUS_START = 0;
 
@@ -61,16 +70,22 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     Handler handler;
     int listSize = 0, count;
     String tinh, huyen;
-
+    Context mContext;
+    boolean isConnected=false;
     public void setTinh(String tinh) {
         this.tinh = tinh;
     }
-
+    public void setIsConnected(boolean isConnected){
+        this.isConnected=isConnected;
+    }
     public void setHuyen(String huyen) {
         this.huyen = huyen;
     }
     public void setYourLocation(MyLocation myLocation){
         this.myLocation=myLocation;
+    }
+    public void setContext(Context context){
+        mContext=context;
     }
     public StoreFragment() {
     }
@@ -79,7 +94,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         Log.i(LOG, "onStart");
         super.onStart();
         myTool = new MyTool(getActivity(),StoreFragment.class.getSimpleName());
-       // myTool.startGoogleApi();
     }
     @Override
     public void onStop() {
@@ -95,26 +109,57 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_store, container, false);
         mView = view;
         listSize = 0;
+
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://com-nha.firebaseio.com/");
         anhxa(view);
+        if (!isConnected){
+            if (Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen) != null) {
+                Log.i(LOG + ".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen, "Ko null");
+                ArrayList<MyLocation> locations = new ArrayList<>();
+                String a = Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen);
+                if(a!=null) {
+                    locations = Storage.readJSONMyLocation(a);
+                    if(locations.size()>0) {
+                        for (MyLocation location : locations) {
+                            listLocation.add(location);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }else
+                        getData();
+                }else{
+                    getData();
+                }
+            }
+        }else
+        {
+            getData();
+        }
+        return view;
+    }
+    public void getData(){
+        final StringWriter out = new StringWriter();
         locaListChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
+
                 MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                 Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
                 newLocation.setLocaID(dataSnapshot.getKey());
-                if(myLocation!=null){
-                float kc = (float) myTool.getDistance(new LatLng(myLocation.getLat(),myLocation.getLng()),new LatLng(newLocation.getLat(), newLocation.getLng()));
-                int c = Math.round(kc);
-                Log.i(LOG+".tinh khoang cach",c+"");
-                int d = c / 1000;
-                int e = c % 1000;
-                int f = e / 100;
-                newLocation.setKhoangcach(d + "," + f + " km");
+                if (myLocation != null) {
+                    float kc = (float) myTool.getDistance(new LatLng(myLocation.getLat(), myLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng()));
+                    int c = Math.round(kc);
+                    Log.i(LOG + ".tinh khoang cach", c + "");
+                    int d = c / 1000;
+                    int e = c % 1000;
+                    int f = e / 100;
+                    newLocation.setKhoangcach(d + "," + f + " km");
                     Log.i("Dia chi", "CC:" + newLocation.getKhoangcach());
-                }else
-                    Log.i(LOG+".getDataInFireBase","my Location==null");
+                } else
+                    Log.i(LOG + ".getDataInFireBase", "my Location==null");
                 listLocation.add(newLocation);
+                    Log.i(LOG+".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen,  Storage.parseMyLocationToJson( listLocation).toString());
+                    Storage.writeFile(mContext,  Storage.parseMyLocationToJson( listLocation).toString(), "listLocation" + filter+"_"+tinh+"_"+huyen);
+
                 if (STATUS_START > 0) {
                     btn_refresh.setVisibility(View.VISIBLE);
                     AnimationUtils.animatbtnRefreshIfChange(btn_refresh);
@@ -178,10 +223,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                         .addChildEventListener(locaListChildEventListener);
                 break;
         }
-
-        return view;
     }
-
     private void anhxa(View view) {
         Log.i(LOG, "anhxa");
         listLocation = new ArrayList<>();
@@ -199,15 +241,19 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        String key = listLocation.get(position).getLocaID();
-                        Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
-                        intent.putExtra(getResources().getString(R.string.fragment_CODE),
-                                getResources().getString(R.string.frag_locadetail_CODE));
-                        ChooseLoca.getInstance().setHuyen(huyen);
-                        ChooseLoca.getInstance().setLocaID(key);
-                        ChooseLoca.getInstance().setTinh(tinh);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        if(isConnected) {
+                            String key = listLocation.get(position).getLocaID();
+                            Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
+                            intent.putExtra(getResources().getString(R.string.fragment_CODE),
+                                    getResources().getString(R.string.frag_locadetail_CODE));
+                            ChooseLoca.getInstance().setHuyen(huyen);
+                            ChooseLoca.getInstance().setLocaID(key);
+                            ChooseLoca.getInstance().setTinh(tinh);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(mContext,"You are offline",Toast.LENGTH_LONG).show();
+                        }
                     }
                 }));
         btn_refresh.setVisibility(View.GONE);

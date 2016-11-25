@@ -3,9 +3,13 @@ package com.app.ptt.comnha.Modules;
 import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.util.JsonWriter;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.FireBase.Post;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,124 +34,129 @@ import java.util.List;
  */
 
 public class Storage {
-    Context mContext;
-    String filename = "myfile.json";
+
 
 
 
     //public Storage(Context context){
        // this.mContext=context;
    // }
-    public static void writeFile(Context mContext,String input){
+    public static void writeFile(Context mContext,String input,String filename){
         FileOutputStream outputStream;
         try {
-            File file = new File(mContext.getCacheDir(), "myfile.json");
+            File file = new File(mContext.getCacheDir(),filename+".json");
             outputStream=new FileOutputStream(file);
             outputStream.write(input.getBytes());
             outputStream.close();
-            Toast.makeText(mContext,"save ok",Toast.LENGTH_LONG).show();
+            //Toast.makeText(mContext,"save ok",Toast.LENGTH_LONG).show();
+            Log.i("Storage.Save:","Save OK");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    public static boolean deleteFile(Context mContext,String filename){
 
-    public static String readFile(Context mContext){
+        File file = new File(mContext.getCacheDir(), filename+".json");
+        if(file!=null) {
+            file.delete();
+            Log.i("Storage.deleteFile:","delete OK");
+            return true;
+
+        }else{
+            return false;
+        }
+    }
+    public static String readFile(Context mContext,String filename){
 
         try {
-            File file = new File(mContext.getCacheDir(), "myfile.json");
-            //file.delete();
-            FileInputStream inputStream=new FileInputStream(file);
-            BufferedReader br=new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder sb=new StringBuilder();
-            String s=null;
-            while ((s=br.readLine())!=null){
-                sb.append(s);
-                sb.append("\n");
+            if (mContext.getCacheDir() == null) {
+                Log.i("Storage.Read:", "getCacheDir=null");
+                Storage.writeFile(mContext, "", filename);
+
+            } else {
+                File file = new File(mContext.getCacheDir(), filename + ".json");
+                //file.delete();
+                if (file != null) {
+                    FileInputStream inputStream = new FileInputStream(file);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuilder sb = new StringBuilder();
+                    String s = null;
+                    while ((s = br.readLine()) != null) {
+                        sb.append(s);
+                        sb.append("\n");
+                    }
+                    Log.i("Storage.Read:", "Read OK");
+                    //Toast.makeText(mContext,sb.toString(),Toast.LENGTH_LONG).show();
+                    return sb.toString();
+
+                }
             }
-            Toast.makeText(mContext,sb.toString(),Toast.LENGTH_LONG).show();
-            return sb.toString();
+            }catch(FileNotFoundException e){
+                e.printStackTrace();
 
-
-        } catch (FileNotFoundException e) {
+            }catch(IOException e) {
             e.printStackTrace();
 
-        } catch (IOException e) {
+        }catch (Exception e){
             e.printStackTrace();
-
 
         }
+
         return null;
 
     }
-    public static ArrayList< MyLocation > readJSONFile(String json) throws JSONException, ParseException {
-        ArrayList< MyLocation > locations=new ArrayList<>();
-        MyLocation myLocation;
-        JSONArray jsonArray = new JSONArray(json);
-        for(int i=0;i<jsonArray.length();i++){
-            myLocation=new MyLocation();
-            JSONObject jsonObject=jsonArray.getJSONObject(i);
-            myLocation.setLocaID(jsonObject.getString("locaID"));
-            myLocation.setKhoangcach(jsonObject.getString("khoangcach"));
-            myLocation.setName(jsonObject.getString("name"));
-            myLocation.setDiachi(jsonObject.getString("diachi"));
-            myLocation.setSdt(jsonObject.getString("sdt"));
-            myLocation.setTimestart(jsonObject.getString("timestart"));
-            myLocation.setTimeend(jsonObject.getString("timeend"));
-            myLocation.setTinhtp(jsonObject.getString("tinhtp"));
-            myLocation.setQuanhuyen(jsonObject.getString("quanhuyen"));
-            myLocation.setLat(jsonObject.getDouble("lat"));
-            myLocation.setLng(jsonObject.getDouble("lng"));
-            myLocation.setGiamax(jsonObject.getLong("giamax"));
-            myLocation.setGiamin(jsonObject.getLong("giamin"));
-            myLocation.setGiaTong(jsonObject.getLong("giaTong"));
-            myLocation.setVsTong(jsonObject.getLong("vsTong"));
-            myLocation.setPvTong(jsonObject.getLong("pvTong"));
-            myLocation.setSize(jsonObject.getLong("size"));
-            myLocation.setGiaAVG(jsonObject.getLong("giaAVG"));
-            myLocation.setPvAVG(jsonObject.getLong("pvAVG"));
-            myLocation.setVsAVG(jsonObject.getLong("vsAVG"));
-            myLocation.setTongAVG(jsonObject.getLong("tongAVG"));
-            locations.add(myLocation);
-        }
-        if(locations.size()>0)
+    public static ArrayList< MyLocation > readJSONMyLocation(String json){
+        Gson gson=new Gson();
+        ArrayList<MyLocation> locations =
+                gson.fromJson(json,new TypeToken<ArrayList<MyLocation>>(){}.getType());
+        if(locations.size()>0) {
+            Log.i("readJSONPost", "locations.size() =" + locations.size());
             return locations;
+        }
         return null;
 
 
 
-
     }
-    public static void  parseToJson(Writer out,ArrayList< MyLocation >locations) throws IOException {
-        JsonWriter jsonWriter = new JsonWriter(out);
-        jsonWriter.beginArray();
-            for (MyLocation location:locations){
-            jsonWriter.beginObject();
-            jsonWriter.name("locaID").value(location.getLocaID());
-            jsonWriter.name("name").value(location.getName());
-            jsonWriter.name("diachi").value(location.getDiachi());
-            jsonWriter.name("sdt").value(location.getSdt());
-            jsonWriter.name("timestart").value(location.getTimestart());
-            jsonWriter.name("timeend").value(location.getTimeend());
-            jsonWriter.name("tinhtp").value(location.getTinhtp());
-            jsonWriter.name("quanhuyen").value(location.getQuanhuyen());
-            jsonWriter.name("khoangcach").value(location.getKhoangcach());
-            jsonWriter.name("lat").value(location.getLat());
-            jsonWriter.name("lng").value(location.getLng());
-            jsonWriter.name("giamin").value(location.getGiamin());
-            jsonWriter.name("giamax").value(location.getGiamax());
-            jsonWriter.name("giaTong").value(location.getGiaTong());
-            jsonWriter.name("vsTong").value(location.getVsTong());
-            jsonWriter.name("pvTong").value(location.getPvTong());
-            jsonWriter.name("size").value(location.getSize());
-            jsonWriter.name("giaAVG").value(location.getGiaAVG());
-            jsonWriter.name("vsAVG").value(location.getVsAVG());
-            jsonWriter.name("pvAVG").value(location.getPvAVG());
-            jsonWriter.name("tongAVG").value(location.getTongAVG());
-            jsonWriter.endObject();
-            }
-        jsonWriter.endArray();
+    public static ArrayList< Post > readJSONPost(String json) throws JSONException, ParseException {
+        ArrayList<Post> posts=new ArrayList<>();
+
+        if(posts.size()>0) {
+            Log.i("readJSONPost","posts.size() ="+posts.size());
+            return posts;
+
+        }
+        return null;
+    }
+    public static ArrayList< Post > readJSONPost1(String json)  {
+        Gson gson=new Gson();
+        ArrayList<Post> posts =
+                gson.fromJson(json,new TypeToken<ArrayList<Post>>(){}.getType());
+        if(posts.size()>0) {
+            Log.i("readJSONPost", "posts.size() =" + posts.size());
+            return posts;
+        }
+        return null;
+    }
+    public static String  parsePostToJson(ArrayList<Post> posts) throws IOException {
+        Gson gson=new Gson();
+        String json=gson.toJson(posts);
+        Log.i("json string:",json);
+        if(json!=null)
+        return json;
+        return null;
+    }
+
+
+    public static String  parseMyLocationToJson(ArrayList< MyLocation >locations) {
+        Gson gson=new Gson();
+        String json1=gson.toJson(locations);
+        Log.i("json string:",json1);
+        if(json1!=null)
+            return json1;
+        return null;
     }
 
 }

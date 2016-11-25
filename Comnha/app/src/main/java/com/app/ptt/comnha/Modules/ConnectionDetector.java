@@ -72,8 +72,7 @@ public class ConnectionDetector {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                Intent main=new Intent(mContext,MainActivity.class);
-                mContext.startActivity(main);
+
             }
         });
         alertDialog.show();
@@ -85,21 +84,33 @@ public class ConnectionDetector {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent main=new Intent(mContext,MainActivity.class);
-                mContext.startActivity(main);
+                dialog.cancel();
             }
         });
+        builder.show();
     }
     public static void showNoConnectAlert(final Context mContext){
-        AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+        final AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
         builder.setTitle("No Connection");
         builder.setMessage("Network and GPS is not enabled. Enable and try again");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent main=new Intent(mContext,MainActivity.class);
-                mContext.startActivity(main);
+                dialog.cancel();
             }
         });
+        builder.show();
+    }
+    public static void showGetLocationError(final Context mContext){
+        final AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+        builder.setTitle("Error!!");
+        builder.setMessage("Can't get your location. Try again");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 }

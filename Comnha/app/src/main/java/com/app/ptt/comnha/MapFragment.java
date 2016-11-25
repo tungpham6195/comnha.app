@@ -9,6 +9,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,12 +42,14 @@ import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.LocationFinderListener;
 import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
+import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,6 +65,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 
@@ -84,14 +92,13 @@ public class MapFragment extends Fragment implements View.OnClickListener,
     GoogleMap myGoogleMap;
     MyLocation yourLocation;
     MyTool myTool;
-    Storage storage;
     int pos = -1, option = 1;
-    //    int pos;
     boolean isNearest = false;
     int temp = 1;
     MarkerOptions yourMarker = null;
     ImageButton btn_search;
     AutoCompleteTextView edt_content;
+    NetworkChangeReceiver mBroadcastReceiver;
     FloatingActionButton fab_filter, fab_location, fab_refresh;
     CardView card_pickProvince, card_pickDistrict, card_filterlabel, card_mylocation;
     TextView txt_tinh, txt_huyen, txt_filterLabel;
@@ -100,6 +107,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
     int whatProvince = -1;
     String tinh, huyen;
     ProgressDialog progressDialog;
+    Boolean isConnected = false;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -108,6 +116,22 @@ public class MapFragment extends Fragment implements View.OnClickListener,
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.i(LOG, "onCreate");
+        list = new ArrayList<>();
+
+        myTool = new MyTool(getContext(), MapFragment.class.getSimpleName());
+        // myTool.startGoogleApi();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(LOG, "onResume");
     }
 
     @Override
@@ -191,166 +215,170 @@ public class MapFragment extends Fragment implements View.OnClickListener,
     public void onStart() {
         Log.i(LOG, "onStart");
         super.onStart();
-        list = new ArrayList<>();
-        mIntentFilter = new IntentFilter();
+        mIntentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        mIntentFilter.addAction("android.location.PROVIDERS_CHANGED");
         mIntentFilter.addAction(mBroadcastSendAddress);
+        mBroadcastReceiver = new NetworkChangeReceiver();
         mIntentFilter.addAction(mBroadcastChangeLocation);
         getActivity().registerReceiver(mBroadcastReceiver, mIntentFilter);
-        myTool = new MyTool(getContext(), MapFragment.class.getSimpleName());
-        myTool.startGoogleApi();
-        // storage = new Storage(getContext());
-
-        //storage.writeFile();
-
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.frg_map_cardV_mylocation:
-                if (myLocationSearch != null && isNearest) {
-                    Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_location_black_24dp);
-                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                    yourMarker = new MarkerOptions()
-                            .position(new LatLng(yourLocation.getLat(), yourLocation.getLng()))
-                            .title(yourLocation.getDiachi())
-                            .icon(markerIcon);
-                    myGoogleMap.addMarker(yourMarker);
-                }
-                myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(yourLocation.getLat(), yourLocation.getLng()), 13));
-                break;
-            case R.id.frg_map_fabrefresh:
-                if (card_pickDistrict.getTranslationY() == 0
-                        && card_pickProvince.getTranslationX() == 0) {
-                    AnimationUtils.animatHideTagMap(card_pickProvince, card_pickDistrict);
-                }
-                if (card_filterlabel.getTranslationX() == 0) {
-                    AnimationUtils.animatHideTagMap2(card_filterlabel);
-                }
-                reloadMap();
-                break;
-            case R.id.frg_map_fabfilter:
-                PopupMenu popupMenu = new PopupMenu(getActivity(), fab_filter, Gravity.TOP | Gravity.END);
-                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.popup_viewquan_none:
-                                if (card_filterlabel.getTranslationX() == 0) {
-                                    AnimationUtils.animatHideTagMap2(card_filterlabel);
-                                }
-                                txt_filterLabel.setText(item.getTitle());
-                                option = 1;
-                                if (tinh != null && huyen != null)
-                                    getDataInFireBase(tinh, huyen);
-                                else
-                                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-
-                                break;
-                            case R.id.popup_viewquan_gia:
-                                if (card_filterlabel.getTranslationX() != 0) {
-                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
-                                }
-                                txt_filterLabel.setText(item.getTitle());
-                                option = 2;
-
-
-                                if (tinh != null && huyen != null)
-                                    getDataInFireBase(tinh, huyen);
-                                else
-                                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-                                break;
-                            case R.id.popup_viewquan_pv:
-                                if (card_filterlabel.getTranslationX() != 0) {
-                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
-                                }
-                                txt_filterLabel.setText(item.getTitle());
-                                option = 3;
-
-                                if (tinh != null && huyen != null)
-                                    getDataInFireBase(tinh, huyen);
-                                else
-                                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-                                break;
-                            case R.id.popup_viewquan_vs:
-                                if (card_filterlabel.getTranslationX() != 0) {
-                                    AnimationUtils.animatShowTagMap2(card_filterlabel);
-                                }
-                                txt_filterLabel.setText(item.getTitle());
-                                option = 4;
-                                if (tinh != null && huyen != null)
-                                    getDataInFireBase(tinh, huyen);
-                                else
-                                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-                                break;
-
-                        }
-
-                        return true;
+        if (isConnected) {
+            switch (v.getId()) {
+                case R.id.frg_map_cardV_mylocation:
+                    if (myLocationSearch != null && isNearest) {
+                        Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_location_black_24dp);
+                        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                        yourMarker = new MarkerOptions()
+                                .position(new LatLng(yourLocation.getLat(), yourLocation.getLng()))
+                                .title(yourLocation.getDiachi())
+                                .icon(markerIcon);
+                        myGoogleMap.addMarker(yourMarker);
                     }
-                });
-                popupMenu.show();
-                break;
-            case R.id.frg_map_fablocation:
-                if (card_pickDistrict.getTranslationY() == 0
-                        && card_pickProvince.getTranslationX() == 0) {
+                    if (yourLocation != null)
+                        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(yourLocation.getLat(), yourLocation.getLng()), 13));
+                    break;
+                case R.id.frg_map_fabrefresh:
+                    if (card_pickDistrict.getTranslationY() == 0
+                            && card_pickProvince.getTranslationX() == 0) {
+                        AnimationUtils.animatHideTagMap(card_pickProvince, card_pickDistrict);
+                    }
+                    if (card_filterlabel.getTranslationX() == 0) {
+                        AnimationUtils.animatHideTagMap2(card_filterlabel);
+                    }
+                    reloadMap();
+                    break;
+                case R.id.frg_map_fabfilter:
+                    PopupMenu popupMenu = new PopupMenu(getActivity(), fab_filter, Gravity.TOP | Gravity.END);
+                    popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.popup_viewquan_none:
+                                    if (card_filterlabel.getTranslationX() == 0) {
+                                        AnimationUtils.animatHideTagMap2(card_filterlabel);
+                                    }
+                                    txt_filterLabel.setText(item.getTitle());
+                                    option = 1;
+                                    if (tinh != null && huyen != null)
+                                        getDataInFireBase(tinh, huyen);
+                                    else
+                                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+
+                                    break;
+                                case R.id.popup_viewquan_gia:
+                                    if (card_filterlabel.getTranslationX() != 0) {
+                                        AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                    }
+                                    txt_filterLabel.setText(item.getTitle());
+                                    option = 2;
+
+
+                                    if (tinh != null && huyen != null)
+                                        getDataInFireBase(tinh, huyen);
+                                    else
+                                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                                    break;
+                                case R.id.popup_viewquan_pv:
+                                    if (card_filterlabel.getTranslationX() != 0) {
+                                        AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                    }
+                                    txt_filterLabel.setText(item.getTitle());
+                                    option = 3;
+
+                                    if (tinh != null && huyen != null)
+                                        getDataInFireBase(tinh, huyen);
+                                    else
+                                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                                    break;
+                                case R.id.popup_viewquan_vs:
+                                    if (card_filterlabel.getTranslationX() != 0) {
+                                        AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                    }
+                                    txt_filterLabel.setText(item.getTitle());
+                                    option = 4;
+                                    if (tinh != null && huyen != null)
+                                        getDataInFireBase(tinh, huyen);
+                                    else
+                                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                                    break;
+
+                            }
+
+                            return true;
+                        }
+                    });
+                    popupMenu.show();
+                    break;
+                case R.id.frg_map_fablocation:
+                    if (card_pickDistrict.getTranslationY() == 0
+                            && card_pickProvince.getTranslationX() == 0) {
 //                    Log.i("transi", "pro: " + card_pickProvince.getTranslationX()
 //                            + " dis: " + card_pickDistrict.getTranslationY());
-                    AnimationUtils.animatHideTagMap(card_pickProvince, card_pickDistrict);
-                } else {
-                    AnimationUtils.animatShowTagMap(card_pickProvince, card_pickDistrict);
-                }
+                        AnimationUtils.animatHideTagMap(card_pickProvince, card_pickDistrict);
+                    } else {
+                        AnimationUtils.animatShowTagMap(card_pickProvince, card_pickDistrict);
+                    }
 
-                break;
-            case R.id.frg_map_cardV_chonProvince:
-                pickLocationDialog.show(fm, "pickProvinceDialog");
-                break;
-            case R.id.frg_map_cardV_chonDistrict:
-                if (whatProvince >= 0) {
-                    Log.i("province", whatProvince + "");
-                    pickLocationDialog.setWhatProvince(whatProvince);
-                    pickLocationDialog.show(fm, "pickDistrictDialog");
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.frg_map_btnsearch:
-                if (edt_content.getText().toString().equals("")) {
-                    Toast.makeText(getContext(), getString(R.string.txt_noaddress),
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    edt_content.setText("");
-                    edt_content.clearFocus();
-                    btn_search.setImageResource(R.drawable.ic_search_grey_600_24dp);
-                }
-                break;
+                    break;
+                case R.id.frg_map_cardV_chonProvince:
+                    pickLocationDialog.show(fm, "pickProvinceDialog");
+                    break;
+                case R.id.frg_map_cardV_chonDistrict:
+                    if (whatProvince >= 0) {
+                        Log.i("province", whatProvince + "");
+                        pickLocationDialog.setWhatProvince(whatProvince);
+                        pickLocationDialog.show(fm, "pickDistrictDialog");
+                    } else {
+                        Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case R.id.frg_map_btnsearch:
+                    if (edt_content.getText().toString().equals("")) {
+                        Toast.makeText(getContext(), getString(R.string.txt_noaddress),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        edt_content.setText("");
+                        edt_content.clearFocus();
+                        btn_search.setImageResource(R.drawable.ic_search_grey_600_24dp);
+                    }
+                    break;
 
 
+            }
+        } else {
+            Toast.makeText(getContext(), "You are offline", Toast.LENGTH_LONG).show();
         }
     }
 
     private void search() {
-        if (edt_content.getText().toString().trim().equals("")) {
-            Toast.makeText(getActivity(),
-                    getString(R.string.txt_noaddress),
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            if (isNearest)
-                isNearest = false;
-            Log.i(LOG + ".onClick ", edt_content.getText().toString());
-            if (edt_content.getText().toString() == "") {
+        if (isConnected) {
+            if (edt_content.getText().toString().trim().equals("")) {
                 Toast.makeText(getActivity(),
-                        "Chưa có địa điểm",
+                        getString(R.string.txt_noaddress),
                         Toast.LENGTH_SHORT).show();
             } else {
-                Log.i(LOG + ".onClick ", "loadListPlace" + pos);
-                if (pos != -1) {
-                    placeAPI = new PlaceAPI(placeAttributes.get(pos).getFullname(), this);
+                if (isNearest)
+                    isNearest = false;
+                Log.i(LOG + ".onClick ", edt_content.getText().toString());
+                if (edt_content.getText().toString() == "") {
+                    Toast.makeText(getActivity(),
+                            "Chưa có địa điểm",
+                            Toast.LENGTH_SHORT).show();
                 } else {
-                    placeAPI = new PlaceAPI(edt_content.getText().toString(), this);
+                    Log.i(LOG + ".onClick ", "loadListPlace" + pos);
+                    if (pos != -1) {
+                        placeAPI = new PlaceAPI(placeAttributes.get(pos).getFullname(), this);
+                    } else {
+                        placeAPI = new PlaceAPI(edt_content.getText().toString(), this);
+                    }
                 }
             }
+        } else {
+            Toast.makeText(getContext(), "You are offline", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -366,10 +394,14 @@ public class MapFragment extends Fragment implements View.OnClickListener,
         txt_huyen.setText(district);
         huyen = district;
         isNearest = false;
-        if (tinh != null && huyen != null) {
-            myGoogleMap.clear();
-            addMarkerYourLocation();
-            getDataInFireBase(tinh, huyen);
+        if(isConnected) {
+            if (tinh != null && huyen != null) {
+                myGoogleMap.clear();
+                addMarkerYourLocation();
+                getDataInFireBase(tinh, huyen);
+            }
+        }else{
+            Toast.makeText(getContext(),"You are offline",Toast.LENGTH_LONG).show();
         }
 
     }
@@ -379,16 +411,16 @@ public class MapFragment extends Fragment implements View.OnClickListener,
         Log.i(LOG, "onStop");
         super.onStop();
         getActivity().unregisterReceiver(mBroadcastReceiver);
-        myTool.stopGoogleApi();
+        if(myTool.isGoogleApiConnected())
+            myTool.stopLocationUpdate();
     }
-
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.i(LOG, "onViewCreated");
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
-        progressDialog.show();
+        //progressDialog.show();
         supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapwhere);
         if (supportMapFragment == null) {
             FragmentManager fragmentManager = getFragmentManager();
@@ -404,8 +436,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                         @Override
                         public void onMapLoaded() {
-                            progressDialog.dismiss();
-
+                            //myTool.startGoogleApi();
                             if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                 // TODO: Consider calling
                                 //    ActivityCompat#requestPermissions
@@ -437,27 +468,29 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                                 }
                             });
 
-                            myGoogleMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
+                            myGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                 @Override
-                                public void onInfoWindowLongClick(Marker marker) {
+                                public void onInfoWindowClick(Marker marker) {
                                     if ((marker.getPosition().latitude != yourLocation.getLat())
                                             && (marker.getPosition().longitude != yourLocation.getLng())) {
                                         if (myLocationSearch == null || (myLocationSearch != null
                                                 && (marker.getPosition().latitude != myLocationSearch.getPlaceLatLng().latitude
                                                 && (marker.getPosition().longitude != myLocationSearch.getPlaceLatLng().longitude)))) {
                                             MyLocation a = returnLocation(marker);
-                                            if (a != null && a.getQuanhuyen() != null && a.getLocaID() != null && a.getTinhtp() != null) {
-                                                Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
-                                                intent.putExtra(getResources().getString(R.string.fragment_CODE),
-                                                        getResources().getString(R.string.frag_locadetail_CODE));
+                                            if(isConnected) {
+                                                if (a != null && a.getQuanhuyen() != null && a.getLocaID() != null && a.getTinhtp() != null) {
+                                                    Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
+                                                    intent.putExtra(getResources().getString(R.string.fragment_CODE),
+                                                            getResources().getString(R.string.frag_locadetail_CODE));
 
-                                                ChooseLoca.getInstance().setHuyen(a.getQuanhuyen());
-                                                ChooseLoca.getInstance().setLocaID(a.getLocaID());
-                                                ChooseLoca.getInstance().setTinh(a.getTinhtp());
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                            } else {
-                                                Toast.makeText(getContext(), a.getDiachi() + "-" + a.getTinhtp() + "-" + a.getQuanhuyen(), Toast.LENGTH_LONG).show();
+                                                    ChooseLoca.getInstance().setHuyen(a.getQuanhuyen());
+                                                    ChooseLoca.getInstance().setLocaID(a.getLocaID());
+                                                    ChooseLoca.getInstance().setTinh(a.getTinhtp());
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                }
+                                            } else{
+                                                    Toast.makeText(getContext(),"You are offline",Toast.LENGTH_LONG).show();
                                             }
 
                                         }
@@ -577,33 +610,54 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                 txt_DiemPhucVu.setText(a.getPvTong() / a.getSize() + "");
             }
         } else
-            Log.i(LOG + ".infoWindow", "a=null");
+            Log.i(LOG + ".infoWindow", "Không thể tìm được địa chỉ này");
         return view1;
     }
 
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(mBroadcastSendAddress)) {
-                if (intent.getIntExtra("STT", 0) == 2 && intent.getBooleanExtra("Location", false)) {
-                    Log.i(LOG + ".BroadcastReceiver", "Nhan vi tri cua ban:");
-                    yourLocation = myTool.getYourLocation();
-                    Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" + list.size());
-                    if (list.size() == 0) {
-                        option = 1;
-                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-                    }
-                }
-                if (intent.getIntExtra("STT", 0) == 3 && intent.getBooleanExtra("LocationChange", false)) {
-                    Log.i(LOG + ".MainActivity", "Nhan su thay doi vi tri cua ban:");
-                    yourLocation = myTool.getYourLocation();
-                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-                    //  myTool.stopGoogleApi();
-                }
-            }
-
-        }
-    };
+//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (intent.getAction().equals(mBroadcastSendAddress)) {
+//                if (intent.getIntExtra("STT", 0) == 2) {
+//                    Log.i(LOG + ".BroadcastReceiver", "Nhan vi tri cua ban:");
+//                    yourLocation = myTool.getYourLocation();
+//                    Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" + list.size());
+//                    if (list.size() == 0 && yourLocation!=null) {
+//                        option = 1;
+//                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+//                    }
+//                    progressDialog.dismiss();
+//                }
+//                if (intent.getIntExtra("STT", 0) == 3 && intent.getBooleanExtra("LocationChange", false)) {
+//                    Log.i(LOG + ".MainActivity", "Nhan su thay doi vi tri cua ban:");
+//                    yourLocation = myTool.getYourLocation();
+//                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+//                    //  myTool.stopGoogleApi();
+//                }
+//                if (intent.getIntExtra("STT", 0) == -1) {
+//                    Log.i(LOG + ".BroadcastReceiver", "No connecttion");
+//                    progressDialog.dismiss();
+//                    ConnectionDetector.showNoConnectAlert(getContext());
+//                }
+//                if (intent.getIntExtra("STT", 0) == -2) {
+//                    Log.i(LOG + ".BroadcastReceiver", "No internet");
+//                    progressDialog.dismiss();
+//                    ConnectionDetector.showNetworkAlert(getContext());
+//                }
+//                if (intent.getIntExtra("STT", 0) == -3) {
+//                    Log.i(LOG + ".BroadcastReceiver", "No gps");
+//                    progressDialog.dismiss();
+//                    ConnectionDetector.showSettingAlert(getContext());
+//                }
+//                if (intent.getIntExtra("STT", 0) == -4) {
+//                    Log.i(LOG + ".BroadcastReceiver", "No gps");
+//                    ConnectionDetector.showGetLocationError(getContext());
+//                    progressDialog.dismiss();
+//                }
+//            }
+//
+//        }
+//    };
 
     public void reloadMap() {
         whatProvince = -1;
@@ -756,47 +810,6 @@ public class MapFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.frg_map_btnsearch:
-//                if(isNearest)
-//                    isNearest=false;
-//                Log.i(LOG + ".onClick ", edt_content.getText().toString());
-//                if (edt_content.getText().toString() == "") {
-//                    Snackbar.make(getView(), "Chưa có địa điểm", Snackbar.LENGTH_LONG).show();
-//                } else {
-//                    Log.i(LOG + ".onClick ", "loadListPlace"+pos);
-//                    if(pos!=-1) {
-//                        placeAPI=new PlaceAPI(placeAttributes.get(pos).getFullname(),this);
-//                    }else{
-//                        Snackbar.make(getView(), "Khong tim duoc", Snackbar.LENGTH_LONG).show();
-//                    }
-//                    Log.i(LOG + ".onClick ", "loadListPlace");
-//                    myLocationSearch = placeAttributes.get(pos);
-//                    changeLocation();
-//                    Log.i(LOG + ".onClick->Search", "onEdt:" + edt_content.getText().toString() + " - Trong list:" + placeAttributes.get(pos).getFullname());
-//                    isNearest=true;
-//                    if(myLocationSearch.getDistrict().equals(list.get(0).getQuanhuyen())&&myLocationSearch.getState().equals(list.get(0).getTinhtp())){
-//                        for (MyLocation location:list){
-//                            Log.i(LOG + ".onClick ", "==current quan huyen");
-//                            float kc=(float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude,myLocationSearch.getPlaceLatLng().longitude),new LatLng(location.getLat(),location.getLng()));
-//                            int c = Math.round(kc);
-//                            int d = c / 1000;
-//                            int e = c % 1000;
-//                            int f = e / 100;
-//                            location.setKhoangcach(d + "," + f);
-//                            addMarker(location);
-//                        }
-//                    }else{
-//                        Log.i(LOG + ".onClick ", "!=current quan huyen");
-//                        getDataInFireBase(myLocationSearch.getState(),myLocationSearch.getDistrict());
-//                    }
-//                }
-//                break;
-//        }
-//    }
-
     public void getDataInFireBase(String tinh, String huyen) {
         Log.i(LOG + ".getDataInFireBase", "tinh:" + tinh + "- huyen:" + huyen);
         if (tinh != null && huyen != null) {
@@ -806,156 +819,238 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                 addMarkerCustomSearch();
             } else {
                 addMarkerYourLocation();
-                myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myTool.returnLatLngByName(huyen + ", " + tinh), 13));
             }
             dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
-            ChildEventListener childEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
-                    newLocation.setLocaID(dataSnapshot.getKey());
-
-
-                    if (isNearest && myLocationSearch != null) {
-                        //addMarkerCustomSearch();
-                        Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
-                        float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(newLocation.getLat(), newLocation.getLng()));
-                        if (kc < 5000) {
-                            addMarker(newLocation);
+            if(!isConnected){
+                ArrayList<MyLocation> locations = new ArrayList<>();
+                String a = Storage.readFile(getContext(), "listLocation" + 1+"_"+tinh+"_"+huyen);
+                if(a!=null) {
+                    locations = Storage.readJSONMyLocation(a);
+                    if(locations.size()>0) {
+                        for (MyLocation location : locations) {
+                            if (isNearest && myLocationSearch != null) {
+                                Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
+                                float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(location.getLat(), location.getLng()));
+                                if (kc < 5000) {
+                                    addMarker(location);
+                                }
+                            } else {
+                                Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:" + myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(location.getLat(), location.getLng())));
+                                float kc = (float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(location.getLat(), location.getLng()));
+                                int c = Math.round(kc);
+                                int d = c / 1000;
+                                int e = c % 1000;
+                                int f = e / 100;
+                                if(location.getKhoangcach()==null)
+                                    location.setKhoangcach(d + "," + f);
+                                addMarker(location);
+                            }
+                            list.add(location);
+                            myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLat(),location.getLng()), 13));
                         }
-                    } else {
-                        Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:" + myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())));
-                        float kc = (float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng()));
-                        int c = Math.round(kc);
-                        int d = c / 1000;
-                        int e = c % 1000;
-                        int f = e / 100;
-                        newLocation.setKhoangcach(d + "," + f);
-                        addMarker(newLocation);
-                    }
-                    list.add(newLocation);
-
+                    }else
+                       Toast.makeText(getContext(),"Không tìm thấy dữ liệu",Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getContext(),"Không tìm thấy dữ liệu",Toast.LENGTH_LONG).show();
                 }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-
-            };
-            if (option == 2) {
-                dbRef.child(tinh + "/" + huyen + "/"
-                        + getString(R.string.locations_CODE))
-                        .orderByChild("giaAVG")
-                        .startAt(6)
-                        .addChildEventListener(childEventListener);
+            }else{
+                getData();
             }
-            if (option == 1) {
-                dbRef.child(//LoginSession.getInstance().getTinh()
-                        tinh + "/"
-                                +
-                                //LoginSession.getInstance().getHuyen()
-                                huyen + "/"
-                                + getString(R.string.locations_CODE))
-                        .addChildEventListener(childEventListener);
 
-            }
-            if (option == 3) {
-                dbRef.child(tinh + "/" + huyen + "/"
-                        + getString(R.string.locations_CODE))
-                        .orderByChild("pvAVG")
-                        .startAt(6)
-                        .addChildEventListener(childEventListener);
-            }
-            if (option == 4) {
-                dbRef.child(tinh + "/" + huyen + "/"
-                        + getString(R.string.locations_CODE))
-                        .orderByChild("vsAVG")
-                        .startAt(6)
-                        .addChildEventListener(childEventListener);
-            }
         } else {
             Toast.makeText(getContext(), "Khong tim thay tinh va huyen", Toast.LENGTH_LONG).show();
         }
     }
+    public void getData(){
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
+                newLocation.setLocaID(dataSnapshot.getKey());
 
-    /***********************************************************************************************************************/
-//    DatabaseReference dbRe;
-//    ArrayList<MyLocation> list;
-//
-//    void query() {
 
+                if (isNearest && myLocationSearch != null) {
+                    //addMarkerCustomSearch();
+                    Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
+                    float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(newLocation.getLat(), newLocation.getLng()));
+                    if (kc < 5000) {
+                        addMarker(newLocation);
+                    }
+                } else {
+                    Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:" + myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())));
+                    float kc = (float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng()));
+                    int c = Math.round(kc);
+                    int d = c / 1000;
+                    int e = c % 1000;
+                    int f = e / 100;
+                    newLocation.setKhoangcach(d + "," + f);
+                    addMarker(newLocation);
+                }
+                list.add(newLocation);
+                myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(newLocation.getLat(),newLocation.getLng()), 13));
 
-//        list = new ArrayList<>();
-//        dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
-//        ChildEventListener childEventListener = new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
-//                newLocation.setLocaID(dataSnapshot.getKey());
-//                list.add(newLocation);
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        };
-            /*R.id.popup_viewquan_none*/
-//        dbRef.child(tinh + "/" + huyen + "/"
-//                + getString(R.string.locations_CODE)).addChildEventListener(locaListChildEventListener);
+            }
 
-            /*R.id.popup_viewquan_gia*/
-//        dbRef.child(tinh + "/" + huyen + "/" +
-//                getResources().getString(R.string.locations_CODE))
-//                .orderByChild("giaAVG")
-//                .limitToLast(200)
-//                .addChildEventListener(locaListChildEventListener);
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            /*R.id.popup_viewquan_pv*/
-//        dbRef.child(tinh + "/" + huyen + "/" +
-//                getResources().getString(R.string.locations_CODE))
-//                .orderByChild("pvAVG")
-//                .limitToLast(200)
-//                .addChildEventListener(locaListChildEventListener);
+            }
 
-            /*R.id.popup_viewquan_vs*/
-//        dbRef.child(tinh + "/" + huyen + "/" +
-//                getResources().getString(R.string.locations_CODE))
-//                .orderByChild("vsAVG")
-//                .limitToLast(200)
-//                .addChildEventListener(locaListChildEventListener);
-//
-//    }
-    /***********************************************************************************************************************/
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        };
+        if (option == 2) {
+            dbRef.child(tinh + "/" + huyen + "/"
+                    + getString(R.string.locations_CODE))
+                    .orderByChild("giaAVG")
+                    .startAt(6)
+                    .addChildEventListener(childEventListener);
+        }
+        if (option == 1) {
+            dbRef.child(//LoginSession.getInstance().getTinh()
+                    tinh + "/"
+                            +
+                            //LoginSession.getInstance().getHuyen()
+                            huyen + "/"
+                            + getString(R.string.locations_CODE))
+                    .addChildEventListener(childEventListener);
+
+        }
+        if (option == 3) {
+            dbRef.child(tinh + "/" + huyen + "/"
+                    + getString(R.string.locations_CODE))
+                    .orderByChild("pvAVG")
+                    .startAt(6)
+                    .addChildEventListener(childEventListener);
+        }
+        if (option == 4) {
+            dbRef.child(tinh + "/" + huyen + "/"
+                    + getString(R.string.locations_CODE))
+                    .orderByChild("vsAVG")
+                    .startAt(6)
+                    .addChildEventListener(childEventListener);
+        }
+    }
+    class NetworkChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent.getIntExtra("STT", 0) == 2) {
+                                    Log.i(LOG + ".BroadcastReceiver", "Nhan vi tri cua ban:");
+                yourLocation = myTool.getYourLocation();
+                Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" + list.size());
+                if (list.size() == 0 && yourLocation!=null) {
+                    option = 1;
+                    getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                }
+                //progressDialog.dismiss();
+            }
+            if (isNetworkAvailable(context) && canGetLocation(context)) {
+                ArrayList<MyLocation> locations = new ArrayList<>();
+                String a = Storage.readFile(getContext(), "myLocation");
+                Log.i(LOG + ".BroadcastReceiver", "myLocation:"+a);
+                if (a != null) {
+                    locations = Storage.readJSONMyLocation(a);
+                    if(locations.size()>0)
+                        yourLocation = locations.get(0);
+                    Log.i(LOG + ".BroadcastReceiver", "yourLocation:"+yourLocation.getDiachi());
+                    if (list.size() == 0 && yourLocation!=null) {
+                        option = 1;
+                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                    }
+                    //progressDialog.dismiss();
+                }
+                if (yourLocation == null) {
+                    myTool.startGoogleApi();
+                    progressDialog.show();
+                }
+                isConnected = true;
+            } else {
+                if (!canGetLocation(context) && !isNetworkAvailable(context)) {
+                    ConnectionDetector.showNoConnectAlert(getContext());
+
+                } else {
+                    if (!isNetworkAvailable(context)) {
+                        ConnectionDetector.showNetworkAlert(getContext());
+                    } else {
+                        ConnectionDetector.showSettingAlert(getContext());
+                    }
+                }
+                ArrayList<MyLocation> locations = new ArrayList<>();
+                String a = Storage.readFile(getContext(), "myLocation");
+                Log.i(LOG + ".BroadcastReceiver", "myLocation:"+a);
+                if (a != null) {
+                    locations = Storage.readJSONMyLocation(a);
+                    if (locations.size() > 0)
+                        yourLocation = locations.get(0);
+                    Log.i(LOG + ".BroadcastReceiver", "yourLocation:" + yourLocation.getDiachi());
+                    if (list.size() == 0 && yourLocation != null) {
+                        option = 1;
+                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                    }
+                }
+                isConnected=false;
+            }
+            Log.i(LOG+".NetworkChangeReceiver", "isConnected: "+isConnected);
+
+        }
+
+        private boolean canGetLocation(Context mContext) {
+            try {
+                LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+                boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                if (!isGPSEnabled) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+
+        }
+
+        private boolean isNetworkAvailable(Context context) {
+            ConnectivityManager connectivity = (ConnectivityManager)
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivity != null) {
+                NetworkInfo[] info = connectivity.getAllNetworkInfo();
+                if (info != null) {
+                    for (int i = 0; i < info.length; i++) {
+                        if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                            if (!isConnected) {
+                                Log.v(LOG, "Now you are connected to Internet!");
+                                //Toast.makeText(getApplicationContext(), "Now you are connected to Internet!", Toast.LENGTH_SHORT).show();
+                                isConnected = true;
+                                //do your processing here ---
+                                //if you need to post any data to the server or get status
+                                //update from the server
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+            Log.v(LOG, "You are not connected to Internet!");
+            // Toast.makeText(getApplicationContext(), "You are offline", Toast.LENGTH_SHORT).show();
+            ;
+            //networkStatus.setText("You are not connected to Internet!");
+            isConnected = false;
+            return false;
+        }
+    }
 }

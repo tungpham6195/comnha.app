@@ -240,13 +240,14 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     @Override
     public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
 
-        if (placeAttribute != null) {
+        if (placeAttribute != null &&placeAttribute.getState()!=null&&placeAttribute.getDistrict()!=null) {
             final LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
             final PlaceAttribute myPlaceAttribute = placeAttribute;
 //            mProgressDialog.dismiss();
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState() + "/";
             huyen = placeAttribute.getDistrict() + "/";
+
             newLocation.setDiachi(placeAttribute.getFullname());
             Log.i(LOG + ".onLocationFinder", placeAttribute.getState() + "-" + placeAttribute.getDistrict());
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

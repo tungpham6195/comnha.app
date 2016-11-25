@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Route;
 
@@ -37,8 +38,8 @@ public class AdapterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adapter);
         Log.i(LOG, "onCreate");
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(mBroadcast);
+        //mIntentFilter = new IntentFilter();
+        //mIntentFilter.addAction(mBroadcast);
         loadData();
     }
 
@@ -60,72 +61,9 @@ public class AdapterActivity extends AppCompatActivity {
     }
 
     private void openMap() {
-//        Log.i(LOG, "openMap");
-//        try{
-//            routes = myService.returnRoute();
-//        } catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        if (routes== null) {
-//            progressDialog = new ProgressDialog(this);
-//            progressDialog.setCancelable(true);
-//            progressDialog.setMessage("Loading data");
-//            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//            progressDialog.setProgressStyle(0);
-//            progressDialog.setMax(100);
-//            progressDialog.show();
-//            progressBarStatus = 0;
-//            temp = 0;
-//            count = 0;
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    myService.getDataInFireBase();
-//                    while (progressBarStatus < 100) {
-//                        progressBarStatus = loadProgress();
-//                        try {
-//
-//                            Thread.sleep(1000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                        progressBarHandler.post(new Runnable() {
-//                            public void run() {
-//                                progressDialog.setProgress(progressBarStatus);
-//                            }
-//
-//                        });
-//                        if (progressBarStatus >= 100) {
-//                            try {
-//                                Thread.sleep(2000);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                            if (isComplete == 1) {
-//                                routes = myService.returnRoute();
-//                                MapFragment mapFragment = new MapFragment();
-//                                mapFragment.getMethod(routes);
-//                                getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
-//
-//                            }
-//                            progressDialog.dismiss();
-//                        }
-//
-//                    }
-//
-//                    if (progressBarStatus == 101 && isComplete != 1)
-//                        showToast("Lỗi rồi");
-//                }
-//            }).start();
-//            if (progressBarStatus == 101 && isComplete != 1)
-//                showToast("Lỗi rồi");
-//
-//        } else {
-//            MapFragment mapFragment = new MapFragment();
-//            mapFragment.getMethod(myService.returnRoute());
-//            getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
-        //   }
+
         MapFragment mapFragment = new MapFragment();
+
         getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
     }
 
@@ -136,49 +74,18 @@ public class AdapterActivity extends AppCompatActivity {
             Log.i(LOG, "frag_map_CODE");
             if (findViewById(R.id.frame_adapter) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
-                    openMap();
+                    try{
+                        openMap();
+                    } catch (Exception e){
+                        Toast.makeText(getApplicationContext(),"Xảy ra lỗi. Xin kiểm tra lại",Toast.LENGTH_LONG).show();
+                    }
+
+
                 }
             }
 
         }
     }
-
-//    public int loadProgress() {
-//        Log.i(LOG, "count= " + count);
-//        Log.i(LOG, "temp= " + temp);
-//        if (isComplete != 1) {
-//            if (count < 60) {
-//                count++;
-//                if (isComplete == -1)
-//                    return 101;
-//                while (temp <= 1000000) {
-//                    temp++;
-//
-//                    if (temp == 100000) {
-//                        return 10;
-//                    } else if (temp == 200000) {
-//                        return 20;
-//                    } else if (temp == 300000) {
-//                        return 30;
-//                    } else if (temp == 400000) {
-//                        return 40;
-//                    } else if (temp == 500000) {
-//                        return 50;
-//                    } else if (temp == 700000) {
-//                        return 70;
-//                    } else if (temp == 800000) {
-//                        return 80;
-//                    }
-//                }
-//                return 0;
-//            } else {
-//                return 101;
-//            }
-//        } else {
-//            return 100;
-//        }
-//    }
-
     @Override
     protected void onPause() {
         super.onPause();

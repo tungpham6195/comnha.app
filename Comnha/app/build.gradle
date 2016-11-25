@@ -56,5 +56,7 @@ dependencies {
     compile 'br.com.mauker.materialsearchview:materialsearchview:1.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.roughike:bottom-bar:2.0.2'
+
+    compile 'com.google.code.gson:gson:2.8.0'
 }
 apply plugin: 'com.google.gms.google-services'

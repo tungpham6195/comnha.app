@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.GpsStatus;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,10 +19,12 @@ import android.util.Log;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.MainActivity;
 import com.app.ptt.comnha.MapFragment;
+import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.LocationFinderListener;
 import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
 import com.app.ptt.comnha.R;
+import com.app.ptt.comnha.SplashActivity;
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,10 +47,13 @@ import java.util.Scanner;
  * Created by cuong on 10/27/2016.
  */
 
-public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener,LocationFinderListener {
+public class MyTool implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener,
+        LocationFinderListener {
     private Context mContext;
     private static final String LOG = MyTool.class.getSimpleName();
     private LocationRequest mLocationRequest;
+    private LocationManager locationManager;
     private GoogleApiClient mGoogleApiClient;
     private Double latitude = null, longtitude = null;
     private String fileName = "note.json";
@@ -60,18 +67,19 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     int temp = 1;
     String classSend;
     int flag;
-    int pos=0;
+    int pos = 0;
     ChildEventListener locaListChildEventListener;
     DatabaseReference dbRef;
+
     public MyTool(Context context, String classSend) {
         Log.i(LOG + ".MyTool", "Khoi chay MyTool");
-        this.classSend=classSend;
+        this.classSend = classSend;
         this.mContext = context;
-
         listLocation = new ArrayList<>();
         //listplaceAttribute=new ArrayList<>();
         broadcastIntent = new Intent();
         geocoder = new Geocoder(mContext, Locale.getDefault());
+
     }
 
 
@@ -84,53 +92,51 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
     public void startGoogleApi() {
-        Log.i(LOG + ".startGoogleApi", "Khoi dong GoogleApiClient");
-        if (mGoogleApiClient == null) {
-            buildGoogleApiClient();
+        {
+            if (checkConnection()) {
+                Log.i(LOG + ".startGoogleApi", "Khoi dong GoogleApiClient");
+                if (mGoogleApiClient == null) {
+                    buildGoogleApiClient();
+                }
+                if (!mGoogleApiClient.isConnected()) {
+                    mGoogleApiClient.connect();
+                }
+            }
         }
 
-        if (!mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.connect();
-        }
+
     }
-
+    public boolean checkConnection() {
+        if (!ConnectionDetector.isWifiAvailable(mContext)) {
+            if (!ConnectionDetector.canGetLocation(mContext)) {
+                Log.i(LOG + ".startGoogleApi", "NoInternetAndGps");
+                flag = -1;
+                sendBroadcast("NoInternetAndGps");
+            } else {
+                Log.i(LOG + ".startGoogleApi", "NoInternet");
+                flag = -2;
+                sendBroadcast("NoInternet");
+            }
+        } else {
+            if (!ConnectionDetector.canGetLocation(mContext)) {
+                Log.i(LOG + ".startGoogleApi", "NoGps");
+                flag = -2;
+                sendBroadcast("NoGps");
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
     public void stopGoogleApi() {
-        Log.i(LOG + ".stopGoogleApi", "Tat GoogleApiClient");
-        if (mGoogleApiClient.isConnected())
-            mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null) {
+            Log.i(LOG + ".stopGoogleApi", "Tat GoogleApiClient");
+            if (mGoogleApiClient.isConnected())
+                mGoogleApiClient.disconnect();
+        }
     }
-
-//    @Override
-//    public void onDirectionFinderSuccess(Route route) {
-//        if (route != null) {
-//            Log.i(LOG + ".FinderSuccess", "Them route thanh cong");
-//            Log.i(LOG + ".FinderSuccess", "className: " + classSend);
-//           // this.route = route;
-//            if (classSend.equals("MapFragment")) {
-//                flag = 5;
-//            }
-//            if (classSend.equals("")) {
-//              //  routes.add(route);
-//                for (MyLocation location : listLocation) {
-//                    if (route.getLocalID().equals(location.getLocaID())) {
-//                        location.setKhoangcach(route.getDistance().text);
-//                        Log.i(LOG + ".FinderSuccess", "Khoang cach: " + location.getKhoangcach());
-//                    }
-//                }
-//                flag = 1;
-//            }
-//            if (classSend.equals("StoreFragment")) {
-//                flag = 3;
-//               // routes.add(route);
-//            }
-//            Log.i(LOG + ".FinderSuccess", "flag= " + flag);
-//            //Log.i(LOG + ".FinderSuccess", "Route SIZE : " + routes.size() + ": " + "distance" + route.getDistance().text);
-//            sendBroadcast(route.getLocalID());
-//        } else {
-//            Log.i(LOG + ".FinderFail", "Het han request api roi");
-//        }
-//    }
 
     public double getDistance(LatLng LatLng1, LatLng LatLng2) {
         double distance = 0;
@@ -159,88 +165,158 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         }
         Location l = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (l != null) {
+            Log.i(LOG + ".onConnected", "l!=null");
             this.latitude = l.getLatitude();
             this.longtitude = l.getLongitude();
             flag = 2;
             MyLocation location = new MyLocation();
-            try{
-            location = returnLocationByLatLng(l.getLatitude(), l.getLongitude());}
-            catch (Exception e){
-                 Log.i(LOG + ".onConnected", "Exception");
+            try {
+                location = returnLocationByLatLng(l.getLatitude(), l.getLongitude());
+            } catch (Exception e) {
+                Log.i(LOG + ".onConnected", "Exception");
             }
-            //if(returnLocationByLatLng(l.getLatitude(), l.getLongitude()).getDiachi()!=null)
             if (location != null)
                 placeAPI = new PlaceAPI(location.getDiachi(), this);
-            else Log.i(LOG + ".onConnected", "LOI BI NULL");
+            else {
+                Log.i(LOG + ".onConnected", "LOI BI NULL");
+                flag=-4;
+                sendBroadcast("GetLocationError");
+            }
         }
         startLocationUpdate();
     }
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.i(LOG + ".onLocationChanged", "Giam sat su thay doi vi tri");
+        if (latitude == null && longtitude == null) {
+            this.latitude = location.getLatitude();
+            this.longtitude = location.getLongitude();
+        }
         if (location != null) {
             if (location.getLatitude() != this.latitude && location.getLongitude() != this.longtitude &&
                     getDistance(new LatLng(location.getLatitude(), location.getLongitude()), new LatLng(this.latitude, this.longtitude)) > 2000) {
                 Log.i(LOG + ".onLocationChanged", "Vi tri cua ban bi thay doi: " + getDistance(new LatLng(location.getLatitude(), location.getLongitude()), new LatLng(this.latitude, this.longtitude)) + "m");
                 this.latitude = location.getLatitude();
                 this.longtitude = location.getLongitude();
-                flag=3;
-                placeAPI=new PlaceAPI(returnLocationByLatLng(location.getLatitude(), location.getLongitude()).getDiachi(),this);
-               // Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLocation.getLat() + "va lng= " + yourLocation.getLng());
+                flag = 3;
+                placeAPI = new PlaceAPI(returnLocationByLatLng(location.getLatitude(), location.getLongitude()).getDiachi(), this);
+                // Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLocation.getLat() + "va lng= " + yourLocation.getLng());
             }
         }
     }
 
     public void sendBroadcast(String a) {
-        Log.i(LOG + ".sendBroadcast", "Gui broadcast toi "+classSend);
-        temp=0;
-//        if (flag == 1) {
-//                Log.i(LOG + ".sendBroadcast", "gui place id: " + temp++);
-//                broadcastIntent.setAction(classSend+".mBroadcastSendAddress");
-//                broadcastIntent.putExtra("PlaceID", a);
-//                broadcastIntent.putExtra("STT", 1);
-//                mContext.sendBroadcast(broadcastIntent);
-//        }
-        if(flag==2){
-            if(classSend.equals("MainActivity")) {
+        Log.i(LOG + ".sendBroadcast", "Gui broadcast toi " + classSend);
+        temp = 0;
+        if (flag == 2) {
+            if (classSend.equals("MainActivity")) {
                 Log.i(LOG + ".sendBroadcast", "Gui vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
                 broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
-                broadcastIntent.putExtra("Location", true);
-                broadcastIntent.putExtra("STT", 2);
+                broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }
-            if(classSend.equals("MapFragment")) {
+            if (classSend.equals("MapFragment")) {
                 Log.i(LOG + ".sendBroadcast", "Gui vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
                 broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
-                broadcastIntent.putExtra("Location", true);
-                broadcastIntent.putExtra("STT", 2);
+                broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }
+            if (classSend.equals("SplashActivity")) {
+                Log.i(LOG + ".sendBroadcast", "Gui vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(SplashActivity.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+
         }
         if (flag == 3) {
-            if(classSend.equals("MainActivity")) {
+            if (classSend.equals("MainActivity")) {
                 Log.i(LOG + ".sendBroadcast", "Gui su thay doi vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
                 broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
-                broadcastIntent.putExtra("LocationChange", true);
-                broadcastIntent.putExtra("STT", 3);
+                broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }
-            if(classSend.equals("MapFragment")) {
+            if (classSend.equals("MapFragment")) {
                 Log.i(LOG + ".sendBroadcast", "Gui su thay doi vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
                 broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
-                broadcastIntent.putExtra("LocationChange", true);
-                broadcastIntent.putExtra("STT", 3);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+        }
+        if (flag == -1) {
+            if (classSend.equals("MainActivity")) {
+                Log.i(LOG + ".sendBroadcast", "Khong internet va gps (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+            if (classSend.equals("MapFragment")) {
+                Log.i(LOG + ".sendBroadcast", "Khong internet va gps (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+        }
+        if (flag == -2) {
+            if (classSend.equals("MainActivity")) {
+                Log.i(LOG + ".sendBroadcast", "Khong internet (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+            if (classSend.equals("MapFragment")) {
+                Log.i(LOG + ".sendBroadcast", "Khong internet (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+        }
+        if (flag == -3) {
+            if (classSend.equals("MainActivity")) {
+                Log.i(LOG + ".sendBroadcast", "Khong gps (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+            if (classSend.equals("MapFragment")) {
+                Log.i(LOG + ".sendBroadcast", "Khong gps (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+        }
+
+        if (flag == -4 ) {
+            if (classSend.equals("MainActivity")) {
+                Log.i(LOG + ".sendBroadcast", "Khong gps (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
+                mContext.sendBroadcast(broadcastIntent);
+            }
+            if (classSend.equals("MapFragment")) {
+                Log.i(LOG + ".sendBroadcast", "GetLocationError (" + classSend + ".mBroadcastSendAddress" + ")");
+                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
+                broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }
         }
     }
+
     private void initLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(100);
-        mLocationRequest.setFastestInterval(100);
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
-    private void startLocationUpdate() {
+
+    public boolean isGoogleApiConnected() {
+        if (mGoogleApiClient != null)
+            return mGoogleApiClient.isConnected();
+        else return false;
+    }
+
+    public void startLocationUpdate() {
         initLocationRequest();
         if (ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -254,7 +330,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -276,84 +352,19 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
-    public void getDataInFireBase(String tinh,String huyen) {
-//        routes = new ArrayList<>();
-        Log.i(LOG + ".getDataInFireBase","Tinh:"+tinh+"-Huyen:"+huyen);
-//        listLocation = new ArrayList<>();
-//        Firebase.setAndroidContext(mContext);
-//        ref = new Firebase(mContext.getString(R.string.firebase_path));
-//        ref.child(mContext.getString(R.string.locations_CODE))
-//                .addChildEventListener(
-//                        new ChildEventListener() {
-//                            @Override
-//                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                                MyLocation myLocation = dataSnapshot.getValue(MyLocation.class);
-//                                myLocation.setLocaID(dataSnapshot.getKey());
-//                                listLocation.add(myLocation);
-//                                loadListPlace(myLocation.getDiachi(), myLocation.getLocaID(), classSend);
-//                                Log.i(LOG + ".onChildAdded", "Ten quan: " + dataSnapshot.getValue(MyLocation.class).getName());
-//                                Log.i(LOG + ".onChildAdded", "Dia chi: " + dataSnapshot.getValue(MyLocation.class).getDiachi());
-//                            }
-//                            @Override
-//                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                                flag = 2;
-//                                sendBroadcast("Location");
-//                            }
-//                            @Override
-//                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//                            }
-//                            @Override
-//                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//                            }
-//                            @Override
-//                            public void onCancelled(FirebaseError firebaseError) {
-//                            }
-//                        }
-//                );
-//
-        listLocation = new ArrayList<>();
 
-        dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(mContext.getString(R.string.firebase_path));
-        locaListChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
-                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
-                Log.i("Dia chi", "RUN:" + newLocation.getDiachi());
-                newLocation.setLocaID(dataSnapshot.getKey());
-                listLocation.add(newLocation);
-                pos=listLocation.size()-1;
-                flag = 1;
-                sendBroadcast(newLocation.getLocaID());
-            }
-            @Override
-            public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onChildRemoved(com.google.firebase.database.DataSnapshot dataSnapshot) {
-            }
-            @Override
-            public void onChildMoved(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-        dbRef.child(tinh + "/" + huyen + "/" + mContext.getString(R.string.locations_CODE))
-                .addChildEventListener(locaListChildEventListener);
-        Log.i("Dia chi", "RUN:" + listLocation.size());
-    }
     public MyLocation getYourLocation() {
         Log.i(LOG + ".returnLocation", "Lay vi tri cua ban");
-        if(yourLocation!=null)
+        if (yourLocation != null)
             return yourLocation;
         else
             return null;
     }
+
     public MyLocation returnLocationByLatLng(Double latitude, Double longitude) {
-        MyLocation myLocation=new MyLocation();
+        MyLocation myLocation = new MyLocation();
 
         List<Address> addresses;
         Double lat = latitude;
@@ -384,10 +395,10 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                         String name;
                         while (kb.hasNext()) {
                             name = kb.next();
-                            if (name.equals( "District" )|| name.equals("Quận")) {
+                            if (name.equals("District") || name.equals("Quận")) {
                                 c = "Quận";
-                                while(kb.hasNext()){
-                                    c+=" "+kb.next();
+                                while (kb.hasNext()) {
+                                    c += " " + kb.next();
                                 }
                             }
                         }
@@ -408,15 +419,16 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                     myLocation.setDiachi(e);
                     myLocation.setLat(lat);
                     myLocation.setLng(lon);
-                    Log.i(LOG + ".returnLocationByLatLng", "Location can tim"+myLocation.getDiachi());
+                    Log.i(LOG + ".returnLocationByLatLng", "Location can tim" + myLocation.getDiachi());
                     return myLocation;
                 }
                 return null;
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
         }
         return null;
     }
+
     public LatLng returnLatLngByName(String address) {
         List<Address> addresses = new ArrayList<>();
         try {
@@ -424,22 +436,23 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (addresses.size()>0) {
+        if (addresses.size() > 0) {
             Log.i(LOG, "convert: latitude=" + addresses.get(0).getLatitude() + "longitude=" + addresses.get(0).getLongitude());
             return new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
         } else return null;
     }
-    public ArrayList <PlaceAttribute> returnPlaceAttributeByName(String mAddress) {
-        ArrayList<PlaceAttribute> listPlaceAttribute=new ArrayList<>();
+
+    public ArrayList<PlaceAttribute> returnPlaceAttributeByName(String mAddress) {
+        ArrayList<PlaceAttribute> listPlaceAttribute = new ArrayList<>();
         List<Address> addresses = new ArrayList<>();
         try {
-            addresses = geocoder.getFromLocationName(mAddress,4);
+            addresses = geocoder.getFromLocationName(mAddress, 4);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (addresses.size() > 0) {
-            for (Address address:addresses) {
-                PlaceAttribute placeAttribute=new PlaceAttribute();
+            for (Address address : addresses) {
+                PlaceAttribute placeAttribute = new PlaceAttribute();
                 String a = address.getAddressLine(0);
                 String b = address.getSubLocality();
                 String c = address.getSubAdminArea();
@@ -461,10 +474,10 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                     String name;
                     while (kb.hasNext()) {
                         name = kb.next();
-                        if (name.equals( "District" )|| name.equals("Quận")) {
+                        if (name.equals("District") || name.equals("Quận")) {
                             c = "Quận";
-                            while(kb.hasNext()){
-                                c+=" "+kb.next();
+                            while (kb.hasNext()) {
+                                c += " " + kb.next();
                             }
                         }
                     }
@@ -482,15 +495,15 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
                     placeAttribute.setState(d);
                 }
                 placeAttribute.setFullname(e);
-                placeAttribute.setPlaceLatLng(new LatLng(address.getLatitude(),address.getLongitude()));
-                Log.i(LOG+".addtoPlaceAttribute","Full name: "+placeAttribute.getFullname());
-                Log.i(LOG+".addtoPlaceAttribute","Address Number:"+placeAttribute.getAddressNum());
-                Log.i(LOG+".addtoPlaceAttribute","Locality: "+placeAttribute.getLocality());
-                Log.i(LOG+".addtoPlaceAttribute","District: "+placeAttribute.getDistrict());
-                Log.i(LOG+".addtoPlaceAttribute","State: "+placeAttribute.getState());
+                placeAttribute.setPlaceLatLng(new LatLng(address.getLatitude(), address.getLongitude()));
+                Log.i(LOG + ".addtoPlaceAttribute", "Full name: " + placeAttribute.getFullname());
+                Log.i(LOG + ".addtoPlaceAttribute", "Address Number:" + placeAttribute.getAddressNum());
+                Log.i(LOG + ".addtoPlaceAttribute", "Locality: " + placeAttribute.getLocality());
+                Log.i(LOG + ".addtoPlaceAttribute", "District: " + placeAttribute.getDistrict());
+                Log.i(LOG + ".addtoPlaceAttribute", "State: " + placeAttribute.getState());
                 listPlaceAttribute.add(placeAttribute);
             }
-            if(listPlaceAttribute.size()>0)
+            if (listPlaceAttribute.size() > 0)
                 return listPlaceAttribute;
         }
         return null;
@@ -503,19 +516,23 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks, GoogleApiCli
 
     @Override
     public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
-        if(placeAttribute!=null) {
+        if (placeAttribute != null) {
+            yourLocation = new MyLocation();
             yourLocation.setDiachi(placeAttribute.getFullname());
             yourLocation.setQuanhuyen(placeAttribute.getDistrict());
             yourLocation.setTinhtp(placeAttribute.getState());
             yourLocation.setLat(returnLatLngByName(placeAttribute.getFullname()).latitude);
             yourLocation.setLng(returnLatLngByName(placeAttribute.getFullname()).longitude);
-            if(flag==2)
+            if (flag == 2)
                 sendBroadcast("Location");
-            if(flag==3)
+            if (flag == 3)
                 sendBroadcast("LocationChange");
-                sendBroadcast("LocationChange");
-        }else{
-            Log.i(LOG+".onLocationFinder","State: null");
+            sendBroadcast("LocationChange");
+        } else {
+            Log.i(LOG + ".onLocationFinder", "State: null");
         }
     }
+
+
+
 }
