@@ -866,11 +866,11 @@ public class MainActivity extends AppCompatActivity
                         isConnected = false;
                     }
                 if (!canGetLocation(context) && !isNetworkAvailable(context)) {
-                   ConnectionDetector.showNoConnectAlert(MainActivity.this);
+                   //ConnectionDetector.showNoConnectAlert(MainActivity.this);
 
                 } else {
                     if (!isNetworkAvailable(context)) {
-                        ConnectionDetector.showNetworkAlert(MainActivity.this);
+                       // ConnectionDetector.showNetworkAlert(MainActivity.this);
                     } else {
                        // ConnectionDetector.showSettingAlert(MainActivity.this);
                     }
