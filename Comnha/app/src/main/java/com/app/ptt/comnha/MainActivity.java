@@ -907,7 +907,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (info != null) {
                     for (int i = 0; i < info.length; i++) {
-                       Toast.makeText(getApplicationContext(),"Ten:"+info[i].getTypeName()+"--TrangThai:"+info[i].getExtraInfo(),Toast.LENGTH_LONG).show();
+                       Toast.makeText(getApplicationContext(),"Ten:"+info[i].getTypeName()+"--TrangThai:"+info[i].getState().toString(),Toast.LENGTH_LONG).show();
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
                             if (!isConnected &&canGetLocation(getApplicationContext())) {
                                 Log.v(LOG, "Now you are connected to Internet!");
