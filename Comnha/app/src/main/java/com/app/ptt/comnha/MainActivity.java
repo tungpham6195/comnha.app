@@ -817,6 +817,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             if (isNetworkAvailable(context) && canGetLocation(context)) {
+
                 if (temp) {
                     ArrayList<MyLocation> locations = new ArrayList<>();
                     String a = Storage.readFile(getApplicationContext(), "myLocation");
@@ -845,6 +846,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 isConnected = true;
             } else {
+                Toast.makeText(getApplicationContext(),"Offline mode",Toast.LENGTH_LONG).show();
                 ArrayList<MyLocation> locations = new ArrayList<>();
                 String a = Storage.readFile(getApplicationContext(), "myLocation");
                 if (a != null) {
@@ -864,13 +866,13 @@ public class MainActivity extends AppCompatActivity
                         isConnected = false;
                     }
                 if (!canGetLocation(context) && !isNetworkAvailable(context)) {
-                    ConnectionDetector.showNoConnectAlert(MainActivity.this);
+                   ConnectionDetector.showNoConnectAlert(MainActivity.this);
 
                 } else {
                     if (!isNetworkAvailable(context)) {
                         ConnectionDetector.showNetworkAlert(MainActivity.this);
                     } else {
-                        ConnectionDetector.showSettingAlert(MainActivity.this);
+                       // ConnectionDetector.showSettingAlert(MainActivity.this);
                     }
                 }
                 }
@@ -884,12 +886,14 @@ public class MainActivity extends AppCompatActivity
                 LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
                 boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
                 if (!isGPSEnabled) {
+                    isConnected = false;
                     return false;
                 } else {
                     return true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                isConnected = false;
                 return false;
             }
 
@@ -903,7 +907,7 @@ public class MainActivity extends AppCompatActivity
                 if (info != null) {
                     for (int i = 0; i < info.length; i++) {
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-                            if (!isConnected) {
+                            if (!isConnected &&canGetLocation(getApplicationContext())) {
                                 Log.v(LOG, "Now you are connected to Internet!");
                                 //Toast.makeText(getApplicationContext(), "Now you are connected to Internet!", Toast.LENGTH_SHORT).show();
                                 isConnected = true;

@@ -93,6 +93,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_review, container, false);
         anhxa(view);
         if(!isConnected){
+            Toast.makeText(context,"Offline mode",Toast.LENGTH_LONG).show();
             if(Storage.readFile(context,"postlist_"+sortType+"_"+tinh+"_"+huyen)!=null){
 
                 String a=Storage.readFile(context,"postlist_"+sortType+"_"+tinh+"_"+huyen);

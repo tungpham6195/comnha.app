@@ -57,7 +57,8 @@ public class ConnectionDetector {
 
     }
 
-    public static void showSettingAlert(final Context mContext) {
+    public static boolean showSettingAlert(final Context mContext) {
+
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
         alertDialog.setTitle("GPS settings");
         alertDialog.setMessage("GPS is not enabled.Do you want to setting menu?");
@@ -76,11 +77,12 @@ public class ConnectionDetector {
             }
         });
         alertDialog.show();
+        return true;
     }
     public static void showNetworkAlert(final Context mContext){
         AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
         builder.setTitle("Network Connection");
-        builder.setMessage("Network is not enabled. Enable network and try again");
+        builder.setMessage("Network is not enabled.");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -92,7 +94,7 @@ public class ConnectionDetector {
     public static void showNoConnectAlert(final Context mContext){
         final AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
         builder.setTitle("No Connection");
-        builder.setMessage("Network and GPS is not enabled. Enable and try again");
+        builder.setMessage("Network and GPS is not enabled.");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

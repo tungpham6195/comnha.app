@@ -183,6 +183,9 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
                 sendBroadcast("GetLocationError");
             }
         }
+        else{
+            Log.i(LOG + ".onConnected", "LOI BI NULL");
+        }
         startLocationUpdate();
     }
 
@@ -521,16 +524,18 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
             yourLocation.setDiachi(placeAttribute.getFullname());
             yourLocation.setQuanhuyen(placeAttribute.getDistrict());
             yourLocation.setTinhtp(placeAttribute.getState());
-            yourLocation.setLat(returnLatLngByName(placeAttribute.getFullname()).latitude);
-            yourLocation.setLng(returnLatLngByName(placeAttribute.getFullname()).longitude);
+            LatLng a=(returnLatLngByName(placeAttribute.getFullname()));
+
+            yourLocation.setLat(a.latitude);
+            yourLocation.setLng(a.longitude);
             if (flag == 2)
                 sendBroadcast("Location");
             if (flag == 3)
                 sendBroadcast("LocationChange");
-            sendBroadcast("LocationChange");
         } else {
             Log.i(LOG + ".onLocationFinder", "State: null");
         }
+        flag=-10;
     }
 
 

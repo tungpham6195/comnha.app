@@ -113,6 +113,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://com-nha.firebaseio.com/");
         anhxa(view);
         if (!isConnected){
+            Toast.makeText(mContext,"Offline mode",Toast.LENGTH_LONG).show();
             if (Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen) != null) {
                 Log.i(LOG + ".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen, "Ko null");
                 ArrayList<MyLocation> locations = new ArrayList<>();

@@ -225,21 +225,25 @@ public class MapFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
-        if (isConnected) {
+
             switch (v.getId()) {
                 case R.id.frg_map_cardV_mylocation:
-                    if (myLocationSearch != null && isNearest) {
-                        Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_location_black_24dp);
-                        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
-                        yourMarker = new MarkerOptions()
-                                .position(new LatLng(yourLocation.getLat(), yourLocation.getLng()))
-                                .title(yourLocation.getDiachi())
-                                .icon(markerIcon);
-                        myGoogleMap.addMarker(yourMarker);
+                    if (isConnected) {
+                        if (myLocationSearch != null && isNearest) {
+                            Drawable circleDrawable = getResources().getDrawable(R.drawable.ic_location_black_24dp);
+                            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(circleDrawable);
+                            yourMarker = new MarkerOptions()
+                                    .position(new LatLng(yourLocation.getLat(), yourLocation.getLng()))
+                                    .title(yourLocation.getDiachi())
+                                    .icon(markerIcon);
+                            myGoogleMap.addMarker(yourMarker);
+                        }
+                        if (yourLocation != null)
+                            myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(yourLocation.getLat(), yourLocation.getLng()), 13));
+                    }else {
+                        Toast.makeText(getContext(), "You are offline", Toast.LENGTH_LONG).show();
                     }
-                    if (yourLocation != null)
-                        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(yourLocation.getLat(), yourLocation.getLng()), 13));
-                    break;
+                        break;
                 case R.id.frg_map_fabrefresh:
                     if (card_pickDistrict.getTranslationY() == 0
                             && card_pickProvince.getTranslationX() == 0) {
@@ -251,69 +255,74 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     reloadMap();
                     break;
                 case R.id.frg_map_fabfilter:
-                    PopupMenu popupMenu = new PopupMenu(getActivity(), fab_filter, Gravity.TOP | Gravity.END);
-                    popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.popup_viewquan_none:
-                                    if (card_filterlabel.getTranslationX() == 0) {
-                                        AnimationUtils.animatHideTagMap2(card_filterlabel);
-                                    }
-                                    txt_filterLabel.setText(item.getTitle());
-                                    option = 1;
-                                    if (tinh != null && huyen != null)
-                                        getDataInFireBase(tinh, huyen);
-                                    else
-                                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                    if(isConnected) {
+                        PopupMenu popupMenu = new PopupMenu(getActivity(), fab_filter, Gravity.TOP | Gravity.END);
+                        popupMenu.getMenuInflater().inflate(R.menu.popup_menu_viewquan, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.popup_viewquan_none:
+                                        if (card_filterlabel.getTranslationX() == 0) {
+                                            AnimationUtils.animatHideTagMap2(card_filterlabel);
+                                        }
+                                        txt_filterLabel.setText(item.getTitle());
+                                        option = 1;
+                                        if (tinh != null && huyen != null)
+                                            getDataInFireBase(tinh, huyen);
+                                        else
+                                            getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
 
-                                    break;
-                                case R.id.popup_viewquan_gia:
-                                    if (card_filterlabel.getTranslationX() != 0) {
-                                        AnimationUtils.animatShowTagMap2(card_filterlabel);
-                                    }
-                                    txt_filterLabel.setText(item.getTitle());
-                                    option = 2;
+                                        break;
+                                    case R.id.popup_viewquan_gia:
+                                        if (card_filterlabel.getTranslationX() != 0) {
+                                            AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                        }
+                                        txt_filterLabel.setText(item.getTitle());
+                                        option = 2;
 
 
-                                    if (tinh != null && huyen != null)
-                                        getDataInFireBase(tinh, huyen);
-                                    else
-                                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-                                    break;
-                                case R.id.popup_viewquan_pv:
-                                    if (card_filterlabel.getTranslationX() != 0) {
-                                        AnimationUtils.animatShowTagMap2(card_filterlabel);
-                                    }
-                                    txt_filterLabel.setText(item.getTitle());
-                                    option = 3;
+                                        if (tinh != null && huyen != null)
+                                            getDataInFireBase(tinh, huyen);
+                                        else
+                                            getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                                        break;
+                                    case R.id.popup_viewquan_pv:
+                                        if (card_filterlabel.getTranslationX() != 0) {
+                                            AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                        }
+                                        txt_filterLabel.setText(item.getTitle());
+                                        option = 3;
 
-                                    if (tinh != null && huyen != null)
-                                        getDataInFireBase(tinh, huyen);
-                                    else
-                                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-                                    break;
-                                case R.id.popup_viewquan_vs:
-                                    if (card_filterlabel.getTranslationX() != 0) {
-                                        AnimationUtils.animatShowTagMap2(card_filterlabel);
-                                    }
-                                    txt_filterLabel.setText(item.getTitle());
-                                    option = 4;
-                                    if (tinh != null && huyen != null)
-                                        getDataInFireBase(tinh, huyen);
-                                    else
-                                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
-                                    break;
+                                        if (tinh != null && huyen != null)
+                                            getDataInFireBase(tinh, huyen);
+                                        else
+                                            getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                                        break;
+                                    case R.id.popup_viewquan_vs:
+                                        if (card_filterlabel.getTranslationX() != 0) {
+                                            AnimationUtils.animatShowTagMap2(card_filterlabel);
+                                        }
+                                        txt_filterLabel.setText(item.getTitle());
+                                        option = 4;
+                                        if (tinh != null && huyen != null)
+                                            getDataInFireBase(tinh, huyen);
+                                        else
+                                            getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                                        break;
 
+                                }
+
+                                return true;
                             }
-
-                            return true;
-                        }
-                    });
-                    popupMenu.show();
+                        });
+                        popupMenu.show();
+                    }else {
+                        Toast.makeText(getContext(), "You are offline", Toast.LENGTH_LONG).show();
+                    }
                     break;
                 case R.id.frg_map_fablocation:
+                    if(isConnected){
                     if (card_pickDistrict.getTranslationY() == 0
                             && card_pickProvince.getTranslationX() == 0) {
 //                    Log.i("transi", "pro: " + card_pickProvince.getTranslationX()
@@ -322,7 +331,9 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     } else {
                         AnimationUtils.animatShowTagMap(card_pickProvince, card_pickDistrict);
                     }
-
+            }else {
+            Toast.makeText(getContext(), "You are offline", Toast.LENGTH_LONG).show();
+        }
                     break;
                 case R.id.frg_map_cardV_chonProvince:
                     pickLocationDialog.show(fm, "pickProvinceDialog");
@@ -337,6 +348,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     }
                     break;
                 case R.id.frg_map_btnsearch:
+                    if(isConnected){
                     if (edt_content.getText().toString().equals("")) {
                         Toast.makeText(getContext(), getString(R.string.txt_noaddress),
                                 Toast.LENGTH_LONG).show();
@@ -345,13 +357,14 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                         edt_content.clearFocus();
                         btn_search.setImageResource(R.drawable.ic_search_grey_600_24dp);
                     }
+            }else {
+            Toast.makeText(getContext(), "You are offline", Toast.LENGTH_LONG).show();
+        }
                     break;
 
 
             }
-        } else {
-            Toast.makeText(getContext(), "You are offline", Toast.LENGTH_LONG).show();
-        }
+
     }
 
     private void search() {
@@ -822,6 +835,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
             }
             dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
             if(!isConnected){
+                Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_LONG).show();
                 ArrayList<MyLocation> locations = new ArrayList<>();
                 String a = Storage.readFile(getContext(), "listLocation" + 1+"_"+tinh+"_"+huyen);
                 if(a!=null) {
@@ -854,94 +868,91 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     Toast.makeText(getContext(),"Không tìm thấy dữ liệu",Toast.LENGTH_LONG).show();
                 }
             }else{
-                getData();
+                ChildEventListener childEventListener = new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
+                        newLocation.setLocaID(dataSnapshot.getKey());
+                        if (isNearest && myLocationSearch != null) {
+                            //addMarkerCustomSearch();
+                            Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
+                            float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(newLocation.getLat(), newLocation.getLng()));
+                            if (kc < 5000) {
+                                addMarker(newLocation);
+                            }
+                        } else {
+                            Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:" + myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())));
+                            float kc = (float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng()));
+                            int c = Math.round(kc);
+                            int d = c / 1000;
+                            int e = c % 1000;
+                            int f = e / 100;
+                            newLocation.setKhoangcach(d + "," + f);
+                            addMarker(newLocation);
+                        }
+                        Log.i(LOG + ".getDataInFireBase", "isConnected: -option=");
+                        Log.i(LOG + ".getDataInFireBase", "isConnected: "+isConnected+"-option="+option);
+                        list.add(newLocation);
+                        myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(newLocation.getLat(),newLocation.getLng()), 13));
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+
+                };
+                if (option == 2) {
+                    dbRef.child(tinh + "/" + huyen + "/"
+                            + getString(R.string.locations_CODE))
+                            .orderByChild("giaAVG")
+                            .startAt(6)
+                            .addChildEventListener(childEventListener);
+                }
+                if (option == 1) {
+                    dbRef.child(//LoginSession.getInstance().getTinh()
+                            tinh + "/"
+                                    +
+                                    //LoginSession.getInstance().getHuyen()
+                                    huyen + "/"
+                                    + getString(R.string.locations_CODE))
+                            .addChildEventListener(childEventListener);
+
+                }
+                if (option == 3) {
+                    dbRef.child(tinh + "/" + huyen + "/"
+                            + getString(R.string.locations_CODE))
+                            .orderByChild("pvAVG")
+                            .startAt(6)
+                            .addChildEventListener(childEventListener);
+                }
+                if (option == 4) {
+                    dbRef.child(tinh + "/" + huyen + "/"
+                            + getString(R.string.locations_CODE))
+                            .orderByChild("vsAVG")
+                            .startAt(6)
+                            .addChildEventListener(childEventListener);
+                }
             }
 
         } else {
             Toast.makeText(getContext(), "Khong tim thay tinh va huyen", Toast.LENGTH_LONG).show();
-        }
-    }
-    public void getData(){
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
-                newLocation.setLocaID(dataSnapshot.getKey());
-
-
-                if (isNearest && myLocationSearch != null) {
-                    //addMarkerCustomSearch();
-                    Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
-                    float kc = (float) myTool.getDistance(new LatLng(myLocationSearch.getPlaceLatLng().latitude, myLocationSearch.getPlaceLatLng().longitude), new LatLng(newLocation.getLat(), newLocation.getLng()));
-                    if (kc < 5000) {
-                        addMarker(newLocation);
-                    }
-                } else {
-                    Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:" + myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())));
-                    float kc = (float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng()));
-                    int c = Math.round(kc);
-                    int d = c / 1000;
-                    int e = c % 1000;
-                    int f = e / 100;
-                    newLocation.setKhoangcach(d + "," + f);
-                    addMarker(newLocation);
-                }
-                list.add(newLocation);
-                myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(newLocation.getLat(),newLocation.getLng()), 13));
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-
-        };
-        if (option == 2) {
-            dbRef.child(tinh + "/" + huyen + "/"
-                    + getString(R.string.locations_CODE))
-                    .orderByChild("giaAVG")
-                    .startAt(6)
-                    .addChildEventListener(childEventListener);
-        }
-        if (option == 1) {
-            dbRef.child(//LoginSession.getInstance().getTinh()
-                    tinh + "/"
-                            +
-                            //LoginSession.getInstance().getHuyen()
-                            huyen + "/"
-                            + getString(R.string.locations_CODE))
-                    .addChildEventListener(childEventListener);
-
-        }
-        if (option == 3) {
-            dbRef.child(tinh + "/" + huyen + "/"
-                    + getString(R.string.locations_CODE))
-                    .orderByChild("pvAVG")
-                    .startAt(6)
-                    .addChildEventListener(childEventListener);
-        }
-        if (option == 4) {
-            dbRef.child(tinh + "/" + huyen + "/"
-                    + getString(R.string.locations_CODE))
-                    .orderByChild("vsAVG")
-                    .startAt(6)
-                    .addChildEventListener(childEventListener);
         }
     }
     class NetworkChangeReceiver extends BroadcastReceiver {
@@ -966,6 +977,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     locations = Storage.readJSONMyLocation(a);
                     if(locations.size()>0)
                         yourLocation = locations.get(0);
+                    isConnected = true;
                     Log.i(LOG + ".BroadcastReceiver", "yourLocation:"+yourLocation.getDiachi());
                     if (list.size() == 0 && yourLocation!=null) {
                         option = 1;
@@ -977,7 +989,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     myTool.startGoogleApi();
                     progressDialog.show();
                 }
-                isConnected = true;
+
             } else {
                 if (!canGetLocation(context) && !isNetworkAvailable(context)) {
                     ConnectionDetector.showNoConnectAlert(getContext());
