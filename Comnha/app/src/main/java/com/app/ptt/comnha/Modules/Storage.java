@@ -143,7 +143,7 @@ public class Storage {
     public static String  parsePostToJson(ArrayList<Post> posts) throws IOException {
         Gson gson=new Gson();
         String json=gson.toJson(posts);
-        Log.i("json string:",json);
+       // Log.i("json string:",json);
         if(json!=null)
         return json;
         return null;
@@ -153,7 +153,7 @@ public class Storage {
     public static String  parseMyLocationToJson(ArrayList< MyLocation >locations) {
         Gson gson=new Gson();
         String json1=gson.toJson(locations);
-        Log.i("json string:",json1);
+        //Log.i("json string:",json1);
         if(json1!=null)
             return json1;
         return null;

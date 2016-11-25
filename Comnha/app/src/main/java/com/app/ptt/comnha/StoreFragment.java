@@ -115,7 +115,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         if (!isConnected){
             Toast.makeText(mContext,"Offline mode",Toast.LENGTH_LONG).show();
             if (Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen) != null) {
-                Log.i(LOG + ".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen, "Ko null");
+               // Log.i(LOG + ".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen, "Ko null");
                 ArrayList<MyLocation> locations = new ArrayList<>();
                 String a = Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen);
                 if(a!=null) {
@@ -158,7 +158,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 } else
                     Log.i(LOG + ".getDataInFireBase", "my Location==null");
                 listLocation.add(newLocation);
-                    Log.i(LOG+".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen,  Storage.parseMyLocationToJson( listLocation).toString());
+                    //Log.i(LOG+".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen,  Storage.parseMyLocationToJson( listLocation).toString());
                     Storage.writeFile(mContext,  Storage.parseMyLocationToJson( listLocation).toString(), "listLocation" + filter+"_"+tinh+"_"+huyen);
 
                 if (STATUS_START > 0) {

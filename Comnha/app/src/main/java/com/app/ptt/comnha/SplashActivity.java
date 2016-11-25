@@ -88,8 +88,6 @@ public class SplashActivity extends AppCompatActivity {
                 if (myLocation != null) {
                     ArrayList<MyLocation> list = new ArrayList<>();
                     list.add(myLocation);
-                    StringWriter out = new StringWriter();
-
                     if (Storage.parseMyLocationToJson(list).toString() != null) {
                         Storage.writeFile(getApplicationContext(), Storage.parseMyLocationToJson(list).toString(), "myLocation");
                     }
