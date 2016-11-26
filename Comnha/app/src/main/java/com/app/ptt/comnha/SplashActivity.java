@@ -1,9 +1,7 @@
 package com.app.ptt.comnha;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.LocationManager;
@@ -18,12 +16,9 @@ import android.widget.TextView;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
-import com.app.ptt.comnha.SingletonClasses.LoginSession;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 
@@ -31,7 +26,7 @@ public class SplashActivity extends AppCompatActivity {
     TextView dot1, dot2, dot3, dot4, dot5, dot6;
     ImageView imgLogo;
     MyTool myTool;
-    private static final String LOG=SplashActivity.class.getSimpleName();
+    private static final String LOG = SplashActivity.class.getSimpleName();
     IntentFilter intentFilter;
     boolean isConnected;
     MyLocation myLocation;
@@ -42,11 +37,11 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        intentFilter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.addAction(mBroadcastSendAddress);
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
-        broadcast=new NetworkChangeReceiver();
-        registerReceiver(broadcast,intentFilter);
+        broadcast = new NetworkChangeReceiver();
+        registerReceiver(broadcast, intentFilter);
     }
 
     @Override
@@ -58,8 +53,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myTool=new MyTool(getApplicationContext(),SplashActivity.class.getSimpleName());
-       // myLocation=new MyLocation();
+        // myLocation=new MyLocation();
         setContentView(R.layout.activity_splash);
         dot1 = (TextView) findViewById(R.id.act_splash_dot1);
         dot2 = (TextView) findViewById(R.id.act_splash_dot2);
@@ -70,12 +64,14 @@ public class SplashActivity extends AppCompatActivity {
         imgLogo = (ImageView) findViewById(R.id.act_splash_imglogo);
         AnimationUtils.animateTransTrip(dot1, dot2, dot3, dot4, dot5, dot6);
         AnimationUtils.animateTransAlpha(imgLogo);
+        myTool = new MyTool(getApplicationContext(), SplashActivity.class.getSimpleName());
     }
 
     @Override
     public void onBackPressed() {
     }
-    class NetworkChangeReceiver extends BroadcastReceiver{
+
+    class NetworkChangeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getIntExtra("STT", 0) == 2) {
@@ -130,7 +126,7 @@ public class SplashActivity extends AppCompatActivity {
                         // This method will be executed once the timer is over
                         // Start your app main activity
                         Intent i = new Intent(SplashActivity.this, MainActivity.class);
-                        i.putExtra("isConnected",false);
+                        i.putExtra("isConnected", false);
                         startActivity(i);
 
                         // close this activity
@@ -139,8 +135,9 @@ public class SplashActivity extends AppCompatActivity {
                 }, SPLASH_TIME_OUT);
                 isConnected = false;
             }
-            Log.i(LOG+".NetworkChangeReceiver", "isConnected: "+isConnected);
+            Log.i(LOG + ".NetworkChangeReceiver", "isConnected: " + isConnected);
         }
+
         private boolean canGetLocation(Context mContext) {
             try {
                 LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
@@ -167,7 +164,7 @@ public class SplashActivity extends AppCompatActivity {
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
                             if (!isConnected) {
                                 Log.v(LOG, "Now you are connected to Internet!");
-                                    isConnected = true;
+                                isConnected = true;
                             }
                             return true;
                         }

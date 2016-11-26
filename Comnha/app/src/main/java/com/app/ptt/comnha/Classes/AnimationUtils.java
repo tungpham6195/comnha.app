@@ -141,12 +141,12 @@ public class AnimationUtils {
     }
 
     public static void animateTransAlpha(View view1) {
-        ObjectAnimator animTransY = ObjectAnimator.ofFloat(view1, "translationY", 1800, 0);
-        ObjectAnimator animAlpha = ObjectAnimator.ofFloat(view1, "alpha", 0f, 1f);
-        animAlpha.setDuration(2500);
-        animTransY.setDuration(2500).setStartDelay(500);
-        animAlpha.start();
-        animTransY.start();
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(view1, "scaleX", 0f, 1f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(view1, "scaleY", 0f, 1f);
+        scaleX.setDuration(2000);
+        scaleY.setDuration(2000);
+        scaleY.start();
+        scaleX.start();
 
     }
 
@@ -194,6 +194,7 @@ public class AnimationUtils {
         rotate.setDuration(300);
         rotate.start();
     }
+
     public static void rotate90postoptionBack(View view) {
         ObjectAnimator rotate = ObjectAnimator.ofFloat(view, "rotation", 180, 0);
         rotate.setDuration(300);

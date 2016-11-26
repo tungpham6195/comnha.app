@@ -173,6 +173,7 @@
 
     <!--Firebase-->
     <string name="users_CODE">Users/</string>
+    <string name="reports_CODE">Reports/</string>
     <string name="thucdon_CODE">Food/</string>
     <string name="locathucdon_CODE">StoreFood/</string>
     <string name="locations_CODE">Stores/</string>
