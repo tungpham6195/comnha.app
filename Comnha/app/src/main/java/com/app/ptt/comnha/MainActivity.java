@@ -229,11 +229,10 @@ public class MainActivity extends AppCompatActivity
                             transaction.replace(R.id.frame, reviewFragment);
                             transaction.commit();
                             AnimationUtils.animatfabMenuIn(fabmenu);
-                    //    }
                         break;
                     case R.id.tab_stores:
                         fabmenu.close(true);
-                       // if (isConnected) {
+
                             StoreFragment storeFragment = new StoreFragment();
                             storeFragment.setFilter(1);
                             storeFragment.setIsConnected(isConnected);
@@ -245,7 +244,7 @@ public class MainActivity extends AppCompatActivity
                             transaction.replace(R.id.frame, storeFragment);
                             transaction.commit();
                             AnimationUtils.animatfabMenuIn(fabmenu);
-                     //   }
+
                         break;
                     case R.id.tab_locations:
                         FilterFragment filterFragment = new FilterFragment();
