@@ -19,6 +19,7 @@
         android:id="@+id/item_reportstore_txt_newtenquan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:textAllCaps="false" />
 
     <TextView

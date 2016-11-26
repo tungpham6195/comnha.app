@@ -60,6 +60,8 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
                 report_adapter.notifyDataSetChanged();
                 dbRef.child(tinh + "/" + quan + "/"
                         + getString(R.string.reports_CODE))
+                        .orderByChild("localID")
+                        .equalTo(myLocation.getLocaID())
                         .addChildEventListener(reportChildEventListener);
                 AnimationUtils.animatMoveListForward(lv_store, lv_reports);
             }

@@ -8,11 +8,9 @@ import java.util.Map;
  */
 
 public class Report {
-    String reportID, old_name, old_address, old_province, old_district, old_timestart, old_timeend, old_sdt;
-    long old_giamin, old_giamax;
-    double old_lat, old_lng;
-    String name, address, province, district, localID, timestart, timeend, sdt;
-    long giamin, giamax;
+    String reportID, oldname, oldaddress, oldprovince, olddistrict, oldtimestart,
+            oldtimeend, oldsdt, name, address, province, district, localID, timestart, timeend, sdt;
+    long oldgiamin, oldgiamax, giamin, giamax;
     double lat, lng;
 
     public void setReportID(String reportID) {
@@ -24,91 +22,75 @@ public class Report {
     }
 
     public void setOld_name(String old_name) {
-        this.old_name = old_name;
+        this.oldname = old_name;
     }
 
     public void setOld_address(String old_address) {
-        this.old_address = old_address;
+        this.oldaddress = old_address;
     }
 
     public void setOld_province(String old_province) {
-        this.old_province = old_province;
+        this.oldprovince = old_province;
     }
 
     public void setOld_district(String old_district) {
-        this.old_district = old_district;
+        this.olddistrict = old_district;
     }
 
     public void setOld_timestart(String old_timestart) {
-        this.old_timestart = old_timestart;
+        this.oldtimestart = old_timestart;
     }
 
     public void setOld_timeend(String old_timeend) {
-        this.old_timeend = old_timeend;
+        this.oldtimeend = old_timeend;
     }
 
     public void setOld_sdt(String old_sdt) {
-        this.old_sdt = old_sdt;
+        this.oldsdt = old_sdt;
     }
 
     public void setOld_giamin(long old_giamin) {
-        this.old_giamin = old_giamin;
+        this.oldgiamin = old_giamin;
     }
 
     public void setOld_giamax(long old_giamax) {
-        this.old_giamax = old_giamax;
-    }
-
-    public void setOld_lat(double old_lat) {
-        this.old_lat = old_lat;
-    }
-
-    public void setOld_lng(double old_lng) {
-        this.old_lng = old_lng;
+        this.oldgiamax = old_giamax;
     }
 
     public String getOld_name() {
-        return old_name;
+        return oldname;
     }
 
     public String getOld_address() {
-        return old_address;
+        return oldaddress;
     }
 
     public String getOld_province() {
-        return old_province;
+        return oldprovince;
     }
 
     public String getOld_district() {
-        return old_district;
+        return olddistrict;
     }
 
     public String getOld_timestart() {
-        return old_timestart;
+        return oldtimestart;
     }
 
     public String getOld_timeend() {
-        return old_timeend;
+        return oldtimeend;
     }
 
     public String getOld_sdt() {
-        return old_sdt;
+        return oldsdt;
     }
 
     public long getOld_giamin() {
-        return old_giamin;
+        return oldgiamin;
     }
 
     public long getOld_giamax() {
-        return old_giamax;
-    }
-
-    public double getOld_lat() {
-        return old_lat;
-    }
-
-    public double getOld_lng() {
-        return old_lng;
+        return oldgiamax;
     }
 
     public void setLat(double lat) {
@@ -217,13 +199,13 @@ public class Report {
 
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
-        result.put("oldname", old_name);
-        result.put("oldaddress", old_address);
-        result.put("oldsdt", old_sdt);
-        result.put("oldgiamax", old_giamax);
-        result.put("oldgiamin", old_giamin);
-        result.put("oldtimestart", old_timestart);
-        result.put("oldtimeend", old_timeend);
+        result.put("oldname", oldname);
+        result.put("oldaddress", oldaddress);
+        result.put("oldsdt", oldsdt);
+        result.put("oldgiamax", oldgiamax);
+        result.put("oldgiamin", oldgiamin);
+        result.put("oldtimestart", oldtimestart);
+        result.put("oldtimeend", oldtimeend);
 
         result.put("name", name);
         result.put("address", address);

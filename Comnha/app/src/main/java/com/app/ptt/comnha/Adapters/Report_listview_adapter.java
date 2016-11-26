@@ -75,11 +75,11 @@ public class Report_listview_adapter extends BaseAdapter {
         holder.old_txt_sdt.setText("SĐT cũ: " + reports.get(position).getOld_sdt());
         holder.old_txt_gia.setText("Giá cũ: " + reports.get(position).getOld_giamin()
                 + " - " + reports.get(position).getOld_giamax());
-        holder.txt_name.setText("Tên mới: " + reports.get(position).getOld_name());
-        holder.txt_diachi.setText("Địa chỉ mới: " + reports.get(position).getOld_name());
+        holder.txt_name.setText("Tên mới: " + reports.get(position).getName());
+        holder.txt_diachi.setText("Địa chỉ mới: " + reports.get(position).getAddress());
         holder.txt_gio.setText("Giờ mới: " + reports.get(position).getTimestart()
                 + " - " + reports.get(position).getTimeend());
-        holder.txt_sdt.setText("SĐT mới: " + reports.get(position).getOld_name());
+        holder.txt_sdt.setText("SĐT mới: " + reports.get(position).getSdt());
         holder.txt_gia.setText("Giá mới: " + reports.get(position).getGiamin()
                 + " - " + reports.get(position).getGiamax());
         return convertView;
