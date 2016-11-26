@@ -644,7 +644,7 @@ public class MainActivity extends AppCompatActivity
                                         reviewFragment.setTinh(LoginSession.getInstance().getTinh());
                                         reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
                                         reviewFragment.setSortType(1);
-                                    reviewFragment.setIsConnected(isConnected);
+                                        reviewFragment.setIsConnected(isConnected);
                                         reviewFragment.setContext(getApplicationContext());
                                         transaction = getSupportFragmentManager().beginTransaction();
                                         transaction.replace(R.id.frame, reviewFragment);
@@ -806,14 +806,17 @@ public class MainActivity extends AppCompatActivity
                     ArrayList<MyLocation> list = new ArrayList<>();
                     list.add(myLocation);
                     Storage.writeFile(getApplicationContext(), Storage.parseMyLocationToJson(list).toString(), "myLocation");
-                    LoginSession.getInstance().setTinh(myLocation.getTinhtp());
-                    LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
-                    fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
-                            + LoginSession.getInstance().getTinh());
-                    Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
-                    bottomBarEvent();
-                    if (myTool.isGoogleApiConnected())
-                        myTool.stopLocationUpdate();
+                    if(LoginSession.getInstance().getHuyen()==null && LoginSession.getInstance().getTinh()==null) {
+                        LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+                        LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
+                        fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
+                                + LoginSession.getInstance().getTinh());
+                        Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
+                        bottomBarEvent();
+                        if (myTool.isGoogleApiConnected())
+                            myTool.stopLocationUpdate();
+                    }
+
                 }
             }
             if (isNetworkAvailable(context) && canGetLocation(context)) {
@@ -837,12 +840,15 @@ public class MainActivity extends AppCompatActivity
                     myTool.startGoogleApi();
                     progressDialog.show();
                 } else {
-                    LoginSession.getInstance().setTinh(myLocation.getTinhtp());
-                    LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
-                    fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
-                            + LoginSession.getInstance().getTinh());
-                    Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
-                    bottomBarEvent();
+                    if(LoginSession.getInstance().getHuyen()==null && LoginSession.getInstance().getTinh()==null ) {
+                        LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+                        LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
+                        fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
+                                + LoginSession.getInstance().getTinh());
+                        Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
+                        bottomBarEvent();
+                    }
+
                 }
                 isConnected = true;
             } else {
@@ -857,13 +863,16 @@ public class MainActivity extends AppCompatActivity
                         myTool.startGoogleApi();
                     }
                     if (myLocation != null) {
-                        LoginSession.getInstance().setTinh(myLocation.getTinhtp());
-                        LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
-                        fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
-                                + LoginSession.getInstance().getTinh());
-                        Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
-                        bottomBarEvent();
-                        isConnected = false;
+                        if(LoginSession.getInstance().getHuyen()==null && LoginSession.getInstance().getTinh()==null ) {
+                            LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+                            LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
+                            fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
+                                    + LoginSession.getInstance().getTinh());
+                            Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
+                            bottomBarEvent();
+                            isConnected = false;
+                        }
+
                     }
                 if (!canGetLocation(context) && !isNetworkAvailable(context)) {
                    //ConnectionDetector.showNoConnectAlert(MainActivity.this);
@@ -907,7 +916,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (info != null) {
                     for (int i = 0; i < info.length; i++) {
-                       Toast.makeText(getApplicationContext(),"Ten:"+info[i].getTypeName()+"--TrangThai:"+info[i].getState().toString(),Toast.LENGTH_LONG).show();
+                       //Toast.makeText(getApplicationContext(),"Ten:"+info[i].getTypeName()+"--TrangThai:"+info[i].getState().toString(),Toast.LENGTH_LONG).show();
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
                             if (!isConnected &&canGetLocation(getApplicationContext())) {
                                 Log.v(LOG, "Now you are connected to Internet!");
@@ -926,16 +935,6 @@ public class MainActivity extends AppCompatActivity
            // Toast.makeText(getApplicationContext(), "You are offline", Toast.LENGTH_SHORT).show();
             ;
             //networkStatus.setText("You are not connected to Internet!");
-            isConnected = false;
-            return false;
-        }
-        public  boolean isMobileNetworkAvailable(Context mContext) {
-            ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            if (mNetworkInfo.isConnected()) {
-                isConnected = true;
-                return true;
-            }
             isConnected = false;
             return false;
         }

@@ -62,7 +62,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     Calendar now;
     String tinh, huyen;
     TimePickerDialog tpd;
-    int edtID, pos;
+    int edtID, pos=-1;
     MyLocation newLocation;
     int hour, min;
     Geocoder gc;
@@ -91,6 +91,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 pos = position;
+
             }
         });
         return view;
@@ -174,6 +175,9 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                             filterResults.count = resultList.size();
                         } else {
                             a = null;
+                            PlaceAttribute a1 =new PlaceAttribute();
+                            a1.setFullname(constraint.toString());
+                            mPlaceAttribute.add(a1);
                         }
                     }
                     return filterResults;
@@ -229,7 +233,13 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         newLocation.setTimeend(btn_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
-        placeAPI = new PlaceAPI(mPlaceAttribute.get(pos).getFullname(), this);
+        Toast.makeText(getContext(),pos+"",Toast.LENGTH_LONG).show();
+//        Log.i(LOG+".addNewLoca",mPlaceAttribute.get(pos).getFullname());
+        if(pos!=-1) {
+            placeAPI = new PlaceAPI(mPlaceAttribute.get(pos).getFullname(), this);
+        }else{
+            placeAPI = new PlaceAPI(autoCompleteText.getText().toString(), this);
+        }
     }
 
     @Override
@@ -247,7 +257,6 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState() + "/";
             huyen = placeAttribute.getDistrict() + "/";
-
             newLocation.setDiachi(placeAttribute.getFullname());
             Log.i(LOG + ".onLocationFinder", placeAttribute.getState() + "-" + placeAttribute.getDistrict());
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -300,6 +309,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
             //mProgressDialog.dismiss();
             Toast.makeText(getActivity(), "Lỗi! Kiểm tra dữ liệu nhập vàp ", Toast.LENGTH_LONG).show();
         }
+        pos=-1;
     }
 
     @Override
@@ -323,15 +333,9 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 } else if (Long.valueOf(edt_giamax.getText().toString()) <= Long.valueOf(edt_giamin.getText().toString())) {
                     Snackbar.make(view, getResources().getText(R.string.txt_giawarn), Snackbar.LENGTH_SHORT).show();
                 } else {
-                    if (a != null) {
-                        Log.i(LOG + ".onClick", a);
-                        if (mPlaceAttribute.get(pos).getAddressNum() == null)
-                            Snackbar.make(view, "Không có số nhà và tên đường. Xin thử lại!!", Snackbar.LENGTH_SHORT).show();
-                        else {
-                            addNewLoca();
-                        }
-                    } else
-                        Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
+                        addNewLoca();
+//                    } else
+//                        Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.frg_addloction_btn_giomo:

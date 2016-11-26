@@ -1041,8 +1041,10 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivity != null) {
                 NetworkInfo[] info = connectivity.getAllNetworkInfo();
+
                 if (info != null) {
                     for (int i = 0; i < info.length; i++) {
+                       // Toast.makeText(getContext(),"Ten:"+info[i].getTypeName()+"--TrangThai:"+info[i].getState().toString(),Toast.LENGTH_LONG).show();
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
                             if (!isConnected) {
                                 Log.v(LOG, "Now you are connected to Internet!");

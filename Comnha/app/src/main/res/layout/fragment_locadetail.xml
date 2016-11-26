@@ -47,6 +47,7 @@
                 app:layout_collapseMode="none">
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/frg_lcdetail_btn_themanh"
                     android:layout_width="@dimen/linear_chucnang_rong"
                     android:layout_height="match_parent"
@@ -72,7 +73,6 @@
                     android:id="@+id/frg_lcdetail_dangreview"
                     android:layout_width="@dimen/linear_chucnang_rong"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="30dp"
                     android:background="@drawable/selector"
                     android:clickable="true"
                     android:gravity="center_horizontal|center_vertical"

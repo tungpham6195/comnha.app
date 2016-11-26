@@ -1,10 +1,6 @@
 package com.app.ptt.comnha.Modules;
 
-import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,14 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
 
 /**
  * Created by cuong on 10/25/2016.
@@ -37,6 +30,7 @@ public class PlaceAPI {
     String fullname;
     String addressNum;
     LocationFinderListener location;
+
     PlaceAttribute mPlaceAttributes;
     public PlaceAPI(String input, LocationFinderListener location){
         this.location=location;

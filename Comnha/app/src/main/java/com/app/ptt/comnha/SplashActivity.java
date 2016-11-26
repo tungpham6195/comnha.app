@@ -19,7 +19,6 @@ import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 
 public class SplashActivity extends AppCompatActivity {
@@ -84,8 +83,6 @@ public class SplashActivity extends AppCompatActivity {
                 if (myLocation != null) {
                     ArrayList<MyLocation> list = new ArrayList<>();
                     list.add(myLocation);
-                    StringWriter out = new StringWriter();
-
                     if (Storage.parseMyLocationToJson(list).toString() != null) {
                         Storage.writeFile(getApplicationContext(), Storage.parseMyLocationToJson(list).toString(), "myLocation");
                     }

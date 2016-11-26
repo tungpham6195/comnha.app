@@ -97,7 +97,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
             if(Storage.readFile(context,"postlist_"+sortType+"_"+tinh+"_"+huyen)!=null){
 
                 String a=Storage.readFile(context,"postlist_"+sortType+"_"+tinh+"_"+huyen);
-                Log.i(LOG + ".onCreateView - " + "postlist_"+sortType+"_"+tinh+"_"+huyen, ""+a.toString());
+                //Log.i(LOG + ".onCreateView - " + "postlist_"+sortType+"_"+tinh+"_"+huyen, ""+a.toString());
                 ArrayList<Post> posts= null;
                 if(a!=null) {
                     try {
@@ -110,7 +110,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
                     }
 
                     if(posts.size()>0) {
-                        Log.i(LOG + ".onCreateView - " + "postlist_"+sortType+"_"+tinh+"_"+huyen,"posts.size()= "+posts.size());
+                        //Log.i(LOG + ".onCreateView - " + "postlist_"+sortType+"_"+tinh+"_"+huyen,"posts.size()= "+posts.size());
                         for (Post post : posts) {
                             postlist.add(post);
                             mAdapter.notifyDataSetChanged();
@@ -138,7 +138,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
                 postlist.add(post);
                 try {
                     Storage.parsePostToJson(postlist);
-                    Log.i(LOG + ".onCreateView - " +"postlist_"+sortType+"_"+tinh+"_"+huyen, Storage.parsePostToJson(postlist));
+                   // Log.i(LOG + ".onCreateView - " +"postlist_"+sortType+"_"+tinh+"_"+huyen, Storage.parsePostToJson(postlist));
                     if (Storage.parsePostToJson(postlist).toString() != null)
                         Storage.writeFile(context,Storage.parsePostToJson(postlist).toString(), "postlist_"+sortType+"_"+tinh+"_"+huyen);
                 } catch (IOException e) {

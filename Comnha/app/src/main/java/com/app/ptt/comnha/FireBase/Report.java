@@ -126,6 +126,8 @@ public class Report {
         result.put("timestart", timestart);
         result.put("timeend", timeend);
         result.put("localID", localID);
+        result.put("lat", lat);
+        result.put("lng", lng);
         return result;
     }
 }
