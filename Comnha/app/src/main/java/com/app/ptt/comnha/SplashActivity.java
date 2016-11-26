@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
@@ -155,9 +156,12 @@ public class SplashActivity extends AppCompatActivity {
             ConnectivityManager connectivity = (ConnectivityManager)
                     context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivity != null) {
+
                 NetworkInfo[] info = connectivity.getAllNetworkInfo();
+
                 if (info != null) {
                     for (int i = 0; i < info.length; i++) {
+                        Log.i(LOG+".isNetworkAvailable",info[i].getState().toString());
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
                             if (!isConnected) {
                                 Log.v(LOG, "Now you are connected to Internet!");

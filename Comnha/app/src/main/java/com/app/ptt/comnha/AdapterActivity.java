@@ -60,10 +60,10 @@ public class AdapterActivity extends AppCompatActivity {
         });
     }
 
-    private void openMap() {
+    private void openMap(Boolean a) {
 
         MapFragment mapFragment = new MapFragment();
-
+        mapFragment.setLocationSaved(a);
         getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter, mapFragment).commit();
     }
 
@@ -75,7 +75,8 @@ public class AdapterActivity extends AppCompatActivity {
             if (findViewById(R.id.frame_adapter) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter) == null) {
                     try{
-                        openMap();
+                        Log.i(LOG + "C", intent.getBooleanExtra("locationsaved",false)+"");
+                        openMap(intent.getBooleanExtra("locationsaved",false));
                     } catch (Exception e){
                         Toast.makeText(getApplicationContext(),"Xảy ra lỗi. Xin kiểm tra lại",Toast.LENGTH_LONG).show();
                     }

@@ -112,9 +112,11 @@ public class MainActivity extends AppCompatActivity
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Loading");
-
-
-
+        mIntentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        mIntentFilter.addAction("android.location.PROVIDERS_CHANGED");
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        mBroadcastReceiver=new NetworkChangeReceiver();
+        registerReceiver(mBroadcastReceiver, mIntentFilter);
         myTool = new MyTool(getApplicationContext(), MainActivity.class.getSimpleName());
         setContentView(R.layout.activity_main2);
 
@@ -217,7 +219,6 @@ public class MainActivity extends AppCompatActivity
                 switch (tabId) {
                     case R.id.tab_reviews:
                         fabmenu.close(true);
-
                             ReviewFragment reviewFragment = new ReviewFragment();
                             reviewFragment.setContext(getApplicationContext());
                             reviewFragment.setTinh(LoginSession.getInstance().getTinh());
@@ -415,11 +416,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         Log.i(LOG, "onStart");
-        mIntentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        mIntentFilter.addAction("android.location.PROVIDERS_CHANGED");
-        mIntentFilter.addAction(mBroadcastSendAddress);
-        mBroadcastReceiver=new NetworkChangeReceiver();
-        registerReceiver(mBroadcastReceiver, mIntentFilter);
+
 
         mAuth.addAuthStateListener(mAuthListener);
         try {
@@ -472,7 +469,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(mBroadcastReceiver);
+
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -484,6 +481,7 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
+        unregisterReceiver(mBroadcastReceiver);
        // Storage.deleteFile(getApplicationContext(),"myLocation");
     }
 
@@ -569,6 +567,8 @@ public class MainActivity extends AppCompatActivity
                     Intent intent2 = new Intent(MainActivity.this, AdapterActivity.class);
                     intent2.putExtra(getString(R.string.fragment_CODE),
                             getString(R.string.frag_map_CODE));
+                intent2.putExtra("locationsaved",temp);
+
 
                     startActivity(intent2);
              //   }
@@ -773,20 +773,6 @@ public class MainActivity extends AppCompatActivity
         }
         return false;
     }
-    public void startGetLocation() {
-        if (!myTool.isGoogleApiConnected()) {
-            Log.i(LOG + ".startGetLocation", "Google Api not connect");
-            myTool.startGoogleApi();
-            requestLocation = true;
-        } else {
-            if (myLocation == null) {
-                Log.i(LOG + ".startGetLocation", "myLocation==null");
-                myTool.startGoogleApi();
-            }
-        }
-        progressDialog.show();
-    }
-
 
     class NetworkChangeReceiver extends BroadcastReceiver {
         @Override
@@ -794,12 +780,13 @@ public class MainActivity extends AppCompatActivity
             Intent myIntent = getIntent();
             boolean temp = myIntent.getBooleanExtra("isConnected", false);
             Log.i(LOG + ".NetworkChangeReceiver", "isConnected splash " + temp);
+            progressDialog.dismiss();
             if (intent.getIntExtra("STT", 0) == 2) {
                 Log.i(LOG + ".NetworkChangeReceiver", "Nhan vi tri cua ban:");
                 try {
                     myLocation = myTool.getYourLocation();
                     Storage.deleteFile(getApplicationContext(), "myLocation");
-                    progressDialog.dismiss();
+
                 } catch (Exception e) {
                 }
                 if (myLocation != null) {
@@ -813,15 +800,17 @@ public class MainActivity extends AppCompatActivity
                                 + LoginSession.getInstance().getTinh());
                         Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
                         bottomBarEvent();
-                        if (myTool.isGoogleApiConnected())
-                            myTool.stopLocationUpdate();
+                        myTool.stopLocationUpdate();
+
                     }
 
                 }
-            }
-            if (isNetworkAvailable(context) && canGetLocation(context)) {
 
+            }
+
+            if (isNetworkAvailable(context) && canGetLocation(context)) {
                 if (temp) {
+                    Log.i(LOG + ".NetworkChangeReceiver", "temp == true");
                     ArrayList<MyLocation> locations = new ArrayList<>();
                     String a = Storage.readFile(getApplicationContext(), "myLocation");
                     if (a != null) {
@@ -832,58 +821,60 @@ public class MainActivity extends AppCompatActivity
                             myLocation = null;
                         }
                     }
-
-            }
+            } else{
+                    myLocation=null;
+                    Log.i(LOG + ".NetworkChangeReceiver", "myLocation set null");
+                }
 
                 if (myLocation == null) {
                     Log.i(LOG + ".NetworkChangeReceiver", "myLocation == null");
                     myTool.startGoogleApi();
-                    progressDialog.show();
+                  //  progressDialog.show();
                 } else {
                     if(LoginSession.getInstance().getHuyen()==null && LoginSession.getInstance().getTinh()==null ) {
                         LoginSession.getInstance().setTinh(myLocation.getTinhtp());
                         LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
                         fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
                                 + LoginSession.getInstance().getTinh());
-                        Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
-                        bottomBarEvent();
-                    }
+                        Log.i(LOG + ".NetworkChangeReceiver", "1");
 
+                    }
+                    Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
                 }
+                bottomBarEvent();
                 isConnected = true;
             } else {
-                Toast.makeText(getApplicationContext(),"Offline mode",Toast.LENGTH_LONG).show();
+                Log.i(LOG + ".NetworkChangeReceiver", "Offline mode");
+                //Toast.makeText(getApplicationContext(),"Offline mode",Toast.LENGTH_LONG).show();
                 ArrayList<MyLocation> locations = new ArrayList<>();
                 String a = Storage.readFile(getApplicationContext(), "myLocation");
                 if (a != null) {
                     locations = Storage.readJSONMyLocation(a);
                     if (locations.size() > 0)
                         myLocation = locations.get(0);
-                    else {
-                        myTool.startGoogleApi();
-                    }
                     if (myLocation != null) {
                         if(LoginSession.getInstance().getHuyen()==null && LoginSession.getInstance().getTinh()==null ) {
                             LoginSession.getInstance().setTinh(myLocation.getTinhtp());
                             LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
                             fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
                                     + LoginSession.getInstance().getTinh());
-                            Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
-                            bottomBarEvent();
                             isConnected = false;
                         }
-
+                        bottomBarEvent();
                     }
-                if (!canGetLocation(context) && !isNetworkAvailable(context)) {
-                   //ConnectionDetector.showNoConnectAlert(MainActivity.this);
-
-                } else {
-                    if (!isNetworkAvailable(context)) {
-                       // ConnectionDetector.showNetworkAlert(MainActivity.this);
-                    } else {
-                       // ConnectionDetector.showSettingAlert(MainActivity.this);
+                    else {
+                        myTool.startGoogleApi();
                     }
-                }
+
+//                if (!canGetLocation(context) && !isNetworkAvailable(context)) {
+//
+//
+//                } else {
+//                    if (!isNetworkAvailable(context)) {
+//
+//                    } else {
+//                    }
+//                }
                 }
                 Log.i(LOG + ".NetworkChangeReceiver", "isConnected: " + isConnected);
 

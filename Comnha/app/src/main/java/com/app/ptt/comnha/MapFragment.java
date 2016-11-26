@@ -107,7 +107,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
     int whatProvince = -1;
     String tinh, huyen;
     ProgressDialog progressDialog;
-    Boolean isConnected = false;
+    Boolean isConnected = false,locationSaved=false;
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
@@ -117,7 +117,9 @@ public class MapFragment extends Fragment implements View.OnClickListener,
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
-
+    public void setLocationSaved(Boolean a){
+        locationSaved=a;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -740,6 +742,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
             myLocationSearch = placeAttribute;
             tinh = placeAttribute.getState();
             huyen = placeAttribute.getDistrict();
+
             Log.i(LOG + ".onLocationFinder", "place:" + placeAttribute.getFullname());
             isNearest = true;
             Log.i(LOG + ".onClick ", "!=current quan huyen");
@@ -831,7 +834,10 @@ public class MapFragment extends Fragment implements View.OnClickListener,
             if (isNearest && myLocationSearch != null) {
                 addMarkerCustomSearch();
             } else {
-                addMarkerYourLocation();
+               if(yourLocation!=null){
+                   addMarkerYourLocation();
+
+               }
             }
             dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
             if(!isConnected){
@@ -863,7 +869,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                             myGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLat(),location.getLng()), 13));
                         }
                     }else
-                       Toast.makeText(getContext(),"Không tìm thấy dữ liệu",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(),"Không tìm thấy dữ liệu",Toast.LENGTH_LONG).show();
                 }else{
                     Toast.makeText(getContext(),"Không tìm thấy dữ liệu",Toast.LENGTH_LONG).show();
                 }
@@ -873,6 +879,7 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         MyLocation newLocation = dataSnapshot.getValue(MyLocation.class);
                         newLocation.setLocaID(dataSnapshot.getKey());
+
                         if (isNearest && myLocationSearch != null) {
                             //addMarkerCustomSearch();
                             Log.i(LOG + ".onClick ", "isNearest && myLocationSearch != null");
@@ -881,7 +888,6 @@ public class MapFragment extends Fragment implements View.OnClickListener,
                                 addMarker(newLocation);
                             }
                         } else {
-                            Log.i(LOG + ".onClick ", "isNearest && myLocationSearch == null:" + myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng())));
                             float kc = (float) myTool.getDistance(new LatLng(yourLocation.getLat(), yourLocation.getLng()), new LatLng(newLocation.getLat(), newLocation.getLng()));
                             int c = Math.round(kc);
                             int d = c / 1000;
@@ -962,43 +968,51 @@ public class MapFragment extends Fragment implements View.OnClickListener,
             if (intent.getIntExtra("STT", 0) == 2) {
                                     Log.i(LOG + ".BroadcastReceiver", "Nhan vi tri cua ban:");
                 yourLocation = myTool.getYourLocation();
-                Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" + list.size());
+                //Log.i(LOG + ".BroadcastReceiver", "Kiem tra list:" + list.size());
+                //Log.i(LOG + ".BroadcastReceiver", "locationSaved:" + locationSaved);
                 if (list.size() == 0 && yourLocation!=null) {
                     option = 1;
                     getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+
                 }
+                //myTool.stopLocationUpdate();
                 //progressDialog.dismiss();
             }
             if (isNetworkAvailable(context) && canGetLocation(context)) {
-                ArrayList<MyLocation> locations = new ArrayList<>();
-                String a = Storage.readFile(getContext(), "myLocation");
-                Log.i(LOG + ".BroadcastReceiver", "myLocation:"+a);
-                if (a != null) {
-                    locations = Storage.readJSONMyLocation(a);
-                    if(locations.size()>0)
-                        yourLocation = locations.get(0);
-                    isConnected = true;
-                    Log.i(LOG + ".BroadcastReceiver", "yourLocation:"+yourLocation.getDiachi());
-                    if (list.size() == 0 && yourLocation!=null) {
-                        option = 1;
-                        getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                if(locationSaved) {
+                    ArrayList<MyLocation> locations = new ArrayList<>();
+                    String a = Storage.readFile(getContext(), "myLocation");
+                    Log.i(LOG + ".BroadcastReceiver", "myLocation:" + a);
+                    if (a != null) {
+                        locations = Storage.readJSONMyLocation(a);
+                        if (locations.size() > 0)
+                            yourLocation = locations.get(0);
+                        isConnected = true;
+                        Log.i(LOG + ".BroadcastReceiver", "yourLocation:" + yourLocation.getDiachi());
+                        if (list.size() == 0 && yourLocation != null) {
+                            option = 1;
+                            getDataInFireBase(yourLocation.getTinhtp(), yourLocation.getQuanhuyen());
+                        }
+                        //progressDialog.dismiss();
                     }
-                    //progressDialog.dismiss();
+                }else{
+                    yourLocation = null;
                 }
                 if (yourLocation == null) {
+                    list=new ArrayList<>() ;
                     myTool.startGoogleApi();
-                    progressDialog.show();
+                   // progressDialog.show();
                 }
 
             } else {
                 if (!canGetLocation(context) && !isNetworkAvailable(context)) {
-                    ConnectionDetector.showNoConnectAlert(getContext());
+                   // ConnectionDetector.showNoConnectAlert(getContext());
 
                 } else {
                     if (!isNetworkAvailable(context)) {
-                        ConnectionDetector.showNetworkAlert(getContext());
+                       // ConnectionDetector.showNetworkAlert(getContext());
                     } else {
-                        ConnectionDetector.showSettingAlert(getContext());
+                        //ConnectionDetector.showSettingAlert(getContext());
                     }
                 }
                 ArrayList<MyLocation> locations = new ArrayList<>();

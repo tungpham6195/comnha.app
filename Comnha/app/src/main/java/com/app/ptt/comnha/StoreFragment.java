@@ -113,11 +113,11 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://com-nha.firebaseio.com/");
         anhxa(view);
         if (!isConnected){
-            Toast.makeText(mContext,"Offline mode",Toast.LENGTH_LONG).show();
-            if (Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen) != null) {
+            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
+            if (Storage.readFile(getContext(), "listLocation" + filter+"_"+tinh+"_"+huyen) != null) {
                // Log.i(LOG + ".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen, "Ko null");
                 ArrayList<MyLocation> locations = new ArrayList<>();
-                String a = Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen);
+                String a = Storage.readFile(getContext(), "listLocation" + filter+"_"+tinh+"_"+huyen);
                 if(a!=null) {
                     locations = Storage.readJSONMyLocation(a);
                     if(locations.size()>0) {
@@ -158,8 +158,7 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 } else
                     Log.i(LOG + ".getDataInFireBase", "my Location==null");
                 listLocation.add(newLocation);
-                    //Log.i(LOG+".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen,  Storage.parseMyLocationToJson( listLocation).toString());
-                    Storage.writeFile(mContext,  Storage.parseMyLocationToJson( listLocation).toString(), "listLocation" + filter+"_"+tinh+"_"+huyen);
+                Storage.writeFile(getContext(),  Storage.parseMyLocationToJson( listLocation).toString(), "listLocation" + filter+"_"+tinh+"_"+huyen);
 
                 if (STATUS_START > 0) {
                     btn_refresh.setVisibility(View.VISIBLE);
@@ -242,19 +241,27 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        if(isConnected) {
+                      //  if(isConnected) {
                             String key = listLocation.get(position).getLocaID();
                             Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                             intent.putExtra(getResources().getString(R.string.fragment_CODE),
                                     getResources().getString(R.string.frag_locadetail_CODE));
+                           // intent.putExtra("LocalID",key);
+                            //intent.putExtra("Info", "listLocation" + filter+"_"+tinh+"_"+huyen);
                             ChooseLoca.getInstance().setHuyen(huyen);
                             ChooseLoca.getInstance().setLocaID(key);
                             ChooseLoca.getInstance().setTinh(tinh);
+                            if(!isConnected) {
+                                ChooseLoca.getInstance().setInfo("listLocation" + filter + "_" + tinh + "_" + huyen);
+                                Log.i(LOG + ".anhxa", "listLocation" + filter + "_" + tinh + "_" + huyen);
+                            }
+                            else
+                                ChooseLoca.getInstance().setInfo("");
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-                        }else{
-                            Toast.makeText(mContext,"You are offline",Toast.LENGTH_LONG).show();
-                        }
+//                        }else{
+//                            Toast.makeText(mContext,"You are offline",Toast.LENGTH_LONG).show();
+//                        }
                     }
                 }));
         btn_refresh.setVisibility(View.GONE);
