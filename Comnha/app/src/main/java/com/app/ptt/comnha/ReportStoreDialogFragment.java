@@ -1,8 +1,11 @@
 package com.app.ptt.comnha;
 
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -16,26 +19,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Report;
+import com.app.ptt.comnha.Modules.DirectionFinder;
+import com.app.ptt.comnha.Modules.LocationFinderListener;
+import com.app.ptt.comnha.Modules.PlaceAPI;
+import com.app.ptt.comnha.Modules.PlaceAttribute;
+import com.app.ptt.comnha.Service.MyTool;
 import com.app.ptt.comnha.SingletonClasses.ReportLocal;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ReportStoreDialogFragment extends DialogFragment implements View.OnClickListener, TimePickerDialog.OnTimeSetListener {
+public class ReportStoreDialogFragment extends DialogFragment implements View.OnClickListener, TimePickerDialog.OnTimeSetListener,LocationFinderListener {
     TextView txt_tenquan, txt_sdt, txt_diachi, txt_gia, txt_giomocau;
     EditText edt_tenquan, edt_sdt,
             edt_giamin, edt_giamax;
@@ -43,12 +57,17 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
     Button btn_timestart, btn_timeend, btn_cancel, btn_ok;
     private TimePickerDialog tpd;
     private Calendar now;
-    int edtID, pos;
+    int edtID;
     int hour, min;
+    ArrayList<String> resultList;
     private DatabaseReference dbRef;
     String prov, dist;
     MyLocation location;
-
+    MyTool myTool;
+    int pos=-1;
+    PlaceAPI placeAPI;
+    Report newReport;
+    ArrayList<PlaceAttribute> placeAttributes;
     public ReportStoreDialogFragment() {
         // Required empty public constructor
     }
@@ -89,6 +108,13 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
         btn_cancel.setOnClickListener(this);
         btn_timestart.setOnClickListener(this);
         btn_timeend.setOnClickListener(this);
+        edt_diachi.setAdapter(new PlaceAutoCompleteAdapter(getContext(),R.layout.autocomplete_list_item));
+        edt_diachi.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pos=position;
+            }
+        });
     }
 
     @Override
@@ -119,9 +145,14 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.frg_reportstore_btnok:
-                Report newReport = new Report();
+                newReport=new Report();
                 newReport.setName(location.getName());
-                newReport.setAddress(location.getDiachi());
+                if(pos!=-1){
+                    placeAPI=new PlaceAPI(placeAttributes.get(pos).getFullname(),this);
+                }else{
+                    placeAPI=new PlaceAPI(edt_diachi.getText().toString(),this);
+                }
+               // newReport.setAddress(location.getDiachi());
                 newReport.setProvince(location.getTinhtp());
                 newReport.setDistrict(location.getQuanhuyen());
                 break;
@@ -201,5 +232,97 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
         // Set the width of the dialog proportional to 75% of the screen width
         window.setLayout((int) (size.x * 0.95), WindowManager.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
+    }
+
+    @Override
+    public void onLocationFinderStart() {
+
+    }
+
+    @Override
+    public void onLocationFinderSuccess(final PlaceAttribute placeAttribute) {
+        if(placeAttribute!=null &&placeAttribute.getDistrict()!=null &&placeAttribute.getState()!=null){
+          // newReport.setAddress(placeAttribute.getFullname());
+            final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+            builder.setMessage("Địa chỉ: " + placeAttribute.getFullname()).setTitle("Xác nhận")
+                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            newReport.setAddress(placeAttribute.getFullname());
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton("Thử lại", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        else {
+            Toast.makeText(getActivity(), "Lỗi! Kiểm tra dữ liệu nhập vàp ", Toast.LENGTH_LONG).show();
+        }
+        pos=-1;
+    }
+
+    class PlaceAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable{
+
+
+        public PlaceAutoCompleteAdapter(Context context, int resource) {
+            super(context, resource);
+            myTool=new MyTool(getContext(), ReportStoreDialogFragment.class.getSimpleName());
+        }
+        @Override
+        public int getCount() {
+            if (resultList != null) {
+                return resultList.size();
+            } else return 0;
+        }
+
+        @Nullable
+        @Override
+        public String getItem(int position) {
+            return resultList.get(position);
+        }
+        @Override
+        public Filter getFilter(){
+            final Filter filter =new Filter(){
+
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults filterResults=new FilterResults();
+                    if(constraint!=null){
+                        placeAttributes=new ArrayList<>();
+                        if(constraint!=null){
+                            placeAttributes=myTool.returnPlaceAttributeByName(constraint.toString().trim());
+                            if(placeAttributes.size()>0){
+                                resultList=new ArrayList<>();
+                                for (PlaceAttribute placeAttribute:placeAttributes){
+                                    resultList.add(placeAttribute.getFullname());
+                                }
+                                filterResults.count=resultList.size();
+                                filterResults.values=resultList;
+                                if(resultList.size()>0)
+                                    return filterResults;
+                            }
+                        }
+
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    if(results!=null && results.count>0){
+                        notifyDataSetChanged();
+                    }else{
+                        notifyDataSetInvalidated();
+                    }
+                }
+            };
+            return filter;
+        }
     }
 }
