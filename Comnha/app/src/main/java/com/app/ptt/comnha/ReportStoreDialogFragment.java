@@ -84,6 +84,14 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_report_store_dialog, container, false);
         location = ReportLocal.getInstance().getMyLocation();
+        newReport = new Report();
+        newReport.setOld_name(location.getName());
+        newReport.setOld_address(location.getDiachi());
+        newReport.setOld_sdt(location.getSdt());
+        newReport.setOld_giamax(location.getGiamax());
+        newReport.setOld_giamin(location.getGiamin());
+        newReport.setOld_timestart(location.getTimestart());
+        newReport.setOld_timeend(location.getTimeend());
         now = Calendar.getInstance();
         prov = ReportLocal.getInstance().getMyLocation().getTinhtp() + "/";
         dist = ReportLocal.getInstance().getMyLocation().getQuanhuyen() + "/";
@@ -155,7 +163,6 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.frg_reportstore_btnok:
-                newReport = new Report();
                 if (edt_tenquan.getText().toString().equals("")
                         && edt_diachi.getText().toString().equals("")
                         && edt_sdt.getText().toString().equals("")

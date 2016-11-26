@@ -1,26 +1,18 @@
 package com.app.ptt.comnha;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.location.GpsStatus;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -38,17 +30,13 @@ import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
-import com.app.ptt.comnha.Interfaces.Transactions;
 import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
-import com.firebase.client.realtime.Connection;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.nearby.connection.Connections;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -58,15 +46,7 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 
-import org.json.JSONException;
-import org.json.simple.parser.ParseException;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -82,7 +62,7 @@ public class MainActivity extends AppCompatActivity
     FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private boolean requestLocation = false;
-    boolean temp=true;
+    boolean temp = true;
     public String userID, username, email;
 
     private Toolbar mtoolbar;
@@ -95,7 +75,7 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionButton fab_review, fab_addloca, fab_changloca;
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     private Firebase ref;
-    boolean isConnected=false;
+    boolean isConnected = false;
     private BottomBar bottomBar;
     private PopupMenu popupMenu;
     private MyTool myTool;
@@ -112,7 +92,6 @@ public class MainActivity extends AppCompatActivity
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Loading");
-
 
 
         myTool = new MyTool(getApplicationContext(), MainActivity.class.getSimpleName());
@@ -202,10 +181,11 @@ public class MainActivity extends AppCompatActivity
         fab_addloca = (FloatingActionButton) findViewById(R.id.main_fabitem2);
         fab_changloca = (FloatingActionButton) findViewById(R.id.main_fabitem1);
         //myTool.startGoogleApi();
-       // progressDialog.show();
+        // progressDialog.show();
         //request();
     }
-    public void bottomBarEvent(){
+
+    public void bottomBarEvent() {
         fab_review.setOnClickListener(this);
         fab_addloca.setOnClickListener(this);
         fab_changloca.setOnClickListener(this);
@@ -218,33 +198,33 @@ public class MainActivity extends AppCompatActivity
                     case R.id.tab_reviews:
                         fabmenu.close(true);
 
-                            ReviewFragment reviewFragment = new ReviewFragment();
-                            reviewFragment.setContext(getApplicationContext());
-                            reviewFragment.setTinh(LoginSession.getInstance().getTinh());
-                            reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                            reviewFragment.setSortType(1);
-                            reviewFragment.setIsConnected(isConnected);
-                            transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.frame, reviewFragment);
-                            transaction.commit();
-                            AnimationUtils.animatfabMenuIn(fabmenu);
-                    //    }
+                        ReviewFragment reviewFragment = new ReviewFragment();
+                        reviewFragment.setContext(getApplicationContext());
+                        reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                        reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                        reviewFragment.setSortType(1);
+                        reviewFragment.setIsConnected(isConnected);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, reviewFragment);
+                        transaction.commit();
+                        AnimationUtils.animatfabMenuIn(fabmenu);
+                        //    }
                         break;
                     case R.id.tab_stores:
                         fabmenu.close(true);
-                       // if (isConnected) {
-                            StoreFragment storeFragment = new StoreFragment();
-                            storeFragment.setFilter(1);
-                            storeFragment.setIsConnected(isConnected);
-                            storeFragment.setContext(getApplicationContext());
-                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                            storeFragment.setYourLocation(myLocation);
-                            transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.frame, storeFragment);
-                            transaction.commit();
-                            AnimationUtils.animatfabMenuIn(fabmenu);
-                     //   }
+                        // if (isConnected) {
+                        StoreFragment storeFragment = new StoreFragment();
+                        storeFragment.setFilter(1);
+                        storeFragment.setIsConnected(isConnected);
+                        storeFragment.setContext(getApplicationContext());
+                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                        storeFragment.setYourLocation(myLocation);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.frame, storeFragment);
+                        transaction.commit();
+                        AnimationUtils.animatfabMenuIn(fabmenu);
+                        //   }
                         break;
                     case R.id.tab_locations:
                         FilterFragment filterFragment = new FilterFragment();
@@ -270,43 +250,43 @@ public class MainActivity extends AppCompatActivity
                             public boolean onMenuItemClick(MenuItem item) {
                                 switch (item.getItemId()) {
                                     case R.id.popup_viewpost_lastnews:
-                                      //  if (isConnected) {
-                                            ReviewFragment reviewFragment = new ReviewFragment();
-                                            reviewFragment.setSortType(1);
+                                        //  if (isConnected) {
+                                        ReviewFragment reviewFragment = new ReviewFragment();
+                                        reviewFragment.setSortType(1);
                                         reviewFragment.setIsConnected(isConnected);
-                                            reviewFragment.setContext(getApplicationContext());
-                                            reviewFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                                            transaction.replace(R.id.frame, reviewFragment);
-                                            transaction.commit();
-                                     //   }// else startGetLocation();
+                                        reviewFragment.setContext(getApplicationContext());
+                                        reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                        transaction.replace(R.id.frame, reviewFragment);
+                                        transaction.commit();
+                                        //   }// else startGetLocation();
                                         break;
                                     case R.id.popup_viewpost_mostcomment:
-                                     //   if (isConnected) {
-                                            ReviewFragment reviewFragment1 = new ReviewFragment();
+                                        //   if (isConnected) {
+                                        ReviewFragment reviewFragment1 = new ReviewFragment();
                                         reviewFragment1.setIsConnected(isConnected);
-                                            reviewFragment1.setSortType(2);
-                                            reviewFragment1.setContext(getApplicationContext());
-                                            reviewFragment1.setTinh(LoginSession.getInstance().getTinh());
-                                            reviewFragment1.setHuyen(LoginSession.getInstance().getHuyen());
-                                            FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
-                                            transaction1.replace(R.id.frame, reviewFragment1);
-                                            transaction1.commit();
-                                     //   } //else startGetLocation();
+                                        reviewFragment1.setSortType(2);
+                                        reviewFragment1.setContext(getApplicationContext());
+                                        reviewFragment1.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment1.setHuyen(LoginSession.getInstance().getHuyen());
+                                        FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+                                        transaction1.replace(R.id.frame, reviewFragment1);
+                                        transaction1.commit();
+                                        //   } //else startGetLocation();
                                         break;
                                     case R.id.popup_viewpost_mostlike:
-                                  //      if (isConnected) {
-                                            ReviewFragment reviewFragment2 = new ReviewFragment();
-                                            reviewFragment2.setSortType(3);
+                                        //      if (isConnected) {
+                                        ReviewFragment reviewFragment2 = new ReviewFragment();
+                                        reviewFragment2.setSortType(3);
                                         reviewFragment2.setIsConnected(isConnected);
-                                            reviewFragment2.setContext(getApplicationContext());
-                                            reviewFragment2.setTinh(LoginSession.getInstance().getTinh());
-                                            reviewFragment2.setHuyen(LoginSession.getInstance().getHuyen());
-                                            FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
-                                            transaction2.replace(R.id.frame, reviewFragment2);
-                                            transaction2.commit();
-                                  //      } //else startGetLocation();
+                                        reviewFragment2.setContext(getApplicationContext());
+                                        reviewFragment2.setTinh(LoginSession.getInstance().getTinh());
+                                        reviewFragment2.setHuyen(LoginSession.getInstance().getHuyen());
+                                        FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
+                                        transaction2.replace(R.id.frame, reviewFragment2);
+                                        transaction2.commit();
+                                        //      } //else startGetLocation();
                                         break;
                                 }
                                 return true;
@@ -325,63 +305,63 @@ public class MainActivity extends AppCompatActivity
                                 StoreFragment storeFragment;
                                 switch (item.getItemId()) {
                                     case R.id.popup_viewquan_none:
-                                     //   if (isConnected) {
-                                            storeFragment = new StoreFragment();
-                                            storeFragment.setFilter(1);
-                                            storeFragment.setIsConnected(isConnected);
-                                            storeFragment.setContext(getApplicationContext());
-                                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            storeFragment.setYourLocation(myLocation);
-                                            transaction = getSupportFragmentManager().beginTransaction();
-                                            transaction.replace(R.id.frame, storeFragment);
-                                            transaction.commit();
-                                    //    } //else startGetLocation();
+                                        //   if (isConnected) {
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setFilter(1);
+                                        storeFragment.setIsConnected(isConnected);
+                                        storeFragment.setContext(getApplicationContext());
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
+                                        transaction = getSupportFragmentManager().beginTransaction();
+                                        transaction.replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        //    } //else startGetLocation();
                                         break;
                                     case R.id.popup_viewquan_gia:
-                                       // if (isConnected) {
-                                            storeFragment = new StoreFragment();
-                                            storeFragment.setIsConnected(isConnected);
-                                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            storeFragment.setContext(getApplicationContext());
-                                            storeFragment.setYourLocation(myLocation);
-                                            storeFragment.setFilter(2);
-                                            transaction = getSupportFragmentManager()
-                                                    .beginTransaction()
-                                                    .replace(R.id.frame, storeFragment);
-                                            transaction.commit();
-                                      //  } //else startGetLocation();
+                                        // if (isConnected) {
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setIsConnected(isConnected);
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setContext(getApplicationContext());
+                                        storeFragment.setYourLocation(myLocation);
+                                        storeFragment.setFilter(2);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        //  } //else startGetLocation();
                                         break;
                                     case R.id.popup_viewquan_pv:
-                                     //   if (isConnected) {
-                                            storeFragment = new StoreFragment();
-                                            storeFragment.setIsConnected(isConnected);
-                                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            storeFragment.setYourLocation(myLocation);
-                                            storeFragment.setContext(getApplicationContext());
-                                            storeFragment.setFilter(3);
-                                            transaction = getSupportFragmentManager()
-                                                    .beginTransaction()
-                                                    .replace(R.id.frame, storeFragment);
-                                            transaction.commit();
-                                    //    } //else startGetLocation();
+                                        //   if (isConnected) {
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setIsConnected(isConnected);
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
+                                        storeFragment.setContext(getApplicationContext());
+                                        storeFragment.setFilter(3);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        //    } //else startGetLocation();
                                         break;
                                     case R.id.popup_viewquan_vs:
-                                       // if (isConnected) {
-                                            storeFragment = new StoreFragment();
-                                            storeFragment.setIsConnected(isConnected);
-                                            storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                            storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                            storeFragment.setYourLocation(myLocation);
-                                            storeFragment.setContext(getApplicationContext());
-                                            storeFragment.setFilter(4);
-                                            transaction = getSupportFragmentManager()
-                                                    .beginTransaction()
-                                                    .replace(R.id.frame, storeFragment);
-                                            transaction.commit();
-                                    //    } //else startGetLocation();
+                                        // if (isConnected) {
+                                        storeFragment = new StoreFragment();
+                                        storeFragment.setIsConnected(isConnected);
+                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                        storeFragment.setYourLocation(myLocation);
+                                        storeFragment.setContext(getApplicationContext());
+                                        storeFragment.setFilter(4);
+                                        transaction = getSupportFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.frame, storeFragment);
+                                        transaction.commit();
+                                        //    } //else startGetLocation();
                                         break;
                                 }
                                 return true;
@@ -418,7 +398,7 @@ public class MainActivity extends AppCompatActivity
         mIntentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mIntentFilter.addAction("android.location.PROVIDERS_CHANGED");
         mIntentFilter.addAction(mBroadcastSendAddress);
-        mBroadcastReceiver=new NetworkChangeReceiver();
+        mBroadcastReceiver = new NetworkChangeReceiver();
         registerReceiver(mBroadcastReceiver, mIntentFilter);
 
         mAuth.addAuthStateListener(mAuthListener);
@@ -484,7 +464,7 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
-       // Storage.deleteFile(getApplicationContext(),"myLocation");
+        // Storage.deleteFile(getApplicationContext(),"myLocation");
     }
 
     @Override
@@ -530,7 +510,8 @@ public class MainActivity extends AppCompatActivity
                         getString(R.string.frag_about_CODE));
                 break;
             case R.id.nav_admin:
-
+                Intent intent2 = new Intent(this, AdminActivity.class);
+                startActivity(intent2);
                 break;
             case R.id.nav_signin:
                 Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
@@ -565,13 +546,13 @@ public class MainActivity extends AppCompatActivity
                 });
                 break;
             case R.id.nav_map:
-               // if (isConnected) {
-                    Intent intent2 = new Intent(MainActivity.this, AdapterActivity.class);
-                    intent2.putExtra(getString(R.string.fragment_CODE),
-                            getString(R.string.frag_map_CODE));
+                // if (isConnected) {
+                Intent intent3 = new Intent(MainActivity.this, AdapterActivity.class);
+                intent3.putExtra(getString(R.string.fragment_CODE),
+                        getString(R.string.frag_map_CODE));
 
-                    startActivity(intent2);
-             //   }
+                startActivity(intent3);
+                //   }
                 break;
         }
         mdrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -596,30 +577,30 @@ public class MainActivity extends AppCompatActivity
                         switch (bottomBar.getCurrentTabPosition()) {
                             case 0:
                                 //if (isConnected) {
-                                    ReviewFragment reviewFragment = new ReviewFragment();
-                                    reviewFragment.setTinh(LoginSession.getInstance().getTinh());
-                                    reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                    reviewFragment.setSortType(1);
-                                    reviewFragment.setIsConnected(isConnected);
-                                    reviewFragment.setContext(getApplicationContext());
-                                    transaction = getSupportFragmentManager().beginTransaction();
-                                    transaction.replace(R.id.frame, reviewFragment);
-                                    transaction.commit();
-                              //  }// else startGetLocation();
+                                ReviewFragment reviewFragment = new ReviewFragment();
+                                reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                                reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                reviewFragment.setSortType(1);
+                                reviewFragment.setIsConnected(isConnected);
+                                reviewFragment.setContext(getApplicationContext());
+                                transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.frame, reviewFragment);
+                                transaction.commit();
+                                //  }// else startGetLocation();
                                 break;
                             case 1:
-                           //     if (isConnected) {
-                                    StoreFragment storeFragment = new StoreFragment();
-                                    storeFragment.setFilter(1);
-                                    storeFragment.setIsConnected(isConnected);
-                                    storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                    storeFragment.setContext(getApplicationContext());
-                                    storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                    storeFragment.setYourLocation(myLocation);
-                                    transaction = getSupportFragmentManager().beginTransaction();
-                                    transaction.replace(R.id.frame, storeFragment);
-                                    transaction.commit();
-                               // }// else startGetLocation();
+                                //     if (isConnected) {
+                                StoreFragment storeFragment = new StoreFragment();
+                                storeFragment.setFilter(1);
+                                storeFragment.setIsConnected(isConnected);
+                                storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                storeFragment.setContext(getApplicationContext());
+                                storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                storeFragment.setYourLocation(myLocation);
+                                transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.frame, storeFragment);
+                                transaction.commit();
+                                // }// else startGetLocation();
                                 break;
                             case 2:
                                 break;
@@ -639,31 +620,31 @@ public class MainActivity extends AppCompatActivity
                             FragmentTransaction transaction;
                             switch (bottomBar.getCurrentTabPosition()) {
                                 case 0:
-                                   // if (isConnected) {
-                                        ReviewFragment reviewFragment = new ReviewFragment();
-                                        reviewFragment.setTinh(LoginSession.getInstance().getTinh());
-                                        reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                        reviewFragment.setSortType(1);
-                                        reviewFragment.setIsConnected(isConnected);
-                                        reviewFragment.setContext(getApplicationContext());
-                                        transaction = getSupportFragmentManager().beginTransaction();
-                                        transaction.replace(R.id.frame, reviewFragment);
-                                        transaction.commit();
-                                 //   }// else startGetLocation();
+                                    // if (isConnected) {
+                                    ReviewFragment reviewFragment = new ReviewFragment();
+                                    reviewFragment.setTinh(LoginSession.getInstance().getTinh());
+                                    reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                    reviewFragment.setSortType(1);
+                                    reviewFragment.setIsConnected(isConnected);
+                                    reviewFragment.setContext(getApplicationContext());
+                                    transaction = getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.frame, reviewFragment);
+                                    transaction.commit();
+                                    //   }// else startGetLocation();
                                     break;
                                 case 1:
-                                   // if (isConnected) {
-                                        StoreFragment storeFragment = new StoreFragment();
-                                        storeFragment.setFilter(1);
-                                        storeFragment.setIsConnected(isConnected);
-                                        storeFragment.setTinh(LoginSession.getInstance().getTinh());
-                                        storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
-                                        storeFragment.setContext(getApplicationContext());
-                                        storeFragment.setYourLocation(myLocation);
-                                        transaction = getSupportFragmentManager().beginTransaction();
-                                        transaction.replace(R.id.frame, storeFragment);
-                                        transaction.commit();
-                                  //  } //else startGetLocation();
+                                    // if (isConnected) {
+                                    StoreFragment storeFragment = new StoreFragment();
+                                    storeFragment.setFilter(1);
+                                    storeFragment.setIsConnected(isConnected);
+                                    storeFragment.setTinh(LoginSession.getInstance().getTinh());
+                                    storeFragment.setHuyen(LoginSession.getInstance().getHuyen());
+                                    storeFragment.setContext(getApplicationContext());
+                                    storeFragment.setYourLocation(myLocation);
+                                    transaction = getSupportFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.frame, storeFragment);
+                                    transaction.commit();
+                                    //  } //else startGetLocation();
                                     break;
                                 case 2:
                                     break;
@@ -698,7 +679,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    //    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 //        @Override
 //        public void onReceive(Context context, Intent intent) {
 //            if (intent.getIntExtra("STT", 0) == 2) {
@@ -773,6 +754,7 @@ public class MainActivity extends AppCompatActivity
         }
         return false;
     }
+
     public void startGetLocation() {
         if (!myTool.isGoogleApiConnected()) {
             Log.i(LOG + ".startGetLocation", "Google Api not connect");
@@ -806,7 +788,7 @@ public class MainActivity extends AppCompatActivity
                     ArrayList<MyLocation> list = new ArrayList<>();
                     list.add(myLocation);
                     Storage.writeFile(getApplicationContext(), Storage.parseMyLocationToJson(list).toString(), "myLocation");
-                    if(LoginSession.getInstance().getHuyen()==null && LoginSession.getInstance().getTinh()==null) {
+                    if (LoginSession.getInstance().getHuyen() == null && LoginSession.getInstance().getTinh() == null) {
                         LoginSession.getInstance().setTinh(myLocation.getTinhtp());
                         LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
                         fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
@@ -833,14 +815,14 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
 
-            }
+                }
 
                 if (myLocation == null) {
                     Log.i(LOG + ".NetworkChangeReceiver", "myLocation == null");
                     myTool.startGoogleApi();
                     progressDialog.show();
                 } else {
-                    if(LoginSession.getInstance().getHuyen()==null && LoginSession.getInstance().getTinh()==null ) {
+                    if (LoginSession.getInstance().getHuyen() == null && LoginSession.getInstance().getTinh() == null) {
                         LoginSession.getInstance().setTinh(myLocation.getTinhtp());
                         LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
                         fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
@@ -852,7 +834,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 isConnected = true;
             } else {
-                Toast.makeText(getApplicationContext(),"Offline mode",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Offline mode", Toast.LENGTH_LONG).show();
                 ArrayList<MyLocation> locations = new ArrayList<>();
                 String a = Storage.readFile(getApplicationContext(), "myLocation");
                 if (a != null) {
@@ -863,7 +845,7 @@ public class MainActivity extends AppCompatActivity
                         myTool.startGoogleApi();
                     }
                     if (myLocation != null) {
-                        if(LoginSession.getInstance().getHuyen()==null && LoginSession.getInstance().getTinh()==null ) {
+                        if (LoginSession.getInstance().getHuyen() == null && LoginSession.getInstance().getTinh() == null) {
                             LoginSession.getInstance().setTinh(myLocation.getTinhtp());
                             LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
                             fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
@@ -874,16 +856,16 @@ public class MainActivity extends AppCompatActivity
                         }
 
                     }
-                if (!canGetLocation(context) && !isNetworkAvailable(context)) {
-                   //ConnectionDetector.showNoConnectAlert(MainActivity.this);
+                    if (!canGetLocation(context) && !isNetworkAvailable(context)) {
+                        //ConnectionDetector.showNoConnectAlert(MainActivity.this);
 
-                } else {
-                    if (!isNetworkAvailable(context)) {
-                       // ConnectionDetector.showNetworkAlert(MainActivity.this);
                     } else {
-                       // ConnectionDetector.showSettingAlert(MainActivity.this);
+                        if (!isNetworkAvailable(context)) {
+                            // ConnectionDetector.showNetworkAlert(MainActivity.this);
+                        } else {
+                            // ConnectionDetector.showSettingAlert(MainActivity.this);
+                        }
                     }
-                }
                 }
                 Log.i(LOG + ".NetworkChangeReceiver", "isConnected: " + isConnected);
 
@@ -912,13 +894,13 @@ public class MainActivity extends AppCompatActivity
             ConnectivityManager connectivity = (ConnectivityManager)
                     context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivity != null) {
-                NetworkInfo[] info =connectivity.getAllNetworkInfo();
+                NetworkInfo[] info = connectivity.getAllNetworkInfo();
 
                 if (info != null) {
                     for (int i = 0; i < info.length; i++) {
-                       //Toast.makeText(getApplicationContext(),"Ten:"+info[i].getTypeName()+"--TrangThai:"+info[i].getState().toString(),Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(),"Ten:"+info[i].getTypeName()+"--TrangThai:"+info[i].getState().toString(),Toast.LENGTH_LONG).show();
                         if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-                            if (!isConnected &&canGetLocation(getApplicationContext())) {
+                            if (!isConnected && canGetLocation(getApplicationContext())) {
                                 Log.v(LOG, "Now you are connected to Internet!");
                                 //Toast.makeText(getApplicationContext(), "Now you are connected to Internet!", Toast.LENGTH_SHORT).show();
                                 isConnected = true;
@@ -932,7 +914,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             Log.v(LOG, "You are not connected to Internet!");
-           // Toast.makeText(getApplicationContext(), "You are offline", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getApplicationContext(), "You are offline", Toast.LENGTH_SHORT).show();
             ;
             //networkStatus.setText("You are not connected to Internet!");
             isConnected = false;
