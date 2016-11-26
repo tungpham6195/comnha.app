@@ -242,7 +242,7 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
     @Override
     public void onLocationFinderSuccess(final PlaceAttribute placeAttribute) {
         if(placeAttribute!=null &&placeAttribute.getDistrict()!=null &&placeAttribute.getState()!=null){
-          // newReport.setAddress(placeAttribute.getFullname());
+
             final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
             builder.setMessage("Địa chỉ: " + placeAttribute.getFullname()).setTitle("Xác nhận")
                     .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
@@ -250,6 +250,7 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
                         public void onClick(DialogInterface dialog, int which) {
                             newReport.setAddress(placeAttribute.getFullname());
                             dialog.dismiss();
+
                         }
                     })
                     .setNegativeButton("Thử lại", new DialogInterface.OnClickListener() {
