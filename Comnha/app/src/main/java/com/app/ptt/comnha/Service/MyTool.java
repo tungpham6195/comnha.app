@@ -95,11 +95,10 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
 
     public void startGoogleApi() {
         {
-            if (checkConnection()) {
                 Log.i(LOG + ".startGoogleApi", "Khoi dong GoogleApiClient");
                 if (mGoogleApiClient == null) {
                     buildGoogleApiClient();
-                }
+
                 if (!mGoogleApiClient.isConnected()) {
                     mGoogleApiClient.connect();
                 }
@@ -108,28 +107,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
 
 
     }
-    public boolean checkConnection() {
-        if (!ConnectionDetector.isWifiAvailable(mContext)) {
-            if (!ConnectionDetector.canGetLocation(mContext)) {
-                Log.i(LOG + ".startGoogleApi", "NoInternetAndGps");
-                flag = -1;
-                sendBroadcast("NoInternetAndGps");
-            } else {
-                Log.i(LOG + ".startGoogleApi", "NoInternet");
-                flag = -2;
-                sendBroadcast("NoInternet");
-            }
-        } else {
-            if (!ConnectionDetector.canGetLocation(mContext)) {
-                Log.i(LOG + ".startGoogleApi", "NoGps");
-                flag = -2;
-                sendBroadcast("NoGps");
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
+
     public void stopGoogleApi() {
         if (mGoogleApiClient != null) {
             Log.i(LOG + ".stopGoogleApi", "Tat GoogleApiClient");
@@ -525,7 +503,6 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
             yourLocation.setQuanhuyen(placeAttribute.getDistrict());
             yourLocation.setTinhtp(placeAttribute.getState());
             LatLng a=(returnLatLngByName(placeAttribute.getFullname()));
-
             yourLocation.setLat(a.latitude);
             yourLocation.setLng(a.longitude);
             if (flag == 2)

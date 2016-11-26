@@ -93,10 +93,9 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_review, container, false);
         anhxa(view);
         if(!isConnected){
-            Toast.makeText(context,"Offline mode",Toast.LENGTH_LONG).show();
-            if(Storage.readFile(context,"postlist_"+sortType+"_"+tinh+"_"+huyen)!=null){
-
-                String a=Storage.readFile(context,"postlist_"+sortType+"_"+tinh+"_"+huyen);
+            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
+            if(Storage.readFile(getContext(),"postlist_"+sortType+"_"+tinh+"_"+huyen)!=null){
+                String a=Storage.readFile(getContext(),"postlist_"+sortType+"_"+tinh+"_"+huyen);
                 //Log.i(LOG + ".onCreateView - " + "postlist_"+sortType+"_"+tinh+"_"+huyen, ""+a.toString());
                 ArrayList<Post> posts= null;
                 if(a!=null) {
@@ -140,7 +139,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
                     Storage.parsePostToJson(postlist);
                    // Log.i(LOG + ".onCreateView - " +"postlist_"+sortType+"_"+tinh+"_"+huyen, Storage.parsePostToJson(postlist));
                     if (Storage.parsePostToJson(postlist).toString() != null)
-                        Storage.writeFile(context,Storage.parsePostToJson(postlist).toString(), "postlist_"+sortType+"_"+tinh+"_"+huyen);
+                        Storage.writeFile(getContext(),Storage.parsePostToJson(postlist).toString(), "postlist_"+sortType+"_"+tinh+"_"+huyen);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -217,7 +216,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }else
-                Toast.makeText(context,"You are offline",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"You are offline",Toast.LENGTH_LONG).show();
 
             }
         }));
