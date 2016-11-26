@@ -308,17 +308,11 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
 
     @Override
     public void onLocationFinderSuccess(final PlaceAttribute placeAttribute) {
-<<<<<<< HEAD
         if (placeAttribute != null && placeAttribute.getDistrict() != null && placeAttribute.getState() != null) {
             // newReport.setAddress(placeAttribute.getFullname());
             mProgressDialog.dismiss();
             placeAttribute.setPlaceLatLng(myTool.returnLatLngByName(placeAttribute.getFullname()));
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-=======
-        if(placeAttribute!=null &&placeAttribute.getDistrict()!=null &&placeAttribute.getState()!=null){
-
-            final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
->>>>>>> origin/master
             builder.setMessage("Địa chỉ: " + placeAttribute.getFullname()).setTitle("Xác nhận")
                     .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                         @Override
@@ -372,7 +366,6 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
                                         }
                                     }).show();
                             dialog.dismiss();
-
                         }
                     })
                     .setNegativeButton("Thử lại", new DialogInterface.OnClickListener() {
