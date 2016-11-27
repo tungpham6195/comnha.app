@@ -1,6 +1,8 @@
 package com.app.ptt.comnha;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
@@ -12,6 +14,8 @@ import com.app.ptt.comnha.Adapters.Store_listview_adapter;
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Report;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AdminActivity extends AppCompatActivity implements View.OnClickListener, PickProvinceDialogFragment.OnnPickProvinceListener, PickDistrictDialogFragment.OnPickDistricListener {
     TextView txt_prov, txt_dist;
@@ -31,11 +37,16 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
     Report_listview_adapter report_adapter;
     String tinh = "", quan = "";
     int whatProvince;
+    ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage(getString(R.string.txt_plzwait));
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
         txt_prov = (TextView) findViewById(R.id.act_admin_txttinh);
         txt_prov.setOnClickListener(this);
@@ -47,9 +58,38 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
         report_adapter = new Report_listview_adapter(reports);
         lv_reports.setAdapter(report_adapter);
         lv_store.setAdapter(store_adapter);
-        report_adapter.setOnItemClickListener(new Report_listview_adapter.OnItemClickListener() {
+        report_adapter.setOnClickPopupMenuListener(new Report_listview_adapter.OnClickPopupMenuListener() {
             @Override
-            public void OnItemClick(Report report) {
+            public void onCLickPopupMenu(final Report report, boolean isAccept) {
+                if (isAccept) {
+                    mProgressDialog.show();
+                    Map<String, Object> updateChild = new HashMap<String, Object>();
+                    updateChild.put(report.getLocalID() + "/" + "name", report.getName());
+                    updateChild.put(report.getLocalID() + "/" + "diachi", report.getAddress());
+                    updateChild.put(report.getLocalID() + "/" + "sdt", report.getSdt());
+                    updateChild.put(report.getLocalID() + "/" + "giamax", report.getGiamax());
+                    updateChild.put(report.getLocalID() + "/" + "giamin", report.getGiamin());
+                    updateChild.put(report.getLocalID() + "/" + "timestart", report.getTimestart());
+                    updateChild.put(report.getLocalID() + "/" + "timeend", report.getTimeend());
+                    updateChild.put(report.getLocalID() + "/" + "lat", report.getLat());
+                    updateChild.put(report.getLocalID() + "/" + "lng", report.getLng());
+                    dbRef.child(tinh + "/" + quan + "/"
+                            + getString(R.string.locations_CODE))
+                            .updateChildren(updateChild).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (!task.isComplete()) {
+                                Toast.makeText(getApplicationContext(), task.getException().getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                onReportDel(report);
+                            }
+                        }
+                    });
+                } else {
+                    mProgressDialog.show();
+                    onReportDel(report);
+                }
 
             }
         });
@@ -111,7 +151,10 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+//                Report report = dataSnapshot.getValue(Report.class);
+//                report.setReportID(dataSnapshot.getKey());
+//                Toast.makeText(getApplicationContext(), dataSnapshot.getKey(), Toast.LENGTH_LONG)
+//                        .show();
             }
 
             @Override
@@ -124,6 +167,28 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
 
             }
         };
+    }
+
+    private void onReportDel(final Report report) {
+        dbRef.child(tinh + "/" + quan + "/"
+                + getString(R.string.reports_CODE)
+                + report.getReportID()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (!task.isComplete()) {
+                    mProgressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), task.getException().getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    mProgressDialog.dismiss();
+                    reports.remove(report);
+                    report_adapter.notifyDataSetChanged();
+                    if (reports.size() == 0) {
+                        AnimationUtils.animatMoveListForback(lv_store, lv_reports);
+                    }
+                }
+            }
+        });
     }
 
     @Override

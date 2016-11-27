@@ -431,6 +431,7 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
                                         } else {
                                             mProgressDialog.dismiss();
                                             new AlertDialog.Builder(getContext())
+                                                    .setCancelable(false)
                                                     .setMessage("Chúng tôi sẽ xem qua " +
                                                             "report của bạn")
                                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {

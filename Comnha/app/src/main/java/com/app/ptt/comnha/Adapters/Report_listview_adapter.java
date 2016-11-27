@@ -1,9 +1,15 @@
 package com.app.ptt.comnha.Adapters;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.ptt.comnha.FireBase.Report;
@@ -18,6 +24,15 @@ import java.util.ArrayList;
 public class Report_listview_adapter extends BaseAdapter {
     ArrayList<Report> reports;
     OnItemClickListener onItemClickListener;
+    OnClickPopupMenuListener onClickPopupMenuListener;
+
+    public interface OnClickPopupMenuListener {
+        void onCLickPopupMenu(Report report, boolean isAccept);
+    }
+
+    public void setOnClickPopupMenuListener(OnClickPopupMenuListener listener) {
+        onClickPopupMenuListener = listener;
+    }
 
     public interface OnItemClickListener {
         void OnItemClick(Report report);
@@ -47,8 +62,8 @@ public class Report_listview_adapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.item_report_store, null);
@@ -63,6 +78,7 @@ public class Report_listview_adapter extends BaseAdapter {
             holder.txt_gio = (TextView) convertView.findViewById(R.id.item_reportstore_txtnewgio);
             holder.txt_sdt = (TextView) convertView.findViewById(R.id.item_reportstore_txt_newsdt);
             holder.txt_gia = (TextView) convertView.findViewById(R.id.item_reportstore_txt_newgia);
+            holder.img_option = (ImageView) convertView.findViewById(R.id.item_reportstore_img_option);
             convertView.setTag(holder);
 
         } else {
@@ -82,11 +98,66 @@ public class Report_listview_adapter extends BaseAdapter {
         holder.txt_sdt.setText("SĐT mới: " + reports.get(position).getSdt());
         holder.txt_gia.setText("Giá mới: " + reports.get(position).getGiamin()
                 + " - " + reports.get(position).getGiamax());
+        holder.img_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popupMenu = new PopupMenu(holder.img_option.getContext(), holder.img_option,
+                        Gravity.START | Gravity.TOP);
+                popupMenu.getMenuInflater().inflate(R.menu.option_menu_report, popupMenu.getMenu());
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_accept:
+                                new AlertDialog.Builder(holder.img_option.getContext())
+                                        .setMessage("Bạn chấp chận report này???")
+                                        .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                onClickPopupMenuListener.onCLickPopupMenu(
+                                                        reports.get(position), true);
+                                            }
+                                        })
+                                        .setNegativeButton("Trở lại", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                                return true;
+                            case R.id.action_deny:
+                                new AlertDialog.Builder(holder.img_option.getContext())
+                                        .setMessage("Bạn muốn từ chối report này???")
+                                        .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                onClickPopupMenuListener.onCLickPopupMenu(
+                                                        reports.get(position), false);
+                                            }
+                                        })
+                                        .setNegativeButton("Trở lại", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+            }
+        });
         return convertView;
     }
 
     static class ViewHolder {
         TextView txt_name, txt_diachi, txt_gio, txt_sdt, txt_gia;
         TextView old_txt_name, old_txt_diachi, old_txt_gio, old_txt_sdt, old_txt_gia;
+        ImageView img_option;
     }
 }

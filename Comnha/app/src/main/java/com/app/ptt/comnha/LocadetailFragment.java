@@ -451,7 +451,7 @@ public class LocadetailFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        ChooseLoca.getInstance().setLocaID(null);
+//        ChooseLoca.getInstance().setLocaID(null);
         ChooseLoca.getInstance().setName(null);
         ChooseLoca.getInstance().setAddress(null);
         ChoosePost.getInstance().setPostID(null);
