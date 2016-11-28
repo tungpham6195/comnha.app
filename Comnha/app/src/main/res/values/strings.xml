@@ -158,6 +158,7 @@
     <string name="frg_viewpost_CODE">viewpost</string>
     <string name="frg_signup_CODE">signup</string>
     <string name="frg_signin_CODE">signin</string>
+    <string name="frg_viewalbum_CODE">viewalbum</string>
     <string name="frg_prodetail_CODE">profiledetail</string>
     <string name="frg_themmon_CODE">themmon</string>
     <string name="frag_locadetail_CODE">locadetail</string>

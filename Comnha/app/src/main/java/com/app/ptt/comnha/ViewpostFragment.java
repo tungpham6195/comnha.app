@@ -3,6 +3,7 @@ package com.app.ptt.comnha;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,6 +37,7 @@ import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.FireBase.TrackLocation;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.app.ptt.comnha.SingletonClasses.OpenAlbum;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -78,6 +80,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     MyLocation myLocation;
     boolean hastrack = false;
     TrackLocation trackLocation;
+    private TextView txt_albums;
 
     public ViewpostFragment() {
         // Required empty public constructor
@@ -270,6 +273,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(true);
         img_option = (ImageView) view.findViewById(R.id.frg_viewreview_imgoption);
+        txt_albums = (TextView) view.findViewById(R.id.frg_frg_viewpost_txt_album);
         linearAlbum = (LinearLayout) view.findViewById(R.id.frg_viewrev_lnearAlbum);
         txt_gia = (TextView) view.findViewById(R.id.frg_frg_viewpost_txt_gia);
         txt_vs = (TextView) view.findViewById(R.id.frg_frg_viewpost_txt_vesinh);
@@ -308,6 +312,19 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             edt_comment.setEnabled(true);
         }
         img_option.setOnClickListener(this);
+        txt_albums.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (albumList.size() > 0) {
+                    Intent intent = new Intent(getActivity(), Adapter2Activity.class);
+                    intent.putExtra(getString(R.string.fragment_CODE),
+                            getString(R.string.frg_viewalbum_CODE));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    OpenAlbum.getInstance().setImage(albumList);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     @Override

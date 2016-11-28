@@ -122,6 +122,15 @@ public class Adapter2Activity extends AppCompatActivity {
                             .commit();
                 }
             }
+        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frg_viewalbum_CODE))) {
+            if (findViewById(R.id.frame_adapter2) != null) {
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
+                    ViewAlbumFragment viewAlbumFragment = new ViewAlbumFragment();
+                    viewAlbumFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, viewAlbumFragment)
+                            .commit();
+                }
+            }
         }
     }
 
@@ -144,9 +153,11 @@ public class Adapter2Activity extends AppCompatActivity {
             finish();
         } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewpost_CODE))) {
             finish();
-        }else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
             finish();
-        }else if (FRAGMENT_CODE.equals(getString(R.string.frg_prodetail_CODE))) {
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frg_prodetail_CODE))) {
+            finish();
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewalbum_CODE))) {
             finish();
         } else {
             new AlertDialog.Builder(this).setMessage("Bạn muốn thoát??")

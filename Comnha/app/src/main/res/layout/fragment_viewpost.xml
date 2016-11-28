@@ -259,6 +259,7 @@
                     android:paddingStart="5dp">
 
                     <TextView
+                        android:id="@+id/frg_frg_viewpost_txt_album"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@string/txt_album"
