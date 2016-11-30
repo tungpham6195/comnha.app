@@ -84,6 +84,14 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_report_store_dialog, container, false);
         location = ReportLocal.getInstance().getMyLocation();
+        newReport = new Report();
+        newReport.setOld_name(location.getName());
+        newReport.setOld_address(location.getDiachi());
+        newReport.setOld_sdt(location.getSdt());
+        newReport.setOld_giamax(location.getGiamax());
+        newReport.setOld_giamin(location.getGiamin());
+        newReport.setOld_timestart(location.getTimestart());
+        newReport.setOld_timeend(location.getTimeend());
         now = Calendar.getInstance();
         prov = ReportLocal.getInstance().getMyLocation().getTinhtp() + "/";
         dist = ReportLocal.getInstance().getMyLocation().getQuanhuyen() + "/";
@@ -155,7 +163,6 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.frg_reportstore_btnok:
-                newReport = new Report();
                 if (edt_tenquan.getText().toString().equals("")
                         && edt_diachi.getText().toString().equals("")
                         && edt_sdt.getText().toString().equals("")
@@ -179,19 +186,6 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
 
                     } else {
                         newReport.setName(edt_tenquan.getText().toString().trim());
-                    }
-                    if (edt_diachi.getText().toString().equals("")) {
-                        newReport.setAddress(location.getDiachi());
-                        newReport.setLat(location.getLat());
-                        newReport.setLng(location.getLng());
-                    } else {
-                        mProgressDialog.show();
-                        if (pos != -1) {
-                            placeAPI = new PlaceAPI(placeAttributes.get(pos).getFullname(), this);
-                        } else {
-                            placeAPI = new PlaceAPI(edt_diachi.getText().toString(), this);
-                        }
-//                        newReport.setAddress(edt_diachi.getText().toString().trim());
                     }
                     if (edt_sdt.getText().toString().equals("")) {
                         newReport.setSdt(location.getSdt());
@@ -219,7 +213,20 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
                     } else {
                         newReport.setTimestart(btn_timestart.getText().toString());
                     }
-
+                    if (edt_diachi.getText().toString().equals("")) {
+                        newReport.setAddress(location.getDiachi());
+                        newReport.setLat(location.getLat());
+                        newReport.setLng(location.getLng());
+                        report();
+                    } else {
+                        mProgressDialog.show();
+                        if (pos != -1) {
+                            placeAPI = new PlaceAPI(placeAttributes.get(pos).getFullname(), this);
+                        } else {
+                            placeAPI = new PlaceAPI(edt_diachi.getText().toString(), this);
+                        }
+//                        newReport.setAddress(edt_diachi.getText().toString().trim());
+                    }
                 }
 
                 break;
@@ -320,51 +327,7 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
                             newReport.setAddress(placeAttribute.getFullname());
                             newReport.setLat(placeAttribute.getPlaceLatLng().latitude);
                             newReport.setLng(placeAttribute.getPlaceLatLng().longitude);
-                            mProgressDialog.show();
-                            Map<String, Object> reportValue = newReport.toMap();
-                            final Map<String, Object> updateChild = new HashMap<>();
-                            String key = dbRef.child(prov + dist + getString(R.string.reports_CODE))
-                                    .push().getKey();
-                            updateChild.put(prov + dist +
-                                    getString(R.string.reports_CODE) + key, reportValue);
-                            new AlertDialog.Builder(getContext())
-                                    .setMessage("Bạn có muốn gửi???")
-                                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dbRef.updateChildren(updateChild).addOnCompleteListener(
-                                                    new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if (!task.isComplete()) {
-                                                                mProgressDialog.dismiss();
-                                                                Toast.makeText(getContext(), task.getException()
-                                                                                .getMessage(),
-                                                                        Toast.LENGTH_SHORT).show();
-                                                            } else {
-                                                                mProgressDialog.dismiss();
-                                                                new AlertDialog.Builder(getContext())
-                                                                        .setMessage("Chúng tôi sẽ xem qua " +
-                                                                                "report của bạn")
-                                                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                                            @Override
-                                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                                dialog.dismiss();
-                                                                                dismiss();
-                                                                            }
-                                                                        })
-                                                                        .show();
-                                                            }
-                                                        }
-                                                    });
-                                        }
-                                    })
-                                    .setNegativeButton("Trở lại", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    }).show();
+                            report();
                             dialog.dismiss();
                         }
                     })
@@ -441,5 +404,54 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
             };
             return filter;
         }
+    }
+
+    private void report() {
+        mProgressDialog.show();
+        Map<String, Object> reportValue = newReport.toMap();
+        final Map<String, Object> updateChild = new HashMap<>();
+        String key = dbRef.child(prov + dist + getString(R.string.reports_CODE))
+                .push().getKey();
+        updateChild.put(prov + dist +
+                getString(R.string.reports_CODE) + key, reportValue);
+        new AlertDialog.Builder(getContext())
+                .setMessage("Bạn có muốn gửi???")
+                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dbRef.updateChildren(updateChild).addOnCompleteListener(
+                                new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (!task.isComplete()) {
+                                            mProgressDialog.dismiss();
+                                            Toast.makeText(getContext(), task.getException()
+                                                            .getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            mProgressDialog.dismiss();
+                                            new AlertDialog.Builder(getContext())
+                                                    .setCancelable(false)
+                                                    .setMessage("Chúng tôi sẽ xem qua " +
+                                                            "report của bạn")
+                                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                            dismiss();
+                                                        }
+                                                    })
+                                                    .show();
+                                        }
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton("Trở lại", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 }
