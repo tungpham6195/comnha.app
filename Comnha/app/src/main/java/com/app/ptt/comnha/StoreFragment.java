@@ -1,6 +1,7 @@
 package com.app.ptt.comnha;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -43,8 +44,7 @@ import java.util.ArrayList;
  */
 public class StoreFragment extends Fragment implements View.OnClickListener {
     private static final String LOG = StoreFragment.class.getSimpleName();
-    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
-    private IntentFilter mIntentFilter;
+
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private Boolean isBound = false;
@@ -72,18 +72,31 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     String tinh, huyen;
     Context mContext;
     boolean isConnected=false;
+    IntentFilter mIntentFilter;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+            }
+        }
+    };
+
+
+
+
     public void setTinh(String tinh) {
         this.tinh = tinh;
-    }
-    public void setIsConnected(boolean isConnected){
-        this.isConnected=isConnected;
     }
     public void setHuyen(String huyen) {
         this.huyen = huyen;
     }
-    public void setYourLocation(MyLocation myLocation){
-        this.myLocation=myLocation;
-    }
+
     public void setContext(Context context){
         mContext=context;
     }
@@ -93,13 +106,27 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         Log.i(LOG, "onStart");
         super.onStart();
+        String a= Storage.readFile(mContext, "myLocation");
+        if(a!=null){
+            ArrayList<MyLocation> list=new ArrayList<>();
+            list=Storage.readJSONMyLocation(a);
+            myLocation=list.get(0);
+        }
+        isConnected= MyService.returnIsConnected();
+        if(!isConnected){
+            Toast.makeText(mContext,"Offline mode",Toast.LENGTH_SHORT).show();
+        }
         myTool = new MyTool(getActivity(),StoreFragment.class.getSimpleName());
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
     }
     @Override
     public void onStop() {
         Log.i(LOG, "onStop");
         super.onStop();
         //myTool.stopGoogleApi();
+        getContext().unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -109,33 +136,38 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_store, container, false);
         mView = view;
         listSize = 0;
-
+        isConnected= MyService.returnIsConnected();
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://com-nha.firebaseio.com/");
         anhxa(view);
         if (!isConnected){
-            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
-            if (Storage.readFile(getContext(), "listLocation" + filter+"_"+tinh+"_"+huyen) != null) {
-               // Log.i(LOG + ".onCreateView - "+"listLocation" + filter+"_"+tinh+"_"+huyen, "Ko null");
-                ArrayList<MyLocation> locations = new ArrayList<>();
-                String a = Storage.readFile(getContext(), "listLocation" + filter+"_"+tinh+"_"+huyen);
-                if(a!=null) {
-                    locations = Storage.readJSONMyLocation(a);
-                    if(locations.size()>0) {
-                        for (MyLocation location : locations) {
-                            listLocation.add(location);
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }else
-                        getData();
-                }else{
-                    getData();
-                }
-            }
+           // Toast.makeText(mContext,"Offline mode",Toast.LENGTH_SHORT).show();
+           getDataOffline();
         }else
         {
+            if(MyService.saveToListSaved("listLocation" + filter+"_"+tinh+"_"+huyen)==1)
+                getDataOffline();
             getData();
         }
         return view;
+    }
+    public void getDataOffline(){
+        Log.i(LOG + ".getDataOffline", "OK");
+        if (Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen) != null) {
+            ArrayList<MyLocation> locations;
+            String a = Storage.readFile(mContext, "listLocation" + filter+"_"+tinh+"_"+huyen);
+            if(a!=null) {
+                locations = Storage.readJSONMyLocation(a);
+                if(locations.size()>0) {
+                    for (MyLocation location : locations) {
+                        listLocation.add(location);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            }else{
+                if(isConnected)
+                    getData();
+            }
+        }
     }
     public void getData(){
         final StringWriter out = new StringWriter();
@@ -158,8 +190,9 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                 } else
                     Log.i(LOG + ".getDataInFireBase", "my Location==null");
                 listLocation.add(newLocation);
-                Storage.writeFile(getContext(),  Storage.parseMyLocationToJson( listLocation).toString(), "listLocation" + filter+"_"+tinh+"_"+huyen);
-
+                Storage.writeFile(mContext,  Storage.parseMyLocationToJson( listLocation).toString(), "listLocation" + filter+"_"+tinh+"_"+huyen);
+                MyService.saveToListSaved("listLocation" + filter+"_"+tinh+"_"+huyen);
+                Log.i(LOG + ".getData ","size = "+ listLocation.size());
                 if (STATUS_START > 0) {
                     btn_refresh.setVisibility(View.VISIBLE);
                     AnimationUtils.animatbtnRefreshIfChange(btn_refresh);
@@ -246,8 +279,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
                             Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
                             intent.putExtra(getResources().getString(R.string.fragment_CODE),
                                     getResources().getString(R.string.frag_locadetail_CODE));
-                           // intent.putExtra("LocalID",key);
-                            //intent.putExtra("Info", "listLocation" + filter+"_"+tinh+"_"+huyen);
                             ChooseLoca.getInstance().setHuyen(huyen);
                             ChooseLoca.getInstance().setLocaID(key);
                             ChooseLoca.getInstance().setTinh(tinh);
@@ -274,7 +305,6 @@ public class StoreFragment extends Fragment implements View.OnClickListener {
             case R.id.frg_store_btn_refresh:
                 mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
                 btn_refresh.setVisibility(View.GONE);
-
                 break;
         }
     }

@@ -68,15 +68,12 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
     String classSend;
     int flag;
     int pos = 0;
-    ChildEventListener locaListChildEventListener;
-    DatabaseReference dbRef;
-
+    public static final String mBroadcastSendAddress1 = "mBroadcastSendAddress1";
     public MyTool(Context context, String classSend) {
         Log.i(LOG + ".MyTool", "Khoi chay MyTool");
         this.classSend = classSend;
         this.mContext = context;
         listLocation = new ArrayList<>();
-        //listplaceAttribute=new ArrayList<>();
         broadcastIntent = new Intent();
         geocoder = new Geocoder(mContext, Locale.getDefault());
 
@@ -182,7 +179,6 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
                 this.longtitude = location.getLongitude();
                 flag = 3;
                 placeAPI = new PlaceAPI(returnLocationByLatLng(location.getLatitude(), location.getLongitude()).getDiachi(), this);
-                // Log.i(LOG + ".onLocationChanged", "Vi tri moi: " + yourLocation + ". Lat= " + yourLocation.getLat() + "va lng= " + yourLocation.getLng());
             }
         }
     }
@@ -191,93 +187,36 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
         Log.i(LOG + ".sendBroadcast", "Gui broadcast toi " + classSend);
         temp = 0;
         if (flag == 2) {
-            if (classSend.equals("MainActivity")) {
+            if (classSend.equals("MapFragment")) {
                 Log.i(LOG + ".sendBroadcast", "Gui vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
+                broadcastIntent.setAction(mBroadcastSendAddress1);
                 broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }
-            if (classSend.equals("MapFragment")) {
+            if (classSend.equals("MyService")) {
                 Log.i(LOG + ".sendBroadcast", "Gui vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
+                broadcastIntent.setAction(mBroadcastSendAddress1);
                 broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }
             if (classSend.equals("SplashActivity")) {
                 Log.i(LOG + ".sendBroadcast", "Gui vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(SplashActivity.mBroadcastSendAddress);
+                broadcastIntent.setAction(mBroadcastSendAddress1);
                 broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }
 
         }
-        if (flag == 3) {
-            if (classSend.equals("MainActivity")) {
-                Log.i(LOG + ".sendBroadcast", "Gui su thay doi vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
-                broadcastIntent.putExtra("STT", flag);
-                mContext.sendBroadcast(broadcastIntent);
-            }
-            if (classSend.equals("MapFragment")) {
-                Log.i(LOG + ".sendBroadcast", "Gui su thay doi vi tri cua ban (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
-                broadcastIntent.putExtra("STT", flag);
-                mContext.sendBroadcast(broadcastIntent);
-            }
-        }
-        if (flag == -1) {
-            if (classSend.equals("MainActivity")) {
-                Log.i(LOG + ".sendBroadcast", "Khong internet va gps (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
-                broadcastIntent.putExtra("STT", flag);
-                mContext.sendBroadcast(broadcastIntent);
-            }
-            if (classSend.equals("MapFragment")) {
-                Log.i(LOG + ".sendBroadcast", "Khong internet va gps (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
-                broadcastIntent.putExtra("STT", flag);
-                mContext.sendBroadcast(broadcastIntent);
-            }
-        }
-        if (flag == -2) {
-            if (classSend.equals("MainActivity")) {
-                Log.i(LOG + ".sendBroadcast", "Khong internet (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
-                broadcastIntent.putExtra("STT", flag);
-                mContext.sendBroadcast(broadcastIntent);
-            }
-            if (classSend.equals("MapFragment")) {
-                Log.i(LOG + ".sendBroadcast", "Khong internet (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
-                broadcastIntent.putExtra("STT", flag);
-                mContext.sendBroadcast(broadcastIntent);
-            }
-        }
-        if (flag == -3) {
-            if (classSend.equals("MainActivity")) {
-                Log.i(LOG + ".sendBroadcast", "Khong gps (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
-                broadcastIntent.putExtra("STT", flag);
-                mContext.sendBroadcast(broadcastIntent);
-            }
-            if (classSend.equals("MapFragment")) {
-                Log.i(LOG + ".sendBroadcast", "Khong gps (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
-                broadcastIntent.putExtra("STT", flag);
-                mContext.sendBroadcast(broadcastIntent);
-            }
-        }
-
         if (flag == -4 ) {
             if (classSend.equals("MainActivity")) {
                 Log.i(LOG + ".sendBroadcast", "Khong gps (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MainActivity.mBroadcastSendAddress);
+                broadcastIntent.setAction(mBroadcastSendAddress1);
                 broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }
             if (classSend.equals("MapFragment")) {
                 Log.i(LOG + ".sendBroadcast", "GetLocationError (" + classSend + ".mBroadcastSendAddress" + ")");
-                broadcastIntent.setAction(MapFragment.mBroadcastSendAddress);
+                broadcastIntent.setAction(mBroadcastSendAddress1);
                 broadcastIntent.putExtra("STT", flag);
                 mContext.sendBroadcast(broadcastIntent);
             }

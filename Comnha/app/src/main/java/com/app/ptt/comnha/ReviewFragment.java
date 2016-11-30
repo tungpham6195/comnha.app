@@ -1,8 +1,10 @@
 package com.app.ptt.comnha;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,7 @@ import com.app.ptt.comnha.Classes.RecyclerItemClickListener;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Storage;
+import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -51,26 +54,57 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     RecyclerView.Adapter mAdapter;
     DatabaseReference dbRef;
     ArrayList<Post> postlist;
+    boolean isSaved=false;
     ChildEventListener lastnewsChildEventListener;
     int sortType;
     Context context;
     Button btn_refresh;
     String tinh, huyen;
     boolean isConnected=false;
+    IntentFilter mIntentFilter;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+            }
+        }
+    };
+
+
     @Override
     public void onStart() {
         super.onStart();
         Log.i(LOG,"onStart");
+        isConnected= MyService.returnIsConnected();
+        if(!isConnected){
+            Toast.makeText(context,"Offline mode",Toast.LENGTH_SHORT).show();
+        }
+        Log.i(LOG, "onStart= "+isConnected);
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
 
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(LOG,"onStop");
+        ChoosePost.getInstance().setPostID(null);
+        ChoosePost.getInstance().setTinh(null);
+        ChoosePost.getInstance().setHuyen(null);
+       // getContext().unregisterReceiver(broadcastReceiver);
     }
     public void setContext(Context mContext){
         this.context=mContext;
         Log.i(LOG+".setContext","OK");
     }
 
-    public void setIsConnected(boolean isConnected){
-        this.isConnected=isConnected;
-    }
     public void setTinh(String tinh) {
         this.tinh = tinh;
     }
@@ -86,60 +120,66 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        isConnected= MyService.returnIsConnected();
         Log.i(LOG + ".onCreateView", "OK");
         // Inflate the layout for this fragment
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
         View view = inflater.inflate(R.layout.fragment_review, container, false);
         anhxa(view);
         if(!isConnected){
-            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
-            if(Storage.readFile(getContext(),"postlist_"+sortType+"_"+tinh+"_"+huyen)!=null){
-                String a=Storage.readFile(getContext(),"postlist_"+sortType+"_"+tinh+"_"+huyen);
-                //Log.i(LOG + ".onCreateView - " + "postlist_"+sortType+"_"+tinh+"_"+huyen, ""+a.toString());
-                ArrayList<Post> posts= null;
-                if(a!=null) {
-                    try {
-                       // posts = Storage.readJSONPost(a);
-                        posts=new ArrayList<>();
-                        posts=Storage.readJSONPost1(a);
-                    } catch (Exception e) {
-                        getData();
-                        e.printStackTrace();
-                    }
-
-                    if(posts.size()>0) {
-                        //Log.i(LOG + ".onCreateView - " + "postlist_"+sortType+"_"+tinh+"_"+huyen,"posts.size()= "+posts.size());
-                        for (Post post : posts) {
-                            postlist.add(post);
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }else{
-                        getData();
-                    }
-                }else{
-                    getData();
-                }
-            }
+            getDataOffline();
         }else
             {
-                getData();
+                if(MyService.saveToListSaved("postlist_" + sortType + "_" + tinh + "_" + huyen)==1)
+                    getDataOffline();
+                else
+                    getData();
             }
         return view;
     }
-    public void getData(){
+    public void getDataOffline(){
+        Log.i(LOG + ".getDataOffline", "OK");
+        if(Storage.readFile(context,"postlist_"+sortType+"_"+tinh+"_"+huyen)!=null){
+            String a=Storage.readFile(context,"postlist_"+sortType+"_"+tinh+"_"+huyen);
+            //Log.i(LOG + ".onCreateView - " + "postlist_"+sortType+"_"+tinh+"_"+huyen, ""+a.toString());
+            ArrayList<Post> posts= null;
+            if(a!=null) {
+                try {
+                    posts=new ArrayList<>();
+                    posts=Storage.readJSONPost1(a);
+                } catch (Exception e) {
+                    getData();
+                    e.printStackTrace();
+                }
 
+                if(posts.size()>0) {
+                    for (Post post : posts) {
+                        postlist.add(post);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            } else{
+                if(isConnected)
+                    getData();
+            }
+        }
+    }
+    public void getData(){
+        Log.i(LOG + ".getData", "OK");
         lastnewsChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post post = dataSnapshot.getValue(Post.class);
                 post.setPostID(dataSnapshot.getKey());
                 postlist.add(post);
+                isSaved=false;
                 try {
-                    Storage.parsePostToJson(postlist);
-                   // Log.i(LOG + ".onCreateView - " +"postlist_"+sortType+"_"+tinh+"_"+huyen, Storage.parsePostToJson(postlist));
-                    if (Storage.parsePostToJson(postlist).toString() != null)
-                        Storage.writeFile(getContext(),Storage.parsePostToJson(postlist).toString(), "postlist_"+sortType+"_"+tinh+"_"+huyen);
+                        Storage.parsePostToJson(postlist);
+                        if (Storage.parsePostToJson(postlist).toString() != null) {
+                            Storage.writeFile(context, Storage.parsePostToJson(postlist).toString(), "postlist_" + sortType + "_" + tinh + "_" + huyen);
+                            MyService.saveToListSaved("postlist_" + sortType + "_" + tinh + "_" + huyen);
+                        }
+                    Log.i(LOG + ".getData ", "size = " + postlist.size());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -194,7 +234,9 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     private void anhxa(View view) {
         Log.i(LOG+".anhxa","OK");
         btn_refresh = (Button) view.findViewById(R.id.frg_review_btn_refresh);
-        postlist = new ArrayList<>();
+
+            postlist = new ArrayList<>();
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_review);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setReverseLayout(true);
@@ -216,7 +258,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }else
-                Toast.makeText(getContext(),"You are offline",Toast.LENGTH_LONG).show();
+                Toast.makeText(context,"You are offline",Toast.LENGTH_LONG).show();
 
             }
         }));
@@ -228,21 +270,12 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.frg_review_btn_refresh:
-                //Toast.makeText(context,Storage.readFile(getContext(),"postlist"+sortType).toString(),Toast.LENGTH_LONG).show();
-               // mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
-               // AnimationUtils.animatbtnRefreshIfClick(btn_refresh);
-               // btn_refresh.setVisibility(View.GONE);
+                mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+                AnimationUtils.animatbtnRefreshIfClick(btn_refresh);
+                btn_refresh.setVisibility(View.GONE);
                 break;
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.i(LOG,"onStop");
 
-        ChoosePost.getInstance().setPostID(null);
-        ChoosePost.getInstance().setTinh(null);
-        ChoosePost.getInstance().setHuyen(null);
-    }
 }

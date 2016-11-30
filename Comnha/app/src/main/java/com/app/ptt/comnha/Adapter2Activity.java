@@ -23,6 +23,7 @@ public class Adapter2Activity extends AppCompatActivity {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
                     AddpostFragment addpostFragment = new AddpostFragment();
                     addpostFragment.setArguments(getIntent().getExtras());
+
                     getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, addpostFragment)
                             .commit();
                 }
@@ -40,6 +41,7 @@ public class Adapter2Activity extends AppCompatActivity {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
                     AddlocaFragment addlocaFragment = new AddlocaFragment();
                     addlocaFragment.setArguments(getIntent().getExtras());
+
                     getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, addlocaFragment).commit();
                 }
             }

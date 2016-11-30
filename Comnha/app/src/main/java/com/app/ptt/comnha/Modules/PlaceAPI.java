@@ -68,7 +68,9 @@ public class PlaceAPI {
                     stringBuffer.append(line+"\n");
                 }
                 is.close();
+                //Log.i("JSON:",stringBuffer.toString());
                 return stringBuffer.toString();
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -80,11 +82,12 @@ public class PlaceAPI {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             try {
+
                 JSONObject jsonObj = new JSONObject(s.toString());
                 JSONArray resultsJsonResult = jsonObj.getJSONArray("results");
                 if (resultsJsonResult.length()>0) {
                     //for(int k=0;k<resultsJsonResult.length();k++) {
-
+                    Log.i("onPostExecute:","zo");
                     JSONObject temp = resultsJsonResult.getJSONObject(0);
                     fullname = temp.getString("formatted_address");
                     // Extract the Place descriptions from the results
