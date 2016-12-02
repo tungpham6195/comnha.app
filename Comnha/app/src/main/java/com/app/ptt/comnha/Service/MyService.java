@@ -27,12 +27,14 @@ public class MyService extends Service {
     private IntentFilter mIntentFilter;
      String className1=null;
     int a=0;
+    static int posOfReviewType=1;
     Intent broadcastIntent;
     boolean isSaved1=false;
     public boolean isConnected=false;
     static boolean isConnected1=false;
     public boolean isSaved=false;
     MyTool myTool;
+    static String changeContent="";
     static ArrayList<String> listSaved=new ArrayList<>();
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
     public static final String mBroadcastSendAddress1 = "mBroadcastSendAddress1";
@@ -44,16 +46,38 @@ public class MyService extends Service {
         }
     }
     public MyService() {
+    }
+    public static void setPosOfReviewType(int pos){
+        posOfReviewType=pos;
+    }
+    public static int getPosOfReviewType(){
+       return posOfReviewType;
+    }
+    public static String getChangeContent(){
+        return changeContent;
+    }
+    public static void setChangeContent(String isChanged){
+        changeContent=isChanged;
+        if(changeContent.equals("justCommend")||changeContent.equals("justDelete")){
+            Log.i(LOG_TAG+".setChangeContent","before remove="+listSaved.size());
+            for(int a=0;a<listSaved.size();a++){
+                Log.i(LOG_TAG+".setChangeContent- "+listSaved.get(a).toString(),"");
+                if(listSaved.get(a).toString().toLowerCase().contains("postlist".toLowerCase())){
+                    listSaved.remove(a);
+                    Log.i(LOG_TAG+".setChangeContent- ","after remove remove="+listSaved.size());
+                }
+            }
 
-
+        }
     }
     public static int saveToListSaved(String file){
-
         for (String myFile:listSaved)
             if(myFile.equals(file)){
+                Log.i(LOG_TAG+".saveToListSaved=1",file);
                 return 1;
             }
         listSaved.add(file);
+        Log.i(LOG_TAG+".saveToListSaved=2",file);
         return 2;
     }
     @Override

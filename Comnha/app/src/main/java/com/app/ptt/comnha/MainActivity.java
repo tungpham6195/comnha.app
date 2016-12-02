@@ -279,7 +279,6 @@ public class MainActivity extends AppCompatActivity
                                     case R.id.popup_viewpost_lastnews:
                                         ReviewFragment reviewFragment = new ReviewFragment();
                                         reviewFragment.setSortType(1);
-
                                         reviewFragment.setContext(getApplicationContext());
                                         reviewFragment.setTinh(LoginSession.getInstance().getTinh());
                                         reviewFragment.setHuyen(LoginSession.getInstance().getHuyen());

@@ -389,6 +389,8 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                                 if (databaseError != null) {
                                     Log.e("updateChildrenComment", databaseError.getMessage());
                                     Toast.makeText(getActivity().getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                }else{
+                                    MyService.setChangeContent("justCommend");
                                 }
                             }
                         });
@@ -549,6 +551,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                                                                     mProgressDialog.dismiss();
                                                                     Toast.makeText(getContext(), "Xóa thành công",
                                                                             Toast.LENGTH_SHORT).show();
+                                                                    MyService.setChangeContent("justDelete");
                                                                     getActivity().finish();
                                                                 }
                                                             }

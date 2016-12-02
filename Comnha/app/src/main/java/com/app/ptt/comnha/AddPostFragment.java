@@ -96,8 +96,6 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
         super.onStop();
         getContext().unregisterReceiver(broadcastReceiver);
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

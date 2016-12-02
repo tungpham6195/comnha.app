@@ -60,6 +60,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     Context context;
     Button btn_refresh;
     String tinh, huyen;
+    Boolean first,second;
     boolean isConnected=false;
     IntentFilter mIntentFilter;
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
@@ -80,10 +81,11 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
+
         Log.i(LOG,"onStart");
         isConnected= MyService.returnIsConnected();
         if(!isConnected){
-            Toast.makeText(context,"Offline mode",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(),"Offline mode",Toast.LENGTH_SHORT).show();
         }
         Log.i(LOG, "onStart= "+isConnected);
         mIntentFilter=new IntentFilter();
@@ -91,14 +93,31 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
         getContext().registerReceiver(broadcastReceiver,mIntentFilter);
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(LOG,"onResume");
+        sortType = MyService.getPosOfReviewType();
+//        if(MyService.getChangeContent()!="") {
+//            sortType = MyService.getPosOfReviewType();
+//            MyService.setChangeContent("");
+//            if (MyService.saveToListSaved("postlist_" + sortType + "_" + tinh + "_" + huyen) == 1)
+//                getDataOffline();
+//            else
+//                getData();
+//        }
+    }
+
     @Override
     public void onStop() {
         super.onStop();
         Log.i(LOG,"onStop");
+        MyService.setPosOfReviewType(sortType);
         ChoosePost.getInstance().setPostID(null);
         ChoosePost.getInstance().setTinh(null);
         ChoosePost.getInstance().setHuyen(null);
-       // getContext().unregisterReceiver(broadcastReceiver);
+        getContext().unregisterReceiver(broadcastReceiver);
     }
     public void setContext(Context mContext){
         this.context=mContext;
@@ -115,6 +134,7 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
 
     public void setSortType(int sortType) {
         this.sortType = sortType;
+        Log.i(LOG + ".setSortType", "sortType="+sortType);
     }
 
     @Override
@@ -122,19 +142,28 @@ public class ReviewFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         isConnected= MyService.returnIsConnected();
         Log.i(LOG + ".onCreateView", "OK");
+
         // Inflate the layout for this fragment
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
         View view = inflater.inflate(R.layout.fragment_review, container, false);
         anhxa(view);
         if(!isConnected){
             getDataOffline();
-        }else
-            {
-                if(MyService.saveToListSaved("postlist_" + sortType + "_" + tinh + "_" + huyen)==1)
-                    getDataOffline();
-                else
-                    getData();
+        }else {
+
+            Log.i(LOG,"onResume");
+            if(MyService.getChangeContent()!="") {
+                sortType = MyService.getPosOfReviewType();
+                MyService.setChangeContent("");
             }
+            if (MyService.saveToListSaved("postlist_" + sortType + "_" + tinh + "_" + huyen) == 1)
+                getDataOffline();
+            else
+                getData();
+
+        }
+
+
         return view;
     }
     public void getDataOffline(){

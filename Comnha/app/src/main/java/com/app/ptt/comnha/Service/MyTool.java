@@ -23,6 +23,7 @@ import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.LocationFinderListener;
 import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
+import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.R;
 import com.app.ptt.comnha.SplashActivity;
 import com.firebase.client.Firebase;
@@ -67,6 +68,7 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
     int temp = 1;
     String classSend;
     int flag;
+    boolean getLocationFail=false;
     int pos = 0;
     public static final String mBroadcastSendAddress1 = "mBroadcastSendAddress1";
     public MyTool(Context context, String classSend) {
@@ -157,8 +159,13 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
                 flag=-4;
                 sendBroadcast("GetLocationError");
             }
+
+            getLocationFail=false;
         }
         else{
+            getLocationFail=true;
+            latitude = null;
+            longtitude = null;
             Log.i(LOG + ".onConnected", "LOI BI NULL");
         }
         startLocationUpdate();
@@ -166,10 +173,15 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.i(LOG + ".onLocationChanged", "Giam sat su thay doi vi tri");
+        Log.i(LOG + ".onLocationChanged", "Giam sat su thay doi vi tri. lat="+location.getLatitude()+" - lng="+location.getLongitude());
         if (latitude == null && longtitude == null) {
             this.latitude = location.getLatitude();
             this.longtitude = location.getLongitude();
+            MyLocation myLocation;
+            myLocation = returnLocationByLatLng(location.getLatitude(), location.getLongitude());
+            flag=2;
+            placeAPI = new PlaceAPI(myLocation.getDiachi(), this);
+
         }
         if (location != null) {
             if (location.getLatitude() != this.latitude && location.getLongitude() != this.longtitude &&
@@ -446,8 +458,11 @@ public class MyTool implements GoogleApiClient.ConnectionCallbacks,
             yourLocation.setLng(a.longitude);
             if (flag == 2)
                 sendBroadcast("Location");
-            if (flag == 3)
-                sendBroadcast("LocationChange");
+            if (flag == 3) {
+                ArrayList<MyLocation> mList=new ArrayList<>();
+                mList.add(yourLocation);
+                Storage.writeFile(mContext, Storage.parseMyLocationToJson(mList).toString(), "myLocation");
+            }
         } else {
             Log.i(LOG + ".onLocationFinder", "State: null");
         }
