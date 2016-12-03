@@ -4,19 +4,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
+import com.app.ptt.comnha.Modules.ConnectionDetector;
 import com.app.ptt.comnha.Modules.Storage;
 import com.app.ptt.comnha.Service.MyTool;
 
@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
     IntentFilter intentFilter;
     boolean isConnected;
     MyLocation myLocation;
-    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    public static final String mBroadcastSendAddress1 = "mBroadcastSendAddress1";
     NetworkChangeReceiver broadcast;
     private static int SPLASH_TIME_OUT = 3000;
 
@@ -38,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        intentFilter.addAction(mBroadcastSendAddress);
+        intentFilter.addAction(mBroadcastSendAddress1);
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
         broadcast = new NetworkChangeReceiver();
         registerReceiver(broadcast, intentFilter);
@@ -90,7 +90,6 @@ public class SplashActivity extends AppCompatActivity {
                 }
                 if (myTool.isGoogleApiConnected())
                     myTool.stopLocationUpdate();
-
                 new Handler().postDelayed(new Runnable() {
 
                     @Override
@@ -98,7 +97,6 @@ public class SplashActivity extends AppCompatActivity {
                         Intent i = new Intent(SplashActivity.this, MainActivity.class);
                         i.putExtra("isConnected", true);
                         startActivity(i);
-
                         finish();
                     }
                 }, SPLASH_TIME_OUT);
@@ -106,50 +104,45 @@ public class SplashActivity extends AppCompatActivity {
             }
 
             if (isNetworkAvailable(context) && canGetLocation(context)) {
+                Log.i(LOG + ".NetworkChangeReceiver", "isNetworkAvailable(context) && canGetLocation(context) ");
                 if (myLocation == null) {
                     Log.i(LOG + ".NetworkChangeReceiver", "myLocation == null");
                     myTool.startGoogleApi();
                 }
                 isConnected = true;
             } else {
-                new Handler().postDelayed(new Runnable() {
+                Log.i(LOG + ".NetworkChangeReceiver","!(isNetworkAvailable(context) && canGetLocation(context)) ");
+                String a= Storage.readFile(getApplicationContext(), "myLocation");
+                if(a!=null){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                            i.putExtra("isConnected", false);
+                            startActivity(i);
+                            finish();
+                        }
+                    }, SPLASH_TIME_OUT);
+                    isConnected = false;
+                }
+                else{
+                    ConnectionDetector.showSettingAlertFirstTime(SplashActivity.this);
+                }
 
-            /*
-             * Showing splash screen with a timer. This will be useful when you
-             * want to show case your app logo / company
-             */
-
-                    @Override
-                    public void run() {
-                        // This method will be executed once the timer is over
-                        // Start your app main activity
-                        Intent i = new Intent(SplashActivity.this, MainActivity.class);
-                        i.putExtra("isConnected", false);
-                        startActivity(i);
-
-                        // close this activity
-                        finish();
-                    }
-                }, SPLASH_TIME_OUT);
-                isConnected = false;
             }
-            Log.i(LOG + ".NetworkChangeReceiver", "isConnected: " + isConnected);
+
         }
 
         private boolean canGetLocation(Context mContext) {
+            int a = 0;
             try {
-                LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-                boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                if (!isGPSEnabled) {
-                    return false;
-                } else {
-                    return true;
-                }
-            } catch (Exception e) {
+                a = Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                //Log.i(LOG_TAG + ".canGetLocation", a + "");
+            } catch (Settings.SettingNotFoundException e) {
                 e.printStackTrace();
-                return false;
             }
-
+            if (a >= 2) return true;
+            return false;
         }
 
         private boolean isNetworkAvailable(Context context) {

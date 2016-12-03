@@ -2,8 +2,11 @@ package com.app.ptt.comnha;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,6 +38,7 @@ import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.FireBase.TrackLocation;
+import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.app.ptt.comnha.SingletonClasses.OpenAlbum;
@@ -60,6 +64,7 @@ import java.util.Map;
  */
 public class ViewpostFragment extends Fragment implements View.OnClickListener {
     private String postID, tinh, huyen;
+    private static final String LOG = ViewpostFragment.class.getSimpleName();
     ImageView img_option;
     TextView txt_un, txt_date, txt_title,
             txt_content, txt_likenumb, btn_like, btn_comment,
@@ -82,6 +87,22 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     TrackLocation trackLocation;
     private TextView txt_albums;
 
+    boolean isConnected = true;
+    IntentFilter mIntentFilter;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG + ".onReceive form Service", "isConnected= " + intent.getBooleanExtra("isConnected", false));
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+            }
+        }
+    };
+
     public ViewpostFragment() {
         // Required empty public constructor
     }
@@ -93,7 +114,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
+        isConnected = MyService.returnIsConnected();
         View view = inflater.inflate(R.layout.fragment_viewpost, container, false);
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
         storageRef = FirebaseStorage
@@ -246,7 +267,15 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onStart() {
+        isConnected = MyService.returnIsConnected();
+        if (!isConnected) {
+            Toast.makeText(getContext(), "Offline mode", Toast.LENGTH_SHORT).show();
+        }
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        getContext().registerReceiver(broadcastReceiver, mIntentFilter);
         super.onStart();
+        Log.i(ViewpostFragment.class.getSimpleName(), "OK");
         mProgressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -319,17 +348,21 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                     Intent intent = new Intent(getActivity(), Adapter2Activity.class);
                     intent.putExtra(getString(R.string.fragment_CODE),
                             getString(R.string.frg_viewalbum_CODE));
+                    intent.putExtra(getString(R.string.fromFrag),
+                            getString(R.string.frg_viewpost_CODE));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    OpenAlbum.getInstance().setImage(albumList);
+                    OpenAlbum.getInstance().setPostID(postID);
                     startActivity(intent);
                 }
             }
         });
     }
 
+
     @Override
     public void onStop() {
         super.onStop();
+        getContext().unregisterReceiver(broadcastReceiver);
         dbRef.removeEventListener(tracklocaValueEventListener);
         dbRef.removeEventListener(locaValueEventListener);
     }
@@ -340,24 +373,25 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             case R.id.frg_viewrev_txtv_like:
                 break;
             case R.id.frg_viewrev_btn_sendcomment:
-                if (!edt_comment.getText().toString().equals("")) {
-                    Comment newComment = new Comment();
-                    newComment.setContent(edt_comment.getText().toString());
-                    newComment.setUsername(LoginSession.getInstance().getUsername());
-                    newComment.setUserID(LoginSession.getInstance().getUserID());
-                    newComment.setDate(new Times().getDate());
-                    newComment.setTime(new Times().getTime());
-                    newComment.setPostID(postID);
-                    edt_comment.setText(null);
-                    String key = dbRef.child(getResources().getString(R.string.postcomment_CODE) + postID).push().getKey();
-                    Map<String, Object> commentValues = newComment.toMap();
-                    Map<String, Object> childUpdates = new HashMap<String, Object>();
-                    childUpdates.put(tinh + "/" + huyen + "/" +
-                            getResources().getString(R.string.postcomment_CODE) + postID + "/"
-                            + key, commentValues);
-                    childUpdates.put(tinh + "/" + huyen + "/" +
-                            getResources().getString(R.string.posts_CODE)
-                            + postID + "/commentCount", comment_List.size() + 1);
+                if (isConnected) {
+                    if (!edt_comment.getText().toString().equals("")) {
+                        Comment newComment = new Comment();
+                        newComment.setContent(edt_comment.getText().toString());
+                        newComment.setUsername(LoginSession.getInstance().getUsername());
+                        newComment.setUserID(LoginSession.getInstance().getUserID());
+                        newComment.setDate(new Times().getDate());
+                        newComment.setTime(new Times().getTime());
+                        newComment.setPostID(postID);
+                        edt_comment.setText(null);
+                        String key = dbRef.child(getResources().getString(R.string.postcomment_CODE) + postID).push().getKey();
+                        Map<String, Object> commentValues = newComment.toMap();
+                        Map<String, Object> childUpdates = new HashMap<String, Object>();
+                        childUpdates.put(tinh + "/" + huyen + "/" +
+                                getResources().getString(R.string.postcomment_CODE) + postID + "/"
+                                + key, commentValues);
+                        childUpdates.put(tinh + "/" + huyen + "/" +
+                                getResources().getString(R.string.posts_CODE)
+                                + postID + "/commentCount", comment_List.size() + 1);
 //                    childUpdates.put(tinh + "/" + huyen + "/" +
 //                            getResources().getString(R.string.locationpost_CODE) + post.getLocaID() + "/"
 //                            + postID + "/commentCount", comment_List.size() + 1);
@@ -365,20 +399,21 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
 //                            + post.getLocaID() + "/"
 //                            + post.getUid() + "/"
 //                            + postID + "/commentCount", comment_List.size() + 1);
-                    childUpdates.put(tinh + "/" + huyen + "/" +
-                            getResources().getString(R.string.userpost_CODE)
-                            + post.getUid() + "/"
-                            + postID + "/commentCount", comment_List.size() + 1);
-                    dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            if (databaseError != null) {
-                                Log.e("updateChildrenComment", databaseError.getMessage());
-                                Toast.makeText(getActivity().getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        childUpdates.put(tinh + "/" + huyen + "/" +
+                                getResources().getString(R.string.userpost_CODE)
+                                + post.getUid() + "/"
+                                + postID + "/commentCount", comment_List.size() + 1);
+                        dbRef.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null) {
+                                    Log.e("updateChildrenComment", databaseError.getMessage());
+                                    Toast.makeText(getActivity().getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                } else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.frg_viewrev_txtv_comment:
                 edt_comment.requestFocusFromTouch();
@@ -386,51 +421,54 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             case R.id.frg_viewrev_lnearAlbum:
                 break;
             case R.id.frg_viewreview_imgoption:
-                AnimationUtils.rotate90postoption(img_option);
-                PopupMenu popupMenu = new PopupMenu(getActivity(), img_option, Gravity.START);
-                popupMenu.getMenuInflater().inflate(R.menu.popup_menu_reviewdetial, popupMenu.getMenu());
-                popupMenu.show();
-                popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
-                    @Override
-                    public void onDismiss(PopupMenu menu) {
-                        AnimationUtils.rotate90postoptionBack(img_option);
-                    }
-                });
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.popup_reviewdetail_delete:
-                                if (!post.getUid().equals(LoginSession.getInstance()
-                                        .getUserID())) {
-                                    Toast.makeText(getContext(), "Bạn không thể xóa, bài này thuộc sở hữa của người khác",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    new AlertDialog.Builder(getActivity())
-                                            .setMessage("Bạn muốn xóa bài viết này?")
-                                            .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dbRef.removeEventListener(postValueEventListener);
-                                                    mProgressDialog.show();
-                                                    delete();
-                                                }
-                                            })
-                                            .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                }
-                                            }).show();
-                                }
-                                return true;
-                            case R.id.popup_reviewdetail_report:
-                                return true;
-                            default:
-                                return false;
+                if (isConnected) {
+                    AnimationUtils.rotate90postoption(img_option);
+                    PopupMenu popupMenu = new PopupMenu(getActivity(), img_option, Gravity.START);
+                    popupMenu.getMenuInflater().inflate(R.menu.popup_menu_reviewdetial, popupMenu.getMenu());
+                    popupMenu.show();
+                    popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+                        @Override
+                        public void onDismiss(PopupMenu menu) {
+                            AnimationUtils.rotate90postoptionBack(img_option);
                         }
-                    }
-                });
+                    });
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.popup_reviewdetail_delete:
+                                    if (!post.getUid().equals(LoginSession.getInstance()
+                                            .getUserID())) {
+                                        Toast.makeText(getContext(), "Bạn không thể xóa, bài này thuộc sở hữa của người khác",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        new AlertDialog.Builder(getActivity())
+                                                .setMessage("Bạn muốn xóa bài viết này?")
+                                                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dbRef.removeEventListener(postValueEventListener);
+                                                        mProgressDialog.show();
+                                                        delete();
+                                                    }
+                                                })
+                                                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                }).show();
+                                    }
+                                    return true;
+                                case R.id.popup_reviewdetail_report:
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        }
+                    });
+                } else
+                    Toast.makeText(getContext(), "You are offline mode", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

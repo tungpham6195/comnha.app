@@ -3,8 +3,11 @@ package com.app.ptt.comnha;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,6 +32,7 @@ import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.Modules.LocationFinderListener;
 import com.app.ptt.comnha.Modules.PlaceAPI;
 import com.app.ptt.comnha.Modules.PlaceAttribute;
+import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.Service.MyTool;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.model.LatLng;
@@ -70,6 +74,39 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
     AutoCompleteTextView autoCompleteText;
     String a = "";
     MyTool myTool;
+    boolean isConnected=true;
+    IntentFilter mIntentFilter;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+            }
+        }
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        isConnected= MyService.returnIsConnected();
+        if(!isConnected){
+            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
+        }
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getContext().unregisterReceiver(broadcastReceiver);
+    }
 
     public AddlocaFragment() {
         // Required empty public constructor
@@ -81,6 +118,7 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_addloca, container, false);
+        isConnected= MyService.returnIsConnected();
         now = Calendar.getInstance();
         gc = new Geocoder(getContext(), Locale.getDefault());
         anhXa(view);
@@ -227,19 +265,18 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
         Log.i(LOG + ".addNewLoca", "Da toi đây");
         newLocation = new MyLocation();
         newLocation.setName(edt_tenquan.getText().toString());
-        //newLocation.setDiachi(returnFullname());
         newLocation.setSdt(edt_sdt.getText().toString());
         newLocation.setTimestart(btn_timestart.getText().toString());
         newLocation.setTimeend(btn_timeend.getText().toString());
         newLocation.setGiamin(Long.valueOf(edt_giamin.getText().toString()));
         newLocation.setGiamax(Long.valueOf(edt_giamax.getText().toString()));
-        Toast.makeText(getContext(),pos+"",Toast.LENGTH_LONG).show();
-//        Log.i(LOG+".addNewLoca",mPlaceAttribute.get(pos).getFullname());
+        if(isConnected){
         if(pos!=-1) {
             placeAPI = new PlaceAPI(mPlaceAttribute.get(pos).getFullname(), this);
         }else{
             placeAPI = new PlaceAPI(autoCompleteText.getText().toString(), this);
         }
+        } else   Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -249,12 +286,9 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
 
     @Override
     public void onLocationFinderSuccess(PlaceAttribute placeAttribute) {
-
         if (placeAttribute != null &&placeAttribute.getState()!=null&&placeAttribute.getDistrict()!=null) {
             final LatLng newLatLng = myTool.returnLatLngByName(placeAttribute.getFullname());
             final PlaceAttribute myPlaceAttribute = placeAttribute;
-//            mProgressDialog.dismiss();
-            //PlaceAttribute placeAttribute1 = placeAttribute;
             tinh = placeAttribute.getState() + "/";
             huyen = placeAttribute.getDistrict() + "/";
             newLocation.setDiachi(placeAttribute.getFullname());
@@ -333,9 +367,11 @@ public class AddlocaFragment extends Fragment implements View.OnClickListener, T
                 } else if (Long.valueOf(edt_giamax.getText().toString()) <= Long.valueOf(edt_giamin.getText().toString())) {
                     Snackbar.make(view, getResources().getText(R.string.txt_giawarn), Snackbar.LENGTH_SHORT).show();
                 } else {
-                        addNewLoca();
-//                    } else
-//                        Snackbar.make(view, "Địa chỉ không hợp lệ. Xin thử lại", Snackbar.LENGTH_SHORT).show();
+                        if(isConnected)
+                            addNewLoca();
+                    else
+                            Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
+
                 }
                 break;
             case R.id.frg_addloction_btn_giomo:

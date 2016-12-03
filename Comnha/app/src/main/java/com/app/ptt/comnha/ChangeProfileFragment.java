@@ -165,7 +165,7 @@ public class ChangeProfileFragment extends DialogFragment implements DatePickerD
                 } else if (editText_username.getText().toString().trim().equals("")) {
                     Toast.makeText(getContext(), getString(R.string.txt_noun),
                             Toast.LENGTH_SHORT).show();
-                }else if (editText_confirmPass.getText().toString().trim()
+                } else if (editText_confirmPass.getText().toString().trim()
                         .equals("")) {
                     Toast.makeText(getContext(), getString(R.string.txt_noconfirmpass), Toast.LENGTH_SHORT).show();
                 } else if (editText_password.getText().toString().trim()
@@ -177,7 +177,7 @@ public class ChangeProfileFragment extends DialogFragment implements DatePickerD
                 } else if (!editText_confirmPass.getText().toString().trim()
                         .equals(editText_password.getText().toString().trim())) {
                     Toast.makeText(getContext(), "Mật khẩu xác nhận không đúng", Toast.LENGTH_SHORT).show();
-                }  else {
+                } else {
                     mProgressDialog.show();
                     UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
                             .setDisplayName(editText_username.getText().toString().trim())
@@ -238,7 +238,6 @@ public class ChangeProfileFragment extends DialogFragment implements DatePickerD
                 break;
         }
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -256,5 +255,6 @@ public class ChangeProfileFragment extends DialogFragment implements DatePickerD
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+
     }
 }

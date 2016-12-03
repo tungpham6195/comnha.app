@@ -1,7 +1,11 @@
 package com.app.ptt.comnha;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -13,8 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.Users;
+import com.app.ptt.comnha.Service.MyService;
 import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +34,7 @@ import java.util.Calendar;
  */
 public class SignupFragment extends Fragment implements DialogInterface.OnCancelListener, DialogInterface.OnDismissListener,
         DatePickerDialog.OnDateSetListener, View.OnClickListener {
+    private static final String LOG=SigninFragment.class.getSimpleName();
     EditText editText_ho, editText_ten, editText_tenlot, editText_username, editText_email,
             editText_password, editText_confirmPass, editText_birth;
     Button butt_signup, butt_exit;
@@ -38,11 +45,25 @@ public class SignupFragment extends Fragment implements DialogInterface.OnCancel
     DatePickerDialog dpd;
     Calendar now;
     int day, month, year;
+    boolean isConnected=true;
+    IntentFilter mIntentFilter;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+            }
+        }
+    };
 
     public SignupFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,12 +125,20 @@ public class SignupFragment extends Fragment implements DialogInterface.OnCancel
     @Override
     public void onStart() {
         super.onStart();
+        isConnected= MyService.returnIsConnected();
+        if(!isConnected){
+            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
+        }
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
         mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        getContext().unregisterReceiver(broadcastReceiver);
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -158,16 +187,18 @@ public class SignupFragment extends Fragment implements DialogInterface.OnCancel
                     if (!isValidEmailAddress(editText_email.getText().toString())) {
                         Snackbar.make(view, getActivity().getResources().getString(R.string.txt_notemail), Snackbar.LENGTH_SHORT).show();
                     } else {
-                        createNewAccount = new Users(getActivity().getApplicationContext());
-                        createNewAccount.setHo(editText_ho.getText().toString());
-                        createNewAccount.setTen(editText_ten.getText().toString());
-                        createNewAccount.setTenlot(editText_tenlot.getText().toString());
-                        createNewAccount.setUsername(editText_username.getText().toString());
-                        createNewAccount.setEmail(editText_email.getText().toString());
-                        createNewAccount.setPassword(editText_password.getText().toString());
-                        createNewAccount.setConfirmPass(editText_confirmPass.getText().toString());
-                        createNewAccount.setBirth(editText_birth.getText().toString());
-                        createNewAccount.createNew();
+                        if(isConnected) {
+                            createNewAccount = new Users(getActivity().getApplicationContext());
+                            createNewAccount.setHo(editText_ho.getText().toString());
+                            createNewAccount.setTen(editText_ten.getText().toString());
+                            createNewAccount.setTenlot(editText_tenlot.getText().toString());
+                            createNewAccount.setUsername(editText_username.getText().toString());
+                            createNewAccount.setEmail(editText_email.getText().toString());
+                            createNewAccount.setPassword(editText_password.getText().toString());
+                            createNewAccount.setConfirmPass(editText_confirmPass.getText().toString());
+                            createNewAccount.setBirth(editText_birth.getText().toString());
+                            createNewAccount.createNew();
+                        }else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;

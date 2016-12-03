@@ -28,8 +28,9 @@
     </style>
 
     <style name="AppTheme.SplashActivity" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/colorPrimary</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <!--<item name="android:statusBarColor">@color/colorPrimary</item>-->
+        <!--<item name="android:background">@color/colorPrimary</item>-->
+        <!--<item name="android:alertDialogTheme">@style/AlertDialog.AppCompat</item>-->
     </style>
 
     <style name="AppTheme.PopupMenu" parent="Widget.AppCompat.PopupMenu">

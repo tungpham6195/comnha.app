@@ -5,10 +5,10 @@
     tools:context="com.app.ptt.comnha.ChangeProfileFragment">
 
     <RelativeLayout
-        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="8dp"
         android:paddingTop="130dp">
 
         <LinearLayout
@@ -139,7 +139,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_exit"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="true" />
 
                 <Button
                     android:id="@+id/frg_changeProfile_butt_signup"
@@ -147,7 +147,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Đổi"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="true" />
 
 
             </LinearLayout>

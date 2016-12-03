@@ -2,11 +2,16 @@ package com.app.ptt.comnha;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +22,7 @@ import android.widget.Toast;
 
 import com.app.ptt.comnha.FireBase.Food;
 import com.app.ptt.comnha.FireBase.FoodCategory;
+import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,6 +38,7 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  */
 public class AddFoodFragment extends Fragment implements View.OnClickListener, PickFoodCategoDialogFragment.PickFoodCategoryListener {
+    private static final String LOG=AddFoodFragment.class.getSimpleName();
     FloatingActionButton fab_themMon;
     EditText edt_tenMon, edt_giamon;
     DatabaseReference dbRef;
@@ -41,16 +48,29 @@ public class AddFoodFragment extends Fragment implements View.OnClickListener, P
     private String foodCategoID = null, locaID, tinh, huyen;
     PickFoodCategoDialogFragment pickFoodDialog;
     FragmentManager dialogFm;
-
+    boolean isConnected=true;
+    IntentFilter mIntentFilter;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+            }
+        }
+    };
     public AddFoodFragment() {
         // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        isConnected= MyService.returnIsConnected();
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(
                 getResources().getString(R.string.firebase_path));
         tinh = ChooseLoca.getInstance().getTinh() + "/";
@@ -89,7 +109,9 @@ public class AddFoodFragment extends Fragment implements View.OnClickListener, P
                 } else if (foodCategoID == null) {
                     Snackbar.make(v, getResources().getString(R.string.txt_noChoseFoodCate), Snackbar.LENGTH_SHORT).show();
                 } else {
+                    if(isConnected)
                     DoSave();
+                    else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.frg_addfood_btnchoosecatego:
@@ -130,8 +152,21 @@ public class AddFoodFragment extends Fragment implements View.OnClickListener, P
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        isConnected= MyService.returnIsConnected();
+        if(!isConnected){
+            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
+        }
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
+        getContext().unregisterReceiver(broadcastReceiver);
         ChooseLoca.getInstance().setLocaID(null);
         ChooseLoca.getInstance().setName(null);
         ChooseLoca.getInstance().setAddress(null);

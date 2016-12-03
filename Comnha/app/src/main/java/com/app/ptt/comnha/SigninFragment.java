@@ -2,8 +2,10 @@ package com.app.ptt.comnha;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.Signin_out;
+import com.app.ptt.comnha.Service.MyService;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +38,7 @@ import static com.app.ptt.comnha.R.id.btn_siFrg_signin;
  * A simple {@link Fragment} subclass.
  */
 public class SigninFragment extends Fragment implements View.OnClickListener {
+    private static final String LOG=SigninFragment.class.getSimpleName();
     private EditText edt_email, edt_pass;
     private Button butt_loginFB, butt_loginGmail, btn_signin, btn_exit;
     private TextView txt_forgotPass;
@@ -44,11 +48,25 @@ public class SigninFragment extends Fragment implements View.OnClickListener {
     FirebaseAuth.AuthStateListener mAuthStateListener;
     android.support.design.widget.Snackbar snackbar;
     ProgressDialog mprogressDialog;
+    boolean isConnected=true;
+    IntentFilter mIntentFilter;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+            }
+        }
+    };
 
     public SigninFragment() {
         // Required empty public constructor
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -101,11 +119,19 @@ public class SigninFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
+        isConnected= MyService.returnIsConnected();
+        if(!isConnected){
+            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
+        }
         mAuth.addAuthStateListener(mAuthStateListener);
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
     }
 
     @Override
     public void onStop() {
+        getContext().unregisterReceiver(broadcastReceiver);
         super.onStop();
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
@@ -116,23 +142,41 @@ public class SigninFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab_signup:
-                Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
-                intent.putExtra(getActivity().getResources().getString(R.string.fragment_CODE),
-                        getActivity().getResources().getString(R.string.frg_signup_CODE));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                if(isConnected) {
+                    Intent intent = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
+                    intent.putExtra(getActivity().getResources().getString(R.string.fragment_CODE),
+                            getActivity().getResources().getString(R.string.frg_signup_CODE));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("isConnected",isConnected);
+                    startActivity(intent);
+                } else{
+                    Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.btn_siFrg_signin:
-                doSignin(view);
+                if (isConnected) {
+                    doSignin(view);
+                } else
+                    Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
+
                 break;
             case R.id.btn_siFrg_exit:
                 getActivity().finish();
                 break;
             case R.id.butt_siFrg_loginFB:
+                if (isConnected) {
+                } else
+                    Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.butt_siFrg_loginGmail:
+                if (isConnected) {
+                } else
+                    Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.txt_siFrg_forgotPass:
+                if (isConnected) {
+                } else
+                    Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -151,7 +195,7 @@ public class SigninFragment extends Fragment implements View.OnClickListener {
             } else {
                 mprogressDialog = ProgressDialog.show(getActivity(),
                         getResources().getString(R.string.txt_plzwait),
-                        getResources().getString(R.string.txt_logging), true, true);
+                        getResources().getString(R.string.txt_logging), true, false);
                 mAuth.signInWithEmailAndPassword(edt_email.getText().toString(), edt_pass.getText().toString())
                         .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                             @Override

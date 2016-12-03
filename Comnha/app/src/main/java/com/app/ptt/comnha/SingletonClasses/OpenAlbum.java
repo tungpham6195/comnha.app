@@ -10,6 +10,15 @@ import java.util.ArrayList;
 public class OpenAlbum {
     private static OpenAlbum ourInstance;
     private ArrayList<Image> images;
+    String postID;
+
+    public void setPostID(String postID) {
+        this.postID = postID;
+    }
+
+    public String getPostID() {
+        return postID;
+    }
 
     public static OpenAlbum getInstance() {
         if (ourInstance == null) {

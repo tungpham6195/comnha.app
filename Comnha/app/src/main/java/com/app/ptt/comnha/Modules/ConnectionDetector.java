@@ -9,10 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
 
-import com.app.ptt.comnha.MainActivity;
-
-import java.util.ArrayList;
-
 /**
  * Created by cuong on 10/16/2016.
  */
@@ -73,12 +69,27 @@ public class ConnectionDetector {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-
             }
         });
         alertDialog.show();
         return true;
     }
+    public static boolean showSettingAlertFirstTime(Context mContext) {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+        alertDialog.setTitle("Alert!!");
+        alertDialog.setMessage("Your location has not been saved. Please turn on your GPS and Internet");
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+               // mContext.startActivity(intent);
+                dialog.cancel();
+            }
+        }).show();
+        return true;
+    }
+
     public static void showNetworkAlert(final Context mContext){
         AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
         builder.setTitle("Network Connection");
@@ -95,6 +106,18 @@ public class ConnectionDetector {
         final AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
         builder.setTitle("No Connection");
         builder.setMessage("Network and GPS is not enabled.");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+    public static void showLoadingAlert(final Context mContext){
+        final AlertDialog.Builder builder=new AlertDialog.Builder(mContext);
+        builder.setTitle("Loading");
+        builder.setMessage("Taking data in the internet");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

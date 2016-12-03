@@ -2,7 +2,10 @@ package com.app.ptt.comnha;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +29,7 @@ import com.app.ptt.comnha.FireBase.Image;
 import com.app.ptt.comnha.FireBase.MyLocation;
 import com.app.ptt.comnha.FireBase.Post;
 import com.app.ptt.comnha.FireBase.TrackLocation;
+import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
 import com.firebase.client.Firebase;
@@ -50,7 +54,7 @@ import java.util.Map;
  * A simple {@link Fragment} subclass.
  */
 public class AddpostFragment extends Fragment implements View.OnClickListener {
-
+    private static final String LOG=AddpostFragment.class.getSimpleName();
     Button btn_save;
     ImageView img;
     TextView txt_name, txt_address;
@@ -71,11 +75,34 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
 
     DatabaseReference dbRef;
     StorageReference storeRef;
+    boolean isConnected=true;
+    IntentFilter mIntentFilter;
+    public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
+    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+            }
+        }
+    };
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getContext().unregisterReceiver(broadcastReceiver);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        isConnected= MyService.returnIsConnected();
         View view = inflater.inflate(R.layout.fragment_addpost, container, false);
         anhXa(view);
         Firebase.setAndroidContext(getActivity());
@@ -114,10 +141,12 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.frg_post_fabchoseloca:
-                Intent intent = new Intent(getActivity(), Adapter2Activity.class);
-                intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frag_chooseloca_CODE));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                if(isConnected) {
+                    Intent intent = new Intent(getActivity(), Adapter2Activity.class);
+                    intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frag_chooseloca_CODE));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.frg_post_fabchoseimg:
                 Intent intent1 = new Intent(getActivity().getApplicationContext(), Adapter2Activity.class);
@@ -132,7 +161,9 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
                 dovoteFragment.show(fm, "fragment_dovote");
                 break;
             case R.id.btn_save:
-                savePost(view);
+                if(isConnected) {
+                    savePost(view);
+                }else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -140,6 +171,10 @@ public class AddpostFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
+        isConnected= MyService.returnIsConnected();
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction(mBroadcastSendAddress);
+        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
         try {
             if (DoPost.getInstance().getMyLocation() != null) {
                 img.setVisibility(View.VISIBLE);
