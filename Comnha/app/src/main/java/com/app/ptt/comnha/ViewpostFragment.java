@@ -463,6 +463,36 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                                     }
                                     return true;
                                 case R.id.popup_reviewdetail_report:
+                                    mProgressDialog.show();
+                                    String key = dbRef.child(tinh + "/" + huyen + "/"
+                                            + getString(R.string.reports_CODE)).push().getKey();
+                                    Map<String, Object> report = new HashMap<String, Object>();
+                                    report.put(tinh + "/" + huyen + "/"
+                                            + getString(R.string.reports_CODE) +
+                                            getString(R.string.posts_CODE) + key, post);
+                                    dbRef.updateChildren(report).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (!task.isComplete()){
+                                                mProgressDialog.dismiss();
+                                                Toast.makeText(getContext(),task.getException().getMessage()
+                                                        ,Toast.LENGTH_SHORT).show();
+                                            }else {
+                                                mProgressDialog.dismiss();
+                                                new AlertDialog.Builder(getContext())
+                                                        .setCancelable(false)
+                                                        .setMessage("Chúng tôi sẽ xem qua " +
+                                                                "report của bạn")
+                                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        })
+                                                        .show();
+                                            }
+                                        }
+                                    });
                                     return true;
                                 default:
                                     return false;

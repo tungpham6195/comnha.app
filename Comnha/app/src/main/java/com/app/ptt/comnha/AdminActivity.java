@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
     String tinh = "", quan = "";
     int whatProvince;
     ProgressDialog mProgressDialog;
+    RadioButton radio_review, radio_location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,9 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
         mProgressDialog.setCancelable(false);
         mProgressDialog.setMessage(getString(R.string.txt_plzwait));
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getString(R.string.firebase_path));
+        txt_prov = (TextView) findViewById(R.id.act_admin_txttinh);
+        radio_review = (RadioButton) findViewById(R.id.act_admin_radio_review);
+        radio_location = (RadioButton) findViewById(R.id.act_admin_radio_location);
         txt_prov = (TextView) findViewById(R.id.act_admin_txttinh);
         txt_prov.setOnClickListener(this);
         txt_dist = (TextView) findViewById(R.id.act_admin_txtquan);
@@ -99,7 +104,7 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
                 reports.clear();
                 report_adapter.notifyDataSetChanged();
                 dbRef.child(tinh + "/" + quan + "/"
-                        + getString(R.string.reports_CODE))
+                        + getString(R.string.reports_CODE)+getString(R.string.locations_CODE))
                         .orderByChild("localID")
                         .equalTo(myLocation.getLocaID())
                         .addChildEventListener(reportChildEventListener);

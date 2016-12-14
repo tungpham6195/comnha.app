@@ -413,7 +413,7 @@ public class ReportStoreDialogFragment extends DialogFragment implements View.On
         String key = dbRef.child(prov + dist + getString(R.string.reports_CODE))
                 .push().getKey();
         updateChild.put(prov + dist +
-                getString(R.string.reports_CODE) + key, reportValue);
+                getString(R.string.reports_CODE) +getString(R.string.locations_CODE)+ key, reportValue);
         new AlertDialog.Builder(getContext())
                 .setMessage("Bạn có muốn gửi???")
                 .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {

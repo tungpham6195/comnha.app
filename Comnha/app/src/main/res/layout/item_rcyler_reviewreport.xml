@@ -3,6 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/reviewreport_imgPopup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="top|end"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:padding="10dp"
+        android:src="@drawable/ic_more_vert_grey_700_24dp" />
+
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +41,7 @@
                 android:paddingTop="10dp">
 
                 <ImageView
-                    android:id="@+id/review_img_user"
+                    android:id="@+id/reviewreport_img_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
@@ -43,7 +54,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/review_txtv_username"
+                        android:id="@+id/reviewreport_txtv_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Android User"
@@ -51,14 +62,14 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/review_txtv_postdate"
+                        android:id="@+id/reviewreport_txtv_postdate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="20/11/2016"
                         android:textStyle="normal" />
 
                     <TextView
-                        android:id="@+id/review_txtv_time"
+                        android:id="@+id/reviewreport_txtv_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="16:30:16"
@@ -89,7 +100,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/review_txtv_tenquan"
+                        android:id="@+id/reviewreport_txtv_tenquan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -98,7 +109,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/review_txtv_diachi"
+                        android:id="@+id/reviewreport_txtv_diachi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -116,7 +127,7 @@
 
 
                 <TextView
-                    android:id="@+id/review_txtv_tittle"
+                    android:id="@+id/reviewreport_txtv_tittle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tittle"
@@ -124,35 +135,12 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/review_txtv_content"
+                    android:id="@+id/reviewreport_txtv_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="Content"
                     android:textColor="@android:color/black" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/review_txtv_likenumb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="20 likes"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/review_txtv_commentnumb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:text="20 comments"
-                        android:textSize="12sp" />
-                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
     </android.support.v7.widget.CardView>

@@ -44,7 +44,7 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
     DatabaseReference dbRef;
     ChildEventListener locaMenuChildEventListener;
     String tinh = "", quan = "";
-    String foodCateID;
+    String foodCateID="";
 
     public FilterFragment() {
         // Required empty public constructor
@@ -161,7 +161,9 @@ public class FilterFragment extends Fragment implements View.OnClickListener, Pi
                     Toast.makeText(getActivity(), getString(R.string.txt_noChoseProvince), Toast.LENGTH_SHORT).show();
                 } else if (quan.equals("")) {
                     Toast.makeText(getActivity(), getString(R.string.txt_noChoseDistrict), Toast.LENGTH_SHORT).show();
-                } else {
+                } else if(mon==null){
+                    Toast.makeText(getActivity(), "Warning: Bạn chưa chọn món ăn", Toast.LENGTH_SHORT).show();
+                }else {
                     querySomething();
                 }
                 break;
