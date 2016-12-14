@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.ptt.comnha.Classes.AnimationUtils;
 import com.app.ptt.comnha.FireBase.MyLocation;
@@ -128,7 +126,7 @@ public class SplashActivity extends AppCompatActivity {
                     isConnected = false;
                 }
                 else{
-                    ConnectionDetector.showSettingAlertFirstTime(context);
+                    ConnectionDetector.showSettingAlertFirstTime(SplashActivity.this);
                 }
 
             }

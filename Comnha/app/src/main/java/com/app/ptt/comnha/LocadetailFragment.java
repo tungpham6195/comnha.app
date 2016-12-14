@@ -41,6 +41,7 @@ import com.app.ptt.comnha.SingletonClasses.ChooseLoca;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.DoPost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.app.ptt.comnha.SingletonClasses.OpenAlbum;
 import com.app.ptt.comnha.SingletonClasses.ReportLocal;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -78,16 +79,17 @@ public class LocadetailFragment extends Fragment {
     ArrayList<Food> foodList;
     ArrayList<Image> files;
     String fileName;
+    TextView txtalbum;
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
-    boolean isConnected=false;
+    boolean isConnected = false;
     IntentFilter mIntentFilter;
-    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(mBroadcastSendAddress)) {
-                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+            if (intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG + ".onReceive form Service", "isConnected= " + intent.getBooleanExtra("isConnected", false));
                 if (intent.getBooleanExtra("isConnected", false)) {
-                    if(!isConnected)
+                    if (!isConnected)
                         getData();
                     isConnected = true;
                 } else
@@ -95,6 +97,7 @@ public class LocadetailFragment extends Fragment {
             }
         }
     };
+
     public LocadetailFragment() {
         // Required empty public constructor
     }
@@ -102,13 +105,13 @@ public class LocadetailFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        isConnected= MyService.returnIsConnected();
-        if(!isConnected){
-            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
+        isConnected = MyService.returnIsConnected();
+        if (!isConnected) {
+            Toast.makeText(getContext(), "Offline mode", Toast.LENGTH_SHORT).show();
         }
-        mIntentFilter=new IntentFilter();
+        mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcastSendAddress);
-        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
+        getContext().registerReceiver(broadcastReceiver, mIntentFilter);
     }
 
     @Override
@@ -121,12 +124,12 @@ public class LocadetailFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_locadetail, container, false);
-        isConnected= MyService.returnIsConnected();
+        isConnected = MyService.returnIsConnected();
         locaID = ChooseLoca.getInstance().getLocaID();
         tinh = ChooseLoca.getInstance().getTinh();
         huyen = ChooseLoca.getInstance().getHuyen();
         fileName = ChooseLoca.getInstance().getInfo();
-        Log.d(LOG + ".onCreateView", "fileName="+fileName);
+        Log.d(LOG + ".onCreateView", "fileName=" + fileName);
         Log.d(LOG + ".onCreateView", locaID);
         if (tinh != null && huyen != null && locaID != null) {
             andxa(view);
@@ -141,7 +144,7 @@ public class LocadetailFragment extends Fragment {
                         if (locations.size() > 0) {
                             for (MyLocation mLocation : locations) {
                                 if (mLocation.getLocaID().equals(locaID)) {
-                                    location=mLocation;
+                                    location = mLocation;
                                     location.setQuanhuyen(LoginSession.getInstance().getHuyen());
                                     location.setTinhtp(LoginSession.getInstance().getTinh());
                                     String gio = location.getTimestart() + " - " + location.getTimeend();
@@ -200,7 +203,8 @@ public class LocadetailFragment extends Fragment {
 
         return null;
     }
-    public void getData(){
+
+    public void getData() {
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
         storageRef = FirebaseStorage.getInstance()
                 .getReferenceFromUrl(getResources().getString(R.string.firebaseStorage_path));
@@ -359,7 +363,10 @@ public class LocadetailFragment extends Fragment {
                 .orderByChild("locaID").equalTo(locaID).limitToFirst(3)
                 .addChildEventListener(imageChildEventListener);
     }
+
     private void andxa(View view) {
+        txtalbum = (TextView) view.findViewById(R.id.frg_locadetial_txtAlbum);
+
         toolbar = (Toolbar) view.findViewById(R.id.frg_locadetial_toolbar);
         txt_tien = (TextView) view.findViewById(R.id.frg_lcdetail_txt_tien);
         txt_diachi = (TextView) view.findViewById(R.id.frg_lcdetail_txt_diachi);
@@ -406,7 +413,21 @@ public class LocadetailFragment extends Fragment {
         files = new ArrayList<>();
         albumAdapter = new Photos_rcyler_adapter(files, getActivity());
         albumRecyclerView.setAdapter(albumAdapter);
-
+        txtalbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (files.size() > 0) {
+                    Intent intent = new Intent(getActivity(), Adapter2Activity.class);
+                    intent.putExtra(getString(R.string.fragment_CODE),
+                            getString(R.string.frg_viewalbum_CODE));
+                    intent.putExtra(getString(R.string.fromFrag),
+                            getString(R.string.frag_locadetail_CODE));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    OpenAlbum.getInstance().setPostID(locaID);
+                    startActivity(intent);
+                }
+            }
+        });
         btn_dangreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -429,17 +450,17 @@ public class LocadetailFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 if (isConnected) {
-                    if (LoginSession.getInstance().getUserID() == null) {
-                        Toast.makeText(getActivity(), getString(R.string.txt_needlogin),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Intent intent = new Intent(getActivity(), Adapter2Activity.class);
-                        intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frg_viewpost_CODE));
-                        ChoosePost.getInstance().setPostID(postlist.get(position).getPostID());
-                        ChoosePost.getInstance().setTinh(tinh);
-                        ChoosePost.getInstance().setHuyen(huyen);
-                        startActivity(intent);
-                    }
+//                    if (LoginSession.getInstance().getUserID() == null) {
+//                        Toast.makeText(getActivity(), getString(R.string.txt_needlogin),
+//                                Toast.LENGTH_SHORT).show();
+//                    } else {
+                    Intent intent = new Intent(getActivity(), Adapter2Activity.class);
+                    intent.putExtra(getString(R.string.fragment_CODE), getString(R.string.frg_viewpost_CODE));
+                    ChoosePost.getInstance().setPostID(postlist.get(position).getPostID());
+                    ChoosePost.getInstance().setTinh(tinh);
+                    ChoosePost.getInstance().setHuyen(huyen);
+                    startActivity(intent);
+//                    }
                 } else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
             }
         }));
@@ -453,44 +474,42 @@ public class LocadetailFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-            switch (item.getItemId()) {
-                case android.R.id.home:
-                    getActivity().finish();
-                    return true;
-                case R.id.menu_locadetail_themmon:
-                    if (isConnected) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
+            case R.id.menu_locadetail_themmon:
+                if (isConnected) {
                     if (LoginSession.getInstance().getUserID() == null) {
                     } else {
                         Intent intent = new Intent(getActivity(), Adapter2Activity.class);
                         intent.putExtra(getResources().getString(R.string.fragment_CODE),
                                 getResources().getString(R.string.frg_themmon_CODE));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        if(location!=null) {
+                        if (location != null) {
                             ChooseLoca.getInstance().setLocaID(location.getLocaID());
                             ChooseLoca.getInstance().setName(location.getName());
                             ChooseLoca.getInstance().setAddress(location.getDiachi());
                             ChooseLoca.getInstance().setTinh(tinh);
                             ChooseLoca.getInstance().setHuyen(huyen);
                             startActivity(intent);
-                        }
-                        else {
+                        } else {
                             ConnectionDetector.showLoadingAlert(getContext());
                         }
                     }
                     return true;
-                    } else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
-                case R.id.menu_locadetail_report:
-                    if (isConnected) {
+                } else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
+            case R.id.menu_locadetail_report:
+                if (isConnected) {
                     ReportLocal.getInstance().setMyLocation(location);
                     ReportStoreDialogFragment reportStoreDialog = new ReportStoreDialogFragment();
                     reportStoreDialog.show(getActivity().getSupportFragmentManager(), "fragment_reportStore");
                     return true;
-                    } else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
-                default:
-                    return super.onOptionsItemSelected(item);
-            }
+                } else Toast.makeText(getContext(), "You are offline", Toast.LENGTH_SHORT).show();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
-
 
 
     @Override

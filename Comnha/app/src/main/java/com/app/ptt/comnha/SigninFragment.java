@@ -195,7 +195,7 @@ public class SigninFragment extends Fragment implements View.OnClickListener {
             } else {
                 mprogressDialog = ProgressDialog.show(getActivity(),
                         getResources().getString(R.string.txt_plzwait),
-                        getResources().getString(R.string.txt_logging), true, true);
+                        getResources().getString(R.string.txt_logging), true, false);
                 mAuth.signInWithEmailAndPassword(edt_email.getText().toString(), edt_pass.getText().toString())
                         .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                             @Override

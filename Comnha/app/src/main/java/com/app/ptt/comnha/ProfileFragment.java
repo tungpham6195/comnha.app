@@ -26,6 +26,7 @@ public class ProfileFragment extends Fragment {
     ValueEventListener profileValueEventListener;
     TextView txt_un, txt_Hoten, txt_Ngsinh, txt_email;
     ImageView btn_changePro;
+    ChangeProfileFragment changeProfileDialog;
 
     public ProfileFragment() {
     }
@@ -60,6 +61,8 @@ public class ProfileFragment extends Fragment {
     }
 
     void anhxa(View view) {
+        changeProfileDialog = new ChangeProfileFragment();
+        changeProfileDialog.setCancelable(false);
         txt_un = (TextView) view.findViewById(R.id.frag_profile_txtUername);
         txt_Hoten = (TextView) view.findViewById(R.id.frag_profile_txtHoten);
         txt_Ngsinh = (TextView) view.findViewById(R.id.frag_profilel_txtNgsinh);
@@ -68,7 +71,6 @@ public class ProfileFragment extends Fragment {
         btn_changePro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ChangeProfileFragment changeProfileDialog = new ChangeProfileFragment();
                 changeProfileDialog.show(getActivity().getSupportFragmentManager(),
                         "fragment_changProfile");
             }

@@ -11,6 +11,7 @@ public class Adapter2Activity extends AppCompatActivity {
     static final String STATE_ADDPOST_FRAGMENT = "addpostFragment";
     static final int CHECK_ADDPOST_FRAGMENT = 1;
     String FRAGMENT_CODE = null;
+    String fromFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +19,7 @@ public class Adapter2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_adapter2);
         Intent intent = getIntent();
         FRAGMENT_CODE = intent.getExtras().getString(getResources().getString(R.string.fragment_CODE));
+        fromFrag = intent.getExtras().getString(getString(R.string.fromFrag));
         if (FRAGMENT_CODE.equals(getString(R.string.frag_addpost_CODE))) {
             if (findViewById(R.id.frame_adapter2) != null) {
                 if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
@@ -124,6 +126,16 @@ public class Adapter2Activity extends AppCompatActivity {
                             .commit();
                 }
             }
+        } else if (FRAGMENT_CODE.equals(getResources().getString(R.string.frg_viewalbum_CODE))) {
+            if (findViewById(R.id.frame_adapter2) != null) {
+                if (getSupportFragmentManager().findFragmentById(R.id.frame_adapter2) == null) {
+                    ViewAlbumFragment viewAlbumFragment = new ViewAlbumFragment();
+                    viewAlbumFragment.setFromFrag(fromFrag);
+                    viewAlbumFragment.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_adapter2, viewAlbumFragment)
+                            .commit();
+                }
+            }
         }
     }
 
@@ -146,12 +158,14 @@ public class Adapter2Activity extends AppCompatActivity {
             finish();
         } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewpost_CODE))) {
             finish();
-        }else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frag_vote_CODE))) {
             finish();
-        }else if (FRAGMENT_CODE.equals(getString(R.string.frg_prodetail_CODE))) {
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frg_prodetail_CODE))) {
+            finish();
+        } else if (FRAGMENT_CODE.equals(getString(R.string.frg_viewalbum_CODE))) {
             finish();
         } else {
-            new AlertDialog.Builder(this).setMessage("Bạn muốn thoát??")
+            new AlertDialog.Builder(this).setMessage("Bạn muốn hủy??")
                     .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

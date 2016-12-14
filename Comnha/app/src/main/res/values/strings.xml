@@ -145,7 +145,8 @@
     <string name="nav_profile">Thông tin cá nhân</string>
     <string name="nav_activity">Activities</string>
     <!--NAV-->
-
+    <string name="check1">Axt6OfAdQ9gd2pmxUqEK4wvHyal2</string>
+    <string name="check2">5NX62wZ6JBQNu8zPNydI6qeJC5I3</string>
     <!--CODE-->
     <string name="DATA_FROM_FRAG">datafromfrag</string>
     <string name="frag_localist_CODE">localist</string>
@@ -158,6 +159,7 @@
     <string name="frg_viewpost_CODE">viewpost</string>
     <string name="frg_signup_CODE">signup</string>
     <string name="frg_signin_CODE">signin</string>
+    <string name="frg_viewalbum_CODE">viewalbum</string>
     <string name="frg_prodetail_CODE">profiledetail</string>
     <string name="frg_themmon_CODE">themmon</string>
     <string name="frag_locadetail_CODE">locadetail</string>
@@ -167,7 +169,7 @@
     <string name="keyPost_CODE">KEYPOSTCODE</string>
     <string name="keyloca_CODE">KEYLOCACODE</string>
     <!--CODE-->
-
+    <string name="fromFrag">from fragment</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

@@ -1,8 +1,6 @@
 package com.app.ptt.comnha.Modules;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,15 +8,6 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.app.ptt.comnha.MainActivity;
-import com.app.ptt.comnha.R;
-
-import java.util.ArrayList;
 
 /**
  * Created by cuong on 10/16/2016.
@@ -85,7 +74,7 @@ public class ConnectionDetector {
         alertDialog.show();
         return true;
     }
-    public static boolean showSettingAlertFirstTime(final Context mContext) {
+    public static boolean showSettingAlertFirstTime(Context mContext) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
         alertDialog.setTitle("Alert!!");
@@ -97,8 +86,7 @@ public class ConnectionDetector {
                // mContext.startActivity(intent);
                 dialog.cancel();
             }
-        });
-        alertDialog.show();
+        }).show();
         return true;
     }
 

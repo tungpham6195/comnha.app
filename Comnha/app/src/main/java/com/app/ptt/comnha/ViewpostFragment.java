@@ -41,6 +41,7 @@ import com.app.ptt.comnha.FireBase.TrackLocation;
 import com.app.ptt.comnha.Service.MyService;
 import com.app.ptt.comnha.SingletonClasses.ChoosePost;
 import com.app.ptt.comnha.SingletonClasses.LoginSession;
+import com.app.ptt.comnha.SingletonClasses.OpenAlbum;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -63,7 +64,7 @@ import java.util.Map;
  */
 public class ViewpostFragment extends Fragment implements View.OnClickListener {
     private String postID, tinh, huyen;
-    private static final String LOG=ViewpostFragment.class.getSimpleName();
+    private static final String LOG = ViewpostFragment.class.getSimpleName();
     ImageView img_option;
     TextView txt_un, txt_date, txt_title,
             txt_content, txt_likenumb, btn_like, btn_comment,
@@ -84,14 +85,16 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     MyLocation myLocation;
     boolean hastrack = false;
     TrackLocation trackLocation;
-    boolean isConnected=true;
+    private TextView txt_albums;
+
+    boolean isConnected = true;
     IntentFilter mIntentFilter;
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
-    BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(mBroadcastSendAddress)) {
-                Log.i(LOG+".onReceive form Service","isConnected= "+ intent.getBooleanExtra("isConnected", false));
+            if (intent.getAction().equals(mBroadcastSendAddress)) {
+                Log.i(LOG + ".onReceive form Service", "isConnected= " + intent.getBooleanExtra("isConnected", false));
                 if (intent.getBooleanExtra("isConnected", false)) {
                     isConnected = true;
                 } else
@@ -99,6 +102,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             }
         }
     };
+
     public ViewpostFragment() {
         // Required empty public constructor
     }
@@ -110,7 +114,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        isConnected= MyService.returnIsConnected();
+        isConnected = MyService.returnIsConnected();
         View view = inflater.inflate(R.layout.fragment_viewpost, container, false);
         dbRef = FirebaseDatabase.getInstance().getReferenceFromUrl(getResources().getString(R.string.firebase_path));
         storageRef = FirebaseStorage
@@ -263,15 +267,15 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onStart() {
-        isConnected= MyService.returnIsConnected();
-        if(!isConnected){
-            Toast.makeText(getContext(),"Offline mode",Toast.LENGTH_SHORT).show();
+        isConnected = MyService.returnIsConnected();
+        if (!isConnected) {
+            Toast.makeText(getContext(), "Offline mode", Toast.LENGTH_SHORT).show();
         }
-        mIntentFilter=new IntentFilter();
+        mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcastSendAddress);
-        getContext().registerReceiver(broadcastReceiver,mIntentFilter);
+        getContext().registerReceiver(broadcastReceiver, mIntentFilter);
         super.onStart();
-        Log.i(ViewpostFragment.class.getSimpleName(),"OK");
+        Log.i(ViewpostFragment.class.getSimpleName(), "OK");
         mProgressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -298,6 +302,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
         mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(true);
         img_option = (ImageView) view.findViewById(R.id.frg_viewreview_imgoption);
+        txt_albums = (TextView) view.findViewById(R.id.frg_frg_viewpost_txt_album);
         linearAlbum = (LinearLayout) view.findViewById(R.id.frg_viewrev_lnearAlbum);
         txt_gia = (TextView) view.findViewById(R.id.frg_frg_viewpost_txt_gia);
         txt_vs = (TextView) view.findViewById(R.id.frg_frg_viewpost_txt_vesinh);
@@ -336,6 +341,21 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             edt_comment.setEnabled(true);
         }
         img_option.setOnClickListener(this);
+        txt_albums.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (albumList.size() > 0) {
+                    Intent intent = new Intent(getActivity(), Adapter2Activity.class);
+                    intent.putExtra(getString(R.string.fragment_CODE),
+                            getString(R.string.frg_viewalbum_CODE));
+                    intent.putExtra(getString(R.string.fromFrag),
+                            getString(R.string.frg_viewpost_CODE));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    OpenAlbum.getInstance().setPostID(postID);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
 
@@ -353,7 +373,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             case R.id.frg_viewrev_txtv_like:
                 break;
             case R.id.frg_viewrev_btn_sendcomment:
-                if(isConnected) {
+                if (isConnected) {
                     if (!edt_comment.getText().toString().equals("")) {
                         Comment newComment = new Comment();
                         newComment.setContent(edt_comment.getText().toString());
@@ -403,7 +423,7 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
             case R.id.frg_viewrev_lnearAlbum:
                 break;
             case R.id.frg_viewreview_imgoption:
-                if(isConnected) {
+                if (isConnected) {
                     AnimationUtils.rotate90postoption(img_option);
                     PopupMenu popupMenu = new PopupMenu(getActivity(), img_option, Gravity.START);
                     popupMenu.getMenuInflater().inflate(R.menu.popup_menu_reviewdetial, popupMenu.getMenu());
@@ -449,7 +469,8 @@ public class ViewpostFragment extends Fragment implements View.OnClickListener {
                             }
                         }
                     });
-                } else Toast.makeText(getContext(), "You are offline mode", Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getContext(), "You are offline mode", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

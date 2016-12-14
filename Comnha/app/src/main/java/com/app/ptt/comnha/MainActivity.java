@@ -1,6 +1,5 @@
 package com.app.ptt.comnha;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -9,13 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -23,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -76,7 +71,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mnavigationView;
     private TextView txt_email, txt_un;
     private FloatingActionMenu fabmenu;
-    int a=0;
+    int a = 0;
     //private boolean checkConnection = true;
     private FloatingActionButton fab_review, fab_addloca, fab_changloca;
     public static final String mBroadcastSendAddress = "mBroadcastSendAddress";
@@ -88,23 +83,24 @@ public class MainActivity extends AppCompatActivity
     private MyTool myTool;
     private ChangeLocationBottomSheetDialogFragment changeLccaBtmSheet;
     NetworkChangeReceiver mBroadcastReceiver;
-    private boolean binded=false;
+    private boolean binded = false;
     private MyService myService;
-    public static boolean temp=false;
-    ServiceConnection serviceConnection =new ServiceConnection() {
+    public static boolean temp = false;
+    ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            myService=new MyService();
-            MyService.MyServiceBinder binder=(MyService.MyServiceBinder) service;
+            myService = new MyService();
+            MyService.MyServiceBinder binder = (MyService.MyServiceBinder) service;
             binder.getService();
-            binded=true;
+            binded = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            binded=false;
+            binded = false;
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,17 +112,17 @@ public class MainActivity extends AppCompatActivity
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Loading");
-        mIntentFilter=new IntentFilter();
+        mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(mBroadcastSendAddress);
         mIntentFilter.addAction(mBroadcastSendAddress1);
         mBroadcastReceiver = new NetworkChangeReceiver();
         myTool = new MyTool(getApplicationContext(), MainActivity.class.getSimpleName());
         setContentView(R.layout.activity_main2);
-        Intent intent=new Intent(this,MyService.class);
+        Intent intent = new Intent(this, MyService.class);
         Intent myIntent = getIntent();
-        temp= myIntent.getBooleanExtra("isConnected", false);
-        Log.i(LOG+".onCreate", "temp="+temp);
-        this.bindService(intent,serviceConnection,Context.BIND_AUTO_CREATE);
+        temp = myIntent.getBooleanExtra("isConnected", false);
+        Log.i(LOG + ".onCreate", "temp=" + temp);
+        this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         Firebase.setAndroidContext(this);
         ref = new Firebase(getResources().getString(R.string.firebase_path));
         anhXa();
@@ -409,8 +405,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        isConnected= MyService.returnIsConnected();
-        Log.i(LOG, "onStart= "+isConnected);
+        isConnected = MyService.returnIsConnected();
+        Log.i(LOG, "onStart= " + isConnected);
         registerReceiver(mBroadcastReceiver, mIntentFilter);
         mAuth.addAuthStateListener(mAuthListener);
         try {
@@ -456,11 +452,12 @@ public class MainActivity extends AppCompatActivity
 
         Log.i(LOG, "onResume");
     }
+
     @Override
     protected void onStop() {
         super.onStop();
 
-       unregisterReceiver(mBroadcastReceiver);
+        unregisterReceiver(mBroadcastReceiver);
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -472,9 +469,9 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i(LOG, "onDestroy");
         super.onDestroy();
-        if(binded){
+        if (binded) {
             this.unbindService(serviceConnection);
-            binded=false;
+            binded = false;
         }
         // Storage.deleteFile(getApplicationContext(),"myLocation");
     }
@@ -491,7 +488,20 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            new AlertDialog.Builder(this)
+                    .setMessage("Bạn có muốn thoát?")
+                    .setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton("có", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
         }
     }
 
@@ -522,17 +532,27 @@ public class MainActivity extends AppCompatActivity
                         getString(R.string.frag_about_CODE));
                 break;
             case R.id.nav_admin:
-
+                try {
+                    if (LoginSession.getInstance().getUserID().equals(getString(R.string.check1))
+                            || LoginSession.getInstance().getUserID().equals(getString(R.string.check2))) {
+                        Intent intent3 = new Intent(this, AdminActivity.class);
+                        startActivity(intent3);
+                    } else {
+                        Toast.makeText(this, "Bạn không thể thực hiện chức năng này", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (NullPointerException mess) {
+                    Toast.makeText(this, "Bạn không thể thực hiện chức năng này", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.nav_signin:
                 Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
                 intent1.putExtra(getString(R.string.fragment_CODE),
                         getString(R.string.frg_signin_CODE));
-                intent1.putExtra("isConnected",isConnected);
+                intent1.putExtra("isConnected", isConnected);
                 startActivity(intent1);
                 break;
             case R.id.nav_signout:
-                if(isConnected) {
+                if (isConnected) {
                     logoutDialog = ProgressDialog.show(this,
                             getResources().getString(R.string.txt_plzwait),
                             getResources().getString(R.string.txt_logginout), true, false);
@@ -555,7 +575,7 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     });
-                } else{
+                } else {
                     Toast.makeText(getApplicationContext(), "You are offline", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -564,7 +584,7 @@ public class MainActivity extends AppCompatActivity
                 Intent intent2 = new Intent(MainActivity.this, AdapterActivity.class);
                 intent2.putExtra(getString(R.string.fragment_CODE),
                         getString(R.string.frag_map_CODE));
-                intent2.putExtra("isConnected",isConnected);
+                intent2.putExtra("isConnected", isConnected);
                 startActivity(intent2);
                 //   }
                 break;
@@ -619,10 +639,10 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onChangetoMylocation(boolean isMylocation) {
                         if (isMylocation) {
-                                LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
-                                LoginSession.getInstance().setTinh(myLocation.getTinhtp());
-                                fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", " +
-                                        LoginSession.getInstance().getTinh());
+                            LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
+                            LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+                            fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", " +
+                                    LoginSession.getInstance().getTinh());
                             fabmenu.close(true);
                             FragmentTransaction transaction;
                             switch (bottomBar.getCurrentTabPosition()) {
@@ -656,7 +676,7 @@ public class MainActivity extends AppCompatActivity
                 });
                 break;
             case R.id.main_fabitem2:
-                if(isConnected) {
+                if (isConnected) {
                     if (LoginSession.getInstance().getUserID() == null) {
                         Toast.makeText(this, getString(R.string.txt_needlogin),
                                 Toast.LENGTH_SHORT).show();
@@ -664,14 +684,14 @@ public class MainActivity extends AppCompatActivity
                         Intent intent = new Intent(MainActivity.this, Adapter2Activity.class);
                         intent.putExtra(getString(R.string.fragment_CODE),
                                 getString(R.string.frag_addloca_CODE));
-                        intent.putExtra("isConnected",isConnected);
+                        intent.putExtra("isConnected", isConnected);
                         startActivity(intent);
                     }
-                }else
-                    Toast.makeText(this,"You are offline",Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(this, "You are offline", Toast.LENGTH_LONG).show();
                 break;
             case R.id.main_fabitem3:
-                if(isConnected) {
+                if (isConnected) {
                     if (LoginSession.getInstance().getUserID() == null) {
                         Toast.makeText(this, getString(R.string.txt_needlogin),
                                 Toast.LENGTH_SHORT).show();
@@ -679,48 +699,48 @@ public class MainActivity extends AppCompatActivity
                         Intent intent1 = new Intent(MainActivity.this, Adapter2Activity.class);
                         intent1.putExtra(getString(R.string.fragment_CODE),
                                 getString(R.string.frag_addpost_CODE));
-                        intent1.putExtra("isConnected",isConnected);
+                        intent1.putExtra("isConnected", isConnected);
                         startActivity(intent1);
                     }
                 } else
-                    Toast.makeText(this,"You are offline",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "You are offline", Toast.LENGTH_LONG).show();
                 break;
 
         }
     }
 
 
-
     class NetworkChangeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             Log.i(LOG + ".NetworkChangeReceiver", "isConnected splash " + temp);
-            if(intent.getAction().equals(mBroadcastSendAddress)) {
-                   if (intent.getBooleanExtra("isConnected",false)) {
-                       isConnected = true;
-                       } else
-                       isConnected = false;
-                   ArrayList<MyLocation> locations;
-                   String a = Storage.readFile(getApplicationContext(), "myLocation");
-                   if (a != null) {
-                       locations = Storage.readJSONMyLocation(a);
-                       if (locations.size() > 0)
-                           myLocation = locations.get(0);
-                       else {
-                           myLocation = null;
-                       }
-                       if (LoginSession.getInstance().getHuyen() == "" && LoginSession.getInstance().getTinh() == "") {
-                           tinh = myLocation.getTinhtp();
-                           huyen = myLocation.getQuanhuyen();
-                           LoginSession.getInstance().setTinh(myLocation.getTinhtp());
-                           LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
-                           fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
-                                   + LoginSession.getInstance().getTinh());
-                           Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
-                   }
-                       bottomBarEvent();
-               }
-           }
+            if (intent.getAction().equals(mBroadcastSendAddress)) {
+                if (intent.getBooleanExtra("isConnected", false)) {
+                    isConnected = true;
+                } else
+                    isConnected = false;
+                ArrayList<MyLocation> locations;
+                String a = Storage.readFile(getApplicationContext(), "myLocation");
+                if (a != null) {
+                    locations = Storage.readJSONMyLocation(a);
+                    if (locations.size() > 0)
+                        myLocation = locations.get(0);
+                    else {
+                        myLocation = null;
+                    }
+                    if (LoginSession.getInstance().getHuyen() == "" && LoginSession.getInstance().getTinh() == "") {
+                        tinh = myLocation.getTinhtp();
+                        huyen = myLocation.getQuanhuyen();
+                        LoginSession.getInstance().setTinh(myLocation.getTinhtp());
+                        LoginSession.getInstance().setHuyen(myLocation.getQuanhuyen());
+                        fab_changloca.setLabelText(LoginSession.getInstance().getHuyen() + ", "
+                                + LoginSession.getInstance().getTinh());
+                        Log.i(LOG + ".NetworkChangeReceiver", "myLocation != null");
+                    }
+                    bottomBarEvent();
+                }
+            }
         }
     }
+
 }

@@ -24,9 +24,15 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name=".Adapter2Activity" />
-        <activity android:name=".AdapterActivity" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".Adapter2Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AdapterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -34,13 +40,16 @@
         </activity>
         <activity
             android:name=".SplashActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AdminActivity"></activity>
+        <activity
+            android:name=".AdminActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".Service.MyService"
